@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">EMPLOYEEPASS</string>
+    <string name="truckNo">TRUCK NUMBER</string>
+    <string name="vendorName">VENDOR NAME</string>
+    <string name="emptyTrolly">EMPTY TROLLY</string>
+    <string name="emptyBins">EMPTY BINS</string>
+    <string name="dialog_title">Getting Truck Details</string>
+    <string name="Today">06-03-2018</string>
+    <string name="SlipNo">0</string>
+    <string name="ACTIVE_IMEI">861299031743053</string>
+</resources>

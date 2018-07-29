@@ -1,0 +1,15 @@
+# Project output                 
+bin/
+target*/
+*.log
+out
+*~
+
+# Project config files
+.settings/
+.project
+.classpath
+.idea/
+*.iml
+.checkstyle
+.DS_Store

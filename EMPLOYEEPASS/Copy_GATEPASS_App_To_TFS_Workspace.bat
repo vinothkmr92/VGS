@@ -1,0 +1,1 @@
+xcopy E:\AndroidProjects\GATEPASS E:\TFS_VGS\GATEPASS /E

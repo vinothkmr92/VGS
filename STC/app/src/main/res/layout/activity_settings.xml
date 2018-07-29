@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="hub.com.stc.stc.Settings">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="PostgreSQL Host"
+                    android:textColor="@android:color/holo_orange_dark"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="100px"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:id="@+id/host"
+                    android:selectAllOnFocus="true"
+                    android:hint="Enter PostgreSQL Host" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="100px">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="PostgreSQL UserName"
+                    android:textColor="@android:color/holo_orange_dark"
+                    android:textStyle="bold" />
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:inputType="text"
+                    android:selectAllOnFocus="true"
+                    android:layout_marginLeft="50px"
+                    android:maxLines="1"
+                    android:id="@+id/username"
+                    android:hint="Enter PostgreSQL User" />
+            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="100px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="PostgreSQL Password"
+                        android:textColor="@android:color/holo_orange_dark"
+                        android:textStyle="bold" />
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="50px"
+                        android:maxLines="1"
+                        android:selectAllOnFocus="true"
+                        android:id="@+id/password"
+                        android:hint="PostgreSQL Password"
+                        android:inputType="textPassword"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="100px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="ST Database Name"
+                        android:textColor="@android:color/holo_orange_dark"
+                        android:textStyle="bold" />
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="70px"
+                        android:inputType="text"
+                        android:selectAllOnFocus="true"
+                        android:maxLines="1"
+                        android:id="@+id/dbname"
+                        android:hint="PostgreSQL Database ST"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="100px">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="FEN Database Name"
+                        android:textColor="@android:color/holo_orange_dark"
+                        android:textStyle="bold" />
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="70px"
+                        android:inputType="text"
+                        android:selectAllOnFocus="true"
+                        android:maxLines="1"
+                        android:id="@+id/dbname_fen"
+                        android:hint="PostgreSQL Database FEN"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="100px">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Default Weight"
+                        android:textColor="@android:color/holo_orange_dark"
+                        android:textStyle="bold"
+                        />
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="120px"
+                        android:maxLines="1"
+                        android:selectAllOnFocus="true"
+                        android:id="@+id/defaultweight"
+                        android:hint="0.250"
+                        android:inputType="numberDecimal"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginTop="100px">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Test Connection"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/mybutton"
+                        android:id="@+id/testButton"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

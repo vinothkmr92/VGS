@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Home">
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:orientation="vertical">
+           <LinearLayout
+               android:layout_width="300dp"
+               android:layout_height="wrap_content"
+               android:orientation="horizontal"
+               android:layout_gravity="center"
+               android:background="@color/colorAccent">
+
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:textSize="20dp"
+                   android:textStyle="bold"
+                   android:text="TOTAL SALE"/>
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="  ₹ "
+                   android:textStyle="bold"
+                   android:textSize="30dp"/>
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:textSize="30dp"
+                   android:textStyle="bold"
+                   android:id="@+id/totSale"
+                   android:text="000000"/>
+
+           </LinearLayout>
+           <LinearLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:orientation="horizontal">
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:orientation="horizontal">
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="FROM :"/>
+                   <EditText
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:id="@+id/frmDt"
+                       android:editable="false"
+                       android:onClick="datePikcer"
+                       android:text="1-APR-2018"/>
+               </LinearLayout>
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:orientation="horizontal"
+                   android:layout_marginLeft="40dp">
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="TO       :"/>
+                   <EditText
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:id="@+id/toDt"
+                       android:editable="false"
+                       android:onClick="datePicker_TO"
+                       android:text="1-APR-2018"/>
+               </LinearLayout>
+           </LinearLayout>
+
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="FAST MOVING PRODUCTS"
+               android:textStyle="bold"
+               android:textSize="20dp"/>
+
+           <TableLayout
+               android:id="@+id/datagrid"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:gravity="center"
+               android:numColumns="auto_fit"
+               android:columnWidth="100dp"
+               android:verticalSpacing="24dp"
+               android:horizontalSpacing="10dp"
+               android:stretchMode="spacingWidthUniform"></TableLayout>
+
+       </LinearLayout>
+
+
+   </ScrollView>
+
+
+</android.support.constraint.ConstraintLayout>

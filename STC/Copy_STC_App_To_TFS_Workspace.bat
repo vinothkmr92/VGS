@@ -1,0 +1,1 @@
+xcopy E:\AndroidProjects\STC E:\TFS_VGS\STC /E

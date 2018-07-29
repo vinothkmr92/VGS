@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout android:id="@+id/Liner1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/truckNoLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="TRUCK NUMBER"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"></TextView>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/truckNo" android:editable="false"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="VENDOR NAME"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"></TextView>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:editable="false"
+            android:id="@+id/vendorName"/>
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:text="SHOP NAME"
+    android:textColor="@color/colorAccent"
+    android:textStyle="bold"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:editable="false"
+            android:id="@+id/shopName"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="GATE NO"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:editable="false"
+            android:id="@+id/gateNo"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="EMPTY TROLLYS"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"></TextView>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:inputType="number"
+            android:id="@+id/emptyTrollys"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="EMPTY BINS"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"></TextView>
+
+        <EditText
+            android:id="@+id/emptyBins"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="number"
+            android:textColor="@android:color/background_dark" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="OTHERS"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"></TextView>
+
+        <EditText
+            android:id="@+id/others"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="number"
+            android:textColor="@android:color/background_dark" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="20px"
+            >
+
+            <Button
+                android:id="@+id/printBtn"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="200px"
+                android:layout_height="50px"
+                android:layout_marginLeft="40px"
+                android:background="@color/colorAccent"
+                android:backgroundTint="@color/colorAccent"
+                android:text="PRINT"
+                android:textColor="@color/zxing_status_text"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/ScanBtn"
+                android:layout_width="200px"
+                android:layout_height="50px"
+                android:layout_marginLeft="330px"
+                android:background="@color/zxing_custom_viewfinder_laser"
+                android:text="SCAN QR CODE"
+                android:textColor="@color/zxing_status_text"
+                android:textStyle="bold|italic" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+
+
+
+
+
+</android.support.constraint.ConstraintLayout>
