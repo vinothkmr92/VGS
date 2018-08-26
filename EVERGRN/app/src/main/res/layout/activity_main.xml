@@ -16,12 +16,11 @@
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
-          android:text="EVERGREEN HARVEST AGRO PRODUCTS - SHOOLAGIRI "
+          android:text="EVERGREEN HARVEST ARGO PRODUCTS"
           android:textAppearance="@style/TextAppearance.AppCompat"
           android:textColor="@android:color/holo_green_dark"
-          android:textSize="40dp"
+          android:textSize="15dp"
           android:textStyle="bold" />
-
   </LinearLayout>
 
     <LinearLayout
@@ -34,16 +33,16 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="DATE: "
-            android:layout_marginLeft="900px"
+            android:layout_marginLeft="200px"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:textStyle="bold" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textStyle="bold"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:text="22-JUL-2018"
             android:id="@+id/dt"/>
     </LinearLayout>
@@ -51,7 +50,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginTop="200px"
+        android:layout_marginTop="170px"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
@@ -60,20 +59,20 @@
             android:text="SUPERVISOR"
             android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textSize="30dp"
+            android:textSize="20dp"
             />
         <Spinner
             android:layout_width="wrap_content"
             android:minWidth="500dp"
-            android:minHeight="80dp"
+            android:minHeight="50dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100px"
+            android:layout_marginLeft="20px"
             android:id="@+id/supervisorDropDwn"></Spinner>
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginTop="300px"
+        android:layout_marginTop="290px"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
@@ -82,14 +81,14 @@
             android:layout_marginLeft="20px"
             android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textSize="30dp"
+            android:textSize="20dp"
             />
         <Spinner
             android:layout_width="wrap_content"
             android:minWidth="500dp"
-            android:minHeight="80dp"
+            android:minHeight="50dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="140px"
+            android:layout_marginLeft="70px"
             android:id="@+id/roomnoDropDwn"></Spinner>
     </LinearLayout>
     <LinearLayout
@@ -104,14 +103,14 @@
             android:layout_marginLeft="20px"
             android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textSize="30dp"
+            android:textSize="20dp"
             />
         <Spinner
             android:layout_width="wrap_content"
             android:minWidth="500dp"
-            android:minHeight="80dp"
+            android:minHeight="50dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="130px"
+            android:layout_marginLeft="50px"
             android:id="@+id/pickerDropDwn"></Spinner>
     </LinearLayout>
     <LinearLayout
@@ -126,27 +125,26 @@
             android:layout_marginLeft="20px"
             android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textSize="30dp"
+            android:textSize="20dp"
             />
         <EditText
             android:layout_width="wrap_content"
-            android:minWidth="200dp"
             android:editable="false"
-            android:minHeight="80dp"
+            android:minHeight="50dp"
             android:text="0.000"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="160px"
+            android:layout_marginLeft="120px"
             android:id="@+id/weight"></EditText>
 
         <ImageButton
             android:id="@+id/btnGetWeight"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@mipmap/refreshicon"
             android:text="Get Weight"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
@@ -154,20 +152,52 @@
         android:layout_height="match_parent"
         android:layout_marginTop="600px"
         android:orientation="horizontal">
-        <Button
-            android:layout_width="300px"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="200px"
-            android:textSize="30dp"
+            android:text="NET WEIGHT"
+            android:layout_marginLeft="20px"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="15dp"></TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.000-1.800="
+            android:layout_marginLeft="20px"
+            android:textStyle="bold"
+            android:id="@+id/netwtstring"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="15dp"></TextView>
+        <EditText
+            android:layout_width="wrap_content"
+            android:editable="false"
+            android:minHeight="50dp"
+            android:text="-1.800"
+            android:textSize="15dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20px"
+            android:id="@+id/netweight"></EditText>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="700px"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="150px"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100px"
+            android:textSize="15dp"
             android:textStyle="bold"
             android:id="@+id/btnSave"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:text="SAVE"/>
         <Button
-            android:layout_width="300px"
+            android:layout_width="150px"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="400px"
-            android:textSize="30dp"
+            android:layout_marginLeft="100px"
+            android:textSize="15dp"
             android:textStyle="bold"
             android:id="@+id/btnReset"
             android:textAppearance="@style/TextAppearance.AppCompat"

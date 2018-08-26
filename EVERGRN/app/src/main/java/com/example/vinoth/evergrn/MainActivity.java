@@ -69,10 +69,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnSave;
     Button btnReset;
     TextView dt;
-
+    TextView netwtst;
+    EditText netweight;
     ArrayList<String> SuperVisorList;
-    ArrayList<Integer> RoomNoList;
-    ArrayList<Integer> PickerList;
+    ArrayList<String> RoomNoList;
+    ArrayList<String> PickerList;
 
     String sqlServer ;
     String sqlUserName;
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         progressBar = new Dialog(MainActivity.this);
         progressBar.setContentView(R.layout.custom_progress_dialog);
         progressBar.setTitle("Loading");
@@ -105,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
         String prefData = format.format(date);
         dt.setText(prefData);
+        netwtst = (TextView)findViewById(R.id.netwtstring);
+        netweight = (EditText)findViewById(R.id.netweight);
         btnGetWeigh = (ImageButton) findViewById(R.id.btnGetWeight);
         btnSave = (Button)findViewById(R.id.btnSave);
         btnReset = (Button)findViewById(R.id.btnReset);
@@ -119,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         RoomNoList = new ArrayList<>();
         PickerList = new ArrayList<>();
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
-        String isimeiVerified = sharedpreferences.getString(IMEIVERIFIED,"");
+        String isimeiVerified = sharedpreferences.getString(IMEIVERIFIED,"Y");
         if(!isimeiVerified.equals("Y")) {
             IMEI = "";
             try{
@@ -215,7 +219,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 startActivity(intent);
                 return true;
-            case R.id.Settings:
+            case R.id.dcentry:
+                Intent dcpage = new Intent(this,DCActivity.class);
+                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(dcpage);
+                return  true;
+                case R.id.Settings:
                 Intent settingsPage = new Intent(this,Settings.class);
                 //settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(settingsPage);
@@ -303,7 +312,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case  R.id.btnGetWeight:
+              //  weightFromBluetooth = "4.589";
                    wet.setText(weightFromBluetooth);
+                Float wt=Float.parseFloat(weightFromBluetooth);
+                Float result = wt-1.800f;
+                netwtst.setText(wt.toString()+"-1.800 = ");
+                DecimalFormat df = new DecimalFormat("0.000");
+                df.setMaximumFractionDigits(3);
+                netweight.setText(df.format(result));
                    break;
             case  R.id.btnReset:
                   supervisorSpiner.setSelection(0);
@@ -312,12 +328,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                   wet.setText("0.000");
                   break;
             case R.id.btnSave:
-                new SaveEntry().execute(0);
+                ValidateDropDowns();
         }
 
     }
 
-
+    public  void ValidateDropDowns() {
+        String supervisor = supervisorSpiner.getSelectedItem().toString();
+        if(supervisor.startsWith("<")){
+            showCustomDialog("Validation","Please Select Supervisor.");
+        }
+        else {
+            String roomNo = roomNoSpiner.getSelectedItem().toString();
+            if(roomNo.startsWith("<")){
+                showCustomDialog("Validation","Please Select Room No.");
+            }
+            else {
+                String pickerNo = pickerNoSpiner.getSelectedItem().toString();
+                if(pickerNo.startsWith("<")){
+                    showCustomDialog("Validation","Please Select Picker No.");
+                }
+                else {
+                    new SaveEntry().execute(0);
+                }
+            }
+        }
+    }
     public class SaveEntry extends AsyncTask<Integer,String,String>
     {
 
@@ -327,10 +363,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String wt;
         @Override
         protected void onPreExecute() {
-            roomno = (Integer) roomNoSpiner.getSelectedItem();
-            pickerno = (Integer)pickerNoSpiner.getSelectedItem();
+            String rmNo = roomNoSpiner.getSelectedItem().toString();
+            roomno = Integer.parseInt(rmNo);
+            String pcNo = pickerNoSpiner.getSelectedItem().toString();
+            pickerno = Integer.parseInt(pcNo);
             supervisor = supervisorSpiner.getSelectedItem().toString();
-            wt = wet.getText().toString();
+            wt = netweight.getText().toString();
             progressBar.show();
         }
 
@@ -342,7 +380,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             else {
                 showCustomDialog("EVERNGRN","Picker Entry Added Successfully.");
+                //supervisorSpiner.setSelection(0);
+                //roomNoSpiner.setSelection(0);
                 pickerNoSpiner.setSelection(0);
+                wet.setText("0.000");
             }
 
             // if(isSuccess) {
@@ -399,8 +440,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
 
         ArrayList<String> spList = new ArrayList<>();
-        ArrayList<Integer> rmList = new ArrayList<>();
-        ArrayList<Integer> pkList = new ArrayList<>();
+        ArrayList<String> rmList = new ArrayList<>();
+        ArrayList<String> pkList = new ArrayList<>();
         @Override
         protected void onPreExecute() {
             progressBar.show();
@@ -437,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String query = "SELECT SUPERVISOR FROM SUPERVISORS";
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
-
+                    spList.add("<SELECT SUPERVISOR>");
                     while (rs.next())
                     {
                         String act = rs.getString("SUPERVISOR");
@@ -448,18 +489,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     query = "SELECT ROOM_NO FROM ROOMS";
                     stmt = con.createStatement();
                     rs = stmt.executeQuery(query);
+                    rmList.add("<SELECT ROOMNO>");
                     while (rs.next()){
                         Integer s = rs.getInt("ROOM_NO");
-                        rmList.add(s);
+                        rmList.add(s.toString());
                     }
                     rs.close();
                     stmt.close();
                     query="SELECT PICKER_NO FROM PICKERS";
                     stmt = con.createStatement();
                     rs = stmt.executeQuery(query);
+                    pkList.add("<SELECT PICKER>");
                     while (rs.next()){
                         Integer s = rs.getInt("PICKER_NO");
-                        pkList.add(s);
+                        pkList.add(s.toString());
                     }
                     z = "SUCCESS";
                 }

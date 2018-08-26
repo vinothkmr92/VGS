@@ -27,18 +27,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="SQL SERVER NAME"
-                    android:textSize="30dp"
+                    android:textSize="15dp"
                     android:textColor="@android:color/holo_orange_dark"
                     android:textStyle="bold" />
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="100px"
+                    android:layout_marginLeft="80px"
                     android:inputType="text"
                     android:maxLines="1"
                     android:id="@+id/host"
-                    android:textSize="30dp"
+                    android:textSize="15dp"
                     android:selectAllOnFocus="true"
                     android:hint="Enter SQL Server Name" />
             </LinearLayout>
@@ -52,16 +52,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="SQL USERNAME"
-                    android:textSize="30dp"
+                    android:textSize="15dp"
                     android:textColor="@android:color/holo_orange_dark"
                     android:textStyle="bold" />
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="text"
-                    android:textSize="30dp"
+                    android:textSize="15dp"
                     android:selectAllOnFocus="true"
-                    android:layout_marginLeft="180px"
+                    android:layout_marginLeft="150px"
                     android:maxLines="1"
                     android:id="@+id/username"
                     android:hint="Enter SQL User" />
@@ -76,14 +76,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="SQL PASSWORD"
-                        android:textSize="30dp"
+                        android:textSize="15dp"
                         android:textColor="@android:color/holo_orange_dark"
                         android:textStyle="bold" />
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="180px"
-                        android:textSize="30dp"
+                        android:layout_marginLeft="150px"
+                        android:textSize="15dp"
                         android:maxLines="1"
                         android:selectAllOnFocus="true"
                         android:id="@+id/password"
@@ -100,14 +100,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="DATABASE NAME"
-                        android:textSize="30dp"
+                        android:textSize="15dp"
                         android:textColor="@android:color/holo_orange_dark"
                         android:textStyle="bold" />
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="160px"
-                        android:textSize="30dp"
+                        android:layout_marginLeft="100px"
+                        android:textSize="15dp"
                         android:inputType="text"
                         android:selectAllOnFocus="true"
                         android:maxLines="1"
@@ -123,15 +123,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="BLUETOOTH DEVICE NAME"
-                        android:textSize="30dp"
+                        android:text="BT DEVICE NAME"
+                        android:textSize="15dp"
                         android:textColor="@android:color/holo_orange_dark"
                         android:textStyle="bold" />
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="30px"
-                        android:textSize="30dp"
+                        android:layout_marginLeft="100px"
+                        android:textSize="15dp"
                         android:inputType="text"
                         android:selectAllOnFocus="true"
                         android:maxLines="1"
@@ -145,10 +145,8 @@
                     android:layout_marginTop="80px">
                     <Button
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="Test Connection"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/mybutton"
                         android:id="@+id/testButton"/>
 
                 </LinearLayout>
