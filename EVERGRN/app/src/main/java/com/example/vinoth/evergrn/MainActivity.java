@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Spinner supervisorSpiner;
     Spinner roomNoSpiner;
     Spinner pickerNoSpiner;
-    String weightFromBluetooth;
+    public static String weightFromBluetooth;
     EditText wet;
     ImageButton btnGetWeigh;
     Button btnSave;
@@ -177,6 +177,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sqlPassword = sharedpreferences.getString(SQLPASSWORD, "");
         sqlDB = sharedpreferences.getString(SQLDB, "");
         blutName = sharedpreferences.getString(BTNAME,"");
+        CommonUtil.SQL_SERVER = sqlServer;
+        CommonUtil.DB = sqlDB;
+        CommonUtil.USERNAME = sqlUserName;
+        CommonUtil.PASSWORD = sqlPassword;
         try{
             if(findBT()){
                 openBT();
@@ -685,7 +689,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         public void run()
                                         {
                                             weightFromBluetooth = data;
-
+                                            wet.setText(weightFromBluetooth);
+                                            CommonUtil.WeightFromBlueTooth = weightFromBluetooth;
+                                            Float wt=Float.parseFloat(weightFromBluetooth);
+                                            Float result = wt-1.800f;
+                                            netwtst.setText(wt.toString()+"-1.800 = ");
+                                            DecimalFormat df = new DecimalFormat("0.000");
+                                            df.setMaximumFractionDigits(3);
+                                            netweight.setText(df.format(result));
 
                                         }
                                     });
