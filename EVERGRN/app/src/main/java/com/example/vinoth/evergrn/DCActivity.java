@@ -21,6 +21,7 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DecimalFormat;
@@ -73,20 +74,22 @@ public class DCActivity extends Activity implements View.OnClickListener {
                         String pacName = CommonUtil.packingsList.get(i).getPacking_NAME();
                         pkList.add(pacName);
                 }
-                double weightToReduce = 0;
                 switch (SelectedTray){
                     case "10KG_BIG_TRAY":
                         pkList.remove("WITHOUT_PUNNET");
                         pkList.remove("LOOSE");
                         pkList.remove("ST");
+                        break;
                     case "8KG_BIG_TRAY":
                         pkList.remove("WITHOUT_PUNNET");
                         pkList.remove("LOOSE");
                         pkList.remove("ST");
+                        break;
                     case "8KG_SMALL_TRAY":
                         pkList.remove("WITH_PUNNET");
                         pkList.remove("LOOSE");
                         pkList.remove("ST");
+                        break;
                 }
                 LoadPackingSpiner(pkList);
             }
@@ -254,6 +257,12 @@ public class DCActivity extends Activity implements View.OnClickListener {
                 }
                 break;
             case  R.id.btnSave:
+                if(saleTrays.size()>0){
+                    new SaveSaleEntry().execute("");
+                }
+                else {
+                    showCustomDialog("Warning","No Data Added in Queue. Please Add Data To Save");
+                }
                 break;
 
         }
@@ -403,6 +412,84 @@ public class DCActivity extends Activity implements View.OnClickListener {
                         CommonUtil.packingsList.add(packings);
                         packList.add(packings.getPacking_NAME());
                     }
+                    z = "SUCCESS";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                z = "ERROR:"+ex.getMessage();
+            }
+            return z;
+        }
+    }
+    public class SaveSaleEntry extends AsyncTask<String,String,String>
+    {
+        ArrayList<Sale_Tray> sr = new ArrayList<Sale_Tray>();
+        String totalwt = "";
+        @Override
+        protected void onPreExecute()
+        {
+            sr = saleTrays;
+            totalwt = totalWeight.getText().toString();
+            progressBar.show();
+        }
+
+        @Override
+        protected void onPostExecute(String r) {
+            progressBar.cancel();
+            if(r.startsWith("ERROR")){
+                showCustomDialog("Exception",r);
+            }
+            else {
+                showCustomDialog("Message","Data Saved Sucessfully.!");
+                customerSpinner.setSelection(0);
+                traySpinner.setSelection(0);
+                packingSprinner.setSelection(0);
+                totalWeight.setText("000");
+                saleTrays.clear();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String z="";
+            try {
+                String imi = params[0];
+                Connection con = connectionClass.CONN(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                if (con == null) {
+                    z = "Error in connection with SQL server";
+                } else {
+                    String query = "SELECT MAX(SALE_ID) AS SALE_ID FROM SALE";
+                    Statement stmt = con.createStatement();
+                    ResultSet rs = stmt.executeQuery(query);
+                    Integer saleId = 0;
+                    while (rs.next())
+                    {
+                        saleId = rs.getInt("SALE_ID");
+                    }
+                    saleId+=1;
+                    rs.close();
+                    stmt.close();
+                    Integer cusId = sr.get(0).getCustomer_ID();
+                    query = "INSERT INTO SALE VALUES (?,GETDATE(),?,"+totalwt+")";
+                    PreparedStatement preparedStatement = con.prepareStatement(query);
+                    preparedStatement.setInt(1,saleId);
+                    preparedStatement.setInt(2,cusId);
+                    preparedStatement.execute();
+                    preparedStatement.close();
+                    for(int i=0;i<sr.size();i++){
+                        Sale_Tray s = sr.get(i);
+                        String qty = s.getWeigth();
+                        query = "INSERT INTO SALE_TRAY VALUES (?,?,?,"+qty+")";
+                        PreparedStatement preparedStatement1 = con.prepareStatement(query);
+                        preparedStatement1.setInt(1,saleId);
+                        preparedStatement1.setInt(2,s.getTray_ID());
+                        preparedStatement1.setInt(3,s.getPacking_ID());
+                        preparedStatement1.execute();
+                        preparedStatement1.close();
+                    }
+                    con.close();
                     z = "SUCCESS";
                 }
             }
