@@ -3,6 +3,15 @@ package com.example.vinoth.evergrn;
 public class Packings {
     private int Packing_ID;
     private String Packing_NAME;
+    private String Short_Name;
+
+    public String getShort_Name() {
+        return Short_Name;
+    }
+
+    public void setShort_Name(String short_Name) {
+        Short_Name = short_Name;
+    }
 
     public int getPacking_ID() {
         return Packing_ID;

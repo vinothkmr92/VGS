@@ -3,6 +3,15 @@ package com.example.vinoth.evergrn;
 public class Tray {
     private int Tray_ID;
     private String Tray_Name;
+    private String Short_Name;
+
+    public String getShort_Name() {
+        return Short_Name;
+    }
+
+    public void setShort_Name(String short_Name) {
+        Short_Name = short_Name;
+    }
 
     public int getTray_ID() {
         return Tray_ID;
