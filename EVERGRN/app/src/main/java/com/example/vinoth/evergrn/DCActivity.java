@@ -251,12 +251,10 @@ public class DCActivity extends Activity implements View.OnClickListener {
             Date date = new Date();
             Customer customer = GetCustomer(saleTrays.get(0).getCustomer_ID());
             ngxPrinter.setDefault();
-            Bitmap customerLogo = BitmapFactory.decodeResource(this.getResources(), R.drawable.evergreen);
-            ngxPrinter.printImage(customerLogo);
-            ngxPrinter.setStyleBold();
-            ngxPrinter.printText("EVERGREEN HARVEST ARGO PRODUCTS", Alignments.CENTER, 28);
             ngxPrinter.setStyleDoubleWidth();
-            ngxPrinter.printText("DELIVERY CHALLAN", Alignments.CENTER, 30);
+            ngxPrinter.printText("DELIVERY CHALLAN", Alignments.CENTER, 24);
+            ngxPrinter.setStyleBold();
+            ngxPrinter.printText("EVERGREEN HARVEST ARGO", Alignments.CENTER, 28);
             ngxPrinter.setStyleBold();
             ngxPrinter.setStyleBold();
             ngxPrinter.printText("DC NO : " + DcNo, Alignments.LEFT, 24);
@@ -264,22 +262,24 @@ public class DCActivity extends Activity implements View.OnClickListener {
             ngxPrinter.printText("TO", Alignments.LEFT, 24);
             ngxPrinter.printText(customer.getCustomer_Name(), Alignments.CENTER, 24);
             ngxPrinter.printText(customer.getAddress(), Alignments.CENTER, 24);
-            ngxPrinter.printText("------------------------------", Alignments.LEFT, 24);
+            ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
             ngxPrinter.printText("SNO         NAME           QTY", Alignments.LEFT, 24);
-            ngxPrinter.printText("------------------------------", Alignments.LEFT, 24);
-
+            ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
             for (int i = 0; i < saleTrays.size(); i++) {
                 Sale_Tray sr = saleTrays.get(i);
                 Integer sno = i + 1;
                 Tray tray = GetTray(sr.getTray_ID());
                 Packings packings = GetPacking(sr.getPacking_ID());
-                ngxPrinter.printText(sno + "        " + tray.getShort_Name() + "-" + packings.getShort_Name() + "      " + sr.getWeigth(), Alignments.LEFT, 24);
+                String shortName = tray.getShort_Name() + "-" + packings.getShort_Name();
+                shortName = padRight(shortName, 12);
+                ngxPrinter.printText(sno + "        " + shortName + "      " + sr.getWeigth(), Alignments.LEFT, 24);
             }
-            ngxPrinter.printText("------------------------------", Alignments.LEFT, 24);
+            ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
             ngxPrinter.printText("            TOTAL WEIGTH:" + totalWeight.getText(), Alignments.LEFT, 24);
             ngxPrinter.printText("                              ");
-            ngxPrinter.printText("                              ");
             ngxPrinter.printText("*** THANK YOU ***", Alignments.CENTER, 24);
+            ngxPrinter.printText("                              ");
+            ngxPrinter.printText("                              ");
             ngxPrinter.setDefault();
         }
         catch (Exception ex){
@@ -287,6 +287,10 @@ public class DCActivity extends Activity implements View.OnClickListener {
             showCustomDialog("Error",ex.getMessage());
         }
         return  returnCode;
+    }
+
+    private String padRight(String s, int n) {
+        return String.format("%1$-" + n + "s", s);
     }
     private  boolean ValidateInput(){
         Boolean isValid = false;
@@ -301,6 +305,7 @@ public class DCActivity extends Activity implements View.OnClickListener {
         }
         return  isValid;
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){
