@@ -14,6 +14,6 @@ public class CommonUtil {
     public static ArrayList<Customer> customerList = new ArrayList<Customer>();
     public static ArrayList<Packings> packingsList = new ArrayList<Packings>();
     public static ArrayList<Tray> trayList=new ArrayList<Tray>();
-    public static String WeightFromBlueTooth = "2.678";
+    public static String WeightFromBlueTooth = "0.000";
 
 }

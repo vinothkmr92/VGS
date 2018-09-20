@@ -84,7 +84,10 @@ public class DCActivity extends Activity implements View.OnClickListener {
                 for(int i=0;i<CommonUtil.packingsList.size();i++){
 
                         String pacName = CommonUtil.packingsList.get(i).getPacking_NAME();
+                    if (!pkList.contains(pacName)) {
                         pkList.add(pacName);
+                    }
+
                 }
                 switch (SelectedTray){
                     case "10KG_BIG_TRAY":
@@ -272,7 +275,9 @@ public class DCActivity extends Activity implements View.OnClickListener {
                 Packings packings = GetPacking(sr.getPacking_ID());
                 String shortName = tray.getShort_Name() + "-" + packings.getShort_Name();
                 shortName = padRight(shortName, 12);
-                ngxPrinter.printText(sno + "        " + shortName + "      " + sr.getWeigth(), Alignments.LEFT, 24);
+                if (!shortName.isEmpty()) {
+                    ngxPrinter.printText(sno + "        " + shortName + "      " + sr.getWeigth(), Alignments.LEFT, 24);
+                }
             }
             ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
             ngxPrinter.printText("            TOTAL WEIGTH:" + totalWeight.getText(), Alignments.LEFT, 24);
@@ -310,6 +315,7 @@ public class DCActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case  R.id.btnAdd:
+                progressBar.show();
                 if(ValidateInput()){
                     String customer = customerSpinner.getSelectedItem().toString();
                     String tray = traySpinner.getSelectedItem().toString();
@@ -350,6 +356,9 @@ public class DCActivity extends Activity implements View.OnClickListener {
                     df.setMaximumFractionDigits(3);
                     se.setWeigth(df.format(result));
                     if(seExists != null){
+                        Float newWt = Float.parseFloat(seExists.getWeigth());
+                        Float tt = newWt + result;
+                        se.setWeigth(df.format(tt));
                        saleTrays.remove(seExists);
                     }
                     saleTrays.add(se);
@@ -363,6 +372,7 @@ public class DCActivity extends Activity implements View.OnClickListener {
                 else {
                 showCustomDialog("Warning","Please Check the Input");
                 }
+                progressBar.cancel();
                 break;
             case  R.id.btnSave:
                 if(saleTrays.size()>0){
