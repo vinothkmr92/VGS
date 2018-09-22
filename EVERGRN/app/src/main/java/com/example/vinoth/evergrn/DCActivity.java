@@ -274,9 +274,9 @@ public class DCActivity extends Activity implements View.OnClickListener {
                 Tray tray = GetTray(sr.getTray_ID());
                 Packings packings = GetPacking(sr.getPacking_ID());
                 String shortName = tray.getShort_Name() + "-" + packings.getShort_Name();
-                shortName = padRight(shortName, 12);
+                shortName = padRight(shortName, 15);
                 if (!shortName.isEmpty()) {
-                    ngxPrinter.printText(sno + "        " + shortName + "      " + sr.getWeigth(), Alignments.LEFT, 24);
+                    ngxPrinter.printText(sno + " " + shortName + "      " + sr.getWeigth(), Alignments.LEFT, 24);
                 }
             }
             ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
