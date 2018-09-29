@@ -29,6 +29,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -91,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int counter;
     volatile boolean stopWorker;
     String blutName;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         PickerList = new ArrayList<>();
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         String isimeiVerified = sharedpreferences.getString(IMEIVERIFIED,"Y");
+
         if(!isimeiVerified.equals("Y")) {
             IMEI = "";
             try{

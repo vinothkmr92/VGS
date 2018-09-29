@@ -18,11 +18,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import com.ngx.mp100sdk.Enums.Alignments;
 import com.ngx.mp100sdk.Intefaces.INGXCallback;
@@ -57,7 +62,8 @@ public class DCActivity extends Activity implements View.OnClickListener {
     ArrayList<Sale_Tray> saleTrays;
     public static NGXPrinter ngxPrinter = NGXPrinter.getNgxPrinterInstance();
     private INGXCallback ingxCallback;
-
+    ImageButton btnGetWeight;
+    Float weightToReduce;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +80,8 @@ public class DCActivity extends Activity implements View.OnClickListener {
         progressBar.setContentView(R.layout.custom_progress_dialog);
         progressBar.setTitle("Loading");
         saleTrays = new ArrayList<Sale_Tray>();
+        btnGetWeight = (ImageButton) findViewById(R.id.btnGetWeightDC);
+        btnGetWeight.setOnClickListener(this);
         traySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -107,6 +115,10 @@ public class DCActivity extends Activity implements View.OnClickListener {
                         break;
                 }
                 LoadPackingSpiner(pkList);
+                String st = CommonUtil.WeightFromBlueTooth;
+                Float f1 = Float.parseFloat(st);
+                DecimalFormat d1 = new DecimalFormat("0.000");
+                wt.setText(d1.format(f1));
             }
 
             @Override
@@ -119,7 +131,7 @@ public class DCActivity extends Activity implements View.OnClickListener {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String SelectedTray = traySpinner.getSelectedItem().toString();
                 String selectedPackage = packingSprinner.getSelectedItem().toString();
-                float weightToReduce = 0;
+                weightToReduce = 0.000f;
                 switch (SelectedTray){
                     case "15KG_TRAY":
                         switch (selectedPackage){
@@ -179,9 +191,13 @@ public class DCActivity extends Activity implements View.OnClickListener {
                                 break;
                         }
                 }
-                Float wt=Float.parseFloat(CommonUtil.WeightFromBlueTooth);
-                Float result = wt-weightToReduce;
-                netwtString.setText(wt.toString()+"-"+weightToReduce+" = ");
+                String st = CommonUtil.WeightFromBlueTooth;
+                Float f1 = Float.parseFloat(st);
+                DecimalFormat d1 = new DecimalFormat("0.000");
+                wt.setText(d1.format(f1));
+                Float wtt = Float.parseFloat(wt.getText().toString());
+                Float result = wtt - weightToReduce;
+                netwtString.setText(wtt.toString() + "-" + weightToReduce + " = ");
                 DecimalFormat df = new DecimalFormat("0.000");
                 df.setMaximumFractionDigits(3);
                 netWt.setText(df.format(result));
@@ -212,9 +228,13 @@ public class DCActivity extends Activity implements View.OnClickListener {
                 }
             };
             ngxPrinter.initService(this, this.ingxCallback);
+            String st = CommonUtil.WeightFromBlueTooth;
+            Float f1 = Float.parseFloat(st);
+            DecimalFormat d1 = new DecimalFormat("0.000");
+            wt.setText(d1.format(f1));
         }
         catch (Exception ex){
-           showCustomDialog("Warning","Kindly use NGX Device.!");
+            showCustomDialog("Warning", ex.getMessage());
         }
     }
     private  Tray GetTray(int TrayID){
@@ -227,6 +247,8 @@ public class DCActivity extends Activity implements View.OnClickListener {
         }
         return  tray;
     }
+
+
     private Packings GetPacking(int PackingID){
         Packings packings = null;
         for(int i=0;i<CommonUtil.packingsList.size();i++){
@@ -280,7 +302,7 @@ public class DCActivity extends Activity implements View.OnClickListener {
                 }
             }
             ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
-            ngxPrinter.printText("            TOTAL WEIGTH:" + totalWeight.getText(), Alignments.LEFT, 24);
+            ngxPrinter.printText("        TOTAL WEIGTH:" + totalWeight.getText(), Alignments.LEFT, 24);
             ngxPrinter.printText("                              ");
             ngxPrinter.printText("*** THANK YOU ***", Alignments.CENTER, 24);
             ngxPrinter.printText("                              ");
@@ -314,6 +336,18 @@ public class DCActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+            case R.id.btnGetWeightDC:
+                String st = CommonUtil.WeightFromBlueTooth;
+                Float f1 = Float.parseFloat(st);
+                DecimalFormat d1 = new DecimalFormat("0.000");
+                wt.setText(d1.format(f1));
+                Float wtt = Float.parseFloat(wt.getText().toString());
+                Float result = wtt - weightToReduce;
+                netwtString.setText(wtt.toString() + "-" + weightToReduce + " = ");
+                DecimalFormat df = new DecimalFormat("0.000");
+                df.setMaximumFractionDigits(3);
+                netWt.setText(df.format(result));
+                break;
             case  R.id.btnAdd:
                 progressBar.show();
                 if(ValidateInput()){
@@ -351,8 +385,8 @@ public class DCActivity extends Activity implements View.OnClickListener {
                         }
                     }
                     String netWeight = netWt.getText().toString();
-                    Float result=Float.parseFloat(netWeight);
-                    DecimalFormat df = new DecimalFormat("0.000");
+                    result = Float.parseFloat(netWeight);
+                    df = new DecimalFormat("0.000");
                     df.setMaximumFractionDigits(3);
                     se.setWeigth(df.format(result));
                     if(seExists != null){

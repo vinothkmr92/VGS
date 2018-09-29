@@ -129,6 +129,16 @@
             android:editable="false"
             android:inputType="number"
             android:layout_marginLeft="180px"/>
+
+        <ImageButton
+            android:id="@+id/btnGetWeightDC"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/refreshicon"
+            android:text="Get Weight"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="20dp"
+            android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
