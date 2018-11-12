@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import com.ngx.mp100sdk.Enums.Alignments;
+import com.ngx.mp100sdk.Intefaces.INGXCallback;
+import com.ngx.mp100sdk.NGXPrinter;
 
 import java.sql.Array;
 import java.sql.Connection;
@@ -31,6 +36,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class Home extends AppCompatActivity implements View.OnClickListener{
 
@@ -54,6 +60,9 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
     Spinner GrpSpinner;
     Spinner CustomerSpinner;
     Button btnPay;
+    public static NGXPrinter ngxPrinter = NGXPrinter.getNgxPrinterInstance();
+    private INGXCallback ingxCallback;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +179,20 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
                 }
             });
             LoadGroupSpinners();
+            this.ingxCallback = new INGXCallback() {
+                public void onRunResult(boolean isSuccess) {
+                    Log.i("NGX", "onRunResult:" + isSuccess);
+                }
+
+                public void onReturnString(String result) {
+                    Log.i("NGX", "onReturnString:" + result);
+                }
+
+                public void onRaiseException(int code, String msg) {
+                    Log.i("NGX", "onRaiseException:" + code + ":" + msg);
+                }
+            };
+            ngxPrinter.initService(this, this.ingxCallback);
         }
         catch (Exception ex){
             showCustomDialog("EXCEPTION",ex.getMessage());
@@ -210,8 +233,44 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         return true;
     }
 
+    private void PrintReceipt(String customerName,String MonthlyPending,String TotalOutstanding,String PaidAmt,String GrpName ){
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
+        Date date = new Date();
+        ngxPrinter.setDefault();
+        ngxPrinter.setStyleDoubleWidth();
+        ngxPrinter.printText("PAYMENT RECEIPT", Alignments.CENTER, 24);
+        ngxPrinter.setStyleBold();
+        ngxPrinter.printText("BACKYALAKSHMI MICRO FINANCE", Alignments.CENTER, 28);
+        ngxPrinter.setStyleBold();
+        ngxPrinter.printText("PRIVATE LIMITED", Alignments.CENTER, 28);
+        ngxPrinter.setStyleBold();
+        ngxPrinter.printText("backyalakshmimicrofinance@gmail.com", Alignments.CENTER, 20);
+        ngxPrinter.setStyleBold();
+        ngxPrinter.printText("LAND LINE: 044-25549900.", Alignments.CENTER, 24);
+        ngxPrinter.setStyleBold();
+        ngxPrinter.printText("CUSTOMER CARE: 74188 99988.", Alignments.CENTER, 24);
+        ngxPrinter.setStyleBold();
+        ngxPrinter.setStyleBold();
+        ngxPrinter.printText("DATE      :" + format.format(date), Alignments.LEFT, 24);
+        ngxPrinter.printText("NAME      :"+customerName, Alignments.LEFT, 24);
+        ngxPrinter.printText("GROUP NAME:"+GrpName, Alignments.LEFT, 24);
+        ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
+        ngxPrinter.printText("AMOUNT PAID          :"+PaidAmt, Alignments.LEFT, 24);
+        ngxPrinter.printText("MONTHLY PENDING AMT  :"+MonthlyPending, Alignments.LEFT, 24);
+        ngxPrinter.printText("TOTAL OUTSTANDING    :"+TotalOutstanding, Alignments.LEFT, 24);
+        ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
+        ngxPrinter.printText("                              ");
+        ngxPrinter.printText("PAYMENT COLLECTED BY: "+CommonUtil.LogedINUser.getUser_Name(), Alignments.LEFT, 24);
+        ngxPrinter.printText("                              ");
+        ngxPrinter.printText("*** THANK YOU ***", Alignments.CENTER, 24);
+        ngxPrinter.printText("                              ");
+        ngxPrinter.printText("                              ");
+        ngxPrinter.setDefault();
+    }
+
     @Override
     public void onClick(View v) {
+        progressBar.setTitle("Saving...");
         progressBar.show();
         try{
             String amtPaying = paymentAmtTextBox.getText().toString();
@@ -257,6 +316,13 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
                 builder.append("MONTHLY PENDING  : "+monthlypend);
                 builder.append("\n");
                 builder.append("TOTAL OUTSTANDING: "+balance);
+                String custName = "";
+                for(Customers c : customerList){
+                    if(cid == c.getCustomerID()){
+                        custName = c.getCustomerName();
+                    }
+                }
+                PrintReceipt(custName,String.valueOf(monthlypend),String .valueOf(balance),String.valueOf(paidAmt),grpName);
                 showPopupAndRecreate("Payment Suceeded",builder.toString());
             }
             else {
@@ -267,6 +333,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
             showPopupAndRecreate("EXCEPTION",ex.getMessage());
         }
         finally {
+            progressBar.setTitle("Loading");
             progressBar.cancel();
         }
 
@@ -282,11 +349,13 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         @Override
         public void  onPreExecute(){
             super.onPreExecute();
+            progressBar.setTitle("Sync Inprogress...");
             progressBar.show();
         }
 
         @Override
         public void onPostExecute(String result) {
+            progressBar.setTitle("Loading");
             progressBar.cancel();
             if(!result.startsWith("ERROR")){
                 showPopupAndRecreate("Message",result);
@@ -513,12 +582,6 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         switch (item.getItemId()) {
             case R.id.Sync:
                 SyncDB();
-                return true;
-            case R.id.exit:
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("EXIT", true);
-                startActivity(intent);
                 return true;
             case R.id.logout:
                 Intent dcpage = new Intent(this,LoginActivity.class);

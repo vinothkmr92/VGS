@@ -1,0 +1,25 @@
+!!brut.androlib.meta.MetaInfo
+apkFileName: base.apk
+compressionType: false
+doNotCompress:
+- arsc
+- META-INF/services/java.sql.Driver
+isFrameworkApk: false
+packageInfo:
+  forcedPackageId: '127'
+  renameManifestPackage: null
+sdkInfo:
+  minSdkVersion: '15'
+  targetSdkVersion: '26'
+sharedLibrary: false
+unknownFiles:
+  net/sourceforge/jtds/jdbc/Charsets.properties: '8'
+  net/sourceforge/jtds/jdbc/Messages.properties: '8'
+usesFramework:
+  ids:
+  - 1
+  tag: null
+version: 2.3.1
+versionInfo:
+  versionCode: '1'
+  versionName: '1.0'
