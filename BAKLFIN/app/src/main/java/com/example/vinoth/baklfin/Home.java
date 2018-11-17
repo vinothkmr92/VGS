@@ -23,6 +23,9 @@ import com.ngx.mp100sdk.Enums.Alignments;
 import com.ngx.mp100sdk.Intefaces.INGXCallback;
 import com.ngx.mp100sdk.NGXPrinter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,6 +40,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.net.HttpURLConnection;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class Home extends AppCompatActivity implements View.OnClickListener{
 
@@ -53,6 +59,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
     public static final String SQLUSERNAME = "SQLUSERNAME";
     public static final String SQLPASSWORD = "SQLPASSWORD";
     public static final String SQLDB = "SQLDB";
+    public static final String SENDERID = "SENDERID";
 
     EditText monthlyPendingTextBox;
     EditText outstandingTextBox;
@@ -83,6 +90,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
             CommonUtil.USERNAME = sharedpreferences.getString(SQLUSERNAME, "");
             CommonUtil.PASSWORD = sharedpreferences.getString(SQLPASSWORD, "");
             CommonUtil.DB = sharedpreferences.getString(SQLDB, "");
+            CommonUtil.SENDERID = sharedpreferences.getString(SENDERID,"");
             monthlyPendingTextBox = (EditText)findViewById(R.id.monthlyPendingView);
             outstandingTextBox = (EditText)findViewById(R.id.outstandingView);
             paymentAmtTextBox = (EditText)findViewById(R.id.amtPaying);
@@ -234,38 +242,89 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
     }
 
     private void PrintReceipt(String customerName,String MonthlyPending,String TotalOutstanding,String PaidAmt,String GrpName ){
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
-        Date date = new Date();
-        ngxPrinter.setDefault();
-        ngxPrinter.setStyleDoubleWidth();
-        ngxPrinter.printText("PAYMENT RECEIPT", Alignments.CENTER, 24);
-        ngxPrinter.setStyleBold();
-        ngxPrinter.printText("BACKYALAKSHMI MICRO FINANCE", Alignments.CENTER, 28);
-        ngxPrinter.setStyleBold();
-        ngxPrinter.printText("PRIVATE LIMITED", Alignments.CENTER, 28);
-        ngxPrinter.setStyleBold();
-        ngxPrinter.printText("backyalakshmimicrofinance@gmail.com", Alignments.CENTER, 20);
-        ngxPrinter.setStyleBold();
-        ngxPrinter.printText("LAND LINE: 044-25549900.", Alignments.CENTER, 24);
-        ngxPrinter.setStyleBold();
-        ngxPrinter.printText("CUSTOMER CARE: 74188 99988.", Alignments.CENTER, 24);
-        ngxPrinter.setStyleBold();
-        ngxPrinter.setStyleBold();
-        ngxPrinter.printText("DATE      :" + format.format(date), Alignments.LEFT, 24);
-        ngxPrinter.printText("NAME      :"+customerName, Alignments.LEFT, 24);
-        ngxPrinter.printText("GROUP NAME:"+GrpName, Alignments.LEFT, 24);
-        ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
-        ngxPrinter.printText("AMOUNT PAID          :"+PaidAmt, Alignments.LEFT, 24);
-        ngxPrinter.printText("MONTHLY PENDING AMT  :"+MonthlyPending, Alignments.LEFT, 24);
-        ngxPrinter.printText("TOTAL OUTSTANDING    :"+TotalOutstanding, Alignments.LEFT, 24);
-        ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
-        ngxPrinter.printText("                              ");
-        ngxPrinter.printText("PAYMENT COLLECTED BY: "+CommonUtil.LogedINUser.getUser_Name(), Alignments.LEFT, 24);
-        ngxPrinter.printText("                              ");
-        ngxPrinter.printText("*** THANK YOU ***", Alignments.CENTER, 24);
-        ngxPrinter.printText("                              ");
-        ngxPrinter.printText("                              ");
-        ngxPrinter.setDefault();
+        try {
+
+
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
+            Date date = new Date();
+            ngxPrinter.setDefault();
+            ngxPrinter.setStyleDoubleWidth();
+            ngxPrinter.printText("PAYMENT RECEIPT", Alignments.CENTER, 24);
+            ngxPrinter.setStyleBold();
+            ngxPrinter.printText("BACKYALAKSHMI MICRO FINANCE", Alignments.CENTER, 28);
+            ngxPrinter.setStyleBold();
+            ngxPrinter.printText("PRIVATE LIMITED", Alignments.CENTER, 28);
+            ngxPrinter.setStyleBold();
+            ngxPrinter.printText("backyalakshmimicrofinance@gmail.com", Alignments.CENTER, 20);
+            ngxPrinter.setStyleBold();
+            ngxPrinter.printText("LAND LINE: 044-25549900.", Alignments.CENTER, 24);
+            ngxPrinter.setStyleBold();
+            ngxPrinter.printText("CUSTOMER CARE: 74188 99988.", Alignments.CENTER, 24);
+            ngxPrinter.setStyleBold();
+            ngxPrinter.setStyleBold();
+            ngxPrinter.printText("DATE      :" + format.format(date), Alignments.LEFT, 24);
+            ngxPrinter.printText("NAME      :" + customerName, Alignments.LEFT, 24);
+            ngxPrinter.printText("GROUP NAME:" + GrpName, Alignments.LEFT, 24);
+            ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
+            ngxPrinter.printText("AMOUNT PAID          :" + PaidAmt, Alignments.LEFT, 24);
+            ngxPrinter.printText("MONTHLY PENDING AMT  :" + MonthlyPending, Alignments.LEFT, 24);
+            ngxPrinter.printText("TOTAL OUTSTANDING    :" + TotalOutstanding, Alignments.LEFT, 24);
+            ngxPrinter.printText("--------------------------------", Alignments.LEFT, 24);
+            ngxPrinter.printText("                              ");
+            ngxPrinter.printText("PAYMENT COLLECTED BY: " + CommonUtil.LogedINUser.getUser_Name(), Alignments.LEFT, 24);
+            ngxPrinter.printText("                              ");
+            ngxPrinter.printText("*** THANK YOU ***", Alignments.CENTER, 24);
+            ngxPrinter.printText("                              ");
+            ngxPrinter.printText("                              ");
+            ngxPrinter.setDefault();
+        }
+        catch (Exception ex){
+            showCustomDialog("Error in Printing",ex.getMessage());
+        }
+    }
+
+
+    class SendSMS extends  AsyncTask<String,Void,String>{
+
+        String msg;
+        @Override
+        public void onPreExecute(){
+            super.onPreExecute();
+
+        }
+
+        @Override
+        public void onPostExecute(String result){
+            showPopupAndRecreate("Payment Suceeded",msg);
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            msg = strings[0];
+            String sendTo = strings[1];
+            String senderid = strings[2];
+
+            String api = "http://sms.websource.asia/api/sendhttp.php?authkey=24504AOEZlGvcSY5abb3fb3&mobiles=rid&message=MSG&sender=sid&route=6&country=91";
+            api = api.replace("MSG",msg);
+            api = api.replace("rid",sendTo);
+            api = api.replace("sid",senderid);
+            String responseString = null;
+            try {
+                URL url = new URL(api);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                if(conn.getResponseCode() == HttpsURLConnection.HTTP_OK){
+                    // Do normal input or output stream reading
+                    responseString = "SUCEESS";
+                }
+                else {
+                    responseString = "FAILED"; // See documentation for more info on response handling
+                }
+            } catch (Exception e) {
+                //TODO Handle problems..
+                responseString = e.getMessage();
+            }
+            return responseString;
+        }
     }
 
     @Override
@@ -317,13 +376,27 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
                 builder.append("\n");
                 builder.append("TOTAL OUTSTANDING: "+balance);
                 String custName = "";
+                String mobileNum = "";
                 for(Customers c : customerList){
                     if(cid == c.getCustomerID()){
                         custName = c.getCustomerName();
+                        mobileNum = c.getMobileNumber();
                     }
                 }
                 PrintReceipt(custName,String.valueOf(monthlypend),String .valueOf(balance),String.valueOf(paidAmt),grpName);
-                showPopupAndRecreate("Payment Suceeded",builder.toString());
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Group Name :"+grpName);
+                stringBuilder.append("\n");
+                stringBuilder.append("PAID AMOUNT      : "+paidAmt);
+                stringBuilder.append("\n");
+                stringBuilder.append("MONTHLY PENDING  : "+monthlypend);
+                stringBuilder.append("\n");
+                stringBuilder.append("TOTAL OUTSTANDING: "+balance);
+                stringBuilder.append("\n");
+                stringBuilder.append("Received By - "+CommonUtil.LogedINUser.getUser_Name());
+                stringBuilder.append("\n");
+                stringBuilder.append("Thanks for Your Payment.");
+                new SendSMS().execute(stringBuilder.toString(),mobileNum,CommonUtil.SENDERID);
             }
             else {
                 showPopupAndRecreate("ERROR","Invalid Group Selected. Please Check");

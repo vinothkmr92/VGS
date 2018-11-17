@@ -22,6 +22,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
     EditText username;
     EditText password;
     EditText dbname;
+    EditText senderId;
     Button testConnection;
     ConnectionClass connectionClass;
     private MySharedPreferences sharedpreferences;
@@ -30,6 +31,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
     public static final String SQLUSERNAME= "SQLUSERNAME";
     public static final String SQLPASSWORD = "SQLPASSWORD";
     public static final String SQLDB = "SQLDB";
+    public static final String SENDERID = "SENDERID";
     private Dialog progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
             host = (EditText) findViewById(R.id.host);
             username = (EditText)findViewById(R.id.username);
             password = (EditText)findViewById(R.id.password);
+            senderId = (EditText)findViewById(R.id.senderID);
             dbname= (EditText)findViewById(R.id.dbname);
             testConnection = (Button)findViewById(R.id.testButton);
             progressBar = new Dialog(Settings.this);
@@ -51,10 +54,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
             String SQLUser = sharedpreferences.getString(SQLUSERNAME,"");
             String SQLPassword = sharedpreferences.getString(SQLPASSWORD,"");
             String Databasename = sharedpreferences.getString(SQLDB,"");
+            String SenderID = sharedpreferences.getString(SENDERID,"");
             host.setText(hostname);
             username.setText(SQLUser);
             password.setText(SQLPassword);
             dbname.setText(Databasename);
+            senderId.setText(SenderID);
             connectionClass = new ConnectionClass();
             testConnection.setOnClickListener(this);
         }
@@ -83,6 +88,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
             sharedpreferences.putString(SQLUSERNAME,SQLUser);
             sharedpreferences.putString(SQLPASSWORD,SQLPassword);
             sharedpreferences.putString(SQLDB,Databasename);
+            sharedpreferences.putString(SENDERID,senderId.getText().toString());
             sharedpreferences.commit();
             progressBar.cancel();
             showCustomDialog("Saved","Settings Saved Sucessfully",true);
