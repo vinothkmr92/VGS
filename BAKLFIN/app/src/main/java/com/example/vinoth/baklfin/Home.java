@@ -549,7 +549,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         }
         private void LoadUsers (Connection con) throws SQLException {
             try{
-                String Query = "SELECT * FROM USERS WHERE USER_ID>10001";
+                String Query = "SELECT * FROM USERS WHERE USER_ID NOT IN (10001)";
                 Statement st = con.createStatement();
                 ResultSet rs = st.executeQuery(Query);
                 while (rs.next()){
