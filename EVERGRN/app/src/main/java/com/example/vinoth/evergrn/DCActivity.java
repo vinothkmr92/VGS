@@ -389,11 +389,15 @@ public class DCActivity extends Activity implements View.OnClickListener {
                     df = new DecimalFormat("0.000");
                     df.setMaximumFractionDigits(3);
                     se.setWeigth(df.format(result));
+                    se.setNoofbox(1);
                     if(seExists != null){
                         Float newWt = Float.parseFloat(seExists.getWeigth());
                         Float tt = newWt + result;
                         se.setWeigth(df.format(tt));
-                       saleTrays.remove(seExists);
+                        saleTrays.remove(seExists);
+                        int n = se.getNoofbox();
+                        n++;
+                        se.setNoofbox(n);
                     }
                     saleTrays.add(se);
                     float TT = 0;
@@ -640,11 +644,12 @@ public class DCActivity extends Activity implements View.OnClickListener {
                     for(int i=0;i<sr.size();i++){
                         Sale_Tray s = sr.get(i);
                         String qty = s.getWeigth();
-                        query = "INSERT INTO SALE_TRAY VALUES (?,?,?,"+qty+")";
+                        query = "INSERT INTO SALE_TRAY VALUES (?,?,?,"+qty+",?)";
                         PreparedStatement preparedStatement1 = con.prepareStatement(query);
                         preparedStatement1.setInt(1,saleId);
                         preparedStatement1.setInt(2,s.getTray_ID());
                         preparedStatement1.setInt(3,s.getPacking_ID());
+                        preparedStatement1.setInt(4,s.getNoofbox());
                         preparedStatement1.execute();
                         preparedStatement1.close();
                     }

@@ -5,6 +5,15 @@ public class Sale_Tray {
     private int Tray_ID;
     private int Packing_ID;
     private String weigth;
+    private int noofbox;
+
+    public int getNoofbox() {
+        return noofbox;
+    }
+
+    public void setNoofbox(int noofbox) {
+        this.noofbox = noofbox;
+    }
 
     public int getCustomer_ID() {
         return Customer_ID;
