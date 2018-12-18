@@ -74,24 +74,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String expireDt = sharedpreferences.getString(EXPIRE_DT,"");
             if(Is_InternetWorking()){
                 new CallWebService().execute(IMEI_Number);
-                Thread.sleep(1000);
+                //Thread.sleep(1000);
             }
-            if(isActivated){
-                if(expireDt.isEmpty()){
+            else{
+                if(isActivated){
+                    if(expireDt.isEmpty()){
                         showCustomDialog("FAILD", "Application Not Activated.!", true);
-                }
-                else {
-                    Date exDate =new SimpleDateFormat("dd-MMM-yyyy").parse(expireDt);
-                    Date dt = new Date();
-                    if(exDate.before(dt)){
+                    }
+                    else {
+                        Date exDate =new SimpleDateFormat("dd-MMM-yyyy").parse(expireDt);
+                        Date dt = new Date();
+                        if(exDate.before(dt)){
                             showCustomDialog("FAILD","Application Expired.",true);
 
+                        }
                     }
                 }
-            }
-            else {
+                else {
                     showCustomDialog("FAILD", "Application Not Activated.!", true);
+                }
             }
+
 
         }
         catch (Exception ex){
@@ -120,6 +123,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         sharedpreferences.putBoolean(ISIMEIACTIVATED,isActive);
                         sharedpreferences.putString(EXPIRE_DT,expire);
                         sharedpreferences.commit();
+                        boolean isActivated = sharedpreferences.getBoolean(ISIMEIACTIVATED,false);
+                        String expireDt = sharedpreferences.getString(EXPIRE_DT,"");
+                        if(isActivated){
+                            if(expireDt.isEmpty()){
+                                showCustomDialog("FAILD", "Application Not Activated.!", true);
+                            }
+                            else {
+                                Date exDate =new SimpleDateFormat("dd-MMM-yyyy").parse(expireDt);
+                                Date dt = new Date();
+                                if(exDate.before(dt)){
+                                    showCustomDialog("FAILD","Application Expired.",true);
+
+                                }
+                            }
+                        }
+                        else {
+                            showCustomDialog("FAILD", "Application Not Activated.!", true);
+                        }
                     }
                     if(res.contains("NO DATA FOUND")){
                         showCustomDialog("FAILD", "Application Not Activated.!", true);
@@ -231,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialogBuilder.setMessage("\n"+Message);
         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-              RecreateActivity();
+              finish();
             }
         });
         AlertDialog b = dialogBuilder.create();
