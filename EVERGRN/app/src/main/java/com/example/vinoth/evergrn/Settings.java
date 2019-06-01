@@ -106,9 +106,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
                 String SQLPassword = password.getText().toString();
                 String Databasename = dbname.getText().toString();
                 new CheckDBConnection().execute(hostname,Databasename,SQLUser,SQLPassword);
-
-
-
     }
 
     class CheckDBConnection extends AsyncTask<String,Void,String> {

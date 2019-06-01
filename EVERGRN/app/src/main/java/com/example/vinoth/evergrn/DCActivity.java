@@ -90,12 +90,10 @@ public class DCActivity extends Activity implements View.OnClickListener {
                 ArrayList<String> pkList = new ArrayList<>();
                 pkList.add("<SELECT PACKING>");
                 for(int i=0;i<CommonUtil.packingsList.size();i++){
-
                         String pacName = CommonUtil.packingsList.get(i).getPacking_NAME();
                     if (!pkList.contains(pacName)) {
                         pkList.add(pacName);
                     }
-
                 }
                 switch (SelectedTray){
                     case "10KG_BIG_TRAY":
