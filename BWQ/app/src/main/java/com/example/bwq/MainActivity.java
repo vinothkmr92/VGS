@@ -30,6 +30,8 @@ import com.ngx.mp100sdk.Enums.Alignments;
 import com.ngx.mp100sdk.Intefaces.INGXCallback;
 import com.ngx.mp100sdk.NGXPrinter;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,6 +42,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
+
+
 
 class DoneOnEditorActionListener implements TextView.OnEditorActionListener {
     @Override
@@ -67,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     ImageButton printBT;
     AutoCompleteTextView prName;
-    EditText wtView;
+    TextView wtView;
 
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
@@ -93,11 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressBar.setTitle("Loading");
         prName = (AutoCompleteTextView)findViewById(R.id.prName);
         prName.setOnEditorActionListener(new DoneOnEditorActionListener());
-        wtView = (EditText) findViewById(R.id.wtEditor);
+        wtView = (TextView) findViewById(R.id.wtEditor);
         dtDispl = (TextView)findViewById(R.id.dtDisplay);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();
-        dtDispl.setText("DATE:    "+dateFormat.format(date));
         printBT = (ImageButton)findViewById(R.id.printBtn);
         printBT.setOnClickListener(this);
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
@@ -116,13 +117,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             };
             ngxPrinter.initService(this, this.ingxCallback);
             CheckSettings();
+            if(progressBar.isShowing()){
+                progressBar.cancel();
+            }
+            Thread myThread = null;
+
+            Runnable runnable = new CountDownRunner();
+            myThread= new Thread(runnable);
+            myThread.start();
         }
         catch (Exception ex){
             showCustomDialog("Exception",ex.getMessage());
         }
     }
-    public void  CheckSettings(){
+    public void doWork() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                try{
+                    Date dt = new Date();
+                    int hours = dt.getHours();
+                    int minutes = dt.getMinutes();
+                    int seconds = dt.getSeconds();
+                    String curTime = hours + ":" + minutes + ":" + seconds;
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss aaa");
+                    Date date = new Date();
+                    dtDispl.setText("DATE:    "+dateFormat.format(date));
+                }catch (Exception e) {}
+            }
+        });
+    }
 
+
+    class CountDownRunner implements Runnable{
+        // @Override
+        public void run() {
+            while(!Thread.currentThread().isInterrupted()){
+                try {
+                    doWork();
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }catch(Exception e){
+                }
+            }
+        }
+    }
+    public void  CheckSettings(){
+        progressBar.show();
         blutName = sharedpreferences.getString(BTNAME,"");
         try{
             if(findBT()){
@@ -136,12 +177,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (getIntent().getBooleanExtra("EXIT", false)) {
             finish();
         }
+
         if (blutName.isEmpty()) {
+            progressBar.cancel();
             StartSettingsActivity();
         }
         else {
             LoadAutoComplete();
+            progressBar.cancel();
         }
+
     }
     public void StartSettingsActivity() {
         //showCustomDialog("Warning", "Host / Username / Dbname should not be Empty");
@@ -242,21 +287,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null)
         {
-
             String error = "Device Doesn't Supports Bluetooth";
             showCustomDialog("Message",error);
-            progressBar.cancel();
         }
         else
         {
             if(!mBluetoothAdapter.isEnabled())
             {
-
                 String  error = "Go to Settings and Enable Bluetooth";
                 showCustomDialog("Message",error);
-                progressBar.cancel();
             }
-
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
             if(pairedDevices.size() > 0)
             {
@@ -274,7 +314,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             }
-
         }
         return  proceedFurther;
 
@@ -282,21 +321,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void openBT() throws IOException
     {
-        progressBar.show();
         UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
         if(mmSocket == null){
             mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
             mmSocket.connect();
             mmOutputStream = mmSocket.getOutputStream();
             mmInputStream = mmSocket.getInputStream();
-            progressBar.cancel();
             beginListenForData();
         }
         else {
             if(mmSocket.isConnected()){
                 showCustomDialog("Message","Connected to Bluetooth Device");
             }
-            progressBar.cancel();
         }
 
     }
@@ -335,7 +371,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         public void run()
                                         {
                                             String res = data;
-                                            wtView.setText(res);
+                                            Double ft = Double.parseDouble(res);
+                                            DecimalFormat formatD = new DecimalFormat();
+                                            formatD.setMaximumFractionDigits(3);
+                                            String s = String.format("%.3f", ft);
+                                            wtView.setText(s);
                                         }
                                     });
                                 }
@@ -368,6 +408,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         try{
+            if(prName.getText().toString().isEmpty()){
+                showCustomDialog("Warning","Please Enter Product Name.");
+                return;
+            }
             Product pr = new Product();
             pr.setProductID(dbHelper.GetNextProductID());
             pr.setProductName(prName.getText().toString());
@@ -396,15 +440,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Date date = new Date();
             ngxPrinter.setDefault();
             ngxPrinter.setStyleBold();
-            ngxPrinter.printText("HMS SCALE BAZAAR", Alignments.CENTER,28);
+            ngxPrinter.printText("HMS SCALE BAZAAR", Alignments.CENTER,30);
             ngxPrinter.setStyleDoubleWidth();
             ngxPrinter.setStyleBold();
-            ngxPrinter.printText("93/4, Jennis Road, AKT Illam, Saidapet, Chennai-15.", Alignments.CENTER, 30);
-            ngxPrinter.printText("Ph: 044-24357260,24358477", Alignments.CENTER, 30);
-            ngxPrinter.printText("E-mail: hms@scalebazzar.com", Alignments.CENTER, 30);
+            ngxPrinter.printText("93/4, Jennis Road, AKT Illam, Saidapet, Chennai-15.", Alignments.CENTER, 28);
+            ngxPrinter.printText("Ph: 044-24357260,24358477", Alignments.CENTER, 28);
+            ngxPrinter.printText("E-mail: hms@scalebazzar.com", Alignments.CENTER, 28);
+            String prHeader = rightPadding("PRODUCT NAME",12);
+            ngxPrinter.printText("                   ");
+            ngxPrinter.printText("                   ");
+            ngxPrinter.printText("-----------------------------------", Alignments.LEFT, 20);
+            ngxPrinter.printText(prHeader+": WEIGHT",Alignments.LEFT,30);
             ngxPrinter.printText("-----------------------------------", Alignments.LEFT, 20);
             String sr = rightPadding(prName,12);
-            ngxPrinter.printText(sr+": "+Wt,Alignments.LEFT,20);
+            ngxPrinter.printText(sr+": "+Wt,Alignments.LEFT,30);
+            ngxPrinter.printText("                   ");
+            ngxPrinter.printText("                   ");
             ngxPrinter.printText("                   ");
             ngxPrinter.printText("                   ");
             ngxPrinter.setDefault();
