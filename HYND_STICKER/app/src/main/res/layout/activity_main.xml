@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="OS and D TAG"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textColor="@color/colorAccent"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:fontFamily="sans-serif-black" />
+
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:columnCount="1"
+        android:orientation="horizontal">
+        <TextView
+            android:text="SHOP"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textSize="@dimen/appTxt"
+            android:textStyle="bold" />
+        <AutoCompleteTextView
+            android:id="@+id/shopName"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            android:layout_width="400dp"
+            android:textSize="@dimen/appTxt"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
+            android:nextFocusForward="@id/partNo"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+
+            />
+        <TextView
+            android:text="PART NO"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textSize="@dimen/appTxt"
+            android:textStyle="bold" />
+        <AutoCompleteTextView
+            android:id="@+id/partNo"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textSize="@dimen/appTxt"
+            android:textStyle="bold"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
+            android:focusable="true"
+            android:nextFocusForward="@id/partName"
+            android:focusableInTouchMode="true"
+            />
+        <TextView
+            android:text="PART NAME"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+        <AutoCompleteTextView
+            android:id="@+id/partName"
+            android:textSize="@dimen/appTxt"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            android:layout_width="400dp"
+            android:inputType="textCapCharacters"
+            android:focusable="true"
+            android:nextFocusForward="@id/ngQty"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            />
+        <TextView
+            android:text="NG QTY"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textSize="@dimen/appTxt"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/ngQty"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            android:textSize="@dimen/appTxt"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:focusable="true"
+            android:nextFocusForward="@id/reasonCd"
+            android:focusableInTouchMode="true"
+            />
+        <TextView
+            android:text="REASON CODE"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+        <AutoCompleteTextView
+            android:id="@+id/reasonCd"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            android:layout_width="400dp"
+            android:inputType="textCapCharacters"
+            android:focusable="true"
+            android:nextFocusForward="@id/reason"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            />
+        <TextView
+            android:text="REASON"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+        <AutoCompleteTextView
+            android:id="@+id/reason"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            android:layout_width="400dp"
+            android:inputType="textCapCharacters"
+            android:focusable="true"
+            android:nextFocusForward="@id/deptCd"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            />
+        <TextView
+            android:text="DEPARTMENT CODD"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+        <AutoCompleteTextView
+            android:id="@+id/deptCd"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            android:layout_width="400dp"
+            android:inputType="textCapCharacters"
+            android:focusable="true"
+            android:nextFocusForward="@id/enterBy"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            />
+        <TextView
+            android:text="ENTERED BY"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/enterBy"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            android:layout_width="400dp"
+            android:inputType="textCapCharacters"
+            android:focusable="true"
+            android:nextFocusForward="@id/printBtn"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            />
+    </GridLayout>
+    <ImageButton
+        android:layout_gravity="center"
+        android:id="@+id/printBtn"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:background="@drawable/printer"
+        android:layout_marginTop="30dp"
+        android:backgroundTint="@color/colorAccent"
+        android:text="PRINT"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+</LinearLayout>
+</ScrollView>

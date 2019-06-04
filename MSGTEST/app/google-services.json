@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1089456724513",
+    "firebase_url": "https://msgtest-3345a.firebaseio.com",
+    "project_id": "msgtest-3345a",
+    "storage_bucket": "msgtest-3345a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089456724513:android:c75d0346d8aebef5",
+        "android_client_info": {
+          "package_name": "com.example.vinoth.msgtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1089456724513-hr1bvdnl3s35utuirhf566rjo4sbc00f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vinoth.msgtest",
+            "certificate_hash": "a7c4d259a8be663aef06093d4ff07d4be9aa5b5d"
+          }
+        },
+        {
+          "client_id": "1089456724513-hvl1p99h31r8j8qb7455is69jmkjt93j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAnDDlBMky4ET9H4mf6JPgiJy7SUBNeSg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1089456724513-hvl1p99h31r8j8qb7455is69jmkjt93j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
