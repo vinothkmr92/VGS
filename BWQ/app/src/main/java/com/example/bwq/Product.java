@@ -11,6 +11,18 @@ public class Product {
     private Date PdDate;
     private String DtString;
     private String Supplier;
+    private Date pdDateAlone;
+
+    public Date getPdDateAlone(){
+
+        SimpleDateFormat frm = new SimpleDateFormat("dd/MM/yyyy");
+        try{
+            return  frm.parse(DtString);
+        }
+        catch (Exception ex){
+            return PdDate;
+        }
+    }
 
     public String getSupplier() {
         return Supplier;
@@ -30,7 +42,7 @@ public class Product {
 
     public Date getPdDate() {
         try{
-            Date ds = new SimpleDateFormat("dd/MM/yyyy hh:mm tt").parse(DtString);
+            Date ds = new SimpleDateFormat("dd/MM/yyyy hh:mm aa").parse(DtString);
             return ds;
         }
         catch(Exception ex){

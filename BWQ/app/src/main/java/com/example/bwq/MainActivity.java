@@ -436,16 +436,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private  void PrintDtl(String prName,String Wt){
         try{
+            if(null == ngxPrinter){
+                return;
+            }
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm aa", Locale.getDefault());
             Date date = new Date();
             ngxPrinter.setDefault();
             ngxPrinter.setStyleBold();
-            ngxPrinter.printText("HMS SCALE BAZAAR", Alignments.CENTER,30);
+            ngxPrinter.printText("YES YES TECHNOLOGIES", Alignments.CENTER,30);
             ngxPrinter.setStyleDoubleWidth();
             ngxPrinter.setStyleBold();
-            ngxPrinter.printText("93/4, Jennis Road, AKT Illam, Saidapet, Chennai-15.", Alignments.CENTER, 28);
-            ngxPrinter.printText("Ph: 044-24357260,24358477", Alignments.CENTER, 28);
-            ngxPrinter.printText("E-mail: hms@scalebazzar.com", Alignments.CENTER, 28);
             String prHeader = rightPadding("PRODUCT NAME",12);
             ngxPrinter.printText("                   ");
             ngxPrinter.printText("                   ");

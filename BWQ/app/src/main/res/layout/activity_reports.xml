@@ -1,9 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Reports">
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/frmDt"
+            android:minWidth="300dp"
+            android:hint="From Date"
+            android:ems="10"
+            />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/toDt"
+            android:minWidth="300dp"
+            android:hint="To Date"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/srchPrd"
+            android:minWidth="300dp"
+            android:ems="10"
+            android:imeOptions="actionDone"
+            android:hint="Search Products"
+            />
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:text="Search"
+                android:background="@drawable/srchicon"
+                android:id="@+id/btnSearch"
+                />
+        </LinearLayout>
+        <TableLayout
+            android:id="@+id/datagrid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:numColumns="auto_fit"
+            android:columnWidth="100dp"
+            android:verticalSpacing="24dp"
+            android:horizontalSpacing="10dp"
+            android:stretchMode="spacingWidthUniform"></TableLayout>
+    </LinearLayout>
+
+</ScrollView>
