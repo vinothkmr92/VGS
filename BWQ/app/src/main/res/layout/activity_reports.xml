@@ -38,6 +38,7 @@
             android:id="@+id/srchPrd"
             android:minWidth="300dp"
             android:ems="10"
+            android:inputType="textCapCharacters"
             android:imeOptions="actionDone"
             android:hint="Search Products"
             />
@@ -53,10 +54,11 @@
             android:id="@+id/datagrid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="left"
             android:numColumns="auto_fit"
             android:columnWidth="100dp"
             android:verticalSpacing="24dp"
+            android:shrinkColumns="1"
             android:horizontalSpacing="10dp"
             android:stretchMode="spacingWidthUniform"></TableLayout>
     </LinearLayout>

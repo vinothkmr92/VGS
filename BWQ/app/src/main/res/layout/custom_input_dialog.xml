@@ -4,9 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <TextView
-        android:id="@+id/dialog_info"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="Enter Code"
+        android:id="@+id/code"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
+        android:password="true"
         android:padding="10dp"/>
 </RelativeLayout>

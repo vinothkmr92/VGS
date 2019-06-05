@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -102,34 +103,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         printBT = (ImageButton)findViewById(R.id.printBtn);
         printBT.setOnClickListener(this);
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
-        try{
-            this.ingxCallback = new INGXCallback() {
-                public void onRunResult(boolean isSuccess) {
-                    Log.i("NGX", "onRunResult:" + isSuccess);
-                }
-                public void onReturnString(String result) {
-                    Log.i("NGX", "onReturnString:" + result);
-                }
+        boolean isActivated = sharedpreferences.getString(ACTIVATED,"").equals("Y");
+        if(isActivated){
+            try{
+                Thread myThread = null;
+                Runnable runnable = new CountDownRunner();
+                myThread= new Thread(runnable);
+                myThread.start();
+                this.ingxCallback = new INGXCallback() {
+                    public void onRunResult(boolean isSuccess) {
+                        Log.i("NGX", "onRunResult:" + isSuccess);
+                    }
+                    public void onReturnString(String result) {
+                        Log.i("NGX", "onReturnString:" + result);
+                    }
 
-                public void onRaiseException(int code, String msg) {
-                    Log.i("NGX", "onRaiseException:" + code + ":" + msg);
+                    public void onRaiseException(int code, String msg) {
+                        Log.i("NGX", "onRaiseException:" + code + ":" + msg);
+                    }
+                };
+                ngxPrinter.initService(this, this.ingxCallback);
+                CheckSettings();
+                if(progressBar.isShowing()){
+                    progressBar.cancel();
                 }
-            };
-            ngxPrinter.initService(this, this.ingxCallback);
-            CheckSettings();
-            if(progressBar.isShowing()){
-                progressBar.cancel();
             }
-            Thread myThread = null;
+            catch (Exception ex){
+                showCustomDialog("Exception",ex.getMessage());
+                if(progressBar.isShowing()){
+                    progressBar.cancel();
+                }
+            }
+        }
+        else {
+            ActivateApp();
+        }
 
-            Runnable runnable = new CountDownRunner();
-            myThread= new Thread(runnable);
-            myThread.start();
-        }
-        catch (Exception ex){
-            showCustomDialog("Exception",ex.getMessage());
-        }
     }
+
+    public void ActivateApp(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.custom_input_dialog, null);
+        dialogBuilder.setView(dialogView);
+
+        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
+        final EditText edt = (EditText)dialogView.findViewById(R.id.code);
+        edt.setOnEditorActionListener(new DoneOnEditorActionListener());
+        dialogBuilder.setTitle("Enter Activation Code");
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String s = edt.getText().toString();
+                if(!s.isEmpty()){
+                    if(s.equals("1@Nopassword")){
+                        sharedpreferences.putString(ACTIVATED,"Y");
+                        sharedpreferences.commit();
+                    }
+                    else{
+                        finish();
+                        System.exit(0);
+                    }
+                }
+                else {
+                    finish();
+                    System.exit(0);
+                }
+            }
+        });
+        AlertDialog b = dialogBuilder.create();
+        b.show();
+    }
+
+
     public void doWork() {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -206,15 +251,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.exit:
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("EXIT", true);
                 try{
                     closeBT();
                 }
                 catch (Exception e) {
                 }
-                startActivity(intent);
+                finish();
+                System.exit(0);
                 return true;
             case R.id.reports:
                 Intent dcpage = new Intent(this,Reports.class);
