@@ -273,7 +273,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent page = new Intent(this,MainActivity.class);
                 page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(page);
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

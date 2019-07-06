@@ -1,8 +1,11 @@
 package com.example.hyndsticker;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -23,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static NGXPrinter ngxPrinter = NGXPrinter.getNgxPrinterInstance();
     private INGXCallback ingxCallback;
-
+    DatabaseHelper dbHelper;
     ImageButton printBT;
     AutoCompleteTextView shop;
     AutoCompleteTextView partNum;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dbHelper = new DatabaseHelper(this);
         shop = (AutoCompleteTextView)findViewById(R.id.shopName);
         partNum = (AutoCompleteTextView)findViewById(R.id.partNo);
         partNam = (AutoCompleteTextView)findViewById(R.id.partName);
@@ -71,53 +75,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void LoadDropDowns(){
-        ArrayList<String> shopList = new ArrayList<>();
-        shopList.add("SHOP NAME ONE");
-        shopList.add("SHOP NAME TWO");
-        shopList.add("SHOP NAME THREE");
-        shopList.add("SHOP NAME FOUR");
-        shopList.add("SHOP NAME FIVE");
-        ArrayAdapter<String> adaptershopList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,shopList);
+        ArrayAdapter<String> adaptershopList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,dbHelper.GetShops());
 
-        ArrayList<String> partNumList = new ArrayList<>();
-        partNumList.add("PART NUMBER ONE");
-        partNumList.add("PART NUMBER TWO");
-        partNumList.add("PART NUMBER THREE");
-        partNumList.add("PART NUMBER FOUR");
-        partNumList.add("PART NUMBER FIVE");
-        ArrayAdapter<String> adapterpartNumList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,partNumList);
+        ArrayAdapter<String> adapterpartNumList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,dbHelper.GetPartNo());
 
-        ArrayList<String> partNameList = new ArrayList<>();
-        partNameList.add("PART NAME ONE");
-        partNameList.add("PART NAME TWO");
-        partNameList.add("PART NAME THREE");
-        partNameList.add("PART NAME FOUR");
-        partNameList.add("PART NAME FIVE");
-        ArrayAdapter<String> adapterpartNameList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,partNameList);
+        ArrayAdapter<String> adapterpartNameList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,dbHelper.GetPartName());
 
-        ArrayList<String> reasonCdList = new ArrayList<>();
-        reasonCdList.add("RC 1");
-        reasonCdList.add("RC 2");
-        reasonCdList.add("RC 3");
-        reasonCdList.add("RC 4");
-        reasonCdList.add("RC 5");
-        ArrayAdapter<String> adapterreasonCdList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,reasonCdList);
+        ArrayAdapter<String> adapterreasonCdList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,dbHelper.GetReasonCd());
 
-        ArrayList<String> reasonList = new ArrayList<>();
-        reasonList.add("REASON ONE");
-        reasonList.add("REASON TWO");
-        reasonList.add("REASON THREE");
-        reasonList.add("REASON FOUR");
-        reasonList.add("REASON FIVE");
-        ArrayAdapter<String> adapterreasonList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,reasonList);
+        ArrayAdapter<String> adapterreasonList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,dbHelper.GetReason());
 
-        ArrayList<String> departList = new ArrayList<>();
-        departList.add("DEPARTMENT ONE");
-        departList.add("DEPARTMENT TWO");
-        departList.add("DEPARTMENT THREE");
-        departList.add("DEPARTMENT FOUR");
-        departList.add("DEPARTMENT FIVE");
-        ArrayAdapter<String> adapterdepartList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,departList);
+        ArrayAdapter<String> adapterdepartList = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,dbHelper.GetDepartnmentCd());
 
         shop.setAdapter(adaptershopList);
         partNum.setAdapter(adapterpartNumList);
@@ -126,6 +94,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         reasonNam.setAdapter(adapterreasonList);
         depart.setAdapter(adapterdepartList);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);//Menu Resource, Menu
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.exit:
+                finish();
+                System.exit(0);
+                return true;
+            case R.id.uploadExcel:
+                Intent dcpage = new Intent(this,UploadExcel.class);
+                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(dcpage);
+                return  true;
+            case R.id.homemenu:
+                Intent page = new Intent(this,MainActivity.class);
+                page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(page);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     @Override
     public void onClick(View v) {
