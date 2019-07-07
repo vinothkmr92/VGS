@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     AutoCompleteTextView reasonNam;
     AutoCompleteTextView depart;
     EditText entered;
+    EditText approvedby;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         reasonNam = (AutoCompleteTextView)findViewById(R.id.reason);
         depart = (AutoCompleteTextView)findViewById(R.id.deptCd);
         entered = (EditText)findViewById(R.id.enterBy);
+        approvedby = (EditText)findViewById(R.id.approvedBy);
         LoadDropDowns();
         try{
 
@@ -131,22 +133,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
        try{
            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
            Date date = new Date();
+           Entry entry = new Entry();
+           entry.setENTRY_ID(dbHelper.GetNextEntryID());
+           entry.setENTRY_DATE(format.format(date));
+           entry.setSHOP(shop.getText().toString());
+           entry.setPART_NO(partNum.getText().toString());
+           entry.setPART_NAME(partNam.getText().toString());
+           entry.setREASON_CD(reasonc.getText().toString());
+           entry.setREASON(reasonNam.getText().toString());
+           Integer qty = Integer.parseInt(ngq.getText().toString());
+           entry.setQTY(qty);
+           entry.setDEPART_CD(depart.getText().toString());
+           entry.setENTERED_BY(entered.getText().toString());
+           entry.setAPPROVED_BY(approvedby.getText().toString());
+           dbHelper.InsesrtEntry(entry);
            ngxPrinter.setDefault();
            ngxPrinter.setStyleBold();
            ngxPrinter.printText("HYUNDAI MOTOR INDIA LIMITED",Alignments.CENTER,28);
            ngxPrinter.setStyleDoubleWidth();
            ngxPrinter.setStyleBold();
            ngxPrinter.printText("OS&D TAG", Alignments.CENTER, 30);
+           ngxPrinter.printText("DATE: "+format.format(date), Alignments.LEFT, 20);
            ngxPrinter.printText("-----------------------------------", Alignments.LEFT, 20);
-           ngxPrinter.printText("SHOP       :"+shop.getText(),Alignments.LEFT,20);
-           ngxPrinter.printText("PART NO    :" + partNum.getText(), Alignments.LEFT, 20);
-           ngxPrinter.printText("PART NAME  :"+ partNam.getText(),Alignments.LEFT,20);
-           ngxPrinter.printText("NG QTY     :"+ngq.getText(),Alignments.LEFT,20);
-           ngxPrinter.printText("REASON CD  :" + reasonc.getText(), Alignments.LEFT, 20);
-           ngxPrinter.printText("REASON     :" + reasonNam.getText(), Alignments.LEFT, 20);
-           ngxPrinter.printText("DEPT CD    :" + depart.getText(), Alignments.LEFT, 20);
-           ngxPrinter.printText("ENTER BY   :" + entered.getText(), Alignments.LEFT, 20);
-           ngxPrinter.printText("TAG NO     :"+"0001" , Alignments.LEFT, 20);
+           ngxPrinter.printText("SHOP       :"+entry.getSHOP(),Alignments.LEFT,20);
+           ngxPrinter.printText("PART NO    :" + entry.getPART_NO(), Alignments.LEFT, 20);
+           ngxPrinter.printText("PART NAME  :"+ entry.getPART_NAME(),Alignments.LEFT,20);
+           ngxPrinter.printText("NG QTY     :"+ entry.getQTY(),Alignments.LEFT,20);
+           ngxPrinter.printText("REASON CD  :" + entry.getREASON_CD(), Alignments.LEFT, 20);
+           ngxPrinter.printText("REASON     :" + entry.getREASON(), Alignments.LEFT, 20);
+           ngxPrinter.printText("DEPT CD    :" + entry.getDEPART_CD(), Alignments.LEFT, 20);
+           ngxPrinter.printText("ENTER BY   :" + entry.getENTERED_BY(), Alignments.LEFT, 20);
+           ngxPrinter.printText("APPROVED BY:" + entry.getAPPROVED_BY(), Alignments.LEFT, 20);
+           ngxPrinter.printText("TAG NO     :"+ entry.getENTRY_ID() , Alignments.LEFT, 20);
            ngxPrinter.printText("-----------------------------------", Alignments.LEFT, 20);
            ngxPrinter.printText("                   ");
            ngxPrinter.printText("                   ");

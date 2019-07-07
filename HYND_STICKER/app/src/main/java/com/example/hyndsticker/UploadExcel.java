@@ -183,8 +183,12 @@ public class UploadExcel extends AppCompatActivity implements View.OnClickListen
                                 return;
                             }
                             Integer counter=0;
+                            Integer i=0;
                             for (Iterator<Row> rit = sheet.rowIterator(); rit.hasNext(); ){
                                 Row row = rit.next();
+                                if(i==0){
+                                    continue;
+                                }
                                 ContentValues contentValues = new ContentValues();
                                 row.getCell(0, Row.CREATE_NULL_AS_BLANK).setCellType(Cell.CELL_TYPE_STRING);
                                 row.getCell(1, Row.CREATE_NULL_AS_BLANK).setCellType(Cell.CELL_TYPE_STRING);
@@ -209,6 +213,7 @@ public class UploadExcel extends AppCompatActivity implements View.OnClickListen
                                 catch (Exception ex){
                                     lbl.setText(ex.getMessage());
                                 }
+                                i++;
                             }
 
                         } catch (IOException e) {

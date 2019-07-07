@@ -180,6 +180,25 @@
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
             />
+        <TextView
+            android:text="APPROVED BY"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/approvedBy"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textSize="@dimen/appTxt"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            android:layout_width="400dp"
+            android:inputType="textCapCharacters"
+            android:focusable="true"
+            android:nextFocusForward="@id/printBtn"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            />
     </GridLayout>
     <ImageButton
         android:layout_gravity="center"
