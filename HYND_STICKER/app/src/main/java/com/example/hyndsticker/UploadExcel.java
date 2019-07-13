@@ -187,6 +187,7 @@ public class UploadExcel extends AppCompatActivity implements View.OnClickListen
                             for (Iterator<Row> rit = sheet.rowIterator(); rit.hasNext(); ){
                                 Row row = rit.next();
                                 if(i==0){
+                                    i++;
                                     continue;
                                 }
                                 ContentValues contentValues = new ContentValues();
