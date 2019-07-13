@@ -136,6 +136,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
        try{
+           if(shop.getText().toString().equals("")){
+               throw  new Exception("Please Enter Data..!");
+           }
            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
            Date date = new Date();
            Entry entry = new Entry();
@@ -181,6 +184,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
            ngxPrinter.printText("-----------------------------------", Alignments.LEFT, 20);
            ngxPrinter.lineFeed(4);
            ngxPrinter.setDefault();
+           shop.setText("");
+           partNam.setText("");
+           partNum.setText("");
+           reasonNam.setText("");
+           reasonc.setText("");
+           depart.setText("");
+           ngq.setText("");
+           entered.setText("");
+           approvedby.setText("");
        }
        catch (Exception ex){
            Toast.makeText(this,ex.getMessage(),Toast.LENGTH_LONG);
