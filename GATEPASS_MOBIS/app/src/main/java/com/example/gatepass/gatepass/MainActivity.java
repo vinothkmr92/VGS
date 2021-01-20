@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.vendorName.setText("");
             this.emptyTrolly.setText("");
             this.emptyBin.setText("");
-            this.gateNo.setText("");
+            this.gateNo.setText("4210");
             this.shopName.setText("");
             this.other.setText("");
             SharedPreferences.Editor editor = sharedpreferences.edit();

@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.hyndsticker",
+  "applicationId": "com.example.gatepass.gatepass",
   "variantName": "release",
   "elements": [
     {
@@ -12,7 +12,7 @@
       "filters": [],
       "properties": [],
       "versionCode": 1,
-      "versionName": "1",
+      "versionName": "1.0",
       "enabled": true,
       "outputFile": "app-release.apk"
     }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/GATEPASS.iml" filepath="$PROJECT_DIR$/GATEPASS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GATEPASS_MOBIS.iml" filepath="$PROJECT_DIR$/.idea/modules/GATEPASS_MOBIS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GATEPASS_MOBIS.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GATEPASS_MOBIS.app.iml" />
+    </modules>
+  </component>
+</project>
