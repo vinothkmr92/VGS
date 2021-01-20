@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:orientation="vertical" android:id="@+id/asd" android:paddingLeft="@dimen/activity_horizontal_margin" android:paddingTop="@dimen/activity_vertical_margin" android:paddingRight="@dimen/activity_horizontal_margin" android:paddingBottom="@dimen/activity_vertical_margin" android:focusableInTouchMode="true" android:layout_width="match_parent" android:layout_height="match_parent">
+    <EditText android:textColor="#fff" android:id="@+id/txt" android:background="@drawable/re" android:padding="@dimen/activity_vertical_margin" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="" android:lines="5" android:ems="10" android:inputType="textMultiLine"/>
+    <ScrollView android:id="@+id/as" android:paddingTop="@dimen/activity_vertical_margin" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout android:orientation="vertical" android:id="@+id/we" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnPrintText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Print Text" android:layout_weight="1"/>
+                <Button android:id="@+id/btnPrintLineFeed" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Line Feed" android:layout_weight="1"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnPrintUNICODEText" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Print Sample Bills" android:layout_weight="1"/>
+                <Button android:id="@+id/btnPrintEnglistText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="English" android:layout_weight="1"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnPrintKannadaText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ಕನ್ನಡ" android:layout_weight="1"/>
+                <Button android:id="@+id/btnPrintHindiText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="हिंदी" android:layout_weight="1"/>
+                <Button android:id="@+id/btnPrintTeluguText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="తెలుగు" android:layout_weight="1"/>
+                <Button android:id="@+id/btnPrintTamilText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="தமிழ்" android:layout_weight="1"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnPrintLogo" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Print Logo" android:layout_weight="1"/>
+                <Button android:id="@+id/btnSetFontBold" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Bold" android:layout_weight="1"/>
+                <Button android:id="@+id/btnSetFontRegular" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Regular" android:layout_weight="1"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnFontSize16" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Size 16" android:layout_weight="1"/>
+                <Button android:id="@+id/btnFontSize20" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Size 20" android:layout_weight="1"/>
+                <Button android:id="@+id/btnFontSize24" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Size 24" android:layout_weight="1"/>
+                <Button android:id="@+id/btnFontSize28" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Size 28" android:layout_weight="1"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnLeftAlign" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Left Align" android:layout_weight="1"/>
+                <Button android:id="@+id/btnCenterAlign" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Center Align" android:layout_weight="1"/>
+                <Button android:id="@+id/btnRightAlign" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Right Align" android:layout_weight="1"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnSetFontNormal" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Nor\10mal" android:layout_weight="1"/>
+                <Button android:id="@+id/btnSetFontDoubleWidth" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Dbl\10Width" android:layout_weight="1"/>
+                <Button android:id="@+id/btnSetFontDoubleHeight" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Dbl\10Ht" android:layout_weight="1"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnTestBill" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Test\10Bill" android:layout_weight="1"/>
+                <Button android:id="@+id/btnQRCode" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="QR Code" android:layout_weight="1"/>
+                <Button android:id="@+id/btnCode39" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Code39" android:layout_weight="1"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnEAN13" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="EAN13" android:layout_weight="1"/>
+                <Button android:id="@+id/btnEAN8" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="EAN8" android:layout_weight="1"/>
+                <Button android:id="@+id/btnITF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="ITF" android:layout_weight="1"/>
+                <Button android:id="@+id/btnCODABAR" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="CODABAR" android:layout_weight="1"/>
+            </TableRow>
+            <TableRow android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/btnCode128" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="CODE128" android:layout_weight="1"/>
+                <Button android:id="@+id/btnPDF417" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="PDF417" android:layout_weight="1"/>
+            </TableRow>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
