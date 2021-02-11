@@ -4,11 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <LinearLayout android:id="@+id/Liner1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Code"
-        android:id="@+id/code"
-        android:password="true"
+        android:hint="Enter Web API URL"
+        android:id="@+id/weburl"
         android:padding="10dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="Enter Device User"
+        android:id="@+id/deviceuser"
+        android:padding="10dp"/>
+    </LinearLayout>
 </RelativeLayout>

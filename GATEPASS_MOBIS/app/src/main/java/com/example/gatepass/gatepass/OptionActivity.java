@@ -196,44 +196,7 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
         AlertDialog b = dialogBuilder.create();
         b.show();
     }
-    public void ActivateApp(){
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.custom_input_dialog, null);
-        dialogBuilder.setView(dialogView);
 
-        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
-        final EditText edt = (EditText)dialogView.findViewById(R.id.code);
-        dialogBuilder.setTitle("Enter Code");
-        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String s = edt.getText().toString();
-                if(!s.isEmpty()){
-                    if(s.equals("1@Nopassword")){
-                        SharedPreferences.Editor editor = sharedpreferences.edit();
-                        editor.putString(isActivated,"True");
-                        editor.commit();
-                    }
-                    else{
-                        finish();
-                        System.exit(0);
-                    }
-                }
-                else {
-                    finish();
-                    System.exit(0);
-                }
-                //do something with edt.getText().toString();
-            }
-        });
-        //dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-        // public void onClick(DialogInterface dialog, int whichButton) {
-        //   //pass
-        //}
-        //});
-        AlertDialog b = dialogBuilder.create();
-        b.show();
-    }
     public void StartMainActivity() {
         Intent mass = new Intent(this, MainActivity.class);
         mass.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

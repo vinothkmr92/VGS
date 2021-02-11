@@ -80,9 +80,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String CustomDate = "Today";
     public static final String SlipNo = "SlipNo";
+    public static final String APIURL = "APIURL";
+    public static final String DEVICEUSER = "DEVICEUSER";
     public static final String isActivated = "IsActivated";
     public SharedPreferences sharedpreferences;
-
+    public String webApiUrl="";
+    public String deviceUser="";
 
 
     @Override
@@ -96,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Date date = new Date();
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
             String dt = sharedpreferences.getString(CustomDate, format.format(date));
+            webApiUrl = sharedpreferences.getString(APIURL,webApiUrl);
+            deviceUser = sharedpreferences.getString(DEVICEUSER,deviceUser);
             Date da = format.parse(dt);
             isWebCallDone = false;
             if (!da.equals(date)) {
@@ -135,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             String empTrolly = emptyTrolly.getText().toString();
                             String empBin = emptyBin.getText().toString();
                         } catch (Exception e) {
-                            showCustomDialog("WebService Error",e.getMessage());
+                            showCustomDialog("Exception",e.getMessage());
                             truckNumber.setText("");
                             e.printStackTrace();
                             //Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
@@ -148,7 +153,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
 //for reading
 
-
+           if(webApiUrl.isEmpty() || deviceUser.isEmpty()){
+                GetAPIDtl();
+           }
                 this.ingxCallback = new INGXCallback() {
                     public void onRunResult(boolean isSuccess) {
                         Log.i("NGX", "onRunResult:" + isSuccess);
@@ -175,6 +182,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public void GetAPIDtl(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.custom_input_dialog, null);
+        dialogBuilder.setView(dialogView);
+
+        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
+        final EditText weburl = (EditText)dialogView.findViewById(R.id.weburl);
+        final EditText deviceuser = (EditText)dialogView.findViewById(R.id.deviceuser);
+        weburl.setText(webApiUrl);
+        deviceuser.setText(deviceUser);
+        dialogBuilder.setTitle("Enter API Details");
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String url = weburl.getText().toString();
+                String user = deviceuser.getText().toString();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString(APIURL,url);
+                editor.putString(DEVICEUSER,user);
+                editor.commit();
+                webApiUrl = url;
+                deviceUser = user;
+                //do something with edt.getText().toString();
+            }
+        });
+        //dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        // public void onClick(DialogInterface dialog, int whichButton) {
+        //   //pass
+        //}
+        //});
+        AlertDialog b = dialogBuilder.create();
+        b.show();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -187,6 +228,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case R.id.exit:
                 finish();
+                return true;
+            case R.id.settings:
+                GetAPIDtl();
                 return true;
             case R.id.refreshPage:
                 this.isWebCallDone = false;
@@ -237,8 +281,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void  PrintPass(){
-
-        String req = "";
         String trNumber = this.truckNumber.getText().toString();
         String othr = other.getText().toString();
         String empTrolly = this.emptyTrolly.getText().toString();
@@ -247,7 +289,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             showCustomDialog("Warining","Please check the Input Fields.!");
         }
         else {
-                PrintGatePass();
+            String req = this.gateNo.getText().toString()+"~"+this.shopName.getText().toString()+"~"+
+                    this.vendorName.getText().toString()+"~"+this.truckNumber.getText().toString()+"~"+
+                    this.emptyTrolly.getText().toString()+"~"+this.emptyBin.getText().toString()+"~"+
+                    other.getText().toString()+"~"+deviceUser;
+            new SaveGatePass().execute(req);
         }
 
     }
@@ -292,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Bitmap hyndaiLogo = BitmapFactory.decodeResource(this.getResources(),R.drawable.hyundai_logo);
             ngxPrinter.printImage(hyndaiLogo);
             ngxPrinter.setStyleBold();
-            ngxPrinter.printText("HYUNDAI MOTOR INDIA LIMITED",Alignments.CENTER,28);
+            ngxPrinter.printText("MOBIS MOTOR INDIA LIMITED",Alignments.CENTER,28);
             ngxPrinter.setStyleDoubleWidth();
             ngxPrinter.printText("GATE PASS", Alignments.CENTER, 30);
             ngxPrinter.setStyleBold();
@@ -398,26 +444,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     showCustomDialog("WebService Error",e.getMessage());
                     truckNumber.setText("");
                     e.printStackTrace();
-
                     //Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
-
                 }
                 finally {
                 }
             }
         }
-
-
-
     }
-
-
 
     class SaveGatePass extends AsyncTask<String,Void,String> {
         public  static final String NAMESPACE = "http://tempuri.org/";
         public  static final   String METHOD_NAME = "SaveGatePassEntry";
         public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/SaveGatePassEntry";
-        public  static final  String URL = "http://10.54.203.152/hmindia/GATEPASS_WCF.svc";
+        public  String URL ;
         // public  static final  String URL = "http://192.168.0.3//GATEPASS_WCF.svc";
         public  int Timeout = 30000;
         String response;
@@ -429,13 +468,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try{
                     String result = res;
                     if(res.equals("1")){
-                        showCustomDialog("Sucess","Data Sucessfully Saved in SAP.");
+                        showCustomDialog("Sucess","Data Sucessfully Saved.");
+                        PrintGatePass();
                     }
                     else if(res.startsWith("EXCEPTION")) {
-                        showCustomDialog("Exception from SAP Call",res);
+                        showCustomDialog("Exception from Web Call",res);
                     }
                     else {
-                        showCustomDialog("Warning","Unable to Save Data into SAP. Contact IT Team. Return Code:"+res);
+                        showCustomDialog("Warning",res);
                     }
                     //truckNumber.setText("");
                 }
@@ -445,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             else {
-                showCustomDialog("SAP CALL Error","Unable to get Response from SAP. Please Contact IT team.");
+                showCustomDialog("Web Call Error","Unable to get Response from Web API. Please Contact IT team.");
                 // Toast.makeText(MainActivity.this,"Error in WCF CAll",Toast.LENGTH_LONG).show();
             }
         }
@@ -453,23 +493,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            URL = webApiUrl;
             progressBar.show();
         }
 
         protected String doInBackground(String... params){
 
-
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-
-
-
             /*
              * Set the category to be the argument of the web service method
              *
              * */
-
             Request.addProperty("request",params[0]);
-
             /*
              * Set the web service envelope
              *
@@ -477,7 +512,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             envelope.dotNet = true;
             envelope.setOutputSoapObject(Request);
-
             //envelope.addMapping(NAMESPACE, "GatePassResponse",new GatePassResponse().getClass());
             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
             // AndroidHttpTransport androidHttpTransport = new AndroidHttpTransport(URL);
@@ -488,145 +522,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String res="";
             try
             {
-
                 androidHttpTransport.call(SOAP_ACTION, envelope);
                 SoapPrimitive results = (SoapPrimitive)envelope.getResponse();
                 res = results.toString();
-
             }
             catch(Exception e)
             {
-
                 e.printStackTrace();
                 res = "EXCEPTION:" + e.getMessage().toString();
-
             }
             return  res;
         }
     }
-
-    class CallWebService extends AsyncTask<String,Void,String>{
-      public  static final String NAMESPACE = "http://tempuri.org/";
-        public  static final   String METHOD_NAME = "GetSAPResponse";
-        public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/GetSAPResponse";
-        public  static final  String URL = "http://10.54.203.152/hmindia/GATEPASS_WCF.svc";
-        //public  static final  String URL = "http://192.168.1.6/GATEPASS_WCF.svc";
-        public  int Timeout = 30000;
-          String response;
-        @Override
-        protected void onPostExecute(String res){
-               //  super.onPostExecute(res);
-            progressBar.cancel();
-            //showCustomDialog("RESPONSE",res);
-            if(!res.isEmpty()){
-                try{
-                    GatePassResponse gatePassResponse = new GatePassResponse();
-                    String[] response = res.split("~");
-                    gatePassResponse.vendorName = response[0].toString();
-                    gatePassResponse.shopName = response[1].toString();
-                    gatePassResponse.gateNo = response[2].toString();
-                    gatePassResponse.msgFromSAP = response[3].toString();
-                    gatePassResponse.plant = response[4].toString();
-                    String s = response[7].toString().toUpperCase();
-                    if(s.equals("OK")) {
-                        gatePassResponse.isResponseOK = true;
-                        isWebCallDone = true;
-                    }
-                    else {
-                        gatePassResponse.isResponseOK = false;
-                        isWebCallDone = false;
-                    }
-                    if(response.length>8){
-                        gatePassResponse.exception = response[8].toString();
-                        String error = gatePassResponse.exception.trim();
-                        if(!error.isEmpty()){
-                            showCustomDialog("SAP CALL Error",gatePassResponse.exception);
-                            truckNumber.setText("");
-                            return;
-                            //Toast.makeText(MainActivity.this,gatePassResponse.exception,Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                    if(gatePassResponse.vendorName.isEmpty() || gatePassResponse.shopName.isEmpty()){
-                        showCustomDialog("INVALID TRUCK","Invalid Truck No. Truck Details were not found in SAP. Please contact concern department");
-                        truckNumber.setText("");
-                        return;
-                    }
-
-                    vendorName.setText(gatePassResponse.vendorName);
-                    shopName.setText(gatePassResponse.shopName);
-                    gateNo.setText(gatePassResponse.gateNo);
-                }
-                catch (Exception ex){
-                    showCustomDialog("SAP CALL Error",ex.getMessage());
-                    ex.printStackTrace();
-                }
-
-
-            }
-            else {
-                showCustomDialog("SAP CALL Error","Unable to get Response from SAP. Please Contact IT team.");
-               // Toast.makeText(MainActivity.this,"Error in WCF CAll",Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.show();
-        }
-
-        protected String doInBackground(String... params){
-
-
-            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-
-
-
-        /*
-         * Set the category to be the argument of the web service method
-         *
-         * */
-
-            Request.addProperty("truckNumber",params[0]);
-
-        /*
-         * Set the web service envelope
-         *
-         * */
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            envelope.dotNet = true;
-            envelope.setOutputSoapObject(Request);
-
-            //envelope.addMapping(NAMESPACE, "GatePassResponse",new GatePassResponse().getClass());
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
-           // AndroidHttpTransport androidHttpTransport = new AndroidHttpTransport(URL);
-        /*
-         * Call the web service and retrieve result ... how luvly <3
-         *
-         * */
-            String res="";
-            try
-                {
-
-                androidHttpTransport.call(SOAP_ACTION, envelope);
-                SoapPrimitive results = (SoapPrimitive)envelope.getResponse();
-                res = results.toString();
-
-            }
-            catch(Exception e)
-            {
-
-                e.printStackTrace();
-               res = " ~ ~ ~ ~ ~ ~ ~" + e.getMessage().toString();
-
-            }
-            return  res;
-        }
-    }
-
-
-
     @Override
     public void onClick(View view) {
           switch (view.getId()){

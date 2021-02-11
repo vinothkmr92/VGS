@@ -6,6 +6,10 @@
 		android:icon="@drawable/refresh"
 		android:title="Refresh"
 		android:tooltipText="Refresh" />
+	<item
+		android:id="@+id/settings"
+		android:title="Settings"
+		android:tooltipText="Settings" />
 	<item android:id="@+id/exit"
 		android:icon="@drawable/exit"
 		android:title="EXIT"/>
