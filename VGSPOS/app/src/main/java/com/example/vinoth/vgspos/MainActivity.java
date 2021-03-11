@@ -17,6 +17,8 @@ import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -66,13 +68,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
                 showCustomDialog("Warning","Enable Full Permission");
-                finish();
+                //finish();
             }
             IMEI_Number = telephonyManager.getDeviceId();
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             boolean isActivated = sharedpreferences.getBoolean(ISIMEIACTIVATED,false);
             String expireDt = sharedpreferences.getString(EXPIRE_DT,"");
-            if(Is_InternetWorking()){
+            /*if(Is_InternetWorking()){
                 new CallWebService().execute(IMEI_Number);
                 //Thread.sleep(1000);
             }
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 else {
                     showCustomDialog("FAILD", "Application Not Activated.!", true);
                 }
-            }
+            }*/
 
 
         }
@@ -101,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             showCustomDialog("ERROR",ex.getMessage());
         }
     }
+
+
+
     class CallWebService extends AsyncTask<String,Void,String> {
         public  static final String NAMESPACE = "http://tempuri.org/";
         public  static final   String METHOD_NAME = "GetLicense";

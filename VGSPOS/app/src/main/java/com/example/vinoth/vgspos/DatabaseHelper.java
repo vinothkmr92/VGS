@@ -24,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Create application database");
       db.execSQL("CREATE TABLE USERS (USER_ID INTEGER PRIMARY KEY,USER_NAME TEXT,MOBILE_NUMBER TEXT,PASSWORD TEXT)");
       db.execSQL("CREATE TABLE TAX (TAX_ID INTEGER PRIMARY KEY,TAX_VALUE NUMERIC)");
-      db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,N_PRICE NUMERIC,AC_PRICE NUMERIC,TAX_ID INTEGER)");
+      db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,N_PRICE NUMERIC,AC_PRICE NUMERIC)");
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,USER_ID INTEGER,PRIMARY KEY (BILL_NO,BILL_DATE))");
       db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NO INTEGER,QUANTITY NUMERIC,PRICE NUMERIC,PRIMARY KEY(BILL_NO,BILL_DATE,ITEM_NO))");
@@ -75,33 +75,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public ArrayList<Item> GetItems(){
         ArrayList<Item> ItemList = new ArrayList<Item>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT I.*,T.TAX_VALUE FROM ITEMS I,TAX T WHERE I.TAX_ID=T.TAX_ID",null);
+        Cursor cur = db.rawQuery("SELECT I.* FROM ITEMS I",null);
          if(cur.getCount()>0){
             while (cur.moveToNext()){
                 Item itm = new Item();
                 itm.setItem_No(cur.getInt(0));
                 itm.setItem_Name(cur.getString(1));
-                itm.setN_Price(cur.getDouble(2));
-                itm.setAc_Price(cur.getDouble(3));
-                Tax t = new Tax();
-                t.setTax_Id(cur.getInt(4));
-                t.setTax_Value(cur.getDouble(5));
-                itm.setTax(t);
                 ItemList.add(itm);
             }
          }
         return ItemList;
+    }
+    public String GetItemName(Integer itemNo){
+        String itemName = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT ITEM_NAME FROM ITEMS WHERE ITEM_NO="+itemNo,null);
+        if(cur.getCount()>0){
+            if(cur.moveToNext()){
+                itemName = cur.getString(0);
+            }
+        }
+        return itemName;
+    }
+    public  void  Delete_Item(Integer itemNo){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("ITEMS","ITEM_NO="+itemNo,null);
     }
     public void Insert_Item(Item item){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cont = new ContentValues();
         cont.put("ITEM_NO",item.getItem_No());
         cont.put("ITEM_NAME",item.getItem_Name());
-        cont.put("N_PRICE",item.getN_Price());
-        cont.put("AC_PRICE",item.getAc_Price());
-        cont.put("TAX_ID",item.getTax().getTax_Id());
         db.insert("ITEMS",null,cont);
-
     }
     public void Insert_Tax(Tax t){
         SQLiteDatabase db = this.getWritableDatabase();

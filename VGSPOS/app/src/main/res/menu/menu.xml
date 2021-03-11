@@ -1,0 +1,13 @@
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/homemenu"
+        android:title="Home"/>
+    <item
+        android:id="@+id/uploadExcel"
+        android:title="Upload Excel"/>
+    <item android:id="@+id/exit"
+        android:title="EXIT"/>
+
+</menu>
