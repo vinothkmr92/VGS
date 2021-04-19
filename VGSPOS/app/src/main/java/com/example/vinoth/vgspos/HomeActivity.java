@@ -213,18 +213,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
            case R.id._clr:
                   if(itemNo.isFocused()){
                       String sr = itemNo.getText().toString();
-                      sr = sr.substring(0,sr.length()-1);
-                      itemNo.setText(sr);
+                      if(sr.length()>0){
+                          sr = sr.substring(0,sr.length()-1);
+                          itemNo.setText(sr);
+                      }
                   }
                   else if(Quantity.isFocused()){
                       String sr = Quantity.getText().toString();
-                      sr = sr.substring(0,sr.length()-1);
-                      Quantity.setText(sr);
+                      if(sr.length()>0){
+                          sr = sr.substring(0,sr.length()-1);
+                          Quantity.setText(sr);
+                      }
                   }
                   break;
            case R.id.viewitems:
                 if(QuantityListener.itemsCarts.size()>0){
-                    Intent intent = new Intent(this, CartActivity.class);
+                    Intent intent = new Intent(this, ViewItemActivity.class);
                     startActivity(intent);
                 }
                 else {
@@ -244,11 +248,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                }
                break;
            case R.id.menu:
-                     //
-               ////
+               Intent intent = new Intent(this, ItemReport.class);
+               startActivity(intent);
                break;
            case  R.id.cancel:
-               ///
+               QuantityListener.itemsCarts.clear();
+               this.itemName.setText("");
+               this.Quantity.setText("");
+               QuantityListener.itemsCarts.clear();
+               tItem.setText("0");
+               tQty.setText("0");
+               showCustomDialog("Info","Items Cleared.");
+               itemName.requestFocus();
                break;
            case  R.id.print:
                 PrintGatePass();
@@ -266,10 +277,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                       showCustomDialog("Warning","Enter Valid Product");
                   }
                   else {
+                      progressBar.show();
                       UpdateCarts();
                       itemNo.setText("");
                       itemName.setText("");
                       Quantity.setText("");
+                      progressBar.hide();
                       itemNo.requestFocus();
                   }
                }
@@ -326,8 +339,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         String res = padRight(name,25);
         return res.substring(0,25);
     }
+    private  void SaveDetails(){
+        int newbillno = dbHelper.GetNextBillNo();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Date date = new Date();
+        String waiter  = wtSpinner.getSelectedItem().toString();
+        for(int i=0;i<QuantityListener.itemsCarts.size();i++){
+            Bills_Item bi = new Bills_Item();
+            bi.setBill_No(newbillno);
+            bi.setBill_DateStr(format.format(date));
+            String name = QuantityListener.itemsCarts.get(i).getItem_Name();
+            bi.setItem_Name(name);
+            bi.setQty(QuantityListener.itemsCarts.get(i).getQty());
+            bi.setWaiter(waiter);
+            dbHelper.Insert_Bill_Items(bi);
+        }
+    }
     public  void PrintGatePass() {
         int sl = 0;
+        progressBar.show();
         try {
             if(QuantityListener.itemsCarts == null || (QuantityListener.itemsCarts!=null && QuantityListener.itemsCarts.size()==0) ){
                 showCustomDialog("Warning", "Please add Items");
@@ -335,6 +365,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
             Date date = new Date();
+            SaveDetails();
             ngxPrinter.setDefault();
             //Bitmap hyndaiLogo = BitmapFactory.decodeResource(this.getResources(),R.drawable.hyundai_logo);
             //ngxPrinter.printImage(hyndaiLogo);
@@ -359,18 +390,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             ngxPrinter.printText("                              ");
             ngxPrinter.setDefault();
             Toast.makeText(this, "Print Queued Scuessfully.!", Toast.LENGTH_LONG).show();
-            this.itemName.setText("");
-            this.Quantity.setText("");
-            QuantityListener.itemsCarts.clear();
-            tItem.setText("0");
-            tQty.setText("0");
+
         } catch (Exception e) {
             showCustomDialog("Print Error",e.getMessage());
             //Toast.makeText(MainActivity.this, e.getMessage(), 1).show();
             e.printStackTrace();
         }
         finally {
-
+            this.itemName.setText("");
+            this.Quantity.setText("");
+            QuantityListener.itemsCarts.clear();
+            tItem.setText("0");
+            tQty.setText("0");
+            progressBar.hide();
+            itemName.requestFocus();
         }
     }
 }

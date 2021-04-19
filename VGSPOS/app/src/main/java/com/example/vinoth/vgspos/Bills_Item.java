@@ -7,9 +7,17 @@ public class Bills_Item {
     private int Bill_No;
     private String Bill_DateStr;
     private Date Bill_Date;
-    private int Item_No;
+    private String Item_Name;
     private double Qty;
-    private double Price;
+    private String Waiter;
+
+    public String getWaiter() {
+        return Waiter;
+    }
+
+    public void setWaiter(String waiter) {
+        Waiter = waiter;
+    }
 
     public int getBill_No() {
         return Bill_No;
@@ -49,12 +57,12 @@ public class Bills_Item {
 
     }
 
-    public int getItem_No() {
-        return Item_No;
+    public String getItem_Name() {
+        return Item_Name;
     }
 
-    public void setItem_No(int item_No) {
-        Item_No = item_No;
+    public void setItem_Name(String item_name) {
+        Item_Name = item_name;
     }
 
     public double getQty() {
@@ -65,11 +73,4 @@ public class Bills_Item {
         Qty = qty;
     }
 
-    public double getPrice() {
-        return Price;
-    }
-
-    public void setPrice(double price) {
-        Price = price;
-    }
 }

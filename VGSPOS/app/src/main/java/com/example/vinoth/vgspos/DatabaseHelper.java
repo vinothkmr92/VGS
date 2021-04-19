@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
@@ -27,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,N_PRICE NUMERIC,AC_PRICE NUMERIC)");
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,USER_ID INTEGER,PRIMARY KEY (BILL_NO,BILL_DATE))");
-      db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NO INTEGER,QUANTITY NUMERIC,PRICE NUMERIC,PRIMARY KEY(BILL_NO,BILL_DATE,ITEM_NO))");
+      db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT)");
       InsertMasterUser(db);
 
     }
@@ -60,6 +62,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cntVal.put("PASSWORD","1234");
         db.insert("USERS",null,cntVal);
     }
+    public int GetNextBillNo(){
+        int id = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT MAX(BILL_NO) FROM BILLS_ITEM",null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                id = cur.getInt(0);
+            }
+        }
+        id++;
+        return  id;
+    }
+
     public int GetNextItemNO(){
         int id = 0;
         SQLiteDatabase db = this.getWritableDatabase();
@@ -71,6 +86,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         id++;
         return  id;
+    }
+    public  void GetBills_Item(){
+        ArrayList<String> report = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT ITEM_NAME FROM BILLS_ITEM  GROUP BY ITEM_NAME",null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                report.add(cur.getString(0));
+            }
+        }
+    }
+    public  String padRight(String s, int n) {
+        return String.format("%-" + n + "s", s);
+    }
+    public  String GetformattedItemName(String name){
+        String res = padRight(name,25);
+        return res.substring(0,25);
+    }
+    public ArrayList<ItemsRpt> GetReports(String billDt,String waiter){
+       ArrayList<ItemsRpt> report = new ArrayList<>();
+       SQLiteDatabase db = this.getWritableDatabase();
+       String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE='"+billDt+"' GROUP BY ITEM_NAME";
+       if(!waiter.equals("ALL")){
+        query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE='"+billDt+"' AND WAITER='"+waiter+"' GROUP BY ITEM_NAME";
+       }
+       Cursor cur = db.rawQuery(query,null);
+       if(cur.getCount()>0){
+           while (cur.moveToNext()){
+               ItemsRpt r = new ItemsRpt();
+               String name = GetformattedItemName(cur.getString((0)));
+               r.setItemName(name);
+               r.setQuantity(cur.getDouble(1));
+               report.add(r);
+           }
+       }
+       return  report;
     }
     public ArrayList<Item> GetItems(){
         ArrayList<Item> ItemList = new ArrayList<Item>();
@@ -122,15 +173,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cont.put("STOCK",stock.getQty());
         db.insert("STOCKS",null,cont);
     }
+
     public void  Insert_Bill_Items(Bills_Item billsItem){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cont = new ContentValues();
         cont.put("BILL_NO",billsItem.getBill_No());
         cont.put("BILL_DATE",billsItem.getBill_DateStr());
-        cont.put("ITEM_NO",billsItem.getItem_No());
+        cont.put("ITEM_NAME",billsItem.getItem_Name());
         cont.put("QUANTITY",billsItem.getQty());
-        cont.put("PRICE",billsItem.getPrice());
-        db.insert("BILLS_ITEM",null,cont);
+        cont.put("WAITER",billsItem.getWaiter());
+        long s = db.insert("BILLS_ITEM",null,cont);
+        if(s>0){
+            Log.println(1,"","Sucessfully inserted bill items");
+        }
+        else {
+            Log.println(1,"","Failed to insert bill items...ITEM_NAME: "+billsItem.getItem_Name());
+        }
     }
     public void Insert_Bills(Bills bills){
         SQLiteDatabase db = this.getWritableDatabase();

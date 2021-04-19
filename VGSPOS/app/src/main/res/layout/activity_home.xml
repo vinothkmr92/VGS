@@ -234,7 +234,7 @@
             <Button
                 android:id="@+id/menu"
                 android:background="@android:color/holo_orange_light"
-                android:text="MENU"
+                android:text="REPORT"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
                 android:textStyle="bold" />

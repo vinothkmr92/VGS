@@ -19,8 +19,11 @@
         android:roundIcon="@drawable/vgposicon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CartActivity"
-            android:parentActivityName=".HomeActivity"/>
+        <activity android:name=".ViewItemActivity"></activity>
+        <activity android:name=".ItemReport" />
+        <activity
+            android:name=".CartActivity"
+            android:parentActivityName=".HomeActivity" />
         <activity android:name=".UploadActivity" />
         <activity android:name=".HomeActivity">
             <intent-filter>
@@ -30,9 +33,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
+
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value=".HomeActivity"/>
+            android:value=".HomeActivity" />
     </application>
 
 </manifest>
