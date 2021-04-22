@@ -359,7 +359,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         int sl = 0;
         progressBar.show();
         try {
-            if(QuantityListener.itemsCarts == null || (QuantityListener.itemsCarts!=null && QuantityListener.itemsCarts.size()==0) ){
+            if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
                 showCustomDialog("Warning", "Please add Items");
                 return;
             }
