@@ -19,11 +19,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,7 +56,19 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         try {
             Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
             //fileintent.setType("gagt/sdf");
-            fileintent.setType("application/vnd.ms-excel");
+            String[] mimeTypes ={"application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"};
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                fileintent.setType(mimeTypes.length == 1 ? mimeTypes[0] : "*/*");
+                if (mimeTypes.length > 0) {
+                    fileintent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                }
+            } else {
+                String mimeTypesStr = "";
+                for (String mimeType : mimeTypes) {
+                    mimeTypesStr += mimeType + "|";
+                }
+                fileintent.setType(mimeTypesStr.substring(0,mimeTypesStr.length() - 1));
+            }
             startActivityForResult(fileintent, requestcode);
         } catch (Exception ex) {
             lbl.setText(ex.getMessage());
@@ -113,6 +127,12 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 final String[] selectionArgs = new String[] {split[1]};
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             }
+            else if ("content".equalsIgnoreCase(uri.getScheme())) {
+                // Return the remote address
+                if (isGooglePhotosUri(uri))
+                    return uri.getLastPathSegment();
+                return uri.getPath();
+            }
         }
         // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
@@ -121,10 +141,12 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 return uri.getLastPathSegment();
             return getDataColumn(context, uri, null, null);
         }
+
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
         }
+
         return null;
     }
 
@@ -251,6 +273,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
                     }
                 } catch (Exception ex) {
+                    lbl.setText(ex.getMessage().toString());
                     ex.printStackTrace();
                     //lbl.setText(ex.getMessage().toString());
                 }

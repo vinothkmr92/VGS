@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GATEPASS.iml" filepath="$PROJECT_DIR$/GATEPASS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.iml" />
     </modules>
   </component>
 </project>

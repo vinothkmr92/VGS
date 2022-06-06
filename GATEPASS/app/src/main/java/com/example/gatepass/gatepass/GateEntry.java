@@ -104,8 +104,7 @@ public class GateEntry extends AppCompatActivity implements View.OnClickListener
         public  static final String NAMESPACE = "http://tempuri.org/";
         public  static final   String METHOD_NAME = "TruckOutEntry";
         public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/TruckOutEntry";
-        public  static final  String URL = "http://10.54.203.152/hmindia/GATEPASS_WCF.svc";
-        // public  static final  String URL = "http://192.168.0.3//GATEPASS_WCF.svc";
+        public  static final  String URL = "http://10.54.203.155:1001/PUBLISHED/GATEPASS_WCF.svc";
         public  int Timeout = 30000;
         String response;
         @Override

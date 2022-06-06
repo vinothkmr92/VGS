@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light"
+    tools:context=".HomeActivity"
+    android:orientation="vertical">
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:columnCount="3"
+        android:orientation="horizontal">
+        <TextView
+            android:text="  WAITER"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+
+        <TextView android:text="          " />
+
+        <Spinner
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:id="@+id/waiterSpinner"
+            ></Spinner>
+        <TextView
+            android:text="  ITEM NO"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="5dp"
+            android:text="          " />
+
+        <EditText
+            android:id="@+id/itemNo"
+            android:editable="false"
+            android:focusable="true"
+            android:minWidth="700px"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark" />
+
+        <TextView
+            android:text="  ITEM NAME"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+
+        <TextView android:text="          " />
+
+        <EditText
+            android:id="@+id/itemName"
+            android:minWidth="700px"
+            android:editable="false"
+            android:focusable="false"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark" />
+
+        <TextView
+            android:text="  QUANTITY"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+
+        <TextView android:text="          " />
+
+        <EditText
+            android:id="@+id/qty"
+            android:editable="false"
+            android:focusable="true"
+            android:minWidth="700px"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark" />
+    </GridLayout>
+
+        <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:columnCount="5"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="TOTAL QTY:  "
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ttQty"
+                android:text="000"
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold" />
+
+            <TextView android:text="                   " />
+
+
+            <TextView
+                android:text="TOTAL ITEMS:  "
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ttItem"
+                android:text="000"
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold" />
+            <TextView/>
+            <TextView/>
+
+        </GridLayout>
+
+
+
+
+        <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:columnCount="4"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_height="10px"
+                android:layout_columnSpan="4"
+                android:layout_gravity="fill"
+                android:background="@color/design_default_color_primary" />
+
+            <Button
+                android:id="@+id/_1"
+                android:background="@color/design_default_color_primary"
+                android:text="1"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_2"
+                android:background="@android:color/background_light"
+                android:text="2"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_3"
+                android:background="@color/design_default_color_primary"
+                android:text="3"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_clr"
+                android:background="@android:color/background_light"
+                android:text="←"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_4"
+                android:background="@android:color/background_light"
+                android:text="4"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_5"
+                android:background="@color/design_default_color_primary"
+                android:text="5"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_6"
+                android:background="@android:color/background_light"
+                android:text="6"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_dot"
+                android:background="@color/design_default_color_primary"
+                android:text="."
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_7"
+                android:background="@color/design_default_color_primary"
+                android:text="7"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_8"
+                android:background="@android:color/background_light"
+                android:text="8"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_9"
+                android:background="@color/design_default_color_primary"
+                android:text="9"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/_0"
+                android:background="@android:color/background_light"
+                android:text="0"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/menu"
+                android:background="@android:color/holo_orange_light"
+                android:text="REPORT"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/cancel"
+                android:background="?attr/colorError"
+                android:text="CANCEL"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/print"
+                android:layout_rowSpan="2"
+                android:layout_gravity="fill"
+                android:background="?attr/actionModeSplitBackground"
+                android:text="PRINT"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/enter"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_rowSpan="2"
+                android:layout_gravity="fill"
+                android:background="@android:color/holo_red_dark"
+                android:text="ENTER"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/viewitems"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:background="@color/colorBrown"
+                android:text="VIEW ITEMS"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+        </GridLayout>
+
+</LinearLayout>
