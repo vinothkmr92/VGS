@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         b.show();
     }
     public void LoadSpiners() {
-         progressBar.show();
+        progressBar.show();
         ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,SuperVisorList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         supervisorSpiner.setAdapter(adapter);

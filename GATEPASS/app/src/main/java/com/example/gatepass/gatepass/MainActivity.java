@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText shopName;
     private EditText gateNo;
     private EditText other;
+    private EditText securityid;
     private ImageButton btnPrint;
     private CheckBox bypasssap;
 
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String SlipNo = "SlipNo";
     public static final String isActivated = "IsActivated";
     public SharedPreferences sharedpreferences;
+    public static boolean isNgxDevice = false;
 
 
 
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             vendorName = (EditText)findViewById(R.id.vendorName);
             emptyTrolly = (EditText)findViewById(R.id.emptyTrollys);
             emptyBin = (EditText)findViewById(R.id.emptyBins);
+            securityid = (EditText)findViewById(R.id.securityID);
             qrScan = new IntentIntegrator(this);
             btnScan.setOnClickListener(this);
             btnPrint.setOnClickListener(this);
@@ -128,28 +131,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                     if(i == EditorInfo.IME_ACTION_GO){
                         try {
-                            //  truckNumber.setText(result.getContents().toString());
                             String req = "";
                             String trNumber = truckNumber.getText().toString();
                             String othr = other.getText().toString();
                             String empTrolly = emptyTrolly.getText().toString();
                             String empBin = emptyBin.getText().toString();
-                            req = trNumber+"~"+empBin+"~"+empTrolly+"~"+othr;
-                            if(!bypasssap.isChecked()) {
-                                new CallWebService().execute(req);
+                            String secuirtyid = securityid.getText().toString();
+                            if(secuirtyid.isEmpty()){
+                                showCustomDialog("Warning","Please Enter valid Security ID");
+                                return  false;
                             }
-
-
+                            else{
+                                req = trNumber+"~"+empBin+"~"+empTrolly+"~"+othr+"~"+secuirtyid;
+                                if(!bypasssap.isChecked()) {
+                                    new CallWebService().execute(req);
+                                }
+                            }
                         } catch (Exception e) {
                             showCustomDialog("WebService Error",e.getMessage());
                             truckNumber.setText("");
                             e.printStackTrace();
-
-                            //Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
-
                         }
-                        finally {
-                        } //do whatever you want
                     }
                     return false;
                 }
@@ -171,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 };
                 ngxPrinter.initService(this, this.ingxCallback);
-
+                isNgxDevice = true;
 
 
         } catch (Exception e) {
@@ -205,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.gateNo.setText("");
                 this.shopName.setText("");
                 this.other.setText("");
+                this.securityid.setText("");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -251,8 +254,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String othr = other.getText().toString();
         String empTrolly = this.emptyTrolly.getText().toString();
         String empBin = this.emptyBin.getText().toString();
+        String sid = this.securityid.getText().toString();
+        if(sid.isEmpty()){
+            showCustomDialog("Warning","Please Enter Valid Security ID!");
+        }
         if(trNumber.isEmpty()){
-            showCustomDialog("Warining","Please check the Input Fields.!");
+            showCustomDialog("Warning","Please check the Input Fields.!");
         }
         else {
             if(bypasssap.isChecked()){
@@ -276,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         try {
            //new CallWebService().execute("  ");
+            String Securityno = this.securityid.getText().toString();
             String trNumber = this.truckNumber.getText().toString();
             String vnName = this.vendorName.getText().toString();
             String empTrolly = this.emptyTrolly.getText().toString();
@@ -343,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.gateNo.setText("");
             this.shopName.setText("");
             this.other.setText("");
+            this.securityid.setText("");
             SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.putString(SlipNo,String.valueOf(sl));
             editor.commit();
@@ -366,24 +375,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 //if qr contains data
                 try {
-                    truckNumber.setText(result.getContents().toString());
-                    String req = "";
-                    String trNumber = this.truckNumber.getText().toString();
-                    String othr = other.getText().toString();
-                    String empTrolly = this.emptyTrolly.getText().toString();
-                    String empBin = this.emptyBin.getText().toString();
-                    if(!bypasssap.isChecked()){
-                        req = trNumber+"~"+empBin+"~"+empTrolly+"~"+othr;
-                        new CallWebService().execute(req);
+                    String sid = this.securityid.getText().toString();
+                    if(sid.isEmpty()){
+                        securityid.setText(result.getContents().toString());
+                    }
+                    else{
+                        truckNumber.setText(result.getContents().toString());
+                        String req = "";
+                        String trNumber = this.truckNumber.getText().toString();
+                        String securityid = this.securityid.getText().toString();
+                        String othr = other.getText().toString();
+                        String empTrolly = this.emptyTrolly.getText().toString();
+                        String empBin = this.emptyBin.getText().toString();
+                        if(!bypasssap.isChecked()){
+                            req = trNumber+"~"+empBin+"~"+empTrolly+"~"+othr+"~"+securityid;
+                            new CallWebService().execute(req);
+                        }
                     }
 
                 } catch (Exception e) {
                     showCustomDialog("WebService Error",e.getMessage());
                     truckNumber.setText("");
                     e.printStackTrace();
-
-                    //Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
-
                 }
                 finally {
                 }
@@ -401,6 +414,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String othr = other.getText().toString();
         String empTrolly = this.emptyTrolly.getText().toString();
         String empBin = this.emptyBin.getText().toString();
+        String seid = this.securityid.getText().toString();
+        if(seid.isEmpty()){
+            qrScan.initiateScan();
+        }
         if( othr.isEmpty() || empTrolly.isEmpty() || empBin.isEmpty()){
             showCustomDialog("Warining","Please check the Input Fields.!");
         }
@@ -419,7 +436,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //String empTrolly = emptyTrolly.getText().toString();
                     //String empBin = emptyBin.getText().toString();
                     if(!bypasssap.isChecked()){
-                        req = trNumber+"~"+empBin+"~"+empTrolly+"~"+othr;
+                        req = trNumber+"~"+empBin+"~"+empTrolly+"~"+othr+"~"+seid;
                         new CallWebService().execute(req);
                     }
 

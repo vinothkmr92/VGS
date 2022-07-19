@@ -132,6 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Item itm = new Item();
                 itm.setItem_No(cur.getInt(0));
                 itm.setItem_Name(cur.getString(1));
+                itm.setPrice((cur.getDouble(2)));
                 ItemList.add(itm);
             }
          }
@@ -157,6 +158,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cont = new ContentValues();
         cont.put("ITEM_NO",item.getItem_No());
         cont.put("ITEM_NAME",item.getItem_Name());
+        cont.put("N_PRICE",item.getPrice());
         db.insert("ITEMS",null,cont);
     }
     public void Insert_Tax(Tax t){

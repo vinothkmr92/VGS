@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.inputmethodservice.Keyboard;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -19,11 +20,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -203,31 +204,32 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                     if (resultCode == RESULT_OK) {
                         AssetManager am = this.getAssets();
                         InputStream inStream;
-                        Workbook wb = null;
                         try {
                             inStream = new FileInputStream(FilePath);
-                            wb = new HSSFWorkbook(inStream);
+                            FileInputStream file = new FileInputStream(FilePath);
+                            XSSFWorkbook book = new XSSFWorkbook(file);
                             inStream.close();
-                            Sheet sheet = wb.getSheetAt(0);
+                            XSSFSheet sheet = book.getSheetAt(0);
                             if (sheet == null) {
                                 return;
                             }
                             Integer counter=0;
                             Integer i=0;
-                            for (Iterator<Row> rit = sheet.rowIterator(); rit.hasNext(); ){
-                                Row row = rit.next();
-                                if(i==0){
-                                    i++;
-                                    continue;
-                                }
-                                ContentValues contentValues = new ContentValues();
-                                row.getCell(0, Row.CREATE_NULL_AS_BLANK).setCellType(Cell.CELL_TYPE_STRING);
-                                row.getCell(1, Row.CREATE_NULL_AS_BLANK).setCellType(Cell.CELL_TYPE_STRING);
+                            XSSFRow row;
+                            XSSFCell cell;
+                            Iterator rit = sheet.rowIterator();
+                            while (rit.hasNext()) {
+                                row = (XSSFRow) rit.next();
+                                Iterator cellitr = row.cellIterator();
+                                XSSFCell cellpid = row.getCell(0);
+                                XSSFCell cellprname = row.getCell(1);
+                                XSSFCell cellprice = row.getCell(2);
                                 Item item = new Item();
-                                item.setItem_Name(row.getCell(0, Row.CREATE_NULL_AS_BLANK).getStringCellValue());
-                                String id = row.getCell(1,Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                                Integer itemid = Integer.parseInt(id);
-                                item.setItem_No(itemid);
+                                String id = cellpid.getStringCellValue();
+                                Integer itid = Integer.parseInt(id);
+                                item.setItem_No(itid);
+                                item.setItem_Name(cellprname.getStringCellValue());
+                                item.setPrice(cellprice.getNumericCellValue());
                                 try{
                                     ArrayList<Item> s = dbHelper.GetItems();
                                     Integer index = s.indexOf(item);
@@ -252,7 +254,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    //lbl.setText(ex.getMessage().toString());
+                    lbl.setText(ex.getMessage().toString());
                 }
         }
     }
