@@ -179,7 +179,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (con == null) {
                     z = "Error in connection with SQL server";
                 } else {
-                    String query = "SELECT PRODUCT_ID,PRODUCT_DESCRIPTION FROM PRODUCTS";
+                    String query = "SELECT PRODUCT_ID,PRODUCT_DESCRIPTION FROM PRODUCTS ORDER BY PRODUCT_DESCRIPTION";
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
                     Product pr = new Product();

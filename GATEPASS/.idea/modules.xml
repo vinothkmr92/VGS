@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GATEPASS.iml" filepath="$PROJECT_DIR$/GATEPASS.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GATEPASS.app.unitTest.iml" />
     </modules>
   </component>
 </project>
