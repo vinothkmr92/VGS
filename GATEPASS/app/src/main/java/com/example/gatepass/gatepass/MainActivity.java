@@ -555,7 +555,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
       public  static final String NAMESPACE = "http://tempuri.org/";
         public  static final   String METHOD_NAME = "GetSAPResponse";
         public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/GetSAPResponse";
-        public  static final  String URL = "http://10.54.203.152/hmindia/GATEPASS_WCF.svc";
+        public  static final  String URL = "http://10.54.203.155:1001/PUBLISHED/GATEPASS_WCF.svc";
         //public  static final  String URL = "http://192.168.1.6/GATEPASS_WCF.svc";
         public  int Timeout = 30000;
           String response;
