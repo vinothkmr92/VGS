@@ -37,12 +37,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import woyou.aidlservice.jiuiv5.*;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.ngx.mp100sdk.Enums.Alignments;
-import com.ngx.mp100sdk.Intefaces.INGXCallback;
-import com.ngx.mp100sdk.NGXPrinter;
+import com.sunmi.peripheral.printer.InnerPrinterCallback;
+import com.sunmi.peripheral.printer.InnerPrinterManager;
+import com.sunmi.peripheral.printer.InnerResultCallback;
+import com.sunmi.peripheral.printer.SunmiPrinterService;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText securityid;
     private ImageButton btnPrint;
     private CheckBox bypasssap;
+    private SunmiPrinterService printerService;
 
     private String serviceVersion;
     private EditText vendorName;
@@ -81,8 +82,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ServiceConnection connService;
 
     private IntentIntegrator qrScan;
-    public static NGXPrinter ngxPrinter = NGXPrinter.getNgxPrinterInstance();
-    private INGXCallback ingxCallback;
 
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String CustomDate = "Today";
@@ -90,7 +89,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ISNGXDEVICE = "ISNGX";
     public static final String isActivated = "IsActivated";
     public SharedPreferences sharedpreferences;
-
+    private InnerResultCallback resultCallback;
+    private InnerPrinterCallback innerPrinterCallback;
 
 
     @Override
@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Date date = new Date();
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
             String dt = sharedpreferences.getString(CustomDate, format.format(date));
+            String isngx = sharedpreferences.getString("ISNGXDEVICE","NO");
             Date da = format.parse(dt);
             isWebCallDone = false;
             if (!da.equals(date)) {
@@ -160,22 +161,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return false;
                 }
             });
-//for reading
-    this.ingxCallback = new INGXCallback() {
-        public void onRunResult(boolean isSuccess) {
-            Log.i("NGX", "onRunResult:" + isSuccess);
-        }
+            resultCallback = new InnerResultCallback(){
 
-        public void onReturnString(String result) {
-            Log.i("NGX", "onReturnString:" + result);
-        }
+                @Override
+                public void onRunResult(boolean isSuccess) throws RemoteException {
 
-        public void onRaiseException(int code, String msg) {
-            Log.i("NGX", "onRaiseException:" + code + ":" + msg);
-        }
-    };
-    ngxPrinter.initService(this, this.ingxCallback);
+                }
 
+                @Override
+                public void onReturnString(String result) throws RemoteException {
+
+                }
+
+                @Override
+                public void onRaiseException(int code, String msg) throws RemoteException {
+
+                }
+
+                @Override
+                public void onPrintResult(int code, String msg) throws RemoteException {
+
+                }
+            };
+             innerPrinterCallback= new InnerPrinterCallback(){
+                @Override protected void onConnected(SunmiPrinterService service)
+                {
+                    printerService = service;
+                    Toast.makeText(MainActivity.this, "PrinterConnected.", Toast.LENGTH_LONG).show();
+                    // Get the interface handle of the remote service after the binding service has been successfully connected.
+                    // You can call supported printing methods through service.
+                }
+                @Override protected void onDisconnected()
+                    {
+                        //The method will be called back if the service is disconnected abnormally.
+                        // A reconnection strategy is recommended here.
+                    }
+            };
+            boolean result = InnerPrinterManager.getInstance().bindService(getApplicationContext(), innerPrinterCallback);
+            if(result){
+                Toast.makeText(MainActivity.this, "PrinterBound.", Toast.LENGTH_SHORT).show();
+            }
         } catch (Exception e) {
             showCustomDialog("Initialize Error",e.getMessage());
         }
@@ -195,7 +220,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.exit:
-                finish();
+                try{
+                    InnerPrinterManager.getInstance().unBindService(MainActivity.this,innerPrinterCallback);
+                }
+                catch (Exception e){
+                    Log.println(Log.ERROR,"Error","exception: "+e.getMessage());
+                }
+                finishAffinity();
                 return true;
             case R.id.refreshPage:
                 this.isWebCallDone = false;
@@ -277,11 +308,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-    private void PrintNgxGatepass(){
+
+    private  void PrintSummiGatePass(){
         int sl = 0;
 
         try {
-            //new CallWebService().execute("  ");
             String Securityno = this.securityid.getText().toString();
             String trNumber = this.truckNumber.getText().toString();
             String vnName = this.vendorName.getText().toString();
@@ -315,33 +346,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
             Date date = new Date();
-            ngxPrinter.setDefault();
             Bitmap hyndaiLogo = BitmapFactory.decodeResource(this.getResources(),R.drawable.hyundai_logo);
-            ngxPrinter.printImage(hyndaiLogo);
-            ngxPrinter.setStyleBold();
-            ngxPrinter.printText("HYUNDAI MOTOR INDIA LIMITED",Alignments.CENTER,28);
-            ngxPrinter.setStyleDoubleWidth();
-            ngxPrinter.printText("GATE PASS", Alignments.CENTER, 30);
-            ngxPrinter.setStyleBold();
-            ngxPrinter.printText("VENDOR EMPTIES RETURN", Alignments.CENTER, 28);
-            ngxPrinter.setStyleBold();
-            ngxPrinter.printText("SLIP NO  : "+slipNo,Alignments.LEFT,24);
-            ngxPrinter.printText("DATE     : " + format.format(date), Alignments.LEFT, 24);
-            ngxPrinter.printText("SHOP     : "+ shopName,Alignments.LEFT,24);
-            ngxPrinter.printText("GATE NO  : "+gateNo,Alignments.LEFT,24);
-            ngxPrinter.printText("VENDOR   : " + vnName, Alignments.LEFT, 24);
-            ngxPrinter.printText("TRUCK NO : " + trNumber, Alignments.LEFT, 24);
-            ngxPrinter.printText("------------------------------", Alignments.LEFT, 24);
-            ngxPrinter.printText("ITEM                     QTY", Alignments.LEFT, 24);
-            ngxPrinter.printText("------------------------------", Alignments.LEFT, 24);
-            ngxPrinter.printText("EMPTY TROLLEYS           " + empTrolly, Alignments.LEFT, 24);
-            ngxPrinter.printText("EMPTY BINS               " + empBin, Alignments.LEFT, 24);
-            ngxPrinter.printText("OTHERS                   " + othr, Alignments.LEFT, 24);
-            ngxPrinter.printText("------------------------------", Alignments.LEFT, 24);
-            ngxPrinter.printText("SECURITY\\GA");
-            ngxPrinter.printText("                              ");
-            ngxPrinter.printText("                              ");
-            ngxPrinter.setDefault();
+            printerService.setAlignment(1,resultCallback);
+            printerService.printBitmap(hyndaiLogo,resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.setFontSize(28,resultCallback);
+            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x1},resultCallback);
+            printerService.printText("HYUNDAI MOTOR INDIA LIMITED",resultCallback);
+            printerService.lineWrap(2,resultCallback);
+            printerService.setFontSize(35,resultCallback);
+            printerService.printText("GATE PASS",resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.setFontSize(28,resultCallback);
+            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x0},resultCallback);
+            printerService.printText("VENDOR EMPTIES RETURN", resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            //ngxPrinter.setStyleBold();
+            printerService.setFontSize(24,resultCallback);
+            printerService.setAlignment(0,resultCallback);
+            printerService.printText("SLIP NO  : "+slipNo,resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("DATE     : " + format.format(date),resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("SHOP     : "+ shopName,resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("GATE NO  : "+gateNo,resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("VENDOR   : " + vnName, resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("TRUCK NO : " + trNumber, resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x1},resultCallback);
+            printerService.printText("------------------------------", resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("ITEM                     QTY", resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("------------------------------", resultCallback);
+            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x0},resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("EMPTY TROLLEYS           " + empTrolly, resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("EMPTY BINS               " + empBin, resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("OTHERS                   " + othr, resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x1},resultCallback);
+            printerService.printText("------------------------------", resultCallback);
+            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x0},resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("SECURITY\\GA        "+Securityno,resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            printerService.printText("                              ",resultCallback);
+            printerService.lineWrap(4,resultCallback);
+            printerService.printText("                              ",resultCallback);
+            printerService.lineWrap(1,resultCallback);
+            //printerService.setDefault();
             Toast.makeText(this, "Print Queued Scuessfully.!", Toast.LENGTH_LONG).show();
             this.truckNumber.setText("");
             this.vendorName.setText("");
@@ -354,7 +413,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.putString(SlipNo,String.valueOf(sl));
             editor.commit();
-        } catch (Exception e) {
+        }
+        catch (RemoteException ex){
+            showCustomDialog("Print Error",ex.getMessage());
+            //Toast.makeText(MainActivity.this, e.getMessage(), 1).show();
+            ex.printStackTrace();
+        }
+        catch (Exception e) {
             showCustomDialog("Print Error",e.getMessage());
             //Toast.makeText(MainActivity.this, e.getMessage(), 1).show();
             e.printStackTrace();
@@ -363,9 +428,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-
     public  void PrintGatePass() {
-            PrintNgxGatepass();
+            PrintSummiGatePass();
     }
     //Getting the scan results
     @Override
