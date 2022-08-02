@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         if( othr.isEmpty() || empTrolly.isEmpty() || empBin.isEmpty()){
-            showCustomDialog("Warining","Please check the Input Fields.!");
+            showCustomDialog("Warning","Please check the Input Fields.!");
         }
         else {
 
