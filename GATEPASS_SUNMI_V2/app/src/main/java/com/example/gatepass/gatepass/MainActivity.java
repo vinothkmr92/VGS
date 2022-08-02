@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             emptyBin = (EditText)findViewById(R.id.emptyBins);
             securityid = (EditText)findViewById(R.id.securityID);
             qrScan = new IntentIntegrator(this);
+            qrScan.setOrientationLocked(true);
+            qrScan.setBeepEnabled(true);
             btnScan.setOnClickListener(this);
             btnPrint.setOnClickListener(this);
             shopName = (EditText)findViewById(R.id.shopName);
@@ -480,6 +482,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String seid = this.securityid.getText().toString();
         if(seid.isEmpty()){
             qrScan.initiateScan();
+            return;
         }
         if( othr.isEmpty() || empTrolly.isEmpty() || empBin.isEmpty()){
             showCustomDialog("Warining","Please check the Input Fields.!");
@@ -502,7 +505,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         req = trNumber+"~"+empBin+"~"+empTrolly+"~"+othr+"~"+seid;
                         new CallWebService().execute(req);
                     }
-
                 } catch (Exception e) {
                     showCustomDialog("WebService Error",e.getMessage());
                     truckNumber.setText("");
