@@ -621,7 +621,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public  static final   String METHOD_NAME = "GetSAPResponse";
         public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/GetSAPResponse";
         public  static final  String URL = "http://10.54.203.155:1001/PUBLISHED/GATEPASS_WCF.svc";
-        //public  static final  String URL = "http://192.168.1.6/GATEPASS_WCF.svc";
+        //public  static final  String URL = "http://192.168.1.3:5200/GATEPASS_WCF.svc";
         public  int Timeout = 30000;
           String response;
         @Override
@@ -656,14 +656,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             return;
                             //Toast.makeText(MainActivity.this,gatePassResponse.exception,Toast.LENGTH_LONG).show();
                         }
-
                     }
                     if(gatePassResponse.vendorName.isEmpty() || gatePassResponse.shopName.isEmpty()){
                         showCustomDialog("INVALID TRUCK","Invalid Truck No. Truck Details were not found in SAP. Please contact concern department");
                         truckNumber.setText("");
                         return;
                     }
-
                     vendorName.setText(gatePassResponse.vendorName);
                     shopName.setText(gatePassResponse.shopName);
                     gateNo.setText(gatePassResponse.gateNo);
@@ -727,10 +725,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             catch(Exception e)
             {
-
                 e.printStackTrace();
                res = " ~ ~ ~ ~ ~ ~ ~" + e.getMessage().toString();
-
             }
             return  res;
         }
