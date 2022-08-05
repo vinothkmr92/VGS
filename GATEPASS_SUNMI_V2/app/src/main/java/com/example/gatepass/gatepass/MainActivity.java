@@ -620,7 +620,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
       public  static final String NAMESPACE = "http://tempuri.org/";
         public  static final   String METHOD_NAME = "GetSAPResponse";
         public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/GetSAPResponse";
-        public  static final  String URL = "http://10.54.203.155:1001/PUBLISHED/GATEPASS_WCF.svc";
+        public  static final  String URL = "http://10.54.203.155:1001/GATEPASS_WCF.svc";
         //public  static final  String URL = "http://192.168.1.3:5200/GATEPASS_WCF.svc";
         public  int Timeout = 30000;
           String response;
@@ -686,19 +686,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         protected String doInBackground(String... params){
-
-
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-
-
-
         /*
          * Set the category to be the argument of the web service method
          *
          * */
-
             Request.addProperty("truckNumber",params[0]);
-
         /*
          * Set the web service envelope
          *
