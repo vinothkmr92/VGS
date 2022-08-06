@@ -443,6 +443,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String sid = this.securityid.getText().toString();
                     if(sid.isEmpty()){
                         securityid.setText(result.getContents().toString());
+                        emptyTrolly.requestFocus();
                     }
                     else{
                         truckNumber.setText(result.getContents().toString());

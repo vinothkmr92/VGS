@@ -37,6 +37,9 @@
             android:layout_height="wrap_content"
             android:inputType="text"
             android:textSize="13dp"
+            android:focusable="true"
+            android:nextFocusDown="@id/emptyTrollys"
+            android:focusableInTouchMode="true"
             android:id="@+id/securityID"/>
         <TextView
             android:layout_width="wrap_content"
