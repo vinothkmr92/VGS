@@ -468,6 +468,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 JSONObject res = new JSONObject(response);
                 String paymentstatus = res.getString("STATUS");
                 paymentStatusTextView.setText(paymentstatus);
+                paymentStatusTextView.setVisibility(View.VISIBLE);
+                paymentStatusImageView.setVisibility(View.VISIBLE);
                 if(paymentstatus.equalsIgnoreCase("TXN_SUCCESS")){
                    paymentStatusImageView.setImageResource(R.drawable.success);
                    paymentStatusTextView.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green));
