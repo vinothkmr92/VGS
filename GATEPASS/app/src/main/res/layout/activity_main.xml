@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
+   <ScrollView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content">
     <LinearLayout android:id="@+id/Liner1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -173,4 +175,5 @@
                 android:textStyle="bold|italic" />
         </RelativeLayout>
     </LinearLayout>
+   </ScrollView>
 </android.support.constraint.ConstraintLayout>

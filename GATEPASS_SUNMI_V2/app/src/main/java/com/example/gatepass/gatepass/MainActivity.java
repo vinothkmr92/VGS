@@ -496,12 +496,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             else {
                 try {
-                    //  truckNumber.setText(result.getContents().toString());
                     String req = "";
-                    //String trNumber = truckNumber.getText().toString();
-                    //String othr = other.getText().toString();
-                    //String empTrolly = emptyTrolly.getText().toString();
-                    //String empBin = emptyBin.getText().toString();
                     if(!bypasssap.isChecked()){
                         req = trNumber+"~"+empBin+"~"+empTrolly+"~"+othr+"~"+seid;
                         new CallWebService().execute(req);
@@ -529,7 +524,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public  static final String NAMESPACE = "http://tempuri.org/";
         public  static final   String METHOD_NAME = "SaveGatePassEntry";
         public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/SaveGatePassEntry";
-        public  static final  String URL = "http://10.54.203.152/hmindia/GATEPASS_WCF.svc";
+        public  static final  String URL = "http://10.54.203.155:1001/GATEPASS_WCF.svc";
         // public  static final  String URL = "http://192.168.0.3//GATEPASS_WCF.svc";
         public  int Timeout = 30000;
         String response;
@@ -730,96 +725,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-          switch (view.getId()){
-              case R.id.printBtn:
-                  this.PrintPass();
-                  break;
-              case R.id.ScanBtn:
-                  this.ScanQRCode(view);
-                  break;
+        switch (view.getId()) {
+            case R.id.printBtn:
+                this.PrintPass();
+                break;
+            case R.id.ScanBtn:
+                this.ScanQRCode(view);
+                break;
 
-          }
-    }
-    class Login extends AsyncTask<String, Void, String> {
-
-        //  ArrayList hubList = new ArrayList();
-
-        @Override
-        public void onPreExecute() {
-            super.onPreExecute();
-          //  progressBar.show();
-        }
-
-        @Override
-        public void onPostExecute(String result) {
-          //  progressBar.cancel();
-            showCustomDialog(result,"Message");
-
-        }
-
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String msg = "";
-            Connection conn = null;
-            Statement st = null;
-            try {
-                //STEP 2: Register JDBC driver
-                Class.forName("net.sourceforge.jtds.jdbc.Driver").newInstance();
-
-                //STEP 3: Open a connection
-                System.out.println("Connecting to database...");
-
-                    conn = DriverManager.getConnection("jdbc:jtds:sqlserver://vgsclouddbserver.database.windows.net:1433;database=VGS_CLOUD;user=vinoth;password=1@Vinothkmr");
-
-
-
-
-                //STEP 4: Execute a query
-                System.out.println("Creating statement...");
-                st = conn.createStatement();
-                String sql;
-                sql = "SELECT * FROM USERS";
-                ResultSet rs = st.executeQuery(sql);
-
-                //STEP 5: Extract data from result set
-                boolean userFound = false;
-                while (rs.next()) {
-                    //Retrieve by column name
-                    String userName = rs.getString("USR_ID");
-                    String password_temp = rs.getString("USR_NAME");
-                }
-
-                //STEP 6: Clean-up environment
-                rs.close();
-                st.close();
-                conn.close();
-            } catch (Exception e) {
-                //Handle errors for Class.forName
-                //  showCustomDialog("Exception",e.getMessage());
-                e.printStackTrace();
-                System.out.println(e.getMessage());
-                msg = "ERROR:" + e.getMessage();
-            } finally {
-                //finally block used to close resources
-                try {
-                    if (st != null)
-                        st.close();
-                } catch (Exception se2) {
-                    // showCustomDialog("Exception",se2.getMessage());
-                    msg = "ERROR:" + se2.getMessage();
-                }// nothing we can do
-
-                try {
-                    if (conn != null)
-                        conn.close();
-                } catch (Exception se) {
-                    se.printStackTrace();
-                    msg = "ERROR:" + se.getMessage();
-                    //showCustomDialog("Exception",se.getMessage());
-                }//end finally try
-                return msg;
-            }
         }
     }
 }

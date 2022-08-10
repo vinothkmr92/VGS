@@ -75,7 +75,7 @@ public class OptionActivity extends AppCompatActivity implements View.OnClickLis
                 if(IMEI.isEmpty()){
                     showCustomPopup("Error","Permission issue to Read IMEI Details.",0);
                 }
-                new CheckIMEI().execute(IMEI);
+                //new CheckIMEI().execute(IMEI);
             }
             catch (Exception ex){
                 showCustomDialog("Exception",ex.getMessage());

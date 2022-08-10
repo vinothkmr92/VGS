@@ -462,6 +462,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ActivityRequestCode && data != null) {
+            progressBar.show();
             String merchantMessage = data.getStringExtra("nativeSdkForMerchantMessage");
             String response = data.getStringExtra("response");
             try{
@@ -478,9 +479,10 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     paymentStatusImageView.setImageResource(R.drawable.failed);
                     paymentStatusTextView.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.red));
                 }
-
+                progressBar.cancel();
             }
             catch (Exception ex){
+                progressBar.cancel();
                 showCustomDialog("Exception:",ex.getMessage());
             }
 
