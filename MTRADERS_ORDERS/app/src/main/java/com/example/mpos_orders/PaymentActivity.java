@@ -1,11 +1,13 @@
 package com.example.mpos_orders;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,12 +45,15 @@ import java.util.Random;
 public class PaymentActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView amountPayingTxtview;
+    TextView paymentStatusTextView;
+    ImageView paymentStatusImageView;
     Button payBtn;
     Dialog progressBar;
     Integer ActivityRequestCode = 2;
     public String merchantID = "mlcMRC76831209884014";
     public String merchantKey = "zT6kAm6Ca53prWYM";
     public String orderID = "";
+    public String checksum="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +61,10 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         amountPayingTxtview = (TextView) findViewById(R.id.amountpaying);
         payBtn = (Button) findViewById(R.id.payButton);
         progressBar = new Dialog(PaymentActivity.this);
+        paymentStatusTextView = (TextView)findViewById(R.id.paymentstatustxt);
+        paymentStatusImageView = (ImageView)findViewById(R.id.paymentstatus);
+        paymentStatusImageView.setVisibility(View.INVISIBLE);
+        paymentStatusTextView.setVisibility(View.INVISIBLE);
         progressBar.setContentView(R.layout.custom_progress_dialog);
         progressBar.setTitle("Loading");
         payBtn.setOnClickListener(PaymentActivity.this);
@@ -92,7 +102,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             body.put("mid", merchantID);
             body.put("websiteName", "DEFAULT");
             body.put("orderId", orderIdString);
-            body.put("callbackUrl", "");
+            //body.put("callbackUrl", "");
 
             JSONObject txnAmount = new JSONObject();
             txnAmount.put("value", txnAmountString);
@@ -177,49 +187,52 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(this, orderDetails, Toast.LENGTH_SHORT).show();
             String callBackUrl = host + "theia/paytmCallback?ORDER_ID="+orderID;
             PaytmOrder paytmOrder = new PaytmOrder(orderID, merchantID, txnToken, txnAmountString, callBackUrl);
-            TransactionManager transactionManager = new TransactionManager(paytmOrder, new PaytmPaymentTransactionCallback(){
+            TransactionManager transactionManager = new TransactionManager(paytmOrder,
+                    new PaytmPaymentTransactionCallback(){
 
-                @Override
-                public void onTransactionResponse(Bundle bundle) {
+                        @Override
+                        public void onTransactionResponse(Bundle bundle) {
+                            String sr = "sr";
+                            Toast.makeText(PaymentActivity.this, "Response (onTransactionResponse) : "+bundle.toString(), Toast.LENGTH_SHORT).show();
+                            showCustomDialog("Result",bundle.toString());
+                            new GetPaytmTransactionStatus().execute();
+                        }
 
-                    Toast.makeText(PaymentActivity.this, "Response (onTransactionResponse) : "+bundle.toString(), Toast.LENGTH_SHORT).show();
-                }
+                        @Override
+                        public void networkNotAvailable() {
 
-                @Override
-                public void networkNotAvailable() {
+                        }
 
-                }
+                        @Override
+                        public void onErrorProceed(String s) {
 
-                @Override
-                public void onErrorProceed(String s) {
+                        }
 
-                }
+                        @Override
+                        public void clientAuthenticationFailed(String s) {
 
-                @Override
-                public void clientAuthenticationFailed(String s) {
+                        }
 
-                }
+                        @Override
+                        public void someUIErrorOccurred(String s) {
 
-                @Override
-                public void someUIErrorOccurred(String s) {
+                        }
 
-                }
+                        @Override
+                        public void onErrorLoadingWebPage(int i, String s, String s1) {
 
-                @Override
-                public void onErrorLoadingWebPage(int i, String s, String s1) {
+                        }
 
-                }
+                        @Override
+                        public void onBackPressedCancelTransaction() {
 
-                @Override
-                public void onBackPressedCancelTransaction() {
+                        }
 
-                }
+                        @Override
+                        public void onTransactionCancel(String s, Bundle bundle) {
 
-                @Override
-                public void onTransactionCancel(String s, Bundle bundle) {
-
-                }
-            });
+                        }
+                    });
             transactionManager.setShowPaymentUrl(host + "theia/api/v1/showPaymentPage");
             transactionManager.startTransaction(this, ActivityRequestCode);
         }
@@ -228,6 +241,89 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
       JSONObject bodystring = GetPaytmReqBody();
       new GetPaytmChecksum().execute(bodystring.toString());
 
+    }
+    public class GetPaytmTransactionStatus extends AsyncTask<String,String,String>
+    {
+        @Override
+        protected void onPreExecute() {
+            progressBar.show();
+        }
+
+        @Override
+        protected void onPostExecute(String r) {
+            progressBar.cancel();
+            if(r.startsWith("ERROR")){
+                showCustomDialog("Exception",r);
+            }
+            else {
+                try{
+                    JSONObject result = new JSONObject(r);
+                    JSONObject resultbody = result.getJSONObject("body");
+                    JSONObject resultInfo = resultbody.getJSONObject("resultInfo");
+                    String status = resultInfo.getString("resultMsg").toString();
+                    showCustomDialog("Result",status);
+                    showCustomDialog("TransactionID",resultbody.getString("txnId").toString());
+                    showCustomDialog("paymentMode",resultbody.getString("paymentMode").toString());
+                }
+                catch (Exception ex){
+                    showCustomDialog("Error",ex.getMessage());
+                }
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String z="";
+            try{
+                JSONObject paytmParams = new JSONObject();
+                JSONObject head = new JSONObject();
+                head.put("signature", checksum);
+                JSONObject body = new JSONObject();
+                /* Find your MID in your Paytm Dashboard at https://dashboard.paytm.com/next/apikeys */
+                body.put("mid", merchantID);
+
+                /* Enter your order id which needs to be check status for */
+                body.put("orderId", orderID);
+
+                paytmParams.put("body", body);
+                paytmParams.put("head", head);
+
+                String post_data = paytmParams.toString();
+                String orderid = body.getString("orderId");
+                /* for Staging */
+                //URL url = new URL("https://securegw-stage.paytm.in/v3/order/status");
+
+                /* for Production */
+                URL url = new URL("https://securegw.paytm.in/v3/order/status");
+
+
+
+                try {
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setDoOutput(true);
+
+                    DataOutputStream requestWriter = new DataOutputStream(connection.getOutputStream());
+                    requestWriter.writeBytes(post_data);
+                    requestWriter.close();
+                    String responseData = "";
+                    InputStream is = connection.getInputStream();
+                    BufferedReader responseReader = new BufferedReader(new InputStreamReader(is));
+                    if ((responseData = responseReader.readLine()) != null) {
+                        System.out.append("Response: " + responseData);
+                        z = responseData;
+                    }
+                    responseReader.close();
+                } catch (Exception exception) {
+                    z = "ERROR:"+exception.getMessage();
+                }
+            }
+            catch (Exception ex){
+                z = "ERROR:"+ex.getMessage();
+            }
+            return z;
+        }
     }
     public class GetPaytmTransactionToken extends AsyncTask<String,String,String>
     {
@@ -244,9 +340,14 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 showCustomDialog("Exception",r);
             }
             else {
-                String txnToken = r;
                 try{
-                    ProcessPayment(txnToken);
+                    String txnToken = r;
+                    try{
+                        ProcessPayment(txnToken);
+                    }
+                    catch (Exception ex){
+                        showCustomDialog("Error",ex.getMessage());
+                    }
                 }
                 catch (Exception ex){
                     showCustomDialog("Error",ex.getMessage());
@@ -268,13 +369,12 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 paytmParams.put("head", head);
 
                 String post_data = paytmParams.toString();
-                String orderid = body.getString("orderId");
 
                 /* for Staging */
                 //URL url = new URL("https://securegw.paytm.in/theia/api/v1/initiateTransaction?mid="+midString+"&orderId="+orderIdString);
 
                 /* for Production */
-                URL url = new URL("https://securegw.paytm.in/theia/api/v1/initiateTransaction?mid="+merchantID+"&orderId="+orderid);
+                URL url = new URL("https://securegw.paytm.in/theia/api/v1/initiateTransaction?mid="+merchantID+"&orderId="+orderID);
 
                 try {
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -295,6 +395,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         JSONObject bodyr = new JSONObject(bodyjson);
                         z = bodyr.get("txnToken").toString();
                     }
+                    // System.out.append("Request: " + post_data);
                     responseReader.close();
                 } catch (Exception exception) {
                     z = "ERROR:"+exception.getMessage();
@@ -321,7 +422,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 showCustomDialog("Exception",r);
             }
             else {
-                String checksum = r;
+                checksum = r;
                 try{
                     new GetPaytmTransactionToken().execute(bodystring,checksum);
                 }
@@ -336,7 +437,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             String z="";
             try {
                 bodystring = params[0];
-                URL url = new URL("http://192.168.1.7:5221/api/Checksum?param="+bodystring+"&merchantKey="+merchantKey);
+                URL url = new URL("http://192.168.1.8:5221/api/Checksum?param="+bodystring+"&merchantKey="+merchantKey);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
@@ -361,7 +462,26 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ActivityRequestCode && data != null) {
-            Toast.makeText(this, data.getStringExtra("nativeSdkForMerchantMessage") + data.getStringExtra("response"), Toast.LENGTH_SHORT).show();
+            String merchantMessage = data.getStringExtra("nativeSdkForMerchantMessage");
+            String response = data.getStringExtra("response");
+            try{
+                JSONObject res = new JSONObject(response);
+                String paymentstatus = res.getString("STATUS");
+                paymentStatusTextView.setText(paymentstatus);
+                if(paymentstatus.equalsIgnoreCase("TXN_SUCCESS")){
+                   paymentStatusImageView.setImageResource(R.drawable.success);
+                   paymentStatusTextView.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.green));
+                }
+                else{
+                    paymentStatusImageView.setImageResource(R.drawable.failed);
+                    paymentStatusTextView.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.red));
+                }
+
+            }
+            catch (Exception ex){
+                showCustomDialog("Exception:",ex.getMessage());
+            }
+
         }
     }
     public void showCustomDialog(String title,String Message) {
