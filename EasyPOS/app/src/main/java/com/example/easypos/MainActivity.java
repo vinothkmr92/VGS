@@ -202,14 +202,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressBar.show();
         printHeaderText(companyname,1);
         printAddress();
-        String head = "SNO        PRICE          QTY          AMOUNT";
+        String head = "SNO          PRICE      QTY               AMOUNT";
         printTextHeaderSno(head);
+
         for(int i=0;i<itemsList.size();i++){
             Items item = itemsList.get(i);
-            String sno = org.apache.commons.lang3.StringUtils.rightPad(item.getSno(),12," ");
-            String price = org.apache.commons.lang3.StringUtils.rightPad(item.getPrice(),15," ");
-            String qty = org.apache.commons.lang3.StringUtils.rightPad(item.getQty(),15," ");
-            String amt = org.apache.commons.lang3.StringUtils.rightPad(item.getAmt(),5," ");
+            String sno = org.apache.commons.lang3.StringUtils.rightPad(item.getSno(),5," ");
+            String price = org.apache.commons.lang3.StringUtils.leftPad(item.getPrice(),12," ");
+            String qty = org.apache.commons.lang3.StringUtils.leftPad(item.getQty(),10," ");
+            String amt = org.apache.commons.lang3.StringUtils.leftPad(item.getAmt(),21," ");
             String line = sno+price+qty+amt;
             printText(line,false);
         }
