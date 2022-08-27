@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activation">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints">
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="10dp"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:padding="20px"
+                android:text="Activation Code"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:padding="20px"
+                android:layout_width="match_parent"
+                android:id="@+id/activationcode"
+                android:inputType="textPassword"
+                android:layout_columnSpan="3"></EditText>
+            <Button android:layout_column="2"
+                android:text="Activate"
+                android:id="@+id/btnActivate"></Button>
+        </GridLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

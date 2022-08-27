@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/AndroidProjects/VGS/EasyPOS/app/src/main/res/layout/activity_main.xml" value="0.358695652173913" />
+        <entry key="..\:/AndroidProjects/VGS/EasyPOS/app/src/main/res/layout/activity_activation.xml" value="0.22008547008547008" />
+        <entry key="..\:/AndroidProjects/VGS/EasyPOS/app/src/main/res/layout/activity_main.xml" value="0.11894273127753303" />
+        <entry key="..\:/AndroidProjects/VGS/EasyPOS/app/src/main/res/layout/activity_settings.xml" value="0.15806159420289856" />
         <entry key="..\:/AndroidProjects/VGS/EasyPOS/app/src/main/res/layout/custom_dialog.xml" value="0.18541666666666667" />
+        <entry key="..\:/AndroidProjects/VGS/EasyPOS/app/src/main/res/layout/custom_progress_dialog.xml" value="0.15806159420289856" />
+        <entry key="..\:/AndroidProjects/VGS/EasyPOS/app/src/main/res/menu/main.xml" value="0.23162393162393163" />
       </map>
     </option>
   </component>
