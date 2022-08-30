@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.os.IBinder;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -35,7 +36,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button printButton;
+    ImageButton printButton;
     public static boolean ISCONNECT;
     public static String DISCONNECT="com.posconsend.net.disconnetct";
     private MySharedPreferences sharedpreferences;
@@ -75,6 +76,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String companyname;
     String address;
     String printeripaddress;
+    private Button btn1;
+    private Button btn2;
+    private Button btn3;
+    private Button btn4;
+    private Button btn5;
+    private Button btn6;
+    private Button btn7;
+    private Button btn8;
+    private Button btn9;
+    private Button btn0;
+    private Button btnDot;
+    private Button btnClear;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,8 +95,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressBar = new Dialog(MainActivity.this);
         progressBar.setContentView(R.layout.custom_progress_dialog);
         progressBar.setTitle("Loading...");
-        printButton = (Button) findViewById(R.id.printbtn);
+        printButton = (ImageButton)findViewById(R.id.printbtn);
         printButton.setOnClickListener(this);
+        printButton.setBackgroundResource(R.drawable.close);
+        printButton.setEnabled(false);
         Intent intent=new Intent(this, PosprinterService.class);
         progressBar.show();
         gridLayout = (GridLayout) findViewById(R.id.gridData);
@@ -99,55 +114,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             GoActivation();
         }
         boolean isconnected = bindService(intent, conn, BIND_AUTO_CREATE);
-        priceEditText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)){
-                    qtyEditText.requestFocus();
-                    return true;
-                }
-                return false;
-            }
-        });
-        qtyEditText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER))
-                {
-                    String qtystr = qtyEditText.getText().toString();
-                    String pricestr = priceEditText.getText().toString();
-                    if(qtystr.isEmpty()){
-                        priceEditText.setFocusable(true);
-                        priceEditText.requestFocus();
-                    }
-                    else{
-                        if(pricestr.isEmpty()){
-                            showSnackbar("Please Enter Price Value");
-                        }
-                        else{
-                            snonumber++;
-                            Items item =new Items();
-                            item.setPrice(priceEditText.getText().toString());
-                            item.setQty(qtyEditText.getText().toString());
-                            item.setSno(String.valueOf(snonumber));
-                            double priced = Double.parseDouble(item.getPrice());
-                            double qtyd = Double.parseDouble(item.getQty());
-                            double amt = priced*qtyd;
-                            String amtstr = String.format("%.0f", amt);
-                            item.setAmt(amtstr);
-                            LoadGrid(item);
-                        }
-
-                    }
-                    priceEditText.setFocusableInTouchMode(true);
-                    priceEditText.requestFocus();
-                    return true;
-                }
-                return false;
-            }
-        });
+        btn1 = (Button)findViewById(R.id._1);
+        btn2= (Button)findViewById(R.id._2);
+        btn3= (Button)findViewById(R.id._3);
+        btn4= (Button)findViewById(R.id._4);
+        btn5= (Button)findViewById(R.id._5);
+        btn6= (Button)findViewById(R.id._6);
+        btn7= (Button)findViewById(R.id._7);
+        btn8= (Button)findViewById(R.id._8);
+        btn9= (Button)findViewById(R.id._9);
+        btn0= (Button)findViewById(R.id._0);
+        btnDot= (Button)findViewById(R.id._dot);
+        btnClear = (Button)findViewById(R.id._clr);
+        btn1.setOnClickListener(this);
+        btn2.setOnClickListener(this);
+        btn3.setOnClickListener(this);
+        btn4.setOnClickListener(this);
+        btn5.setOnClickListener(this);
+        btn6.setOnClickListener(this);
+        btn7.setOnClickListener(this);
+        btn8.setOnClickListener(this);
+        btn9.setOnClickListener(this);
+        btn0.setOnClickListener(this);
+        btnDot.setOnClickListener(this);
+        btnClear.setOnClickListener(this);
+        qtyEditText.requestFocus();
 
     }
 
@@ -423,11 +414,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     ISCONNECT=true;
                     showSnackbar("Printer connection successful");
+                    printButton.setEnabled(true);
+                    printButton.setBackgroundResource(R.drawable.print);
                     //in this ,you could call acceptdatafromprinter(),when disconnect ,will execute onfailed();
                     binder.acceptdatafromprinter(new UiExecute() {
                         @Override
                         public void onsucess() {
-
+                            printButton.setEnabled(true);
+                            printButton.setBackgroundResource(R.drawable.print);
                         }
 
                         @Override
@@ -437,6 +431,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             Intent intent=new Intent();
                             intent.setAction(DISCONNECT);
                             sendBroadcast(intent);
+                            printButton.setEnabled(false);
+                            printButton.setBackgroundResource(R.drawable.print);
                         }
                     });
                 }
@@ -456,13 +452,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.printbtn:
                 PrintWifi();
                 break;
+            case R.id._clr:
+                if(priceEditText.isFocused()){
+                    String sr = priceEditText.getText().toString();
+                    if(sr.length()>0){
+                        sr = sr.substring(0,sr.length()-1);
+                        priceEditText.setText(sr);
+                    }
+                }
+                else if(qtyEditText.isFocused()){
+                    String sr = qtyEditText.getText().toString();
+                    if(sr.length()>0){
+                        sr = sr.substring(0,sr.length()-1);
+                        qtyEditText.setText(sr);
+                    }
+                }
+                break;
+            case  R.id._dot:
+                if(qtyEditText.isFocused()){
+                    priceEditText.requestFocus();
+                    break;
+                }
+                if(priceEditText.isFocused()){
+                    if(qtyEditText.getText().toString().isEmpty()  ){
+                        showCustomDialog("Warning","Enter Valid Quantity");
+                    }
+                    else {
+                        progressBar.show();
+                        snonumber++;
+                        Items item =new Items();
+                        item.setPrice(priceEditText.getText().toString());
+                        item.setQty(qtyEditText.getText().toString());
+                        item.setSno(String.valueOf(snonumber));
+                        double priced = Double.parseDouble(item.getPrice());
+                        double qtyd = Double.parseDouble(item.getQty());
+                        double amt = priced*qtyd;
+                        String amtstr = String.format("%.0f", amt);
+                        item.setAmt(amtstr);
+                        LoadGrid(item);
+                        progressBar.hide();
+                        qtyEditText.requestFocus();
+                    }
+                }
+                break;
+            default:
+                String addstr = getResources().getResourceEntryName(view.getId());
+                addstr =  addstr.replace("_","");
+                if(priceEditText.isFocused()){
+                    String sr = priceEditText.getText().toString();
+                    sr+=addstr;
+                    priceEditText.setText(sr);
+                }
+                else if(qtyEditText.isFocused()){
+                    String sr = qtyEditText.getText().toString();
+                    sr+=addstr;
+                    qtyEditText.setText(sr);
+                }
+                break;
         }
     }
     private void LoadGrid(Items item){
         dynamicView = new DynamicView(this.getApplicationContext());
         gridLayout.addView(dynamicView.snoTextView(getApplicationContext(),item.getSno()));
-        gridLayout.addView(dynamicView.priceTextView(getApplicationContext(),item.getPrice()));
         gridLayout.addView(dynamicView.qtyTextView(getApplicationContext(),item.getQty()));
+        gridLayout.addView(dynamicView.priceTextView(getApplicationContext(),item.getPrice()));
         gridLayout.addView(dynamicView.amtTextView(getApplicationContext(),item.getAmt()));
         itemsList.add(item);
         double totalAmt = 0;
