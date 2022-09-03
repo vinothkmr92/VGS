@@ -31,8 +31,11 @@ import net.posprinter.posprinterface.UiExecute;
 import net.posprinter.service.PosprinterService;
 import net.posprinter.utils.DataForSendToPrinterPos80;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -53,7 +56,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             //Bind successfully
             binder= (IMyBinder) iBinder;
-            connetNet();
+            while (!ISCONNECT){
+                connetNet();
+            }
             Log.e("binder","connected");
             progressBar.cancel();
         }
@@ -88,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn0;
     private Button btnDot;
     private Button btnClear;
+    private AlertDialog alert;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +145,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnDot.setOnClickListener(this);
         btnClear.setOnClickListener(this);
         qtyEditText.requestFocus();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirm");
+        builder.setMessage("Click Yes to Print Second Copy ?");
 
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing but close the dialog
+                PrintWifi();
+                ClearDetails();
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                ClearDetails();
+                dialog.dismiss();
+            }
+        });
+        alert = builder.create();
     }
 
     public  void  GoActivation(){
@@ -191,29 +219,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void PrintWifi(){
         progressBar.show();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
+        Date date = new Date();
         printHeaderText(companyname,1);
         printAddress();
-        String head = "SNO          PRICE      QTY               AMOUNT";
+        printText(" ",false);
+        String dateStr = format.format(date);
+        printText("Date: "+dateStr,false);
+        printText(" ",false);
+        String head = "SNO          QTY      PRICE               AMOUNT";
         printTextHeaderSno(head);
-
+        double totalQty = 0d;
         for(int i=0;i<itemsList.size();i++){
             Items item = itemsList.get(i);
             String sno = org.apache.commons.lang3.StringUtils.rightPad(item.getSno(),5," ");
-            String price = org.apache.commons.lang3.StringUtils.leftPad(item.getPrice(),12," ");
-            String qty = org.apache.commons.lang3.StringUtils.leftPad(item.getQty(),10," ");
+            String price = org.apache.commons.lang3.StringUtils.leftPad(item.getPrice(),10," ");
+            String qty = org.apache.commons.lang3.StringUtils.leftPad(item.getQty(),12," ");
             String amt = org.apache.commons.lang3.StringUtils.leftPad(item.getAmt(),21," ");
-            String line = sno+price+qty+amt;
+            String line = sno+qty+price+amt;
             printText(line,false);
+            printText(" ",false);
+            double q = Double.parseDouble(item.getQty());
+            totalQty+=q;
         }
+        String totalqty =String.valueOf(totalQty);
+        String txttotalqty = "TOTAL QTY: "+totalqty;
         String totalamt = totalAmtTextView.getText().toString();
         String txttotal = "TOTAL: "+totalamt+"/-";
         printText(" ",false);
         printHeaderText(txttotal,2);
-        printText(" ",false);
+        printHeaderText(txttotalqty,0);
+        printText(" ",true);
+    }
+    private  void ClearDetails(){
         gridLayout.removeViews(4,itemsList.size()*4);
         itemsList.clear();
         totalAmtTextView.setText("000");
-        printText(" ",true);
         progressBar.cancel();
         snonumber=0;
     }
@@ -247,7 +288,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             byte[] data1= StringUtils.strTobytes(str);
                             list.add(data1);
                             //should add the command of print and feed line,because print only when one line is complete, not one line, no print
-                            list.add(DataForSendToPrinterPos80.printAndFeedLine());
+                            //list.add(DataForSendToPrinterPos80.printAndFeedLine());
+                            list.add(DataForSendToPrinterPos80.printAndFeed(1));
                             //cut pager
                             if(cutPaper){
                                 list.add(DataForSendToPrinterPos80.selectCutPagerModerAndCutPager(66,1));
@@ -411,7 +453,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             binder.connectNetPort(ipAddress,9100, new UiExecute() {
                 @Override
                 public void onsucess() {
-
                     ISCONNECT=true;
                     showSnackbar("Printer connection successful");
                     printButton.setEnabled(true);
@@ -432,7 +473,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             intent.setAction(DISCONNECT);
                             sendBroadcast(intent);
                             printButton.setEnabled(false);
-                            printButton.setBackgroundResource(R.drawable.print);
+                            printButton.setBackgroundResource(R.drawable.close);
                         }
                     });
                 }
@@ -441,9 +482,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //Execution of the connection in the UI thread after the failure of the connection
                     ISCONNECT=false;
                     showSnackbar("Printer connection failed");
+                    printButton.setEnabled(false);
+                    printButton.setBackgroundResource(R.drawable.close);
                 }
             });
-
         }
     }
     @Override
@@ -451,6 +493,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()){
             case R.id.printbtn:
                 PrintWifi();
+                alert.show();
                 break;
             case R.id._clr:
                 if(priceEditText.isFocused()){
