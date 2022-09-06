@@ -4,10 +4,12 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -22,15 +24,21 @@ import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.sewoo.jpos.command.ESCPOS;
+import com.sewoo.jpos.command.ESCPOSConst;
+import com.sewoo.jpos.printer.ESCPOSPrinter;
+import com.sewoo.jpos.printer.LKPrint;
+import com.sewoo.port.android.WiFiPort;
+import com.sewoo.port.android.WiFiPortConnection;
+import com.sewoo.request.android.RequestHandler;
 
-import net.posprinter.posprinterface.IMyBinder;
-import net.posprinter.posprinterface.ProcessData;
-import net.posprinter.posprinterface.UiExecute;
-import net.posprinter.service.PosprinterService;
-import net.posprinter.utils.DataForSendToPrinterPos80;
-
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,27 +56,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ADDRESS= "ADDRESS";
     public static final String PRINTERIP = "PRINTERIP";
     public static final String ISACTIVATED = "ISACTIVATED";
-    //IMyBinder interface，All methods that can be invoked to connect and send data are encapsulated within this interface
-    public static IMyBinder binder;
-    //bindService connection
-    ServiceConnection conn= new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            //Bind successfully
-            binder= (IMyBinder) iBinder;
-            while (!ISCONNECT){
-                connetNet();
-            }
-            Log.e("binder","connected");
-            progressBar.cancel();
-        }
+    private WiFiPort wifiPort;
 
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            Log.e("disbinder","disconnected");
-            progressBar.cancel();
-        }
-    };
     CoordinatorLayout container;
     GridLayout gridLayout;
     DynamicView dynamicView;
@@ -94,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnDot;
     private Button btnClear;
     private AlertDialog alert;
+    private Thread hThread;
+    private boolean showConfirmBox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,10 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressBar.setTitle("Loading...");
         printButton = (ImageButton)findViewById(R.id.printbtn);
         printButton.setOnClickListener(this);
-        printButton.setBackgroundResource(R.drawable.close);
-        printButton.setEnabled(false);
-        Intent intent=new Intent(this, PosprinterService.class);
-        progressBar.show();
+        printButton.setBackgroundResource(R.drawable.print);
+        printButton.setEnabled(true);
+        wifiPort = WiFiPort.getInstance();
         gridLayout = (GridLayout) findViewById(R.id.gridData);
         priceEditText = (EditText) findViewById(R.id.price);
         totalAmtTextView = (TextView) findViewById(R.id.totalAmt);
@@ -119,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!isactivated.equals("true")){
             GoActivation();
         }
-        boolean isconnected = bindService(intent, conn, BIND_AUTO_CREATE);
         btn1 = (Button)findViewById(R.id._1);
         btn2= (Button)findViewById(R.id._2);
         btn3= (Button)findViewById(R.id._3);
@@ -153,9 +142,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             public void onClick(DialogInterface dialog, int which) {
                 // Do nothing but close the dialog
-                PrintWifi();
-                ClearDetails();
-                dialog.dismiss();
+                if(!wifiPort.isConnected()){
+                    try{
+                        new connectPrinter().execute(printeripaddress);
+                    }
+                    catch (Exception ex){
+                        showCustomDialog("Exception",ex.getMessage().toString());
+                    }
+                }
+                showConfirmBox = false;
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -168,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         alert = builder.create();
+        showConfirmBox = true;
     }
 
     public  void  GoActivation(){
@@ -217,283 +213,132 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog b = dialogBuilder.create();
         b.show();
     }
-    public void PrintWifi(){
-        progressBar.show();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
-        Date date = new Date();
-        printHeaderText(companyname,1);
-        printAddress();
-        printText(" ",false);
-        String dateStr = format.format(date);
-        printText("Date: "+dateStr,false);
-        printText(" ",false);
-        String head = "SNO          QTY      PRICE               AMOUNT";
-        printTextHeaderSno(head);
-        double totalQty = 0d;
-        for(int i=0;i<itemsList.size();i++){
-            Items item = itemsList.get(i);
-            String sno = org.apache.commons.lang3.StringUtils.rightPad(item.getSno(),5," ");
-            String price = org.apache.commons.lang3.StringUtils.leftPad(item.getPrice(),10," ");
-            String qty = org.apache.commons.lang3.StringUtils.leftPad(item.getQty(),12," ");
-            String amt = org.apache.commons.lang3.StringUtils.leftPad(item.getAmt(),21," ");
-            String line = sno+qty+price+amt;
-            printText(line,false);
-            printText(" ",false);
-            double q = Double.parseDouble(item.getQty());
-            totalQty+=q;
+    public int PrintData() throws InterruptedException
+    {
+        try
+        {
+            posPtr.setAsync(true);
+            rtn = posPtr.printerSts();
+
+            // Do not check the paper near empty.
+            // if( (rtn != 0) && (rtn != ESCPOSConst.STS_PAPERNEAREMPTY)) return rtn;
+            // check the paper near empty.
+            if( rtn != 0 )  return rtn;
         }
-        String totalqty =String.valueOf(totalQty);
-        String txttotalqty = "TOTAL QTY: "+totalqty;
-        String totalamt = totalAmtTextView.getText().toString();
-        String txttotal = "TOTAL: "+totalamt+"/-";
-        printText(" ",false);
-        printHeaderText(txttotal,2);
-        printHeaderText(txttotalqty,0);
-        printText(" ",true);
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            return rtn;
+        }
+
+        try
+        {
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
+            Date date = new Date();
+            String dateStr = format.format(date);
+            posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+companyname+"\r\n");
+            //posPtr.printNormal(ESC+"|rATEL (123)-456-7890\n\n\n");
+            posPtr.printNormal(ESC+"|cA"+address+"\n\n");
+            posPtr.printNormal(ESC+"|lADate: "+dateStr+"\n\n");
+            posPtr.printNormal("SNO          QTY      PRICE               AMOUNT\n");
+            double totalQty = 0d;
+            for(int i=0;i<itemsList.size();i++){
+                Items item = itemsList.get(i);
+                String sno = org.apache.commons.lang3.StringUtils.rightPad(item.getSno(),5," ");
+                String price = org.apache.commons.lang3.StringUtils.leftPad(item.getPrice(),10," ");
+                String qty = org.apache.commons.lang3.StringUtils.leftPad(item.getQty(),12," ");
+                String amt = org.apache.commons.lang3.StringUtils.leftPad(item.getAmt(),21," ");
+                String line = sno+qty+price+amt+"\n";
+                posPtr.printNormal(line);
+                double q = Double.parseDouble(item.getQty());
+                totalQty+=q;
+            }
+            String totalamt = totalAmtTextView.getText().toString();
+            String txttotal = "TOTAL: "+totalamt+"/-";
+            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+            posPtr.lineFeed(1);
+            String totalqty =String.valueOf(totalQty);
+            String txttotalqty = "TOTAL QTY: "+totalqty;
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+txttotalqty+"\n\n");
+            posPtr.lineFeed(4);
+            posPtr.cutPaper();
+            wifiPort.disconnect();
+            if(showConfirmBox){
+                alert.show();
+            }
+            else{
+                ClearDetails();
+                alert.dismiss();
+            }
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
+
     private  void ClearDetails(){
         gridLayout.removeViews(4,itemsList.size()*4);
         itemsList.clear();
         totalAmtTextView.setText("000");
-        progressBar.cancel();
         snonumber=0;
-    }
-
-    private void printText(String texttoPrint,boolean cutPaper){
-
-        MainActivity.binder.writeDataByYouself(
-                new UiExecute() {
-                    @Override
-                    public void onsucess() {
-
-                    }
-
-                    @Override
-                    public void onfailed() {
-
-                    }
-                }, new ProcessData() {
-                    @Override
-                    public List<byte[]> processDataBeforeSend() {
-
-                        List<byte[]> list=new ArrayList<byte[]>();
-                        //creat a text ,and make it to byte[],
-                        String str=texttoPrint;
-                        if (str.equals(null)||str.equals("")){
-                           // showSnackbar("NO Text to Print");
-                        }else {
-                            //initialize the printer
-//                            list.add( DataForSendToPrinterPos58.initializePrinter());
-                            list.add(DataForSendToPrinterPos80.initializePrinter());
-                            byte[] data1= StringUtils.strTobytes(str);
-                            list.add(data1);
-                            //should add the command of print and feed line,because print only when one line is complete, not one line, no print
-                            //list.add(DataForSendToPrinterPos80.printAndFeedLine());
-                            list.add(DataForSendToPrinterPos80.printAndFeed(1));
-                            //cut pager
-                            if(cutPaper){
-                                list.add(DataForSendToPrinterPos80.selectCutPagerModerAndCutPager(66,1));
-                            }
-                            return list;
-                        }
-                        return null;
-                    }
-                });
-
-    }
-    private void printTextHeaderSno(String texttoPrint){
-
-        MainActivity.binder.writeDataByYouself(
-                new UiExecute() {
-                    @Override
-                    public void onsucess() {
-
-                    }
-
-                    @Override
-                    public void onfailed() {
-
-                    }
-                }, new ProcessData() {
-                    @Override
-                    public List<byte[]> processDataBeforeSend() {
-
-                        List<byte[]> list=new ArrayList<byte[]>();
-                        //creat a text ,and make it to byte[],
-                        String str=texttoPrint;
-                        if (str.equals(null)||str.equals("")){
-                            showSnackbar("NO Text to Print");
-                        }else {
-                            //initialize the printer
-//                            list.add( DataForSendToPrinterPos58.initializePrinter());
-                            list.add(DataForSendToPrinterPos80.initializePrinter());
-                            //list.add(DataForSendToPrinterPos80.selectCharacterSize());
-                            //list.add(DataForSendToPrinterPos80.selectFont(1));
-                            byte[] data1= StringUtils.strTobytes(str);
-                            list.add(data1);
-                            //should add the command of print and feed line,because print only when one line is complete, not one line, no print
-                            list.add(DataForSendToPrinterPos80.printAndFeedLine());
-                            return list;
-                        }
-                        return null;
-                    }
-                });
-
-    }
-    private void printHeaderText(String txttoprint,int allignment){
-
-        MainActivity.binder.writeDataByYouself(
-                new UiExecute() {
-                    @Override
-                    public void onsucess() {
-
-                    }
-
-                    @Override
-                    public void onfailed() {
-
-                    }
-                }, new ProcessData() {
-                    @Override
-                    public List<byte[]> processDataBeforeSend() {
-
-                        List<byte[]> list=new ArrayList<byte[]>();
-                        //creat a text ,and make it to byte[],
-                        String str=txttoprint;
-                        if (str.equals(null)||str.equals("")){
-                            showSnackbar("NO Text to Print");
-                        }else {
-                            //initialize the printer
-//                            list.add( DataForSendToPrinterPos58.initializePrinter());
-                            list.add(DataForSendToPrinterPos80.initializePrinter());
-                            list.add(DataForSendToPrinterPos80.selectCharacterSize(9));
-                            list.add(DataForSendToPrinterPos80.selectAlignment(allignment));
-                            //list.add(DataForSendToPrinterPos80.selectFont(1));
-                            byte[] data1= StringUtils.strTobytes(str);
-                            list.add(data1);
-                            //should add the command of print and feed line,because print only when one line is complete, not one line, no print
-                            list.add(DataForSendToPrinterPos80.printAndFeedLine());
-                            list.add(DataForSendToPrinterPos80.printAndFeedLine());
-
-                            return list;
-                        }
-                        return null;
-                    }
-                });
-
-    }
-    private void printAddress(){
-
-        MainActivity.binder.writeDataByYouself(
-                new UiExecute() {
-                    @Override
-                    public void onsucess() {
-
-                    }
-
-                    @Override
-                    public void onfailed() {
-
-                    }
-                }, new ProcessData() {
-                    @Override
-                    public List<byte[]> processDataBeforeSend() {
-
-                        List<byte[]> list=new ArrayList<byte[]>();
-                        //creat a text ,and make it to byte[],
-                        String str=address;
-                        if (str.equals(null)||str.equals("")){
-                            showSnackbar("NO Text to Print");
-                        }else {
-                            //initialize the printer
-//                            list.add( DataForSendToPrinterPos58.initializePrinter());
-                            list.add(DataForSendToPrinterPos80.initializePrinter());
-                            list.add(DataForSendToPrinterPos80.selectCharacterSize(9));
-                            list.add(DataForSendToPrinterPos80.selectAlignment(1));
-                            //list.add(DataForSendToPrinterPos80.selectFont(1));
-                            byte[] data1= StringUtils.strTobytes(str);
-                            list.add(data1);
-                            //should add the command of print and feed line,because print only when one line is complete, not one line, no print
-                            list.add(DataForSendToPrinterPos80.printAndFeedLine());
-                            list.add(DataForSendToPrinterPos80.printAndFeedLine());
-
-                            return list;
-                        }
-                        return null;
-                    }
-                });
-
-    }
-    private void showSnackbar(String showstring){
-        showCustomDialog("Msg",showstring);
     }
     @Override
     protected void onDestroy() {
+        try
+        {
+            if(wifiPort != null)
+                wifiPort.disconnect();
+        }
+        catch (IOException e)
+        {
+            Log.e("ERR", e.getMessage(), e);
+        }
+        catch (InterruptedException e)
+        {
+            Log.e("ERR", e.getMessage(), e);
+        }
+        if((hThread != null) && (hThread.isAlive()))
+        {
+            hThread.interrupt();
+            hThread = null;
+        }
         super.onDestroy();
-        binder.disconnectCurrentPort(new UiExecute() {
-            @Override
-            public void onsucess() {
-
-            }
-
-            @Override
-            public void onfailed() {
-
-            }
-        });
-        unbindService(conn);
     }
-    private void connetNet(){
-        String ipAddress=printeripaddress;
-        if (ipAddress.equals(null)||ipAddress.equals("")){
-               showSnackbar("Invalid Printer IP.");
 
-        }else {
-            //ipAddress :ip address; portal:9100
-            binder.connectNetPort(ipAddress,9100, new UiExecute() {
-                @Override
-                public void onsucess() {
-                    ISCONNECT=true;
-                    showSnackbar("Printer connection successful");
-                    printButton.setEnabled(true);
-                    printButton.setBackgroundResource(R.drawable.print);
-                    //in this ,you could call acceptdatafromprinter(),when disconnect ,will execute onfailed();
-                    binder.acceptdatafromprinter(new UiExecute() {
-                        @Override
-                        public void onsucess() {
-                            printButton.setEnabled(true);
-                            printButton.setBackgroundResource(R.drawable.print);
-                        }
+    private void PrintWifi(){
+        try
+        {
+            if(!wifiPort.isConnected()){
+                try{
+                    new connectPrinter().execute(printeripaddress);
+                    //Thread.sleep(4000);
+                }
+                catch (Exception ex){
+                    showCustomDialog("Exception",ex.getMessage().toString());
+                }
+            }
 
-                        @Override
-                        public void onfailed() {
-                            ISCONNECT=false;
-                            showSnackbar("Printer Connection Failed");
-                            Intent intent=new Intent();
-                            intent.setAction(DISCONNECT);
-                            sendBroadcast(intent);
-                            printButton.setEnabled(false);
-                            printButton.setBackgroundResource(R.drawable.close);
-                        }
-                    });
-                }
-                @Override
-                public void onfailed() {
-                    //Execution of the connection in the UI thread after the failure of the connection
-                    ISCONNECT=false;
-                    showSnackbar("Printer connection failed");
-                    printButton.setEnabled(false);
-                    printButton.setBackgroundResource(R.drawable.close);
-                }
-            });
+        }
+        catch (Exception ex){
+            showCustomDialog("Exception",ex.getMessage().toString());
+        }
+        if(progressBar.isShowing()){
+            progressBar.cancel();
         }
     }
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.printbtn:
+                progressBar.show();
                 PrintWifi();
-                alert.show();
+                if(progressBar.isShowing()){
+                    progressBar.cancel();
+                }
+                showConfirmBox =true;
                 break;
             case R.id._clr:
                 if(priceEditText.isFocused()){
@@ -570,5 +415,192 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         totalAmtTextView.setText(totalstr);
         priceEditText.setText("");
         qtyEditText.setText("");
+    }
+
+    private void wifiConn(String ipAddr) throws IOException
+    {
+        new connTask().execute(ipAddr);
+    }
+    // WiFi Disconnection method.
+    private void wifiDisConn() throws IOException, InterruptedException
+    {
+        wifiPort.disconnect();
+        hThread.interrupt();
+        Toast toast = Toast.makeText(MainActivity.this, "Printer Disconnected", Toast.LENGTH_SHORT);
+        toast.show();
+    }
+    class connectPrinter extends AsyncTask<String, Void, Integer>
+    {
+        private final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+        private WiFiPortConnection connection;
+        @Override
+        protected void onPreExecute()
+        {
+            dialog.setTitle("Print Status");
+            dialog.setMessage("Printing.....");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(String... params)
+        {
+            Integer retVal = null;
+            try
+            {
+                // ip
+                wifiPort.connect(params[0]);
+                //connection = wifiPort.open(params[0]);
+
+                //lastConnAddr = params[0];
+                retVal = new Integer(0);
+            }
+            catch (IOException e)
+            {
+                Log.e("Wificonnection:",e.getMessage(),e);
+                retVal = new Integer(-1);
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result)
+        {
+            if(result.intValue() == 0)
+            {
+                RequestHandler rh = new RequestHandler();
+                hThread = new Thread(rh);
+                hThread.start();
+                if(dialog.isShowing())
+                    dialog.dismiss();
+                posPtr = new ESCPOSPrinter();
+                posPtr.setAsync(true);
+                try{
+                    PrintData();
+                }
+                catch (Exception ex){
+                    showCustomDialog("Exception",ex.getMessage().toString());
+                }
+            }
+            else{
+                if(dialog.isShowing())
+                    dialog.dismiss();
+            }
+
+            super.onPostExecute(result);
+        }
+    }
+    // WiFi Connection Task.
+    class connTask extends AsyncTask<String, Void, Integer>
+    {
+        private final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+        private WiFiPortConnection connection;
+        @Override
+        protected void onPreExecute()
+        {
+            dialog.setTitle("Wifi Connection");
+            dialog.setMessage("Connecting...");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(String... params)
+        {
+            Integer retVal = null;
+            try
+            {
+                // ip
+                wifiPort.connect(params[0]);
+                //connection = wifiPort.open(params[0]);
+
+                //lastConnAddr = params[0];
+                retVal = new Integer(0);
+            }
+            catch (IOException e)
+            {
+                Log.e("Wificonnection:",e.getMessage(),e);
+                retVal = new Integer(-1);
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result)
+        {
+            if(result.intValue() == 0)
+            {
+                RequestHandler rh = new RequestHandler();
+                hThread = new Thread(rh);
+                hThread.start();
+                if(dialog.isShowing())
+                    dialog.dismiss();
+                showCustomDialog("Wifi","Printer Connected");
+                printButton.setEnabled(true);
+                printButton.setBackgroundResource(R.drawable.print);
+                //posPtr = new ESCPOSPrinter(connection);
+                posPtr.setAsync(true);
+            }
+            else
+            {
+                showCustomDialog("Wifi","Printer Connection Failed");
+                if(dialog.isShowing())
+                    dialog.dismiss();
+            }
+
+            super.onPostExecute(result);
+        }
+    }
+
+    public ESCPOSPrinter posPtr;
+    // 0x1B
+    private final char ESC = ESCPOS.ESC;
+
+    public  MainActivity() {posPtr=new ESCPOSPrinter();}
+    //	private final String TAG = "PrinterStsChecker";
+    private int rtn;
+
+    public int sample1() throws InterruptedException
+    {
+        try
+        {
+            rtn = posPtr.printerSts();
+            // Do not check the paper near empty.
+            // if( (rtn != 0) && (rtn != ESCPOSConst.STS_PAPERNEAREMPTY)) return rtn;
+            // check the paper near empty.
+            if( rtn != 0 )  return rtn;
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            return rtn;
+        }
+
+        try
+        {
+            posPtr.printNormal(ESC+"|cA"+ESC+"|2CReceipt\r\n\r\n\r\n");
+            posPtr.printNormal(ESC+"|rATEL (123)-456-7890\n\n\n");
+            posPtr.printNormal(ESC+"|cAThank you for coming to our shop!\n");
+            posPtr.printNormal(ESC+"|cADate\n\n");
+            posPtr.printNormal("Chicken                             $10.00\n");
+            posPtr.printNormal("Hamburger                           $20.00\n");
+            posPtr.printNormal("Pizza                               $30.00\n");
+            posPtr.printNormal("Lemons                              $40.00\n");
+            posPtr.printNormal("Drink                               $50.00\n");
+            posPtr.printNormal("Excluded tax                       $150.00\n");
+            posPtr.printNormal(ESC+"|uCTax(5%)                              $7.50\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|2CTotal         $157.50\n\n");
+            posPtr.printNormal("Payment                            $200.00\n");
+            posPtr.printNormal("Change                              $42.50\n\n");
+            posPtr.printBarCode("{Babc456789012", LKPrint.LK_BCS_Code128, 40, 512, LKPrint.LK_ALIGNMENT_CENTER, LKPrint.LK_HRI_TEXT_BELOW); // Print Barcode
+            posPtr.lineFeed(4);
+            posPtr.cutPaper();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 }

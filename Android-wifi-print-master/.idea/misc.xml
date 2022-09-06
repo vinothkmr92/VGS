@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidProjects/VGS/Android-wifi-print-master/res/layout/activity_print_fragment.xml" value="0.18541666666666667" />
+        <entry key="..\:/AndroidProjects/VGS/Android-wifi-print-master/res/layout/activity_wifi_list.xml" value="0.18541666666666667" />
+        <entry key="..\:/AndroidProjects/VGS/Android-wifi-print-master/res/layout/custom_wifi_list_item.xml" value="0.18541666666666667" />
+        <entry key="..\:/AndroidProjects/VGS/Android-wifi-print-master/res/layout/dialog_progressbar.xml" value="0.18541666666666667" />
+        <entry key="..\:/AndroidProjects/VGS/Android-wifi-print-master/res/layout/fragemnt_print.xml" value="0.18541666666666667" />
+        <entry key="..\:/AndroidProjects/VGS/Android-wifi-print-master/res/layout/list_item.xml" value="0.18541666666666667" />
+        <entry key="..\:/AndroidProjects/VGS/Android-wifi-print-master/res/layout/main.xml" value="0.18541666666666667" />
+      </map>
+    </option>
+  </component>
+  <component name="IdProvider" IDEtalkID="B38E2D6282A3805C4D46823C303AFD40" />
+  <component name="NullableNotNullManager">
+    <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
+    <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />
+    <option name="myNullables">
+      <value>
+        <list size="12">
+          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
+          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
+          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
+          <item index="3" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
+          <item index="4" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableDecl" />
+          <item index="5" class="java.lang.String" itemvalue="androidx.annotation.Nullable" />
+          <item index="6" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.Nullable" />
+          <item index="7" class="java.lang.String" itemvalue="com.android.annotations.Nullable" />
+          <item index="8" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNullable" />
+          <item index="9" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
+          <item index="10" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.Nullable" />
+          <item index="11" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableType" />
+        </list>
+      </value>
+    </option>
+    <option name="myNotNulls">
+      <value>
+        <list size="11">
+          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
+          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
+          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
+          <item index="3" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
+          <item index="4" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNonNull" />
+          <item index="5" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.NonNull" />
+          <item index="6" class="java.lang.String" itemvalue="com.android.annotations.NonNull" />
+          <item index="7" class="java.lang.String" itemvalue="androidx.annotation.NonNull" />
+          <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullType" />
+          <item index="9" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullDecl" />
+          <item index="10" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.NonNull" />
+        </list>
+      </value>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" project-jdk-name="Android API 21 Platform" project-jdk-type="Android SDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
