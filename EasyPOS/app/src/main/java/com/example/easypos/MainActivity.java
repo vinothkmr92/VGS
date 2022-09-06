@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private  void ClearDetails(){
-        gridLayout.removeViews(5,itemsList.size()*4);
+        gridLayout.removeViews(5,itemsList.size()*5);
         itemsList.clear();
         totalAmtTextView.setText("000");
         snonumber=0;
