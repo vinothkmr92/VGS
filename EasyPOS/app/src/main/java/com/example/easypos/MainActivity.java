@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AlertDialog alert;
     private Thread hThread;
     private boolean showConfirmBox;
+    private static MainActivity instance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         alert = builder.create();
         showConfirmBox = true;
+        instance = this;
     }
 
     public  void  GoActivation(){
@@ -280,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private  void ClearDetails(){
-        gridLayout.removeViews(4,itemsList.size()*4);
+        gridLayout.removeViews(5,itemsList.size()*4);
         itemsList.clear();
         totalAmtTextView.setText("000");
         snonumber=0;
@@ -399,22 +401,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-    private void LoadGrid(Items item){
-        dynamicView = new DynamicView(this.getApplicationContext());
-        gridLayout.addView(dynamicView.snoTextView(getApplicationContext(),item.getSno()));
-        gridLayout.addView(dynamicView.qtyTextView(getApplicationContext(),item.getQty()));
-        gridLayout.addView(dynamicView.priceTextView(getApplicationContext(),item.getPrice()));
-        gridLayout.addView(dynamicView.amtTextView(getApplicationContext(),item.getAmt()));
-        itemsList.add(item);
+    public  void RemoveLine(int index){
+        gridLayout.removeViews(5,itemsList.size()*5);
+        itemsList.remove(index);
+        for(int i=0;i<itemsList.size();i++){
+            itemsList.get(i).setSno(String.valueOf(i+1));
+        }
+        LoadGridAsync();
+    }
+    public static MainActivity getInstance() {
+        return instance;
+    }
+    private void LoadGridAsync(){
         double totalAmt = 0;
         for(int i=0;i<itemsList.size();i++){
+            Items item = itemsList.get(i);
+            dynamicView = new DynamicView(this.getApplicationContext());
+            gridLayout.addView(dynamicView.clrButton(getApplicationContext(),i));
+            gridLayout.addView(dynamicView.snoTextView(getApplicationContext(),item.getSno()));
+            gridLayout.addView(dynamicView.qtyTextView(getApplicationContext(),item.getQty()));
+            gridLayout.addView(dynamicView.priceTextView(getApplicationContext(),item.getPrice()));
+            gridLayout.addView(dynamicView.amtTextView(getApplicationContext(),item.getAmt()));
             double amt = Double.parseDouble(itemsList.get(i).getAmt());
             totalAmt+=amt;
         }
         String totalstr = String.format("%.0f", totalAmt);
         totalAmtTextView.setText(totalstr);
+    }
+    private void LoadGrid(Items it){
+        if(gridLayout.getRowCount()>0){
+            gridLayout.removeViews(5,itemsList.size()*5);
+        }
+        itemsList.add(it);
+        LoadGridAsync();
         priceEditText.setText("");
         qtyEditText.setText("");
+        instance = this;
     }
 
     private void wifiConn(String ipAddr) throws IOException
