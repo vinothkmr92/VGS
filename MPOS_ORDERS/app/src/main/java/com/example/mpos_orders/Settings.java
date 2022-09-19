@@ -22,8 +22,6 @@ import static androidx.core.content.ContextCompat.startActivity;
 public class Settings extends AppCompatActivity implements View.OnClickListener{
 
     EditText host;
-    EditText username;
-    EditText password;
     EditText dbname;
     Button testConnection;
     ConnectionClass connectionClass;
@@ -41,8 +39,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_settings);
             host = (EditText) findViewById(R.id.host);
-            username = (EditText)findViewById(R.id.username);
-            password = (EditText)findViewById(R.id.password);
             dbname= (EditText)findViewById(R.id.dbname);
             testConnection = (Button)findViewById(R.id.testButton);
             progressBar = new Dialog(Settings.this);
@@ -50,12 +46,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
             progressBar.setTitle("Loading");
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             String hostname = sharedpreferences.getString(SQLSERVER,"");
-            String SQLUser = sharedpreferences.getString(SQLUSERNAME,"");
-            String SQLPassword = sharedpreferences.getString(SQLPASSWORD,"");
             String Databasename = sharedpreferences.getString(SQLDB,"");
             host.setText(hostname);
-            username.setText(SQLUser);
-            password.setText(SQLPassword);
             dbname.setText(Databasename);
             connectionClass = new ConnectionClass();
             testConnection.setOnClickListener(this);
@@ -68,14 +60,14 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
     public  void  SaveSettings(){
         progressBar.show();
         String hostname = host.getText().toString();
-        String SQLUser = username.getText().toString();
-        String SQLPassword = password.getText().toString();
+        String SQLUser = "sa";
+        String SQLPassword = "1@Knowbut";
         // String defWeight = defaultWeight.getText().toString();
         String Databasename = dbname.getText().toString();
         // String dbfen = dbname_fen.getText().toString();
-        if(hostname.isEmpty() || SQLUser.isEmpty() || Databasename.isEmpty() ){
+        if(hostname.isEmpty()  || Databasename.isEmpty() ){
             progressBar.cancel();
-            showCustomDialog("Warning","Host / Username / Dbname should not be Empty.",false);
+            showCustomDialog("Warning","Host  / Dbname should not be Empty.",false);
 
         }
         else{
@@ -96,8 +88,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
     public void onClick(View v) {
 
         String hostname = host.getText().toString();
-        String SQLUser = username.getText().toString();
-        String SQLPassword = password.getText().toString();
+        String SQLUser = "sa";
+        String SQLPassword = "1@Knowbut";
         String Databasename = dbname.getText().toString();
         new CheckDBConnection().execute(hostname,Databasename,SQLUser,SQLPassword);
     }

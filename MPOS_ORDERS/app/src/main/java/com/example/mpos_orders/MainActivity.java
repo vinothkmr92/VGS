@@ -34,23 +34,22 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import PRTAndroidSDK.PRTAndroidPrint;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     EditText qty;
     TextView logedinuser;
+    TextView estimatedAmt;
+    TextView sellingPriceeditText;
     Spinner productDropdown;
     ArrayList<String> productnamelist;
     Dialog progressBar;
     ConnectionClass connectionClass;
     TableLayout dataGrid;
     ArrayList<OrderProducts> orderProductsArraList;
-    private static PRTAndroidPrint PRT=null;
     Button clearBtn;
     Button saveBtn;
     Context _thisContext;
-    private static String printerIP = "192.168.0.102";
+    double totalAmt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             LoadLogin();
         }
         else{
+            totalAmt=0;
             _thisContext = this.getApplicationContext();
             progressBar = new Dialog(MainActivity.this);
             progressBar.setContentView(R.layout.custom_progress_dialog);
@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             saveBtn.setOnClickListener(this);
             qty = (EditText)findViewById(R.id.qty);
             logedinuser = (TextView)findViewById(R.id.loggedinusr);
+            estimatedAmt = (TextView)findViewById(R.id.estimateAmt);
+            sellingPriceeditText= (TextView)findViewById(R.id.sellingprice);
             logedinuser.setText("Username: "+CommonUtil.loggedUserName);
             productDropdown = (Spinner)findViewById(R.id.productDropdown);
             dataGrid = (TableLayout)findViewById(R.id.datagrid);
@@ -87,8 +89,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                     // Your code here
                     if(productDropdown.getSelectedItemPosition()>0){
+                        Double sellingprice = 0d;
+                        String prname = productDropdown.getSelectedItem().toString();
+                        for(Product p:CommonUtil.productsList){
+                            if(p.getProductName().equals(prname)){
+                                sellingprice = p.getSellingPrice();
+                                break;
+                            }
+                        }
+                        sellingPriceeditText.setText(fmt(sellingprice));
                         qty.setFocusableInTouchMode(true);
                         qty.requestFocus();
+                    }
+                    else{
+                        sellingPriceeditText.setText("0");
                     }
                 }
 
@@ -116,14 +130,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         OrderProducts orp = new OrderProducts();
                         String prid = "";
+                        Double sellingprice = 0d;
                         for(Product p:CommonUtil.productsList){
                             if(p.getProductName().equals(prname)){
                                 prid = p.getProductID();
+                                sellingprice = p.getSellingPrice();
                                 break;
                             }
                         }
                         orp.setProductID(prid);
                         orp.setProductName(prname);
+                        double amt = sellingprice*qt;
+                        orp.setAmt(amt);
                         orp.setQuantity(qt);
                         int indexs = 0;
                         boolean prodexists = false;
@@ -150,7 +168,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
+    public  String fmt(double d)
+    {
+        if(d == (long) d)
+            return String.format("%d",(long)d);
+        else
+            return String.format("%s",d);
+    }
     public void showCustomDialog(String title,String Message) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -212,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public  void  LoadDataGrid(){
         dataGrid.removeAllViews();
+        totalAmt = 0;
         TableRow row = new TableRow(this);
         row.setLayoutParams(new TableLayout.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
         row.setPadding(10,10,10,10);
@@ -237,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             OrderProducts b = orderProductsArraList.get(j);
             // Inflate your row "template" and fill out the fields.
+            totalAmt+=b.getAmt();
             TableRow row1 = new TableRow(this);
             row1.setLayoutParams(new TableLayout.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
             row1.setPadding(5,5,5,5);
@@ -252,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             textView3.setBackgroundColor(Color.WHITE);
             row1.addView(textView3);
             TextView textView4 = new TextView(this);
-            textView4.setText(String.valueOf("   "+b.getQuantity()));
+            textView4.setText("  "+fmt(b.getQuantity()));
             textView4.setTextColor(Color.BLACK);
             textView4.setBackgroundResource(R.drawable.cellborder);
             textView4.setBackgroundColor(Color.WHITE);
@@ -260,60 +286,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             row1.addView(textView4);
             dataGrid.addView(row1,new TableLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
         }
+        estimatedAmt.setText("₹ "+fmt(totalAmt));
     }
-    public void Print(){
-        PRT.PRTReset();
-        if(!PRT.GetPortType().equals("WiFi"))
-        {
-            if( PRT.PRTGetCurrentStatus()==3)
-            {
-                showCustomDialog("Printer is Not Ready","Status");
-                return;
-            }
-        }
-        try
-        {
-            Thread.sleep(200);
-        }
-        catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        int intLanguageNum=23;
-        String codeL="utf-8";
-        PRT.Language =codeL;
-        byte data[] = null;
-        PRT.PRTFormatString(false,false,true,false,false);
-        data = ("ORDERS").getBytes(StandardCharsets.UTF_8);
-        PRT.WriteData(data, data.length);
-        PRT.PRTFeedLines(20);
-        PRT.PRTReset();
-        for(OrderProducts op : orderProductsArraList){
-            PRT.PRTFormatString(false,false,true,false,false);
-            String pr = op.getProductName()+"           "+op.getQuantity();
-            data = (pr).getBytes(StandardCharsets.UTF_8);
-            PRT.WriteData(data, data.length);
-            PRT.PRTFeedLines(20);
-            PRT.PRTReset();
-        }
-        PRT.PRTFeedLines(200);
-        PRT.PRTReset();
-    }
-    public void ConnectPrinter(){
-        try{
-            PRT = new PRTAndroidPrint(this,"WiFi","TP806 Printer");
-            if(!PRT.OpenPort(printerIP+",9100")){
-                showCustomDialog("Printer Connection Failed","Printer Status");
-            }
-        }
-        catch (Exception ex){
-            showCustomDialog(ex.getMessage(),"Exception");
-        }
-    }
+
     public void SaveOrder(){
        if(orderProductsArraList.size()>0){
-           new WiFiPrint().execute("");
-           //new SaveOrderDb().execute("");
+           new SaveOrderDb().execute("");
        }
        else{
            showCustomDialog("Warning","No items selected for Order");
@@ -334,67 +312,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 SaveOrder();
                 break;
         }
-    }
-    public class WiFiPrint extends  AsyncTask<String,String,String>
-    {
-        @Override
-        protected void onPreExecute(){
-            progressBar.show();
-        }
-        @Override
-        protected  void onPostExecute(String r){
-            progressBar.cancel();
-            showCustomDialog(r,"Status");
-        }
-        @Override
-        protected String doInBackground(String... params) {
-            String r = "";
-            try{
-                PRT = new PRTAndroidPrint(_thisContext,"WiFi","TP806 Printer");
-                if(!PRT.OpenPort(printerIP+",9100")){
-                    r ="Printer Connection Failed";
-                }
-                PRT.PRTReset();
-                if(!PRT.GetPortType().equals("WiFi"))
-                {
-                    if( PRT.PRTGetCurrentStatus()==3)
-                    {
-                        r = "Printer is Not Ready";
-                    }
-                }
-                try
-                {
-                    Thread.sleep(200);
-                }
-                catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                int intLanguageNum=23;
-                String codeL="utf-8";
-                PRT.Language =codeL;
-                byte data[] = null;
-                PRT.PRTFormatString(false,false,true,false,false);
-                data = ("ORDERS").getBytes(StandardCharsets.UTF_8);
-                PRT.WriteData(data, data.length);
-                PRT.PRTFeedLines(20);
-                PRT.PRTReset();
-                for(OrderProducts op : orderProductsArraList){
-                    PRT.PRTFormatString(false,false,true,false,false);
-                    String pr = op.getProductName()+"           "+op.getQuantity();
-                    data = (0x7f05001f+pr).getBytes(StandardCharsets.UTF_8);
-                    PRT.WriteData(data, data.length);
-                    PRT.PRTFeedLines(100);
-                    PRT.PRTReset();
-                }
-                r = "Print Success";
-            }
-            catch (Exception ex){
-                r = ex.getMessage();
-            }
-            return  r;
-        }
-
     }
     public class SaveOrderDb extends AsyncTask<String,String,String>
     {

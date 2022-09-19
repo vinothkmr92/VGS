@@ -11,8 +11,10 @@
         <entry key="..\:/AndroidProjects/VGS/MTRADERS_ORDERS/app/src/main/res/layout/activity_login.xml" value="0.12916666666666668" />
         <entry key="..\:/AndroidProjects/VGS/MTRADERS_ORDERS/app/src/main/res/layout/activity_main.xml" value="0.121875" />
         <entry key="..\:/AndroidProjects/VGS/MTRADERS_ORDERS/app/src/main/res/layout/activity_payment.xml" value="0.21510416666666668" />
-        <entry key="..\:/AndroidProjects/VGS/MTRADERS_ORDERS/app/src/main/res/menu/loginmenu.xml" value="0.12916666666666668" />
-        <entry key="..\:/AndroidProjects/VGS/MTRADERS_ORDERS/app/src/main/res/menu/main.xml" value="0.12916666666666668" />
+        <entry key="..\:/AndroidProjects/VGS/MTRADERS_ORDERS/app/src/main/res/layout/activity_settings.xml" value="0.358695652173913" />
+        <entry key="..\:/AndroidProjects/VGS/MTRADERS_ORDERS/app/src/main/res/layout/custom_dialog.xml" value="0.358695652173913" />
+        <entry key="..\:/AndroidProjects/VGS/MTRADERS_ORDERS/app/src/main/res/menu/loginmenu.xml" value="0.33" />
+        <entry key="..\:/AndroidProjects/VGS/MTRADERS_ORDERS/app/src/main/res/menu/main.xml" value="0.33" />
       </map>
     </option>
   </component>

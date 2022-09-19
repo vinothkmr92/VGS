@@ -30,7 +30,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Dialog progressBar;
     Button login;
     EditText usrName;
-    EditText pass;
     private static LoginActivity mInstance;
     private MySharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
@@ -50,7 +49,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login = (Button)findViewById(R.id.btnLogin);
         login.setOnClickListener(this);
         usrName = (EditText)findViewById(R.id.userText);
-        pass = (EditText)findViewById(R.id.passText);
         progressBar = new Dialog(LoginActivity.this);
         progressBar.setContentView(R.layout.custom_progress_dialog);
         progressBar.setTitle("Loading");
@@ -179,7 +177,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (con == null) {
                     z = "Error in connection with SQL server";
                 } else {
-                    String query = "SELECT PRODUCT_ID,PRODUCT_DESCRIPTION FROM PRODUCTS ORDER BY PRODUCT_DESCRIPTION";
+                    String query = "SELECT PRODUCT_ID,PRODUCT_DESCRIPTION,SELLING_PRICE FROM PRODUCTS ORDER BY PRODUCT_DESCRIPTION";
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
                     Product pr = new Product();
@@ -190,9 +188,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     {
                         String prid = rs.getString("PRODUCT_ID");
                         String prname = rs.getString("PRODUCT_DESCRIPTION");
+                        double sPrice = rs.getDouble("SELLING_PRICE");
                         Product ps = new Product();
                         ps.setProductID(prid);
                         ps.setProductName(prname);
+                        ps.setSellingPrice(sPrice);
                         productlist.add(ps);
                     }
                     rs.close();
@@ -215,7 +215,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
         String userid = usrName.getText().toString();
-        String password = pass.getText().toString();
 
 
         @Override
@@ -241,8 +240,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected String doInBackground(String... params) {
-            if(userid.trim().equals("")|| password.trim().equals(""))
-                z = "Please enter User Id and Password";
+            if(userid.trim().equals(""))
+                z = "Please enter Registered Mobile Number";
             else
             {
                 try {
@@ -250,19 +249,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (con == null) {
                         z = "Error in connection with SQL server";
                     } else {
-                        String query = "SELECT * FROM MEMBERS WHERE MEMBER_ID="+userid+" AND LASTNAME='"+password+"'";
+                        String query = "SELECT * FROM MEMBERS WHERE MOBILE_NUMBER='"+userid+"'";
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
 
                         if(rs.next())
                         {
                             Member member = new Member();
-                            Integer mid = Integer.parseInt(userid);
-                            member.setMemberID(mid);
+                            Integer memid = rs.getInt("MEMBER_ID");
+                            member.setMemberID(memid);
                             String membername = rs.getString("FIRSTNAME");
                             member.setMemberName(membername);
                             member.setMemberName(membername);
-                            member.setPassword(password);
                             CommonUtil.loggedUserName = membername;
                             CommonUtil.member = member;
                             z = "Login successfull";
@@ -270,7 +268,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                         else
                         {
-                            z = "Invalid Credentials";
+                            z = "Not a valid Member";
                             isSuccess = false;
                         }
 

@@ -32,6 +32,22 @@
             android:textSize="15dp"
             android:textStyle="bold" />
     </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="left"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="000"
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@android:color/holo_green_dark"
+                android:id="@+id/estimateAmt"
+                android:textSize="50dp"
+                android:textStyle="bold" />
+        </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -71,6 +87,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="120px"
             android:id="@+id/qty"></EditText>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="200px"
+            android:text="0"
+            android:id="@+id/sellingprice"
+            android:textSize="20dp"
+            android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"

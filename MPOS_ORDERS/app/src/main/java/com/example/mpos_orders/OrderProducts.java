@@ -4,6 +4,15 @@ public class OrderProducts {
     private String ProductID;
     private String ProductName;
     private Double Quantity;
+    private Double Amt;
+
+    public Double getAmt() {
+        return Amt;
+    }
+
+    public void setAmt(Double amt) {
+        Amt = amt;
+    }
 
     public String getProductID() {
         return ProductID;

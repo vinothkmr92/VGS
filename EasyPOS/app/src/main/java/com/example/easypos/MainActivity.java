@@ -316,7 +316,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(!wifiPort.isConnected()){
                 try{
                     new connectPrinter().execute(printeripaddress);
-                    //Thread.sleep(4000);
                 }
                 catch (Exception ex){
                     showCustomDialog("Exception",ex.getMessage().toString());
