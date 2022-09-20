@@ -1,15 +1,18 @@
 package com.example.vinoth.vgspos;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
+import android.content.pm.PackageManager;
+
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,14 +25,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ngx.mp100sdk.Enums.Alignments;
-import com.ngx.mp100sdk.Intefaces.INGXCallback;
-import com.ngx.mp100sdk.NGXPrinter;
 
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -60,10 +63,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnPrint;
     private Button btnEnter;
     private Spinner wtSpinner;
-    public static NGXPrinter ngxPrinter = NGXPrinter.getNgxPrinterInstance();
-    private INGXCallback ingxCallback;
-
-
+    private BluetoothAdapter mBluetoothAdapter = null;
+    private BluetoothDevice mBluetoothDevice = null;
+    private BluetoothSocket mBluetoothSocket = null;
+    OutputStream mOutputStream = null;
+    Set<BluetoothDevice> pairedDevices = null;
+    private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,31 +77,31 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         progressBar = new Dialog(HomeActivity.this);
         progressBar.setContentView(R.layout.custom_progress_dialog);
         progressBar.setTitle("Loading");
-        try{
+        try {
             dbHelper = new DatabaseHelper(this);
-            itemNo = (EditText)findViewById(R.id.itemNo);
-            itemName= (EditText)findViewById(R.id.itemName);
-            Quantity= (EditText)findViewById(R.id.qty);
-            tQty = (TextView)findViewById(R.id.ttQty);
-            tItem= (TextView)findViewById(R.id.ttItem);
-            wtSpinner = (Spinner)findViewById(R.id.waiterSpinner);
-            btn1 = (Button)findViewById(R.id._1);
-            btn2= (Button)findViewById(R.id._2);
-            btn3= (Button)findViewById(R.id._3);
-            btn4= (Button)findViewById(R.id._4);
-            btn5= (Button)findViewById(R.id._5);
-            btn6= (Button)findViewById(R.id._6);
-            btn7= (Button)findViewById(R.id._7);
-            btn8= (Button)findViewById(R.id._8);
-            btn9= (Button)findViewById(R.id._9);
-            btn0= (Button)findViewById(R.id._0);
-            btnClear= (Button)findViewById(R.id._clr);
-            btnDot= (Button)findViewById(R.id._dot);
-            btnSpace= (Button)findViewById(R.id.viewitems);
-            btnMenu= (Button)findViewById(R.id. menu);
-            btnCancel= (Button)findViewById(R.id.cancel);
-            btnPrint= (Button)findViewById(R.id.print);
-            btnEnter= (Button)findViewById(R.id.enter);
+            itemNo = (EditText) findViewById(R.id.itemNo);
+            itemName = (EditText) findViewById(R.id.itemName);
+            Quantity = (EditText) findViewById(R.id.qty);
+            tQty = (TextView) findViewById(R.id.ttQty);
+            tItem = (TextView) findViewById(R.id.ttItem);
+            wtSpinner = (Spinner) findViewById(R.id.waiterSpinner);
+            btn1 = (Button) findViewById(R.id._1);
+            btn2 = (Button) findViewById(R.id._2);
+            btn3 = (Button) findViewById(R.id._3);
+            btn4 = (Button) findViewById(R.id._4);
+            btn5 = (Button) findViewById(R.id._5);
+            btn6 = (Button) findViewById(R.id._6);
+            btn7 = (Button) findViewById(R.id._7);
+            btn8 = (Button) findViewById(R.id._8);
+            btn9 = (Button) findViewById(R.id._9);
+            btn0 = (Button) findViewById(R.id._0);
+            btnClear = (Button) findViewById(R.id._clr);
+            btnDot = (Button) findViewById(R.id._dot);
+            btnSpace = (Button) findViewById(R.id.viewitems);
+            btnMenu = (Button) findViewById(R.id.menu);
+            btnCancel = (Button) findViewById(R.id.cancel);
+            btnPrint = (Button) findViewById(R.id.print);
+            btnEnter = (Button) findViewById(R.id.enter);
 
             btn1.setOnClickListener(this);
             btn2.setOnClickListener(this);
@@ -121,16 +126,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             waiters.add("WAITER - 3");
             waiters.add("WAITER - 4");
             waiters.add("WAITER - 5");
-            if(QuantityListener.itemsCarts!=null){
+            if (QuantityListener.itemsCarts != null) {
                 tItem.setText(String.valueOf(QuantityListener.itemsCarts.size()));
                 int ttq = 0;
-                for(int i=0;i<QuantityListener.itemsCarts.size();i++){
+                for (int i = 0; i < QuantityListener.itemsCarts.size(); i++) {
                     ItemsCart ic = QuantityListener.itemsCarts.get(i);
-                    ttq = ttq+ic.getQty();
+                    ttq = ttq + ic.getQty();
                 }
                 tQty.setText(String.valueOf(ttq));
             }
-            ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,waiters);
+            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, waiters);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             wtSpinner.setAdapter(adapter);
             wtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -143,26 +148,86 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
             });
-            this.ingxCallback = new INGXCallback() {
-                public void onRunResult(boolean isSuccess) {
-                    Log.i("NGX", "onRunResult:" + isSuccess);
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                showCustomDialog("Msg", "Please give Bluetooth permission");
+                return;
+            }
+            pairedDevices = mBluetoothAdapter.getBondedDevices();
+            String getName = mBluetoothAdapter.getName();
+            for (BluetoothDevice device : pairedDevices) {
+                // Add the name and address to an array adapter to show in a ListView
+                if (device.getName().contains("Printer001")) {
+                    getName = device.getAddress();
+                    break;
                 }
 
-                public void onReturnString(String result) {
-                    Log.i("NGX", "onReturnString:" + result);
-                }
-
-                public void onRaiseException(int code, String msg) {
-                    Log.i("NGX", "onRaiseException:" + code + ":" + msg);
-                }
-            };
-            ngxPrinter.initService(this, this.ingxCallback);
-        }
-        catch (Exception ex){
-            showCustomDialog("Error",ex.getMessage());
+            }
+            if(mBluetoothSocket==null){
+                ConnectBluetooth(getName);
+            }
+        } catch (Exception ex) {
+            showCustomDialog("Error", ex.getMessage());
         }
     }
 
+    public void PrintData(String txt) {
+        try {
+            mOutputStream = mBluetoothSocket.getOutputStream();
+            mOutputStream.write((txt+"\n").getBytes("GBK"));
+            mOutputStream.flush();
+        } catch (Exception ex) {
+            showCustomDialog("Exception", ex.getMessage().toString());
+        }
+    }
+
+    public void PaperCut() {
+        try {
+            mOutputStream = mBluetoothSocket.getOutputStream();
+            mOutputStream.write(new byte[]{0x0a, 0x0a, 0x1d, 0x56, 0x01});
+            mOutputStream.flush();
+        } catch (Exception ex) {
+            showCustomDialog("Exception", ex.getMessage().toString());
+        }
+    }
+
+    public void ConnectBluetooth(String btName) {
+        try {
+            mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(btName);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(HomeActivity.SPP_UUID);
+            mBluetoothSocket.connect();
+        }
+        catch (Exception ex){
+            showCustomDialog("Exception",ex.getMessage().toString());
+            CloseBluetooth();
+        }
+    }
+    private void CloseBluetooth(){
+        try {
+            mOutputStream.close();
+            mBluetoothSocket.close();
+        }
+        catch (Exception ex){
+            showCustomDialog("Exception",ex.getMessage().toString());
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -358,6 +423,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public  void PrintGatePass() {
         int sl = 0;
         progressBar.show();
+        String waiter  = wtSpinner.getSelectedItem().toString();
         try {
             if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
                 showCustomDialog("Warning", "Please add Items");
@@ -366,17 +432,26 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
             Date date = new Date();
             SaveDetails();
-            ngxPrinter.setDefault();
-            //Bitmap hyndaiLogo = BitmapFactory.decodeResource(this.getResources(),R.drawable.hyundai_logo);
-            //ngxPrinter.printImage(hyndaiLogo);
-            ngxPrinter.setStyleBold();
-            ngxPrinter.printText("SS HYDERABAD BIRIYANI", Alignments.CENTER,28);
-            ngxPrinter.setStyleDoubleWidth();
-            String waiter  = wtSpinner.getSelectedItem().toString();
-            ngxPrinter.printText("KOT-> "+waiter, Alignments.CENTER, 30);
+
+
+            PrintData("KOT-->"+waiter);
+            PrintData("DATE     : " + format.format(date));
+            PrintData("------------------------------");
+            PrintData("ITEM                     QTY");
+            PrintData("------------------------------");
+            for(int k=0;k<QuantityListener.itemsCarts.size();k++){
+                String name = QuantityListener.itemsCarts.get(k).getItem_Name();
+                String qty = String.valueOf(QuantityListener.itemsCarts.get(k).getQty());
+                PrintData( GetformattedItemName(name)+": "+ qty);
+            }
+            PrintData("                              ");
+            PrintData("                              ");
+            PaperCut();
+            /*ngxPrinter.printText("KOT-> "+waiter, Alignments.CENTER, 30);
             ngxPrinter.setStyleBold();
             ngxPrinter.printText("ITEMS DETAILS", Alignments.CENTER, 28);
             ngxPrinter.setStyleBold();
+
             ngxPrinter.printText("DATE     : " + format.format(date), Alignments.LEFT, 24);
             ngxPrinter.printText("------------------------------", Alignments.LEFT, 24);
             ngxPrinter.printText("ITEM                     QTY", Alignments.LEFT, 24);
@@ -388,7 +463,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             ngxPrinter.printText("                              ");
             ngxPrinter.printText("                              ");
-            ngxPrinter.setDefault();
+            ngxPrinter.setDefault();*/
             Toast.makeText(this, "Print Queued Scuessfully.!", Toast.LENGTH_LONG).show();
 
         } catch (Exception e) {

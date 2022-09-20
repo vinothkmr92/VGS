@@ -4,31 +4,23 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.ngx.mp100sdk.Enums.Alignments;
-import com.ngx.mp100sdk.Intefaces.INGXCallback;
-import com.ngx.mp100sdk.NGXPrinter;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class ItemReport extends AppCompatActivity implements  View.OnClickListener{
@@ -40,8 +32,6 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     private Button btnrpt;
     private Button btnPrint;
     private Spinner waiters;
-    public static NGXPrinter ngxPrinter = NGXPrinter.getNgxPrinterInstance();
-    private INGXCallback ingxCallback;
 
 
     @Override
@@ -72,25 +62,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date date = new Date();
         reportDt.setText(format.format(date));
-        try{
-            this.ingxCallback = new INGXCallback() {
-                public void onRunResult(boolean isSuccess) {
-                    Log.i("NGX", "onRunResult:" + isSuccess);
-                }
 
-                public void onReturnString(String result) {
-                    Log.i("NGX", "onReturnString:" + result);
-                }
-
-                public void onRaiseException(int code, String msg) {
-                    Log.i("NGX", "onRaiseException:" + code + ":" + msg);
-                }
-            };
-            ngxPrinter.initService(this, this.ingxCallback);
-        }
-        catch (Exception ex){
-            showCustomDialog("Error",ex.getMessage());
-        }
     }
 
 
@@ -140,7 +112,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
 
     private void PrintReport(ArrayList<ItemsRpt> items){
         try {
-            ngxPrinter.setDefault();
+            /*ngxPrinter.setDefault();
             //Bitmap hyndaiLogo = BitmapFactory.decodeResource(this.getResources(),R.drawable.hyundai_logo);
             //ngxPrinter.printImage(hyndaiLogo);
             ngxPrinter.setStyleBold();
@@ -164,7 +136,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             }
             ngxPrinter.printText("                              ");
             ngxPrinter.printText("                              ");
-            ngxPrinter.setDefault();
+            ngxPrinter.setDefault();*/
             Toast.makeText(this, "Print Queued Scuessfully.!", Toast.LENGTH_LONG).show();
 
         } catch (Exception e) {

@@ -1,9 +1,12 @@
 package com.example.vinoth.vgspos;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,7 +14,9 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,7 +45,11 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     DatabaseHelper dbHelper;
     public static final int requestcode = 1;
     TextView lbl;
-
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +58,21 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         btnUpload = (Button) findViewById(R.id.btnUpload);
         dbHelper = new DatabaseHelper(this);
         btnUpload.setOnClickListener(this);
+        verifyStoragePermissions(UploadActivity.this);
     }
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
     @Override
     public void onClick(View v) {
         try {
@@ -95,7 +117,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             else if (isDownloadsDocument(uri)) {
                 String fileName = getFilePath(context, uri);
                 if (fileName != null) {
-                    return Environment.getExternalStorageDirectory().toString() + "/Download/" + fileName;
+                    return Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/Download/" + fileName;
                 }
 
                 String id = DocumentsContract.getDocumentId(uri);

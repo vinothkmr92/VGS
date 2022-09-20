@@ -1,10 +1,9 @@
 package com.example.vinoth.vgspos;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.widget.TextView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CartActivity extends AppCompatActivity {
 
@@ -17,7 +16,7 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
 
         //Set back button to activity
-        android.support.v7.app.ActionBar actionBar=getSupportActionBar();
+        androidx.appcompat.app.ActionBar actionBar=getSupportActionBar();
         if(actionBar!=null){
             actionBar.setHomeButtonEnabled(true);
             actionBar.setTitle("KOT Details");
