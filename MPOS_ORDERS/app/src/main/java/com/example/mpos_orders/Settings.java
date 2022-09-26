@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,8 +46,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
             progressBar.setContentView(R.layout.custom_progress_dialog);
             progressBar.setTitle("Loading");
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
-            String hostname = sharedpreferences.getString(SQLSERVER,"");
-            String Databasename = sharedpreferences.getString(SQLDB,"");
+            String sqlserver = this.getApplicationContext().getString(R.string.SQL_SERVER);
+            String dbnamestr = this.getApplicationContext().getString(R.string.SQL_DBNAME);
+            String hostname = sharedpreferences.getString(SQLSERVER,sqlserver);
+            String Databasename = sharedpreferences.getString(SQLDB,dbnamestr);
             host.setText(hostname);
             dbname.setText(Databasename);
             connectionClass = new ConnectionClass();
@@ -60,8 +63,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
     public  void  SaveSettings(){
         progressBar.show();
         String hostname = host.getText().toString();
-        String SQLUser = "sa";
-        String SQLPassword = "1@Knowbut";
+        String SQLUser = this.getApplicationContext().getString(R.string.SQL_USERNAME);
+        String SQLPassword = this.getApplicationContext().getString(R.string.SQL_PASSWORD);
+        if(hostname.isEmpty()){
+            hostname = this.getApplicationContext().getString(R.string.SQL_SERVER);
+        }
         // String defWeight = defaultWeight.getText().toString();
         String Databasename = dbname.getText().toString();
         // String dbfen = dbname_fen.getText().toString();
@@ -88,8 +94,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
     public void onClick(View v) {
 
         String hostname = host.getText().toString();
-        String SQLUser = "sa";
-        String SQLPassword = "1@Knowbut";
+        if(hostname.isEmpty()){
+            hostname = this.getApplicationContext().getString(R.string.SQL_SERVER);
+        }
+        String SQLUser = this.getApplicationContext().getString(R.string.SQL_USERNAME);
+        String SQLPassword = this.getApplicationContext().getString(R.string.SQL_PASSWORD);
         String Databasename = dbname.getText().toString();
         new CheckDBConnection().execute(hostname,Databasename,SQLUser,SQLPassword);
     }

@@ -4,6 +4,15 @@ public class ItemsCart {
     private int Item_No;
     private String Item_Name;
     private int Qty;
+    private double Price;
+
+    public double getPrice() {
+        return Price;
+    }
+
+    public void setPrice(double price) {
+        Price = price;
+    }
 
     public int getItem_No() {
         return Item_No;

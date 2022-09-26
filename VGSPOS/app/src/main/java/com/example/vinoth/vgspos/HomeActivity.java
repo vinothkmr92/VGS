@@ -3,6 +3,7 @@ package com.example.vinoth.vgspos;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -12,7 +13,10 @@ import android.content.pm.PackageManager;
 
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +30,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.sewoo.jpos.command.ESCPOS;
+import com.sewoo.jpos.printer.ESCPOSPrinter;
+import com.sewoo.port.android.WiFiPort;
+import com.sewoo.port.android.WiFiPortConnection;
+import com.sewoo.request.android.RequestHandler;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private EditText Quantity;
     private TextView tQty;
     private TextView tItem;
-
+    private TextView estAmt;
     private Button btn1;
     private Button btn2;
     private Button btn3;
@@ -69,7 +83,34 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     OutputStream mOutputStream = null;
     Set<BluetoothDevice> pairedDevices = null;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    public static HomeActivity instance;
+    public  EditText priceTxt;
+    private static String[] PERMISSIONS_BLUETOOTH = {
+            Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH
+    };
+    private MySharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String HEADERMSG = "HEADERMSG";
+    public static final String FOOTERMSG= "FOOTERMSG";
+    public static final String PRINTERIP = "PRINTERIP";
+    public static final String BLUETOOTNAME = "BLUETOOTHNAME";
+    public static final String ISWIFI = "ISWIFI";
+    String headerMsg ;
+    String footerMsg ;
+    String printerip ;
+    String bluetothName;
+    boolean isWifiPrint;
+    private Thread hThread;
+    private WiFiPort wifiPort;
+    public ESCPOSPrinter posPtr;
+    public static final byte[] PRINT_ALIGN_LEFT = new byte[] { 0x1b, 'a', 0x00 };
+    public static final byte[] PRINT_ALIGN_RIGHT = new byte[] { 0x1b, 'a', 0x02 };
+    public static final byte[] PRINT_ALIGN_CENTER = new byte[] { 0x1b, 'a', 0x01 };
+    private int rtn;
+    // 0x1B
+    private final char ESC = ESCPOS.ESC;
 
+    public  HomeActivity() {posPtr=new ESCPOSPrinter();}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +126,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             tQty = (TextView) findViewById(R.id.ttQty);
             tItem = (TextView) findViewById(R.id.ttItem);
             wtSpinner = (Spinner) findViewById(R.id.waiterSpinner);
+            estAmt = (TextView)findViewById(R.id.estimateAmt);
+            priceTxt = (EditText)findViewById(R.id.itemPrice);
             btn1 = (Button) findViewById(R.id._1);
             btn2 = (Button) findViewById(R.id._2);
             btn3 = (Button) findViewById(R.id._3);
@@ -102,7 +145,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             btnCancel = (Button) findViewById(R.id.cancel);
             btnPrint = (Button) findViewById(R.id.print);
             btnEnter = (Button) findViewById(R.id.enter);
-
             btn1.setOnClickListener(this);
             btn2.setOnClickListener(this);
             btn3.setOnClickListener(this);
@@ -121,11 +163,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             btnPrint.setOnClickListener(this);
             btnEnter.setOnClickListener(this);
             ArrayList<String> waiters = new ArrayList<String>();
+            waiters.add("NONE");
             waiters.add("WAITER - 1");
             waiters.add("WAITER - 2");
             waiters.add("WAITER - 3");
             waiters.add("WAITER - 4");
             waiters.add("WAITER - 5");
+            wifiPort = WiFiPort.getInstance();
             if (QuantityListener.itemsCarts != null) {
                 tItem.setText(String.valueOf(QuantityListener.itemsCarts.size()));
                 int ttq = 0;
@@ -148,46 +192,267 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
             });
-            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                showCustomDialog("Msg", "Please give Bluetooth permission");
-                return;
-            }
-            pairedDevices = mBluetoothAdapter.getBondedDevices();
-            String getName = mBluetoothAdapter.getName();
-            for (BluetoothDevice device : pairedDevices) {
-                // Add the name and address to an array adapter to show in a ListView
-                if (device.getName().contains("Printer001")) {
-                    getName = device.getAddress();
-                    break;
+            sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
+            headerMsg = sharedpreferences.getString(HEADERMSG,"");
+            footerMsg = sharedpreferences.getString(FOOTERMSG,"");
+            printerip = sharedpreferences.getString(PRINTERIP,"");
+            bluetothName = sharedpreferences.getString(BLUETOOTNAME,"");
+            String isWifi = sharedpreferences.getString(ISWIFI,"");
+            isWifiPrint = isWifi.equalsIgnoreCase("YES");
+            if(!isWifiPrint){
+                mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    ActivityCompat.requestPermissions(HomeActivity.this,PERMISSIONS_BLUETOOTH
+                            ,1);
+                    return;
                 }
+                pairedDevices = mBluetoothAdapter.getBondedDevices();
+                String getName = mBluetoothAdapter.getName();
+                for (BluetoothDevice device : pairedDevices) {
+                    // Add the name and address to an array adapter to show in a ListView
+                    if (device.getName().contains(bluetothName)) {
+                        getName = device.getAddress();
+                        break;
+                    }
 
+                }
+                if(mBluetoothSocket==null){
+                    ConnectBluetooth(getName);
+                }
             }
-            if(mBluetoothSocket==null){
-                ConnectBluetooth(getName);
-            }
+            instance = this;
         } catch (Exception ex) {
             showCustomDialog("Error", ex.getMessage());
         }
     }
+    @Override
+    protected void onDestroy() {
+        try
+        {
+            if(wifiPort != null)
+                wifiPort.disconnect();
+            mOutputStream.close();
+            mBluetoothSocket.close();
+        }
+        catch (IOException e)
+        {
+            Log.e("ERR", e.getMessage(), e);
+        }
+        catch (InterruptedException e)
+        {
+            Log.e("ERR", e.getMessage(), e);
+        }
+        if((hThread != null) && (hThread.isAlive()))
+        {
+            hThread.interrupt();
+            hThread = null;
+        }
+        super.onDestroy();
+    }
+    public int PrintData() throws InterruptedException
+    {
+        try
+        {
+            posPtr.setAsync(true);
+            rtn = posPtr.printerSts();
 
-    public void PrintData(String txt) {
+            // Do not check the paper near empty.
+            // if( (rtn != 0) && (rtn != ESCPOSConst.STS_PAPERNEAREMPTY)) return rtn;
+            // check the paper near empty.
+            if( rtn != 0 )  return rtn;
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            return rtn;
+        }
+
+        try
+        {
+            QuantityListener.itemsCarts = Common.itemsCarts;
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
+            Date date = new Date();
+            String dateStr = format.format(date);
+            int billno = SaveDetails();
+
+            posPtr.printNormal(ESC+"|cA"+ESC+"|4C"+headerMsg+"\r\n");
+            posPtr.printNormal("\n");
+            //posPtr.printNormal(ESC+"|rATEL (123)-456-7890\n\n\n");
+            String waiter  = wtSpinner.getSelectedItem().toString();
+            posPtr.printNormal(ESC+"|lABILL NO: "+billno+"\n");
+            if(!waiter.equals("NONE")){
+                posPtr.printNormal(ESC+"|lAUSER: "+waiter);
+                posPtr.printNormal("\n");
+            }
+            posPtr.printNormal(ESC+"|lADate: "+dateStr+"\n\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME             QTY      PRICE    AMOUNT\n");
+            double totalQty = 0d;
+            double totalAmt = 0d;
+            for(int k=0;k<QuantityListener.itemsCarts.size();k++){
+                String name = QuantityListener.itemsCarts.get(k).getItem_Name();
+                String qty = String.valueOf(QuantityListener.itemsCarts.get(k).getQty());
+                String price = String.format("%.0f",QuantityListener.itemsCarts.get(k).getPrice());
+                Double amt = QuantityListener.itemsCarts.get(k).getPrice()*QuantityListener.itemsCarts.get(k).getQty();
+                totalAmt+=amt;
+                String amts=String.format("%.0f",amt);
+                name = StringUtils.rightPad(name,20);
+                qty = StringUtils.leftPad(qty,5);
+                price = StringUtils.leftPad(price,11);
+                amts = StringUtils.leftPad(amts,10);
+                String line = name+qty+price+amts+"\n";
+                posPtr.printNormal(line);
+            }
+            String totalamt = String.format("%.0f",totalAmt);
+            String txttotal = "TOTAL: "+totalamt+"/-";
+            posPtr.lineFeed(1);
+            posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+            posPtr.lineFeed(2);
+            posPtr.printNormal(ESC+"|cA"+footerMsg+"\n");
+            posPtr.lineFeed(5);
+            posPtr.cutPaper();
+            wifiPort.disconnect();
+            RefreshViews();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    private void PrintWifi(){
+        try
+        {
+            if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
+                showCustomDialog("Warning", "Please add Items");
+                return;
+            }
+            if(!wifiPort.isConnected()){
+                try{
+                    new connectPrinter().execute(printerip);
+                }
+                catch (Exception ex){
+                    showCustomDialog("Exception",ex.getMessage().toString());
+                }
+            }
+
+        }
+        catch (Exception ex){
+            showCustomDialog("Exception",ex.getMessage().toString());
+        }
+        if(progressBar.isShowing()){
+            progressBar.cancel();
+        }
+    }
+    class connectPrinter extends AsyncTask<String, Void, Integer>
+    {
+        private final ProgressDialog dialog = new ProgressDialog(HomeActivity.this);
+        private WiFiPortConnection connection;
+        @Override
+        protected void onPreExecute()
+        {
+            dialog.setTitle(" ");
+            dialog.setMessage("Printing.....");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(String... params)
+        {
+            Integer retVal = null;
+            try
+            {
+                // ip
+                wifiPort.connect(params[0]);
+                //connection = wifiPort.open(params[0]);
+
+                //lastConnAddr = params[0];
+                retVal = new Integer(0);
+            }
+            catch (IOException e)
+            {
+                Log.e("Wificonnection:",e.getMessage(),e);
+                retVal = new Integer(-1);
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result)
+        {
+            if(result.intValue() == 0)
+            {
+                RequestHandler rh = new RequestHandler();
+                hThread = new Thread(rh);
+                hThread.start();
+                posPtr = new ESCPOSPrinter();
+                posPtr.setAsync(true);
+                try{
+                    PrintData();
+                }
+                catch (Exception ex){
+                    showCustomDialog("Exception",ex.getMessage().toString());
+                }
+                finally {
+                    if(dialog.isShowing())
+                        dialog.dismiss();
+                }
+            }
+            else{
+                if(dialog.isShowing())
+                    dialog.dismiss();
+            }
+
+            super.onPostExecute(result);
+        }
+    }
+    public static HomeActivity getInstance() {
+        return instance;
+    }
+    public void PrintBltnBytes(byte[] bytes){
         try {
             mOutputStream = mBluetoothSocket.getOutputStream();
+            mOutputStream.write(bytes);
+            mOutputStream.flush();
+        } catch (Exception ex) {
+            showCustomDialog("Exception", ex.getMessage().toString());
+        }
+    }
+    public void PrintData(String txt,final byte[] pFormat, final byte[] pAlignment) {
+        try {
+            mOutputStream = mBluetoothSocket.getOutputStream();
+            mOutputStream.write(pAlignment);
+            // Notify printer it should be printed in the given format:
+            mOutputStream.write(pFormat);
             mOutputStream.write((txt+"\n").getBytes("GBK"));
             mOutputStream.flush();
         } catch (Exception ex) {
             showCustomDialog("Exception", ex.getMessage().toString());
         }
     }
-
+    public boolean PrintWithFormat(byte[] buffer, final byte[] pFormat, final byte[] pAlignment) {
+        try {
+            mOutputStream = mBluetoothSocket.getOutputStream();
+            // Notify printer it should be printed with given alignment:
+            mOutputStream.write(pAlignment);
+            // Notify printer it should be printed in the given format:
+            mOutputStream.write(pFormat);
+            // Write the actual data:
+            mOutputStream.write(buffer, 0, buffer.length);
+            mOutputStream.flush();
+            return true;
+        } catch (IOException e) {
+            Log.e("ERR", "Exception during write", e);
+            return false;
+        }
+    }
     public void PaperCut() {
         try {
             mOutputStream = mBluetoothSocket.getOutputStream();
@@ -248,6 +513,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(dcpage);
                 return  true;
+            case R.id.settings:
+                Intent settingsPage = new Intent(this,Settings.class);
+                settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(settingsPage);
+                return  true;
             case R.id.homemenu:
                 Intent page = new Intent(this,HomeActivity.class);
                 page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -270,6 +540,33 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         AlertDialog b = dialogBuilder.create();
         b.show();
+    }
+    private int GetItematIndex(ArrayList<ItemsCart> items,int itemno){
+        int index=-1;
+        for(int i=0;i<items.size();i++){
+            ItemsCart itemsCart = items.get(i);
+            if(itemsCart.getItem_No() == itemno){
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+    private void SortItemsCarts(){
+        ArrayList<ItemsCart>  items = new ArrayList<>();
+        for(int i=0;i<Common.itemsCarts.size();i++){
+            ItemsCart item = Common.itemsCarts.get(i);
+                int index = GetItematIndex(items,item.getItem_No());
+                if(index>-1){
+                    ItemsCart existingitem = items.get(index);
+                    int qty = item.getQty();
+                    qty+=existingitem.getQty();
+                    item.setQty(qty);
+                    items.remove(index);
+                }
+            items.add(item);
+        }
+        Common.itemsCarts = items;
     }
 
     @Override
@@ -318,24 +615,41 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                break;
            case  R.id.cancel:
                QuantityListener.itemsCarts.clear();
+               Common.itemsCarts.clear();
                this.itemName.setText("");
                this.Quantity.setText("");
-               QuantityListener.itemsCarts.clear();
                tItem.setText("0");
                tQty.setText("0");
+               estAmt.setText("₹ 000");
                showCustomDialog("Info","Items Cleared.");
                itemName.requestFocus();
                break;
            case  R.id.print:
-                PrintGatePass();
+               SortItemsCarts();
+                if(isWifiPrint){
+                    PrintWifi();
+                }
+                else{
+                    PrintViaBlueTooth();
+                }
                break;
            case  R.id.enter:
                if(itemNo.isFocused()){
                    String itemnostr = itemNo.getText().toString();
-                   Integer ino = Integer.parseInt(itemnostr);
-                   String itemname = dbHelper.GetItemName(ino);
-                   itemName.setText(itemname);
-                   Quantity.requestFocus();
+                   if(!itemnostr.isEmpty()){
+                       Integer ino = Integer.parseInt(itemnostr);
+                       Item item = dbHelper.GetItem(ino);
+                       if(item!=null){
+                           itemName.setText(item.getItem_Name());
+                           String price =String.format("%.0f", item.getPrice());
+                           priceTxt.setText(price);
+                           Quantity.requestFocus();
+                       }
+                       else{
+                           showCustomDialog("Msg","Invalid Item Number.");
+                       }
+                   }
+
                }
                else if(Quantity.isFocused()){
                   if(itemNo.getText().toString().isEmpty() || itemName.getText().toString().isEmpty()){
@@ -347,6 +661,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                       itemNo.setText("");
                       itemName.setText("");
                       Quantity.setText("");
+                      priceTxt.setText("");
                       progressBar.hide();
                       itemNo.requestFocus();
                   }
@@ -369,12 +684,29 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
        }
     }
+    public void LoadTotalAmt(){
+        if(Common.itemsCarts.size()>0){
+            tItem.setText(String.valueOf(Common.itemsCarts.size()));
+            int ttq = 0;
+            double amt = 0;
+            for(int i=0;i<Common.itemsCarts.size();i++){
+                ItemsCart ic = Common.itemsCarts.get(i);
+                ttq = ttq+ic.getQty();
+                double pr = ic.getPrice()*ic.getQty();
+                amt+=pr;
+            }
+            tQty.setText(String.valueOf(ttq));
+            String amtstr = String.format("%.0f", amt);
+            estAmt.setText("₹ "+amtstr);
+        }
+    }
     public  void  UpdateCarts(){
         ArrayList<ItemsCart> itemsCarts = QuantityListener.itemsCarts;
         ItemsCart itc = new ItemsCart();
         itc.setItem_No(Integer.valueOf(itemNo.getText().toString()));
         itc.setItem_Name(itemName.getText().toString());
         itc.setQty(Integer.valueOf(Quantity.getText().toString()));
+        itc.setPrice(Double.valueOf(priceTxt.getText().toString()));
         if(itemsCarts == null){
             itemsCarts = new ArrayList<ItemsCart>();
         }
@@ -388,23 +720,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         itemsCarts.add(itc);
-        tItem.setText(String.valueOf(itemsCarts.size()));
-        int ttq = 0;
-        for(int i=0;i<itemsCarts.size();i++){
-            ItemsCart ic = itemsCarts.get(i);
-            ttq = ttq+ic.getQty();
-        }
-        tQty.setText(String.valueOf(ttq));
+        Common.itemsCarts = itemsCarts;
         QuantityListener.itemsCarts = itemsCarts;
+        LoadTotalAmt();
     }
-    public  String padRight(String s, int n) {
-        return String.format("%-" + n + "s", s);
+    public  String padLeft(String s, int n) {
+        return StringUtils.leftPad(s,n);
     }
-    public  String GetformattedItemName(String name){
-        String res = padRight(name,25);
-        return res.substring(0,25);
+    public String GetFormatedString(String txt,int maxLength){
+        String res = padLeft(txt,maxLength);
+        return res.substring(0,maxLength);
     }
-    private  void SaveDetails(){
+
+    private int SaveDetails(){
         int newbillno = dbHelper.GetNextBillNo();
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date date = new Date();
@@ -419,10 +747,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             bi.setWaiter(waiter);
             dbHelper.Insert_Bill_Items(bi);
         }
+        return newbillno;
     }
-    public  void PrintGatePass() {
+    private void RefreshViews(){
+        this.itemName.setText("");
+        this.Quantity.setText("");
+        QuantityListener.itemsCarts.clear();
+        tItem.setText("0");
+        tQty.setText("0");
+        estAmt.setText("₹ 000");
+        progressBar.hide();
+        itemName.requestFocus();
+    }
+    public  void PrintViaBlueTooth() {
         int sl = 0;
         progressBar.show();
+        QuantityListener.itemsCarts = Common.itemsCarts;
         String waiter  = wtSpinner.getSelectedItem().toString();
         try {
             if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
@@ -431,40 +771,42 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
             Date date = new Date();
-            SaveDetails();
-
-
-            PrintData("KOT-->"+waiter);
-            PrintData("DATE     : " + format.format(date));
-            PrintData("------------------------------");
-            PrintData("ITEM                     QTY");
-            PrintData("------------------------------");
+            //PrintBltnBytes(PRINT_ALIGN_CENTER);
+            //PrintData(headerMsg);
+            //PrintBltnBytes(PRINT_ALIGN_LEFT);
+            String msg = headerMsg+"\n";
+            PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
+            int billno = SaveDetails();
+            if(!waiter.equals("NONE")){
+                PrintData("USER     :"+waiter,new Formatter().get(),Formatter.leftAlign());
+            }
+            PrintData("BILL NO  :"+billno,new Formatter().get(),Formatter.leftAlign());
+            PrintData("DATE     : " + format.format(date),new Formatter().get(),Formatter.leftAlign());
+            PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+            String hed = "ITEM        QTY    RATE   AMOUNT";
+            PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+            PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+            double totalAmt=0;
             for(int k=0;k<QuantityListener.itemsCarts.size();k++){
                 String name = QuantityListener.itemsCarts.get(k).getItem_Name();
                 String qty = String.valueOf(QuantityListener.itemsCarts.get(k).getQty());
-                PrintData( GetformattedItemName(name)+": "+ qty);
+                String price = String.format("%.0f",QuantityListener.itemsCarts.get(k).getPrice());
+                Double amt = QuantityListener.itemsCarts.get(k).getPrice()*QuantityListener.itemsCarts.get(k).getQty();
+                totalAmt+=amt;
+                String amts=String.format("%.0f",amt);
+                PrintData(name,new Formatter().get(),Formatter.leftAlign());
+                PrintData("           "+GetFormatedString(qty,4)+GetFormatedString(price,9)+GetFormatedString(amts,8),
+                        new Formatter().get(),Formatter.leftAlign());
             }
-            PrintData("                              ");
-            PrintData("                              ");
-            PaperCut();
-            /*ngxPrinter.printText("KOT-> "+waiter, Alignments.CENTER, 30);
-            ngxPrinter.setStyleBold();
-            ngxPrinter.printText("ITEMS DETAILS", Alignments.CENTER, 28);
-            ngxPrinter.setStyleBold();
-
-            ngxPrinter.printText("DATE     : " + format.format(date), Alignments.LEFT, 24);
-            ngxPrinter.printText("------------------------------", Alignments.LEFT, 24);
-            ngxPrinter.printText("ITEM                     QTY", Alignments.LEFT, 24);
-            ngxPrinter.printText("------------------------------", Alignments.LEFT, 24);
-            for(int k=0;k<QuantityListener.itemsCarts.size();k++){
-                String name = QuantityListener.itemsCarts.get(k).getItem_Name();
-                String qty = String.valueOf(QuantityListener.itemsCarts.get(k).getQty());
-                ngxPrinter.printText( GetformattedItemName(name)+": "+ qty, Alignments.LEFT, 24);
-            }
-            ngxPrinter.printText("                              ");
-            ngxPrinter.printText("                              ");
-            ngxPrinter.setDefault();*/
-            Toast.makeText(this, "Print Queued Scuessfully.!", Toast.LENGTH_LONG).show();
+            PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            String ttAmtTxt = "TOTAL AMT:"+String.format("%.0f",totalAmt)+"/-";
+            PrintData(ttAmtTxt,new Formatter().bold().get(),Formatter.centerAlign());
+            PrintData("  ",new Formatter().get(),Formatter.leftAlign());
+            PrintData(footerMsg,new Formatter().get(),Formatter.centerAlign());
+            PrintData(" ",new Formatter().get(),Formatter.leftAlign());
+            PrintData("  ",new Formatter().get(),Formatter.leftAlign());
+            Toast.makeText(this, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
 
         } catch (Exception e) {
             showCustomDialog("Print Error",e.getMessage());
@@ -472,13 +814,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         finally {
-            this.itemName.setText("");
-            this.Quantity.setText("");
-            QuantityListener.itemsCarts.clear();
-            tItem.setText("0");
-            tQty.setText("0");
-            progressBar.hide();
-            itemName.requestFocus();
+            RefreshViews();
         }
     }
+
 }

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -63,10 +64,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startActivity(st);
     }
     public void  CheckSQLSettings(){
-        sqlServer = sharedpreferences.getString(SQLSERVER, "");
-        sqlUserName = sharedpreferences.getString(SQLUSERNAME, "");
-        sqlPassword = sharedpreferences.getString(SQLPASSWORD, "");
-        sqlDB = sharedpreferences.getString(SQLDB, "");
+        String sqlserver = this.getApplicationContext().getString(R.string.SQL_SERVER);
+        String dbname = this.getApplicationContext().getString(R.string.SQL_DBNAME);
+        String usr = this.getApplicationContext().getString(R.string.SQL_USERNAME);
+        String pwd = this.getApplicationContext().getString(R.string.SQL_PASSWORD);
+        sqlServer = sharedpreferences.getString(SQLSERVER, sqlserver);
+        sqlUserName = sharedpreferences.getString(SQLUSERNAME, usr);
+        sqlPassword = sharedpreferences.getString(SQLPASSWORD, pwd);
+        sqlDB = sharedpreferences.getString(SQLDB, dbname);
         CommonUtil.SQL_SERVER = sqlServer;
         CommonUtil.DB = sqlDB;
         CommonUtil.USERNAME = sqlUserName;
@@ -180,10 +185,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String query = "SELECT PRODUCT_ID,PRODUCT_DESCRIPTION,SELLING_PRICE FROM PRODUCTS ORDER BY PRODUCT_DESCRIPTION";
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
-                    Product pr = new Product();
-                    pr.setProductID("0");
-                    pr.setProductName("<SELECT PRODUCT>");
-                    productlist.add(pr);
                     while (rs.next())
                     {
                         String prid = rs.getString("PRODUCT_ID");

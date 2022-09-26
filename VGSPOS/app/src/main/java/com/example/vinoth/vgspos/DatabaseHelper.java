@@ -26,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Create application database");
       db.execSQL("CREATE TABLE USERS (USER_ID INTEGER PRIMARY KEY,USER_NAME TEXT,MOBILE_NUMBER TEXT,PASSWORD TEXT)");
       db.execSQL("CREATE TABLE TAX (TAX_ID INTEGER PRIMARY KEY,TAX_VALUE NUMERIC)");
-      db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,N_PRICE NUMERIC,AC_PRICE NUMERIC)");
+      db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC)");
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,USER_ID INTEGER,PRIMARY KEY (BILL_NO,BILL_DATE))");
       db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT)");
@@ -132,21 +132,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Item itm = new Item();
                 itm.setItem_No(cur.getInt(0));
                 itm.setItem_Name(cur.getString(1));
+                itm.setPrice(cur.getDouble(2));
                 ItemList.add(itm);
             }
          }
         return ItemList;
     }
-    public String GetItemName(Integer itemNo){
-        String itemName = "";
+
+    public Item GetItem(Integer itemNo){
+        Item item=null;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT ITEM_NAME FROM ITEMS WHERE ITEM_NO="+itemNo,null);
+        Cursor cur = db.rawQuery("SELECT ITEM_NAME,PRICE FROM ITEMS WHERE ITEM_NO="+itemNo,null);
         if(cur.getCount()>0){
             if(cur.moveToNext()){
-                itemName = cur.getString(0);
+                item = new Item();
+                item.setItem_Name( cur.getString(0));
+                item.setItem_No(itemNo);
+                item.setPrice(cur.getDouble(1));
             }
         }
-        return itemName;
+        return item;
     }
     public  void  Delete_Item(Integer itemNo){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -157,6 +162,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cont = new ContentValues();
         cont.put("ITEM_NO",item.getItem_No());
         cont.put("ITEM_NAME",item.getItem_Name());
+        cont.put("PRICE",item.getPrice());
         db.insert("ITEMS",null,cont);
     }
     public void Insert_Tax(Tax t){
@@ -184,10 +190,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cont.put("WAITER",billsItem.getWaiter());
         long s = db.insert("BILLS_ITEM",null,cont);
         if(s>0){
-            Log.println(1,"","Sucessfully inserted bill items");
+            Log.println(Log.ASSERT,"","Sucessfully inserted bill items");
         }
         else {
-            Log.println(1,"","Failed to insert bill items...ITEM_NAME: "+billsItem.getItem_Name());
+            Log.println(Log.ASSERT,"","Failed to insert bill items...ITEM_NAME: "+billsItem.getItem_Name());
         }
     }
     public void Insert_Bills(Bills bills){

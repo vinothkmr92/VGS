@@ -15,31 +15,26 @@
         android:columnCount="3"
         android:orientation="horizontal">
         <TextView
-            android:text="  WAITER"
+            android:text="WAITER"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold" />
-
-        <TextView android:text="          " />
 
         <Spinner
-            android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
             android:id="@+id/waiterSpinner"
-            ></Spinner>
+            android:layout_width="match_parent"
+            android:layout_columnSpan="2"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"></Spinner>
         <TextView
-            android:text="  ITEM NO"
+            android:text="ITEM NO"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="5dp"
-            android:text="          " />
-
         <EditText
             android:id="@+id/itemNo"
+            android:layout_width="match_parent"
+            android:layout_columnSpan="2"
             android:editable="false"
             android:focusable="true"
             android:minWidth="700px"
@@ -47,34 +42,47 @@
             android:textColor="@android:color/background_dark" />
 
         <TextView
-            android:text="  ITEM NAME"
+            android:text="ITEM NAME"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold" />
-
-        <TextView android:text="          " />
 
         <EditText
             android:id="@+id/itemName"
             android:minWidth="700px"
             android:editable="false"
             android:focusable="false"
+            android:layout_columnSpan="2"
+            android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark" />
-
         <TextView
-            android:text="  QUANTITY"
+            android:text="PRICE"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold" />
 
-        <TextView android:text="          " />
+        <EditText
+            android:id="@+id/itemPrice"
+            android:minWidth="700px"
+            android:editable="false"
+            android:focusable="false"
+            android:textStyle="bold"
+            android:layout_columnSpan="2"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark" />
+        <TextView
+            android:text="QUANTITY"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/qty"
             android:editable="false"
             android:focusable="true"
             android:minWidth="700px"
+            android:layout_columnSpan="2"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark" />
     </GridLayout>
@@ -82,8 +90,8 @@
         <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:columnCount="5"
+            android:columnCount="6"
+            android:layout_marginTop="80dp"
             android:orientation="horizontal">
 
             <TextView
@@ -94,33 +102,44 @@
 
             <TextView
                 android:id="@+id/ttQty"
-                android:text="000"
+                android:text="000               "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
+                android:layout_columnSpan="2"
                 android:textStyle="bold" />
-
-            <TextView android:text="                   " />
-
-
             <TextView
-                android:text="TOTAL ITEMS:  "
+                android:text="      TOTAL ITEMS:  "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/ttItem"
-                android:text="000"
+                android:text="000            "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
+                android:layout_columnSpan="2"
                 android:textStyle="bold" />
-            <TextView/>
-            <TextView/>
 
         </GridLayout>
-
-
-
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₹ 000"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/holo_green_dark"
+            android:id="@+id/estimateAmt"
+            android:textSize="80dp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
         <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
@@ -278,7 +297,5 @@
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
                 android:textStyle="bold" />
-
         </GridLayout>
-
 </LinearLayout>

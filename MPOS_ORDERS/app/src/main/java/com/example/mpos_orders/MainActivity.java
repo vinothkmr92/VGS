@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -40,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView logedinuser;
     TextView estimatedAmt;
     TextView sellingPriceeditText;
-    Spinner productDropdown;
     ArrayList<String> productnamelist;
     Dialog progressBar;
     ConnectionClass connectionClass;
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button saveBtn;
     Context _thisContext;
     double totalAmt;
+    TextView searchTxtView;
+    Dialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             progressBar = new Dialog(MainActivity.this);
             progressBar.setContentView(R.layout.custom_progress_dialog);
             progressBar.setTitle("Loading");
+            searchTxtView = (TextView)findViewById(R.id.testView);
+            searchTxtView.setText("<SELECT PRODUCT>");
             connectionClass = new ConnectionClass();
             clearBtn = (Button)findViewById(R.id.clearButton);
             saveBtn = (Button)findViewById(R.id.saveButton);
@@ -73,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             estimatedAmt = (TextView)findViewById(R.id.estimateAmt);
             sellingPriceeditText= (TextView)findViewById(R.id.sellingprice);
             logedinuser.setText("Username: "+CommonUtil.loggedUserName);
-            productDropdown = (Spinner)findViewById(R.id.productDropdown);
             dataGrid = (TableLayout)findViewById(R.id.datagrid);
             progressBar.show();
             productnamelist = new ArrayList<>();
@@ -81,35 +87,81 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for(int i=0;i<CommonUtil.productsList.size();i++){
                 productnamelist.add(CommonUtil.productsList.get(i).getProductName());
             }
-            ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,productnamelist);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            productDropdown.setAdapter(adapter);
-            progressBar.cancel();
-            productDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    // Your code here
-                    if(productDropdown.getSelectedItemPosition()>0){
-                        Double sellingprice = 0d;
-                        String prname = productDropdown.getSelectedItem().toString();
-                        for(Product p:CommonUtil.productsList){
-                            if(p.getProductName().equals(prname)){
-                                sellingprice = p.getSellingPrice();
-                                break;
-                            }
-                        }
-                        sellingPriceeditText.setText(fmt(sellingprice));
-                        qty.setFocusableInTouchMode(true);
-                        qty.requestFocus();
-                    }
-                    else{
-                        sellingPriceeditText.setText("0");
-                    }
-                }
+            searchTxtView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Initialize dialog
+                    dialog=new Dialog(MainActivity.this);
 
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                    return;
+                    // set custom dialog
+                    dialog.setContentView(R.layout.dialog_searchable_spinner);
+
+                    // set custom height and width
+                    dialog.getWindow().setLayout(800,800);
+
+                    // set transparent background
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                    // show dialog
+                    dialog.show();
+
+                    // Initialize and assign variable
+                    EditText editText=dialog.findViewById(R.id.edit_text);
+                    ListView listView=dialog.findViewById(R.id.list_view);
+
+                    // Initialize array adapter
+                    ArrayAdapter<String> adapter=new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1,productnamelist);
+
+                    // set adapter
+                    listView.setAdapter(adapter);
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            adapter.getFilter().filter(s);
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            // when item selected from list
+                            // set selected item on textView
+                            searchTxtView.setText(adapter.getItem(position));
+
+                            // Dismiss dialog
+                            dialog.dismiss();
+                            if(position>0){
+                                Double sellingprice = 0d;
+                                String prname = searchTxtView.getText().toString();
+                                for(Product p:CommonUtil.productsList){
+                                    if(p.getProductName().equals(prname)){
+                                        sellingprice = p.getSellingPrice();
+                                        break;
+                                    }
+                                }
+                                sellingPriceeditText.setText(fmt(sellingprice));
+                                qty.setFocusableInTouchMode(true);
+                                qty.requestFocus();
+                            }
+                            else{
+                                sellingPriceeditText.setText("0");
+                            }
+
+                        }
+                    });
                 }
             });
+            progressBar.cancel();
             qty.setOnKeyListener(new View.OnKeyListener() {
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     // If the event is a key-down event on the "enter" button
@@ -117,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             (keyCode == KeyEvent.KEYCODE_ENTER)) {
                         // Perform action on key press
                         //  Toast.makeText(HelloFormStuff.this, edittext.getText(), Toast.LENGTH_SHORT).show();
-                        String prname = productDropdown.getSelectedItem().toString();
+                        String prname = searchTxtView.getText().toString();
                         if(prname.startsWith("<SELECT")){
                             showCustomDialog("Warning","Please Select Valid Product");
                             return  false;
@@ -159,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         orderProductsArraList.add(orp);
                         LoadDataGrid();
                         qty.setText("");
-                        productDropdown.setSelection(0);
+                        searchTxtView.setText("<SELECT PRODUCT>");
                         return true;
                     }
                     return false;
@@ -305,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     orderProductsArraList.remove(orderProductsArraList.size()-1);
                     LoadDataGrid();
                     qty.setText("");
-                    productDropdown.setSelection(0);
+                    searchTxtView.setText("<SELECT PRODUCT>");
                 }
                 break;
             case R.id.saveButton:
@@ -333,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else {
                 showCustomDialog("Msg","Your order no "+orderNumber+" has been Successfully Saved.");
                 orderProductsArraList.clear();
-                productDropdown.setSelection(0);
+                searchTxtView.setText("<SELECT PRODUCT>");
                 LoadDataGrid();
             }
 

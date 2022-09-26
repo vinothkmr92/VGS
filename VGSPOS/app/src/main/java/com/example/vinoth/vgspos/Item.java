@@ -3,6 +3,15 @@ package com.example.vinoth.vgspos;
 public class Item {
     private int Item_No;
     private String Item_Name;
+    private double Price;
+
+    public double getPrice() {
+        return Price;
+    }
+
+    public void setPrice(double price) {
+        Price = price;
+    }
 
     public int getItem_No() {
         return Item_No;

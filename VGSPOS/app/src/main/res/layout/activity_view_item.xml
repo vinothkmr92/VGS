@@ -6,10 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".ViewItemActivity">
 
-    <ListView
+    <ScrollView
+        android:id="@+id/scrollviews"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/viewlist"
-        tools:layout_editor_absoluteX="99dp"
-        tools:layout_editor_absoluteY="125dp" />
+        android:layout_height="308dp"
+        android:contentDescription="@string/app_name"
+        tools:ignore="MissingConstraints">
+
+        <GridLayout
+            android:id="@+id/gridData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            tools:ignore="MissingConstraints">
+            <TextView
+                android:padding="50px"
+                android:text=" "
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:padding="50px"
+                android:text="Sno"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:padding="50px"
+                android:text="Item Name"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:padding="50px"
+                android:text="QTY"
+                android:textStyle="bold"></TextView>
+        </GridLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

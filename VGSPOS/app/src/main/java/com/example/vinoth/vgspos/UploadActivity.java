@@ -25,19 +25,33 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+import com.opencsv.CSVReader;
+
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class UploadActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -45,10 +59,8 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     DatabaseHelper dbHelper;
     public static final int requestcode = 1;
     TextView lbl;
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE
     };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,19 +70,17 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         btnUpload = (Button) findViewById(R.id.btnUpload);
         dbHelper = new DatabaseHelper(this);
         btnUpload.setOnClickListener(this);
-        verifyStoragePermissions(UploadActivity.this);
-    }
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(UploadActivity.this,PERMISSIONS_STORAGE
+                    ,1);
+            return;
         }
     }
     @Override
@@ -78,12 +88,10 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         try {
             Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
             //fileintent.setType("gagt/sdf");
-            String[] mimeTypes ={"application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"};
+            String[] mimeTypes ={"text/comma-separated-values","application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"};
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                fileintent.setType(mimeTypes.length == 1 ? mimeTypes[0] : "*/*");
-                if (mimeTypes.length > 0) {
-                    fileintent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                }
+                fileintent.setType("*/*");
+
             } else {
                 String mimeTypesStr = "";
                 for (String mimeType : mimeTypes) {
@@ -242,36 +250,43 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             return;
         switch (requestCode) {
             case requestcode:
+                String Fpath = data.getDataString();
+                File file = new File(String.valueOf(data.getData()));
                 String FilePath = getPath(this,data.getData());
+                //String FilePath = FileUtil.getPath(this,data.getData());
+                //File file=FileUtil.getFile(uri);
                 try {
                     if (resultCode == RESULT_OK) {
                         AssetManager am = this.getAssets();
                         InputStream inStream;
                         Workbook wb = null;
                         try {
-                            inStream = new FileInputStream(FilePath);
-                            wb = new HSSFWorkbook(inStream);
-                            inStream.close();
-                            Sheet sheet = wb.getSheetAt(0);
-                            if (sheet == null) {
-                                return;
-                            }
+                            CSVReader reader = new CSVReader(new FileReader(FilePath));
+                            String[] nextLine;
                             Integer counter=0;
-                            Integer i=0;
-                            for (Iterator<Row> rit = sheet.rowIterator(); rit.hasNext(); ){
-                                Row row = rit.next();
-                                if(i==0){
-                                    i++;
+                            while ((nextLine = reader.readNext()) != null) {
+                                // nextLine[] is an array of values from the line
+                                String itemname = nextLine[0];
+                                if(itemname.equals("ITEM NAME")){
                                     continue;
                                 }
-                                ContentValues contentValues = new ContentValues();
-                                row.getCell(0, Row.CREATE_NULL_AS_BLANK).setCellType(Cell.CELL_TYPE_STRING);
-                                row.getCell(1, Row.CREATE_NULL_AS_BLANK).setCellType(Cell.CELL_TYPE_STRING);
+                                if(itemname.isEmpty()){
+                                    break;
+                                }
+                                String itemnos = nextLine[1];
+                                String prices = nextLine[2];
+                                if(itemnos.isEmpty()){
+                                    break;
+                                }
+                                if(prices.isEmpty()){
+                                    prices="0";
+                                }
+                                Integer itemno = Integer.parseInt(itemnos);
+                                Double price = Double.parseDouble(prices);
                                 Item item = new Item();
-                                item.setItem_Name(row.getCell(0, Row.CREATE_NULL_AS_BLANK).getStringCellValue());
-                                String id = row.getCell(1,Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                                Integer itemid = Integer.parseInt(id);
-                                item.setItem_No(itemid);
+                                item.setItem_Name(itemname);
+                                item.setItem_No(itemno);
+                                item.setPrice(price);
                                 try{
                                     ArrayList<Item> s = dbHelper.GetItems();
                                     Integer index = s.indexOf(item);
@@ -280,14 +295,13 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                     }
                                     dbHelper.Insert_Item(item);
                                     counter++;
-                                    lbl.setText("  "+counter+" - Rows Uploaded");
                                 }
-                                catch (Exception ex){
+                                catch (Exception ex)
+                                {
                                     lbl.setText(ex.getMessage());
                                 }
-                                i++;
+                                lbl.setText("  "+counter+" - Rows Uploaded");
                             }
-
                         } catch (IOException e) {
                             lbl.setText(e.getMessage().toString());
                             e.printStackTrace();
@@ -320,6 +334,11 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 Intent dcpage = new Intent(this,UploadActivity.class);
                 dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(dcpage);
+                return  true;
+            case R.id.settings:
+                Intent settingsPage = new Intent(this,Settings.class);
+                settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(settingsPage);
                 return  true;
             case R.id.homemenu:
                 Intent page = new Intent(this,HomeActivity.class);
