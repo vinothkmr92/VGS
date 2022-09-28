@@ -15,7 +15,7 @@
         android:columnCount="3"
         android:orientation="horizontal">
         <TextView
-            android:text="WAITER"
+            android:text="CUSTOMER"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold" />
@@ -23,14 +23,28 @@
         <Spinner
             android:id="@+id/waiterSpinner"
             android:layout_width="match_parent"
-            android:layout_columnSpan="2"
+            android:layout_columnSpan="1"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"></Spinner>
+            android:textColor="@android:color/background_dark"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"></Spinner>
+        <ImageButton android:layout_height="100px"
+            android:layout_width="100px"
+            android:id="@+id/btnAddMember"
+            android:background="@drawable/ic_baseline_person_add_24"></ImageButton>
+        <Button
+            android:id="@+id/scanQR"
+            style="@style/Widget.MaterialComponents.Button"
+            android:background="@android:color/holo_red_dark"
+            android:text="SCAN"
+            android:textColor="@android:color/background_light"
+            android:textSize="15dp"
+            android:textStyle="bold" />
         <TextView
             android:text="ITEM NO"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold" />
+
         <EditText
             android:id="@+id/itemNo"
             android:layout_width="match_parent"
@@ -39,7 +53,8 @@
             android:focusable="true"
             android:minWidth="700px"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark" />
+            android:textColor="@android:color/background_dark"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
         <TextView
             android:text="ITEM NAME"
@@ -49,13 +64,14 @@
 
         <EditText
             android:id="@+id/itemName"
-            android:minWidth="700px"
+            android:layout_columnSpan="2"
             android:editable="false"
             android:focusable="false"
-            android:layout_columnSpan="2"
-            android:textStyle="bold"
+            android:minWidth="700px"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark" />
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
         <TextView
             android:text="PRICE"
             android:textAppearance="@style/TextAppearance.AppCompat"
@@ -64,13 +80,14 @@
 
         <EditText
             android:id="@+id/itemPrice"
-            android:minWidth="700px"
-            android:editable="false"
-            android:focusable="false"
-            android:textStyle="bold"
             android:layout_columnSpan="2"
+            android:editable="false"
+            android:focusable="true"
+            android:minWidth="700px"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark" />
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
         <TextView
             android:text="QUANTITY"
             android:textAppearance="@style/TextAppearance.AppCompat"
@@ -79,12 +96,13 @@
 
         <EditText
             android:id="@+id/qty"
+            android:layout_columnSpan="2"
             android:editable="false"
             android:focusable="true"
             android:minWidth="700px"
-            android:layout_columnSpan="2"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark" />
+            android:textColor="@android:color/background_dark"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
     </GridLayout>
 
         <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -141,7 +159,7 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-        <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -152,7 +170,8 @@
                 android:layout_height="10px"
                 android:layout_columnSpan="4"
                 android:layout_gravity="fill"
-                android:background="@color/design_default_color_primary" />
+                android:background="@color/design_default_color_primary"
+                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/_1"
@@ -256,7 +275,8 @@
                 android:text="REPORT"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="TextContrastCheck" />
 
             <Button
                 android:id="@+id/cancel"

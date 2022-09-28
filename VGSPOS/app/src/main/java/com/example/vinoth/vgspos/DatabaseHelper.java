@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 2);
+        super(context, DATABASE_NAME, null, 4);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -28,8 +28,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("CREATE TABLE TAX (TAX_ID INTEGER PRIMARY KEY,TAX_VALUE NUMERIC)");
       db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC)");
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
-      db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,USER_ID INTEGER,PRIMARY KEY (BILL_NO,BILL_DATE))");
+      db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,PRIMARY KEY (BILL_NO,BILL_DATE))");
       db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT)");
+      db.execSQL("CREATE TABLE CUSTOMERS (NAME TEXT,MOBILE_NUMBER TEXT,ADDRESS TEXT,PRIMARY KEY (MOBILE_NUMBER))");
       InsertMasterUser(db);
 
     }
@@ -43,7 +44,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS STOCKS");
         db.execSQL("DROP TABLE IF EXISTS BILLS");
         db.execSQL("DROP TABLE IF EXISTS BILLS_ITEM");
+        db.execSQL("DROP TABLE IF EXISTS CUSTOMERS");
         onCreate(db);
+    }
+    public void InsertCustomer(Customer customer){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cntVal = new ContentValues();
+        cntVal.put("NAME",customer.getCustomerName());
+        cntVal.put("MOBILE_NUMBER",customer.getMobileNumber());
+        cntVal.put("ADDRESS",customer.getAddress());
+        Customer c = GetCustomer(customer.getMobileNumber());
+        if(c==null){
+            db.insert("CUSTOMERS",null,cntVal);
+        }
+        else {
+            db.update("CUSTOMERS",cntVal,"MOBILE_NUMBER",new String[]{customer.getMobileNumber()});
+        }
+
+    }
+    public Customer GetCustomer(String mobileNumber){
+        Customer customer =null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT * FROM CUSTOMERS WHERE MOBILE_NUMBER='"+mobileNumber+"'",null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                customer = new Customer();
+                customer.setCustomerName(cur.getString(0));
+                customer.setMobileNumber(cur.getString(1));
+                customer.setAddress(cur.getString(2));
+            }
+        }
+        return customer;
+    }
+    public  ArrayList<Customer> GetCustomers(){
+        ArrayList<Customer> customers = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT * FROM CUSTOMERS",null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                Customer customer = new Customer();
+                customer.setCustomerName(cur.getString(0));
+                customer.setMobileNumber(cur.getString(1));
+                customer.setAddress(cur.getString(2));
+                customers.add(customer);
+            }
+        }
+        return customers;
     }
     public void InsertUser(Users usr){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -104,18 +150,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String res = padRight(name,25);
         return res.substring(0,25);
     }
-    public ArrayList<ItemsRpt> GetReports(String billDt,String waiter){
+    public  ArrayList<SaleReport> GetAllSales(String waiter){
+        ArrayList<SaleReport> report = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT FROM BILLS";
+        if(!waiter.equals("ALL")){
+            query = "SELECT BILL_NO,BILL_DATE,SALE_AMT FROM BILLS WHERE USER_ID='"+waiter+"'";
+        }
+        Cursor cur = db.rawQuery(query,null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                SaleReport r = new SaleReport();
+                String billno = cur.getString(0);
+                r.setBillNo(billno);
+                String billDate = cur.getString(1);
+                r.setBillDate(billDate);
+                r.setBillAmount(cur.getDouble(2));
+                report.add(r);
+            }
+        }
+        return  report;
+    }
+    public ArrayList<SaleReport> GetSaleReport(String frmDate,String toDate,String waiter){
+        ArrayList<SaleReport> report = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT FROM BILLS WHERE BILL_DATE>='"+frmDate+"' AND BILL_DATE<='"+toDate+"'";
+        if(!waiter.equals("ALL")){
+            query = "SELECT BILL_NO,BILL_DATE,SALE_AMT FROM BILLS WHERE BILL_DATE='"+frmDate+"' AND BILL_DATE<='"+toDate+"' AND USER_ID='"+waiter+"'";
+        }
+        Cursor cur = db.rawQuery(query,null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                SaleReport r = new SaleReport();
+                String billno = cur.getString(0);
+                r.setBillNo(billno);
+                String billDate = cur.getString(1);
+                r.setBillDate(billDate);
+                r.setBillAmount(cur.getDouble(2));
+                report.add(r);
+            }
+        }
+        return  report;
+    }
+    public ArrayList<ItemsRpt> GetReports(String frmDt,String toDt,String waiter){
        ArrayList<ItemsRpt> report = new ArrayList<>();
        SQLiteDatabase db = this.getWritableDatabase();
-       String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE='"+billDt+"' GROUP BY ITEM_NAME";
+       String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE>='"+frmDt+"' AND BILL_DATE<='"+toDt+"' GROUP BY ITEM_NAME";
        if(!waiter.equals("ALL")){
-        query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE='"+billDt+"' AND WAITER='"+waiter+"' GROUP BY ITEM_NAME";
+        query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE>='"+frmDt+"' AND BILL_DATE<='"+toDt+"' AND WAITER='"+waiter+"' GROUP BY ITEM_NAME";
        }
        Cursor cur = db.rawQuery(query,null);
        if(cur.getCount()>0){
            while (cur.moveToNext()){
                ItemsRpt r = new ItemsRpt();
-               String name = GetformattedItemName(cur.getString((0)));
+               String name = cur.getString(0);
                r.setItemName(name);
                r.setQuantity(cur.getDouble(1));
                report.add(r);
@@ -199,11 +287,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void Insert_Bills(Bills bills){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cnt = new ContentValues();
-        cnt.put("",bills.getBill_No());
-        cnt.put("",bills.getBill_DtStr());
-        cnt.put("",bills.getSale_Amt());
-        cnt.put("",bills.getUser().getUser_Id());
-        db.insert("BILLS",null,cnt);
+        cnt.put("BILL_NO",bills.getBill_No());
+        cnt.put("BILL_DATE",bills.getBill_Date());
+        cnt.put("SALE_AMT",bills.getSale_Amt());
+        cnt.put("WAITER",bills.getUser());
+        long s =db.insert("BILLS",null,cnt);
+        if(s>0){
+            Log.println(Log.ASSERT,"","Sucessfully inserted bills");
+        }
+        else {
+            Log.println(Log.ASSERT,"","Failed to insert bill no: "+bills.getBill_No());
+        }
     }
     public ArrayList<Stock> GetStocks(){
         ArrayList<Stock> stocks = new ArrayList<Stock>();

@@ -2,6 +2,7 @@ package com.example.vinoth.vgspos;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,8 +15,14 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -59,9 +66,8 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     DatabaseHelper dbHelper;
     public static final int requestcode = 1;
     TextView lbl;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.MANAGE_EXTERNAL_STORAGE
-    };
+    private Dialog progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,22 +76,53 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         btnUpload = (Button) findViewById(R.id.btnUpload);
         dbHelper = new DatabaseHelper(this);
         btnUpload.setOnClickListener(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(UploadActivity.this,PERMISSIONS_STORAGE
-                    ,1);
-            return;
+        progressBar = new Dialog(UploadActivity.this);
+        progressBar.setContentView(R.layout.custom_progress_dialog);
+        progressBar.setTitle("Loading...");
+        if(!checkPermission()){
+            requestStoragePermission();
         }
     }
+    public void requestStoragePermission(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+            Intent intent = new Intent();
+            intent.setAction(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            storeageActivitytResultLanucher.launch(intent);
+        }
+        else{
+            ActivityCompat.requestPermissions(UploadActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}
+                    ,1);
+        }
+    }
+    public boolean checkPermission(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+         return  Environment.isExternalStorageManager();
+        }
+        else{
+            int write = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
+            return write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+    private ActivityResultLauncher<Intent> storeageActivitytResultLanucher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+
+                    }
+                    else{
+
+                    }
+                }
+            });
     @Override
     public void onClick(View v) {
         try {
+            progressBar.show();
             Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
             //fileintent.setType("gagt/sdf");
             String[] mimeTypes ={"text/comma-separated-values","application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"};
@@ -102,6 +139,11 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             startActivityForResult(fileintent, requestcode);
         } catch (Exception ex) {
             lbl.setText(ex.getMessage());
+        }
+        finally {
+            if(progressBar.isShowing()){
+                progressBar.cancel();
+            }
         }
     }
 
@@ -314,6 +356,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                     //lbl.setText(ex.getMessage().toString());
                 }
         }
+        super.onActivityResult(requestCode,resultCode,data);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

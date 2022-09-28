@@ -10,6 +10,9 @@
     <item
         android:id="@+id/settings"
         android:title="Settings"/>
+    <item
+        android:id="@+id/saleReort"
+        android:title="Sale Report"/>
     <item android:id="@+id/exit"
         android:title="EXIT"/>
 

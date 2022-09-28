@@ -7,26 +7,56 @@
     android:orientation="horizontal"
     tools:context=".ItemReport">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <GridLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:columnCount="3"
+        tools:ignore="MissingConstraints">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Select Date"/>
-        <EditText
-            android:id="@+id/rptDate"
+            android:text="From Date"/>
+        <TextView
+            android:id="@+id/itemrptFrmDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="date"
-            android:ems="10"/>
-    </LinearLayout>
+            android:gravity="center"
+            android:layout_marginLeft="50px"
+            android:text="Date"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+        <ImageButton
+            android:layout_width="100px"
+            android:layout_height="100px"
+            android:id="@+id/btndpFrmDateItem"
+            android:layout_marginLeft="50px"
+            android:background="@drawable/ic_baseline_date_range_24"></ImageButton>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="To Date"/>
+        <TextView
+            android:id="@+id/itemrptToDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginLeft="50px"
+            android:text="Date"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+        <ImageButton
+            android:layout_width="100px"
+            android:layout_height="100px"
+            android:id="@+id/btndpToDateItem"
+            android:layout_marginLeft="50px"
+            android:background="@drawable/ic_baseline_date_range_24"></ImageButton>
+    </GridLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="80dp"
         android:paddingTop="20dp"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
@@ -52,16 +82,37 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="62dp"
+        android:layout_marginTop="100dp"
         android:paddingTop="40dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ListView
-            android:id="@+id/rptView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></ListView>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            tools:ignore="MissingConstraints">
+
+            <GridLayout
+                android:id="@+id/gridDataRpt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                tools:ignore="MissingConstraints">
+
+                <TextView
+                    android:layout_width="266dp"
+                    android:padding="50px"
+                    android:text="Item Name"
+                    android:textStyle="bold"></TextView>
+
+                <TextView
+                    android:padding="50px"
+                    android:text="QTY"
+                    android:textStyle="bold"></TextView>
+            </GridLayout>
+        </ScrollView>
     </LinearLayout>
 
 

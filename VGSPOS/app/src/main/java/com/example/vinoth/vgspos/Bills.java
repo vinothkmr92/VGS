@@ -6,10 +6,9 @@ import java.util.Locale;
 
 public class Bills {
     private int Bill_No;
-    private String Bill_DtStr;
-    private Date Bill_Date;
+    private String Bill_Date;
     private double Sale_Amt;
-    private Users user;
+    private String user;
 
     public int getBill_No() {
         return Bill_No;
@@ -19,33 +18,13 @@ public class Bills {
         Bill_No = bill_No;
     }
 
-    public String getBill_DtStr() {
-        return Bill_DtStr;
-    }
-
-    public void setBill_DtStr(String bill_DtStr) {
-        Bill_DtStr = bill_DtStr;
-    }
-
-    public Date getBill_Date() {
-        try{
-            Bill_Date=new SimpleDateFormat("dd-MMM-yyyy").parse(getBill_DtStr());
-            return Bill_Date;
-        }
-        catch (Exception ex){
-            return new Date();
-        }
+    public String getBill_Date() {
+        return Bill_Date;
 
     }
 
     public void setBill_Date(String bill_Date) {
-        try
-        {
-            Bill_Date=new SimpleDateFormat("dd-MMM-yyyy").parse(bill_Date);
-        }
-        catch (Exception ex){
-            Bill_Date = new Date();
-        }
+        Bill_Date = bill_Date;
 
     }
 
@@ -57,11 +36,11 @@ public class Bills {
         Sale_Amt = sale_Amt;
     }
 
-    public Users getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(Users user) {
+    public void setUser(String user) {
         this.user = user;
     }
 }

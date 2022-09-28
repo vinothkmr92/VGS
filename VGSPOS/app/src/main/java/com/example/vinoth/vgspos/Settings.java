@@ -181,7 +181,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         String headerMsg = editTextHeaderMsg.getText().toString();
         String footerMsg = editTextFooterMsg.getText().toString();
         String printer = editTextPrinterIP.getText().toString();
-        String bluetoothName = spinnerbluetothDevice.getSelectedItem().toString();
+        String bluetoothName = radioButtonBluetooth.isChecked()? spinnerbluetothDevice.getSelectedItem().toString(): " ";
         String isWifi = radioButtonWifi.isChecked() ? "YES":"NO";
         sharedpreferences.putString(HEADERMSG,headerMsg);
         sharedpreferences.putString(FOOTERMSG,footerMsg);
@@ -189,6 +189,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         sharedpreferences.putString(BLUETOOTNAME,bluetoothName);
         sharedpreferences.putString(ISWIFI,isWifi);
         sharedpreferences.commit();
+        Common.printerIP = printer;
+        Common.headerMeg = headerMsg;
+        Common.footerMsg = footerMsg;
+        Common.bluetoothDeviceName = bluetoothName;
         showCustomDialog("Saved","Successfully Saved Data",true);
     }
 }
