@@ -5,14 +5,17 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -20,10 +23,9 @@ import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,13 +44,14 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     ImageButton btnToDatePicker;
     private Button btnrpt;
     private Button btnPrint;
-    private Spinner waiters;
     private GridLayout gridView;
     private DynamicViewItemRpt dynamicView;
     private Calendar calendar;
     private int year, month, day;
     DatePickerDialog datePickerDialog;
     DatePickerDialog todatePickerDialog;
+    TextView searchTxtView;
+    Dialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,21 +67,76 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         gridView = (GridLayout) findViewById(R.id.gridDataRpt);
         btnrpt = (Button) findViewById(R.id.btngetreport);
         btnPrint = (Button)findViewById(R.id.btnrptprint);
-        waiters = (Spinner)findViewById(R.id.rptwaiter);
         btnPrint.setOnClickListener(this);
         btnrpt.setOnClickListener(this);
         btnFrmDatePicker.setOnClickListener(this);
         btnToDatePicker.setOnClickListener(this);
+        searchTxtView = (TextView)findViewById(R.id.customerinfoitemwise);
+        searchTxtView.setText("ALL");
         ArrayList<String> wts = new ArrayList<String>();
         wts.add("ALL");
-        wts.add("WAITER - 1");
-        wts.add("WAITER - 2");
-        wts.add("WAITER - 3");
-        wts.add("WAITER - 4");
-        wts.add("WAITER - 5");
-        ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,wts);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        waiters.setAdapter(adapter);
+        ArrayList<Customer> customers = dbHelper.GetCustomers();
+        for(int i=0;i<customers.size();i++){
+            wts.add(customers.get(i).getCustomerName());
+        }
+        searchTxtView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Initialize dialog
+                dialog=new Dialog(ItemReport.this);
+
+                // set custom dialog
+                dialog.setContentView(R.layout.dialog_searchable_spinner);
+
+                // set custom height and width
+                dialog.getWindow().setLayout(500,500);
+
+                // set transparent background
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                // show dialog
+                dialog.show();
+
+                // Initialize and assign variable
+                EditText editText=dialog.findViewById(R.id.edit_text);
+                ListView listView=dialog.findViewById(R.id.list_view);
+
+                // Initialize array adapter
+                ArrayAdapter<String> adapter=new ArrayAdapter<>(ItemReport.this, android.R.layout.simple_list_item_1,wts);
+
+                // set adapter
+                listView.setAdapter(adapter);
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        adapter.getFilter().filter(s);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        // when item selected from list
+                        // set selected item on textView
+                        searchTxtView.setText(adapter.getItem(position));
+
+                        // Dismiss dialog
+                        dialog.dismiss();
+
+                    }
+                });
+            }
+        });
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date date = new Date();
         frmDateTextView.setText(format.format(date));
@@ -184,8 +242,14 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             Common.saleReportFrmDate = frmdt;
             Common.saleReportToDate = todt;
             Common.isItemWiseRptBill = true;
-           PrintWifi printWifi = new PrintWifi(ItemReport.this,false);
-           printWifi.Print();
+            if(Common.isWifiPrint){
+                PrintWifi printWifi = new PrintWifi(ItemReport.this,false);
+                printWifi.Print();
+            }
+            else{
+                PrintBluetooth printBluetooth = new PrintBluetooth(ItemReport.this);
+                printBluetooth.PrintItemWiseReport();
+            }
 
         } catch (Exception e) {
             showCustomDialog("Print Error",e.getMessage());
@@ -195,7 +259,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     public void LoadReportViews(){
         String frmdt = frmDateTextView.getText().toString();
         String todt = toDateTextView.getText().toString();
-        String waiter  = waiters.getSelectedItem().toString();
+        String waiter  = searchTxtView.getText().toString();
         ArrayList<ItemsRpt> itemsRpts = dbHelper.GetReports(frmdt,todt,waiter);
         if(gridView.getRowCount()>1){
             gridView.removeViews(2,itemsRpts.size()*2);
@@ -223,7 +287,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             case R.id.btnrptprint:
                 String frmdt = frmDateTextView.getText().toString();
                 String todt = toDateTextView.getText().toString();
-                String waiter  = waiters.getSelectedItem().toString();
+                String waiter  = searchTxtView.getText().toString();
                 ArrayList<ItemsRpt> items = dbHelper.GetReports(frmdt,todt,waiter);
                 if(items.size()>0){
                     PrintReport(items);

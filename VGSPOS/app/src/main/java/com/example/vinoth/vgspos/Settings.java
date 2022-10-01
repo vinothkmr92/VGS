@@ -1,8 +1,5 @@
 package com.example.vinoth.vgspos;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -21,6 +18,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -193,6 +193,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         Common.headerMeg = headerMsg;
         Common.footerMsg = footerMsg;
         Common.bluetoothDeviceName = bluetoothName;
+        Common.isWifiPrint = radioButtonWifi.isChecked();
         showCustomDialog("Saved","Successfully Saved Data",true);
     }
 }

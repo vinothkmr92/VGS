@@ -13,4 +13,5 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="ActivationAPIHost">60.243.50.58</string>
 </resources>

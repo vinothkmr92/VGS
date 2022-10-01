@@ -1,25 +1,31 @@
 package com.example.vinoth.vgspos;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
-import android.widget.Spinner;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,7 +40,6 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     TextView toDateTextView;
     ImageButton btnFrmDatePicker;
     ImageButton btnToDatePicker;
-    Spinner waiterSpinner;
     Button btnGetReport;
     ImageButton btnPrintReport;
     private DatePicker datePicker;
@@ -48,6 +53,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     DynamicViewSaleReport dynamicView;
     TextView txtViewTotalSaleAmt;
     private Dialog progressBar;
+    TextView searchTxtView;
+    Dialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +67,6 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         toDateTextView = (TextView) findViewById(R.id.salerptToDate);
         btnFrmDatePicker = (ImageButton) findViewById(R.id.btndpFrmDate);
         btnToDatePicker = (ImageButton) findViewById(R.id.btndpToDate);
-        waiterSpinner = (Spinner) findViewById(R.id.salerptwaiter);
         btnGetReport = (Button) findViewById(R.id.btngetsalereport);
         btnPrintReport = (ImageButton) findViewById(R.id.btnsalerptprint);
         gridLayout = (GridLayout)findViewById(R.id.gridDataSaleRpt);
@@ -69,20 +75,76 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         btnPrintReport.setOnClickListener(this);
         btnFrmDatePicker.setOnClickListener(this);
         btnToDatePicker.setOnClickListener(this);
+        searchTxtView = (TextView)findViewById(R.id.customerinfosaleRpt);
+        searchTxtView.setText("ALL");
+        ArrayList<String> wts = new ArrayList<String>();
+        wts.add("ALL");
+        ArrayList<Customer> customers = dbHelper.GetCustomers();
+        for(int i=0;i<customers.size();i++){
+            wts.add(customers.get(i).getCustomerName());
+        }
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date date = new Date();
         frmDateTextView.setText(format.format(date));
         toDateTextView.setText(format.format(date));
-        ArrayList<String> wts = new ArrayList<String>();
-        wts.add("ALL");
-        wts.add("WAITER - 1");
-        wts.add("WAITER - 2");
-        wts.add("WAITER - 3");
-        wts.add("WAITER - 4");
-        wts.add("WAITER - 5");
-        ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,wts);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        waiterSpinner.setAdapter(adapter);
+        searchTxtView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Initialize dialog
+                dialog=new Dialog(SaleReportActivity.this);
+
+                // set custom dialog
+                dialog.setContentView(R.layout.dialog_searchable_spinner);
+
+                // set custom height and width
+                dialog.getWindow().setLayout(500,500);
+
+                // set transparent background
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                // show dialog
+                dialog.show();
+
+                // Initialize and assign variable
+                EditText editText=dialog.findViewById(R.id.edit_text);
+                ListView listView=dialog.findViewById(R.id.list_view);
+
+                // Initialize array adapter
+                ArrayAdapter<String> adapter=new ArrayAdapter<>(SaleReportActivity.this, android.R.layout.simple_list_item_1,wts);
+
+                // set adapter
+                listView.setAdapter(adapter);
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        adapter.getFilter().filter(s);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        // when item selected from list
+                        // set selected item on textView
+                        searchTxtView.setText(adapter.getItem(position));
+
+                        // Dismiss dialog
+                        dialog.dismiss();
+
+                    }
+                });
+            }
+        });
         GetDefaultDate();
         datePickerDialog = new DatePickerDialog(SaleReportActivity.this,myDateListener,year,month,day);
         todatePickerDialog = new DatePickerDialog(SaleReportActivity.this,mytoDateListener,year,month,day);
@@ -168,7 +230,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     private void LoadSaleReport(){
         String frmdt = frmDateTextView.getText().toString();
         String todt = toDateTextView.getText().toString();
-        String waiter  = waiterSpinner.getSelectedItem().toString();
+        String waiter  = searchTxtView.getText().toString();
         //ArrayList<SaleReport> items = dbHelper.GetAllSales(waiter);
         ArrayList<SaleReport> items = dbHelper.GetSaleReport(frmdt,todt,waiter);
         int rc = gridLayout.getRowCount();
@@ -222,14 +284,20 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 try{
                     String frmdt = frmDateTextView.getText().toString();
                     String todt = toDateTextView.getText().toString();
-                    String waiter  = waiterSpinner.getSelectedItem().toString();
+                    String waiter  = searchTxtView.getText().toString();
                     ArrayList<SaleReport> items = dbHelper.GetSaleReport(frmdt,todt,waiter);
                     if(items.size()>0){
                         Common.saleReports = items;
                         Common.saleReportFrmDate = frmdt;
                         Common.saleReportToDate = todt;
-                        PrintWifi printWifi = new PrintWifi(SaleReportActivity.this,false);
-                        printWifi.Print();
+                        if(Common.isWifiPrint){
+                            PrintWifi printWifi = new PrintWifi(SaleReportActivity.this,false);
+                            printWifi.Print();
+                        }
+                        else{
+                            PrintBluetooth printBluetooth = new PrintBluetooth(SaleReportActivity.this);
+                            printBluetooth.PrintSaleReport();
+                        }
                     }
                     else {
                         showCustomDialog("Info","No record found.");

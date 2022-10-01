@@ -3,20 +3,17 @@ package com.example.vinoth.vgspos;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.media.Image;
-import android.os.AsyncTask;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,31 +24,21 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.sewoo.jpos.command.ESCPOS;
-import com.sewoo.jpos.printer.ESCPOSPrinter;
-import com.sewoo.port.android.WiFiPort;
-import com.sewoo.port.android.WiFiPortConnection;
-import com.sewoo.request.android.RequestHandler;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener, AddCustomerDialog.CustomerDialogListener {
 
@@ -81,7 +68,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnCancel;
     private Button btnPrint;
     private Button btnEnter;
-    private Spinner wtSpinner;
     private ImageButton btnAddCustomer;
 
 
@@ -97,12 +83,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String PRINTERIP = "PRINTERIP";
     public static final String BLUETOOTNAME = "BLUETOOTHNAME";
     public static final String ISWIFI = "ISWIFI";
+    public static final String EXPIRE_DT = "EXPIRE_DT";
     String headerMsg ;
     String footerMsg ;
     String printerip ;
     String bluetothName;
     boolean isWifiPrint;
     Button btnScanQr;
+    TextView searchTxtView;
+    Dialog dialog;
+    ArrayList<String> waiters;
+    String android_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,9 +108,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Quantity = (EditText) findViewById(R.id.qty);
             tQty = (TextView) findViewById(R.id.ttQty);
             tItem = (TextView) findViewById(R.id.ttItem);
-            wtSpinner = (Spinner) findViewById(R.id.waiterSpinner);
             estAmt = (TextView)findViewById(R.id.estimateAmt);
             priceTxt = (EditText)findViewById(R.id.itemPrice);
+            searchTxtView = (TextView)findViewById(R.id.customerInfoTxtView);
+            searchTxtView.setText("NONE");
             btn1 = (Button) findViewById(R.id._1);
             btn2 = (Button) findViewById(R.id._2);
             btn3 = (Button) findViewById(R.id._3);
@@ -158,13 +150,91 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             btnCancel.setOnClickListener(this);
             btnPrint.setOnClickListener(this);
             btnEnter.setOnClickListener(this);
-            ArrayList<String> waiters = new ArrayList<String>();
+            sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
+            headerMsg = sharedpreferences.getString(HEADERMSG,"");
+            waiters = new ArrayList<String>();
             waiters.add("NONE");
-            waiters.add("WAITER - 1");
-            waiters.add("WAITER - 2");
-            waiters.add("WAITER - 3");
-            waiters.add("WAITER - 4");
-            waiters.add("WAITER - 5");
+            ArrayList<Customer> customers = dbHelper.GetCustomers();
+            for(int i=0;i<customers.size();i++){
+                waiters.add(customers.get(i).getCustomerName());
+            }
+            Date dt = new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
+            String expiredtstr = sharedpreferences.getString(EXPIRE_DT,simpleDateFormat.format(cal.getTime()));
+            Date expireDt = simpleDateFormat.parse(expiredtstr);
+            if(expireDt.compareTo(dt)<0){
+                boolean internetav = Is_InternetWorking();
+                if(internetav){
+                    Common.isActivated = false;
+                    android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+                    AppActivation appActivation = new AppActivation(HomeActivity.this,android_id);
+                    appActivation.CheckActivationStatus();
+                }
+                else{
+                    showCustomDialog("Msg","Your application expired.\nPlease connect to internet and Try again.",true);
+                }
+            }
+            searchTxtView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Initialize dialog
+                    dialog=new Dialog(HomeActivity.this);
+
+                    // set custom dialog
+                    dialog.setContentView(R.layout.dialog_searchable_spinner);
+
+                    // set custom height and width
+                    dialog.getWindow().setLayout(500,500);
+
+                    // set transparent background
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                    // show dialog
+                    dialog.show();
+
+                    // Initialize and assign variable
+                    EditText editText=dialog.findViewById(R.id.edit_text);
+                    ListView listView=dialog.findViewById(R.id.list_view);
+
+                    // Initialize array adapter
+                    ArrayAdapter<String> adapter=new ArrayAdapter<>(HomeActivity.this, android.R.layout.simple_list_item_1,waiters);
+
+                    // set adapter
+                    listView.setAdapter(adapter);
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            adapter.getFilter().filter(s);
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            // when item selected from list
+                            // set selected item on textView
+                            searchTxtView.setText(adapter.getItem(position));
+
+                            // Dismiss dialog
+                            dialog.dismiss();
+                            itemNo.requestFocus();
+
+                        }
+                    });
+                }
+            });
             if (QuantityListener.itemsCarts != null) {
                 tItem.setText(String.valueOf(QuantityListener.itemsCarts.size()));
                 int ttq = 0;
@@ -174,21 +244,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 tQty.setText(String.valueOf(ttq));
             }
-            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, waiters);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            wtSpinner.setAdapter(adapter);
-            wtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    // Your code here
-                    itemNo.requestFocus();
-                }
-
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                    return;
-                }
-            });
-            sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
-            headerMsg = sharedpreferences.getString(HEADERMSG,"");
             footerMsg = sharedpreferences.getString(FOOTERMSG,"");
             printerip = sharedpreferences.getString(PRINTERIP,"");
             Common.printerIP = printerip;
@@ -198,6 +253,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Common.bluetoothDeviceName = bluetothName;
             String isWifi = sharedpreferences.getString(ISWIFI,"");
             isWifiPrint = isWifi.equalsIgnoreCase("YES");
+            Common.isWifiPrint = isWifiPrint;
             if(!isWifiPrint){
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
@@ -216,6 +272,29 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception ex) {
             showCustomDialog("Error", ex.getMessage());
         }
+    }
+    public void ValidateActivationResponse(String response){
+        if(!Common.isActivated){
+            showCustomDialog("Msg","Your Android device "+android_id+" is not activated\n"+response,true);
+        }
+    }
+    public boolean Is_InternetWorking(){
+        boolean connected = false;
+        try {
+
+            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+            if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                //we are connected to a network
+                connected = true;
+            }
+            else
+                connected = false;
+        }
+        catch (Exception ex) {
+            connected = false;
+        }
+        return connected;
     }
     private void PrintViaBlueTooth(){
         try
@@ -305,7 +384,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 return super.onOptionsItemSelected(item);
         }
     }
-    public void showCustomDialog(String title, String Message) {
+    public void showCustomDialog(String title, String Message,boolean... closeapp) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
@@ -314,9 +393,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         dialogBuilder.setMessage("\n"+Message);
         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+                if(closeapp[0]){
+                    finish();
+                    System.exit(0);
+                }
             }
         });
         AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
         b.show();
     }
     private int GetItematIndex(ArrayList<ItemsCart> items,int itemno){
@@ -489,7 +574,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                SortItemsCarts();
                int billno = SaveDetails();
                Common.billNo = billno;
-               Common.waiter  = wtSpinner.getSelectedItem().toString();
+               Common.waiter  = searchTxtView.getText().toString();
                 if(isWifiPrint){
                     PrintWifi();
                 }
@@ -584,7 +669,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         int newbillno = dbHelper.GetNextBillNo();
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Date date = new Date();
-        String waiter  = wtSpinner.getSelectedItem().toString();
+        String waiter  = searchTxtView.getText().toString();
         double saleAmt = 0;
         for(int i=0;i<QuantityListener.itemsCarts.size();i++){
             Bills_Item bi = new Bills_Item();
@@ -650,5 +735,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         customer.setAddress(address);
         dbHelper.InsertCustomer(customer);
         showCustomDialog("Msg","Successfully added Customer details");
+        waiters = new ArrayList<String>();
+        ArrayList<Customer> customers = dbHelper.GetCustomers();
+        for(int i=0;i<customers.size();i++){
+            waiters.add(customers.get(i).getCustomerName());
+        }
     }
 }

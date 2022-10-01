@@ -60,13 +60,15 @@
         android:paddingTop="20dp"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
-        <Spinner
+        <TextView
+            android:id="@+id/customerinfoitemwise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
-            android:id="@+id/rptwaiter"
-            ></Spinner>
+            android:background="@android:drawable/editbox_background"
+            android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+            android:gravity="center_vertical"
+            android:hint="Select Customer"
+            android:padding="12dp" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

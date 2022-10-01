@@ -129,6 +129,56 @@ public class PrintBluetooth {
         String res = padLeft(txt,maxLength);
         return res.substring(0,maxLength);
     }
+    public void PrintSaleReport(){
+        String msg = "SALE REPORT\n";
+        PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
+        PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
+        PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
+        PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+        String hed =  "BILL NO   BILL_DATE       AMOUNT";
+        PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+        PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+        double totalAmt = 0;
+        for(int k=0;k<Common.saleReports.size();k++){
+            SaleReport sr = Common.saleReports.get(k);
+            String billno = sr.getBillNo();
+            String billdate = sr.getBillDate();
+            Double saleAmt = sr.getBillAmount();
+            String billAmt = String.format("%.0f",saleAmt);
+            totalAmt+=saleAmt;
+            String line = StringUtils.rightPad(billno,10)+StringUtils.rightPad(billdate,11)+StringUtils.leftPad(billAmt,11);
+            PrintData(line,new Formatter().get(),Formatter.leftAlign());
+        }
+        PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+        PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+        String ttAmtTxt = "TOTAL SALE :"+String.format("%.0f",totalAmt)+"/-";
+        PrintData(ttAmtTxt,new Formatter().bold().get(),Formatter.centerAlign());
+        PrintData("  ",new Formatter().get(),Formatter.leftAlign());
+        PrintData("  ",new Formatter().get(),Formatter.leftAlign());
+        Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
+    }
+    public void PrintItemWiseReport(){
+        String msg = "ITEM WISE REPORT\n";
+        PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
+        PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
+        PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
+        PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+        String hed =  "ITEM NAME               QTY SOLD";
+        PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+        PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+        double totalAmt = 0;
+        for(int k=0;k<Common.itemsRpts.size();k++){
+            ItemsRpt sr = Common.itemsRpts.get(k);
+            String name = sr.getItemName();
+            Double qty = sr.getQuantity();
+            String qtystr = String.format("%.0f",qty);
+            String line = StringUtils.rightPad(name,24)+StringUtils.leftPad(qtystr,8);
+            PrintData(line,new Formatter().get(),Formatter.leftAlign());
+        }
+        PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+        PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+        Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
+    }
     public  void Print() {
         int sl = 0;
         try {

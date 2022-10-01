@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,24 +11,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:columnCount="3"
+        android:columnCount="4"
         android:orientation="horizontal">
         <TextView
             android:text="CUSTOMER"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/waiterSpinner"
-            android:layout_width="match_parent"
-            android:layout_columnSpan="1"
-            android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"></Spinner>
-        <ImageButton android:layout_height="100px"
-            android:layout_width="100px"
+        <TextView
+            android:id="@+id/customerInfoTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/editbox_background"
+            android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+            android:gravity="center_vertical"
+            android:hint="Select Customer"
+            android:padding="12dp" />
+        <ImageButton android:layout_width="50px"
+            android:layout_height="50px"
             android:id="@+id/btnAddMember"
+            android:paddingLeft="20dp"
             android:background="@drawable/ic_baseline_person_add_24"></ImageButton>
         <Button
             android:id="@+id/scanQR"
@@ -38,7 +39,15 @@
             android:text="SCAN"
             android:textColor="@android:color/background_light"
             android:textSize="15dp"
+            android:paddingLeft="20dp"
             android:textStyle="bold" />
+    </GridLayout>
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:columnCount="3"
+        android:orientation="horizontal">
         <TextView
             android:text="ITEM NO"
             android:textAppearance="@style/TextAppearance.AppCompat"
