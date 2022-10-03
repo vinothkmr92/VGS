@@ -31,9 +31,8 @@ dependencies {
     implementation files('libs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
-    implementation 'org.apache.poi:poi-ooxml:4.1.2'
-    implementation 'com.opencsv:opencsv:4.6'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.zxing:core:3.2.1'
     implementation 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
+    implementation files('libs/poishadow-all.jar')
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }

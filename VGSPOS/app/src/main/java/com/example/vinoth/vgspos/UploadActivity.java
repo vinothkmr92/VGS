@@ -1,10 +1,8 @@
 package com.example.vinoth.vgspos;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,9 +10,16 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -24,41 +29,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-
-import com.opencsv.CSVReader;
-
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class UploadActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -67,6 +50,21 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     public static final int requestcode = 1;
     TextView lbl;
     private Dialog progressBar;
+
+    static {
+        System.setProperty(
+                "org.apache.poi.javax.xml.stream.XMLInputFactory",
+                "com.fasterxml.aalto.stax.InputFactoryImpl"
+        );
+        System.setProperty(
+                "org.apache.poi.javax.xml.stream.XMLOutputFactory",
+                "com.fasterxml.aalto.stax.OutputFactoryImpl"
+        );
+        System.setProperty(
+                "org.apache.poi.javax.xml.stream.XMLEventFactory",
+                "com.fasterxml.aalto.stax.EventFactoryImpl"
+        );
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,18 +122,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         try {
             progressBar.show();
             Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-            //fileintent.setType("gagt/sdf");
-            String[] mimeTypes ={"text/comma-separated-values","application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"};
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                fileintent.setType("*/*");
-
-            } else {
-                String mimeTypesStr = "";
-                for (String mimeType : mimeTypes) {
-                    mimeTypesStr += mimeType + "|";
-                }
-                fileintent.setType(mimeTypesStr.substring(0,mimeTypesStr.length() - 1));
-            }
+            fileintent.setType("application/*");
             startActivityForResult(fileintent, requestcode);
         } catch (Exception ex) {
             lbl.setText(ex.getMessage());
@@ -287,23 +274,87 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
+    private boolean isNumeric(String val){
+        try{
+            Integer integer = Integer.parseInt(val);
+            return true;
+        }
+        catch (Exception ex){
+            return false;
+        }
+    }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null)
             return;
         switch (requestCode) {
             case requestcode:
-                String Fpath = data.getDataString();
-                File file = new File(String.valueOf(data.getData()));
                 String FilePath = getPath(this,data.getData());
-                //String FilePath = FileUtil.getPath(this,data.getData());
-                //File file=FileUtil.getFile(uri);
+                Log.e("File Path",FilePath);
+                if(FilePath.contains("/root_path")){
+                    FilePath = FilePath.replace("/root_path","");
+                }
+                Log.e("File Path",FilePath);
                 try {
                     if (resultCode == RESULT_OK) {
                         AssetManager am = this.getAssets();
                         InputStream inStream;
                         Workbook wb = null;
                         try {
-                            CSVReader reader = new CSVReader(new FileReader(FilePath));
+                            inStream = new FileInputStream(FilePath);
+                            Log.e("Extension",FilePath.substring(FilePath.lastIndexOf(".")));
+                            if(FilePath.substring(FilePath.lastIndexOf(".")).equals(".xls")){
+                                Log.e("File Type","Selected file is XLS");
+                                wb = new HSSFWorkbook(inStream);
+                            }
+                            else if(FilePath.substring(FilePath.lastIndexOf(".")).equals(".xlsx")){
+                                Log.e("File Type","Selected file is XLSX");
+                                wb = new XSSFWorkbook(inStream);
+                            }
+                            else{
+                                wb = null;
+                                lbl.setText("Please select valid Excel file.");
+                                return;
+                            }
+                            inStream.close();
+                            Sheet sheet = wb.getSheetAt(0);
+                            int counter=0;
+                            for(Iterator<Row> rit = sheet.rowIterator();rit.hasNext();){
+                                Row row = rit.next();
+                                row.getCell(0,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
+                                row.getCell(1,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
+                                row.getCell(2,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.NUMERIC);
+                                String itemname = row.getCell(0,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                                if(itemname.equals("ITEM NAME") || itemname.isEmpty()){
+                                    continue;
+                                }
+                                else{
+                                    String itemnostr = row.getCell(1,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                                    Integer itemno = isNumeric(itemnostr) ? Integer.parseInt(itemnostr):0;
+                                    double price = row.getCell(2,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getNumericCellValue();
+                                    Item item = new Item();
+                                    item.setItem_No(itemno);
+                                    item.setItem_Name(itemname);
+                                    item.setPrice(price);
+                                    try{
+                                        ArrayList<Item> s = dbHelper.GetItems();
+                                        for(int k=0;k<s.size();k++){
+                                            int ino = s.get(k).getItem_No();
+                                            if(itemno == ino){
+                                                dbHelper.Delete_Item(item.getItem_No());
+                                                break;
+                                            }
+                                        }
+                                        dbHelper.Insert_Item(item);
+                                        counter++;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        lbl.setText(ex.getMessage());
+                                    }
+                                }
+                            }
+                            lbl.setText("  "+counter+" - Rows Uploaded");
+                           /* CSVReader reader = new CSVReader(new FileReader(FilePath));
                             String[] nextLine;
                             Integer counter=0;
                             while ((nextLine = reader.readNext()) != null) {
@@ -343,7 +394,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                     lbl.setText(ex.getMessage());
                                 }
                                 lbl.setText("  "+counter+" - Rows Uploaded");
-                            }
+                            }*/
                         } catch (IOException e) {
                             lbl.setText(e.getMessage().toString());
                             e.printStackTrace();

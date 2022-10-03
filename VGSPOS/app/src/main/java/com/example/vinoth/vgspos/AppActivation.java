@@ -17,9 +17,9 @@ import java.util.Locale;
 public class AppActivation {
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String EXPIRE_DT = "EXPIRE_DT";
-    private String imeiNumber;
-    private Context context;
-    private MySharedPreferences sharedpreferences;
+    private final String imeiNumber;
+    private final Context context;
+    private final MySharedPreferences sharedpreferences;
     public AppActivation(Context ctx,String imei){
         imeiNumber = imei;
         context = ctx;
