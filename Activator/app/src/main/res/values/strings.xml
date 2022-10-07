@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Activator</string>
+    <string name="ActivationAPIHost">60.243.50.58</string>
+</resources>

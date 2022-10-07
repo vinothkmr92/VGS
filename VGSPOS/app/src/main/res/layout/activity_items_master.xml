@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ItemsMasterActivity">
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:columnCount="3"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:layout_marginRight="20dp"
+            android:text="ITEM NO"
+            android:textColor="@android:color/holo_green_light"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextItemID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:hint="Enter Item Number"
+            android:inputType="number"></EditText>
+    </GridLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+    <GridLayout
+        android:id="@+id/itemViewGrid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/border"
+        android:columnCount="3"
+        android:orientation="vertical"
+        android:padding="50dp"
+        android:useDefaultMargins="true"
+        tools:ignore="MissingConstraints">
+        <TextView
+            android:text="ITEM NO"
+            android:textColor="@android:color/holo_green_light"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/txtViewItemID"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:text="ITEM NAME"
+            android:textColor="@android:color/holo_green_light"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/txtViewItemName"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:text="PRICE"
+            android:textColor="@android:color/holo_green_light"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/txtViewItemPrice"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnupdateitems"
+            android:layout_width="100px"
+            android:layout_height="100px"
+            android:layout_columnSpan="3"
+            android:layout_gravity="right"
+            android:background="@drawable/ic_baseline_edit_24"></ImageButton>
+    </GridLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

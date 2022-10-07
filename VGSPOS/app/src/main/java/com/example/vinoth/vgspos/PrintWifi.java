@@ -1,18 +1,13 @@
 package com.example.vinoth.vgspos;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 
 import com.sewoo.jpos.command.ESCPOS;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
 import com.sewoo.port.android.WiFiPort;
-import com.sewoo.port.android.WiFiPortConnection;
 import com.sewoo.request.android.RequestHandler;
 
 import org.apache.commons.lang3.StringUtils;
@@ -120,6 +115,7 @@ public class PrintWifi {
         catch(IOException e)
         {
             e.printStackTrace();
+            HomeActivity.getInstance().showCustomDialog("Error",e.getMessage());
         }
         return 0;
     }
@@ -173,6 +169,7 @@ public class PrintWifi {
         catch(IOException e)
         {
             e.printStackTrace();
+            HomeActivity.getInstance().showCustomDialog("Error",e.getMessage());
         }
         return 0;
     }
@@ -229,6 +226,7 @@ public class PrintWifi {
         catch(IOException e)
         {
             e.printStackTrace();
+            HomeActivity.getInstance().showCustomDialog("Error",e.getMessage());
         }
         return 0;
     }
@@ -299,7 +297,7 @@ public class PrintWifi {
                 }
                 catch (Exception ex)
                 {
-                      //
+                      HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
                 }
                 finally {
                     if(Common.isItemWiseRptBill){

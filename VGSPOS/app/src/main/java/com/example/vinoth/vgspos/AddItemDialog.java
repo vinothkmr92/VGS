@@ -18,7 +18,9 @@ public class AddItemDialog extends AppCompatDialogFragment {
     private EditText editTextItemName;
     private EditText editTextItemPrice;
     private AddItemDialog.CustomerDialogListener listener;
-
+    public String ItemNo="";
+    public String ItemName="";
+    public String ItemPrice="";
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -40,6 +42,15 @@ public class AddItemDialog extends AppCompatDialogFragment {
         editTextItemNo = view.findViewById(R.id.ItemNoadd);
         editTextItemName = view.findViewById(R.id.ItemNameadd);
         editTextItemPrice = view.findViewById(R.id.ItemPriceadd);
+        if(!ItemNo.isEmpty()){
+            editTextItemNo.setText(ItemNo);
+        }
+        if(!ItemName.isEmpty()){
+            editTextItemName.setText(ItemName);
+        }
+        if(!ItemPrice.isEmpty()){
+            editTextItemPrice.setText(ItemPrice);
+        }
         return builder.create();
     }
     @Override

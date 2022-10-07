@@ -104,6 +104,7 @@ public class PrintBluetooth {
             mOutputStream.flush();
         } catch (Exception ex) {
             Log.e("ERR", "Exception during write", ex);
+            HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
         }
     }
     public boolean PrintWithFormat(byte[] buffer, final byte[] pFormat, final byte[] pAlignment) {
@@ -119,6 +120,7 @@ public class PrintBluetooth {
             return true;
         } catch (IOException e) {
             Log.e("ERR", "Exception during write", e);
+            HomeActivity.getInstance().showCustomDialog("Error",e.getMessage());
             return false;
         }
     }
@@ -220,6 +222,7 @@ public class PrintBluetooth {
         } catch (Exception e) {
             //Toast.makeText(MainActivity.this, e.getMessage(), 1).show();
             e.printStackTrace();
+            HomeActivity.getInstance().showCustomDialog("Error",e.getMessage());
         }
     }
 }

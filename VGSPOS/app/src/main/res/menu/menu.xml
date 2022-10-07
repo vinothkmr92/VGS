@@ -1,5 +1,4 @@
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/homemenu"
@@ -10,6 +9,9 @@
     <item
         android:id="@+id/settings"
         android:title="Settings"/>
+    <item
+        android:id="@+id/itemMaster"
+        android:title="Add/Update Items"/>
     <item
         android:id="@+id/saleReort"
         android:title="Sale Report"/>

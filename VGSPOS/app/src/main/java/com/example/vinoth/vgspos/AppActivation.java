@@ -42,6 +42,9 @@ public class AppActivation {
                     Common.expireDate = expireDate;
                     sharedpreferences.putString(EXPIRE_DT,res);
                     sharedpreferences.commit();
+                    Date dt = new Date();
+                    Date compare = new Date(dt.getYear(),dt.getMonth(),dt.getDate());
+                    Common.isActivated = expireDate.compareTo(compare)>=0;
                     HomeActivity.getInstance().ValidateActivationResponse(res);
                 }
                 catch (ParseException e){
@@ -73,7 +76,7 @@ public class AppActivation {
             {
                 String host= context.getApplicationContext().getString(R.string.ActivationAPIHost);
                 String imei = params[0];
-                java.net.URL url = new URL("http://"+host+":9092/api/ActivationAPI?imei="+imei);
+                java.net.URL url = new URL("http://"+host+":9092/api/ActivationAPI/GetActivationStatus?imei="+imei);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");

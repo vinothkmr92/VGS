@@ -51,6 +51,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tQty;
     private TextView tItem;
     private TextView estAmt;
+    private TextView billnoTxtView;
     private Button btn1;
     private Button btn2;
     private Button btn3;
@@ -111,6 +112,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             estAmt = (TextView)findViewById(R.id.estimateAmt);
             priceTxt = (EditText)findViewById(R.id.itemPrice);
             searchTxtView = (TextView)findViewById(R.id.customerInfoTxtView);
+            billnoTxtView = (TextView)findViewById(R.id.billnoTxt);
+            int newbillno = dbHelper.GetNextBillNo();
+            billnoTxtView.setText(String.valueOf(newbillno));
             searchTxtView.setText("NONE");
             btn1 = (Button) findViewById(R.id._1);
             btn2 = (Button) findViewById(R.id._2);
@@ -164,7 +168,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
             String expiredtstr = sharedpreferences.getString(EXPIRE_DT,simpleDateFormat.format(cal.getTime()));
             Date expireDt = simpleDateFormat.parse(expiredtstr);
-            if(expireDt.compareTo(dt)<0){
+            Date compare = new Date(dt.getYear(),dt.getMonth(),dt.getDate());
+            if(expireDt.compareTo(compare)<0){
                 boolean internetav = Is_InternetWorking();
                 if(internetav){
                     Common.isActivated = false;
@@ -365,6 +370,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(dcpage);
                 return  true;
+            case R.id.itemMaster:
+                Intent itemmaster = new Intent(this,ItemsMasterActivity.class);
+                itemmaster.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(itemmaster);
+                return true;
             case R.id.settings:
                 Intent settingsPage = new Intent(this,Settings.class);
                 settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -393,7 +403,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         dialogBuilder.setMessage("\n"+Message);
         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                if(closeapp[0]){
+                if(closeapp.length>0 && closeapp[0]){
                     finish();
                     System.exit(0);
                 }
@@ -640,6 +650,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     public  void  UpdateCarts(){
+        QuantityListener.itemsCarts = Common.itemsCarts;
         ArrayList<ItemsCart> itemsCarts = QuantityListener.itemsCarts;
         ItemsCart itc = new ItemsCart();
         itc.setItem_No(Integer.valueOf(itemNo.getText().toString()));
@@ -689,6 +700,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         bills.setSale_Amt(saleAmt);
         bills.setUser(waiter);
         dbHelper.Insert_Bills(bills);
+        int nextBillNo = dbHelper.GetNextBillNo();
+        billnoTxtView.setText(String.valueOf(nextBillNo));
         return newbillno;
     }
     private void RefreshViews(){
@@ -698,6 +711,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         tItem.setText("0");
         tQty.setText("0");
         estAmt.setText("₹ 000");
+        int newbillno = dbHelper.GetNextBillNo();
+        billnoTxtView.setText(String.valueOf(newbillno));
         progressBar.hide();
         itemName.requestFocus();
     }

@@ -1,5 +1,7 @@
 package com.example.vinoth.vgspos;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,11 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-
-import static android.content.ContentValues.TAG;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -251,7 +249,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cont.put("ITEM_NO",item.getItem_No());
         cont.put("ITEM_NAME",item.getItem_Name());
         cont.put("PRICE",item.getPrice());
-        db.insert("ITEMS",null,cont);
+        Item it = GetItem(item.getItem_No());
+        if(it!=null){
+            db.update("ITEMS",cont,"ITEM_NO = ?",new String[]{String.valueOf(item.getItem_No())});
+        }
+        else {
+            db.insert("ITEMS",null,cont);
+        }
+
     }
     public void Insert_Tax(Tax t){
         SQLiteDatabase db = this.getWritableDatabase();

@@ -69,7 +69,7 @@ public class DynamicView implements View.OnClickListener {
         ViewItemActivity.getInstance().ClearData();
         Common.itemsCarts.remove(index);
         ViewItemActivity.getInstance().LoadData();
-        HomeActivity.getInstance().LoadTotalAmt();
+        HomeActivity.getInstance().UpdateCarts();
     }
 }
 
