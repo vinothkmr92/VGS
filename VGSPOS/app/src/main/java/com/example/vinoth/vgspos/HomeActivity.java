@@ -280,7 +280,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void ValidateActivationResponse(String response){
         if(!Common.isActivated){
-            showCustomDialog("Msg","Your Android device "+android_id+" is not activated\n"+response,true);
+            showCustomDialog("Msg","Your Android device "+android_id+" is not activated\n"+response,true,true);
         }
     }
     public boolean Is_InternetWorking(){
@@ -401,6 +401,26 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         dialogBuilder.setView(dialogView);
         dialogBuilder.setTitle(title);
         dialogBuilder.setMessage("\n"+Message);
+        if(closeapp.length>1 && closeapp[1]){
+            dialogBuilder.setNeutralButton("Share Device ID", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
+                    whatsappIntent.setType("text/plain");
+                    whatsappIntent.setPackage("com.whatsapp");
+                    whatsappIntent.putExtra(Intent.EXTRA_TEXT, android_id);
+                    try {
+                        startActivity(whatsappIntent);
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(HomeActivity.this,"Whatsapp have not been installed.",Toast.LENGTH_LONG);
+                    }
+                    finally {
+                        finish();
+                        System.exit(0);
+                    }
+                }
+            });
+        }
         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if(closeapp.length>0 && closeapp[0]){
@@ -707,6 +727,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void RefreshViews(){
         this.itemName.setText("");
         this.Quantity.setText("");
+        Common.itemsCarts.clear();
         QuantityListener.itemsCarts.clear();
         tItem.setText("0");
         tQty.setText("0");

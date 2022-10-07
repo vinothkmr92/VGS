@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -168,6 +169,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     boolean isActivated = !res.startsWith("ERROR");
                     if(isActivated){
                         showCustomDialog("Msg","Data Sync Successfully Completed");
+                        editTextDeviceID.setText("");
+                        editTextDeviceName.setText("");
+                        editTextExpireDt.setText("");
                     }
                     else{
                         showCustomDialog("Msg",res);
@@ -203,18 +207,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String devicename= params[1];
                 String expiredt = params[2];
                 java.net.URL url = new URL("http://"+host+":9092/api/ActivationAPI/ActivateDevice?imei="+imei+"&devicename="+devicename+"&expiredt="+expiredt);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
-                connection.setDoOutput(true);
-                String responseData = "";
-                InputStream is = connection.getInputStream();
-                BufferedReader responseReader = new BufferedReader(new InputStreamReader(is));
-                if ((responseData = responseReader.readLine()) != null) {
-                    System.out.append("Response: " + responseData);
-                    res = responseData;
+                //URL url = new URL("http://www.android.com/");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                    BufferedReader responseReader = new BufferedReader(new InputStreamReader(in));
+                    String responseData = "";
+                    if ((responseData = responseReader.readLine()) != null) {
+                        System.out.append("Response: " + responseData);
+                        res = responseData;
+                    }
+                } finally {
+                    urlConnection.disconnect();
                 }
-                responseReader.close();
             }
             catch(Exception e)
             {
