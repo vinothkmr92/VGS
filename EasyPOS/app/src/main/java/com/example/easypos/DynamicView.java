@@ -11,7 +11,8 @@ import android.widget.TextView;
 
 public class DynamicView implements View.OnClickListener {
     Context ctx;
-    private final int textSize = 15;
+    private final int textSize = 13;
+    private final int padding = 25;
     DynamicView(Context context){
         this.ctx = context;
     }
@@ -30,7 +31,7 @@ public class DynamicView implements View.OnClickListener {
         final TextView textView = new TextView(context);
         textView.setLayoutParams(lparams);
         textView.setTextSize(textSize);
-        textView.setPadding(50,50,50,50);
+        textView.setPadding(padding,padding,padding,padding);
         textView.setTextColor(Color.rgb(0,0,0));
         textView.setText(" "+text+" ");
         textView.setMaxEms(8);
@@ -42,7 +43,7 @@ public class DynamicView implements View.OnClickListener {
         final TextView textView = new TextView(context);
         textView.setLayoutParams(lparams);
         textView.setTextSize(textSize);
-        textView.setPadding(50,50,50,50);
+        textView.setPadding(padding,padding,padding,padding);
         textView.setTextColor(Color.rgb(0,0,0));
         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
         textView.setText(" "+text+" ");
@@ -54,7 +55,7 @@ public class DynamicView implements View.OnClickListener {
         final TextView textView = new TextView(context);
         textView.setLayoutParams(lparams);
         textView.setTextSize(textSize);
-        textView.setPadding(50,50,50,50);
+        textView.setPadding(padding,padding,padding,padding);
         textView.setTextColor(Color.rgb(0,0,0));
         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
         textView.setText(" "+text+" ");
@@ -66,7 +67,7 @@ public class DynamicView implements View.OnClickListener {
         final TextView textView = new TextView(context);
         textView.setLayoutParams(lparams);
         textView.setTextSize(textSize);
-        textView.setPadding(50,50,50,50);
+        textView.setPadding(padding,padding,padding,padding);
         textView.setTextColor(Color.rgb(0,0,0));
         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
         textView.setText(" "+text+" ");

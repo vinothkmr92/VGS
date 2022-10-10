@@ -174,7 +174,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 if(internetav){
                     Common.isActivated = false;
                     android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-                    AppActivation appActivation = new AppActivation(HomeActivity.this,android_id);
+                    AppActivation appActivation = new AppActivation(HomeActivity.this,android_id,this);
                     appActivation.CheckActivationStatus();
                 }
                 else{

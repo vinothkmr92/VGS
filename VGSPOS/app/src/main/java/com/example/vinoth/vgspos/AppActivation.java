@@ -19,10 +19,12 @@ public class AppActivation {
     public static final String EXPIRE_DT = "EXPIRE_DT";
     private final String imeiNumber;
     private final Context context;
+    private final HomeActivity homeActivity;
     private final MySharedPreferences sharedpreferences;
-    public AppActivation(Context ctx,String imei){
+    public AppActivation(Context ctx,String imei,HomeActivity homeInstance){
         imeiNumber = imei;
         context = ctx;
+        homeActivity = homeInstance;
         sharedpreferences = MySharedPreferences.getInstance(ctx,MyPREFERENCES);
     }
     public void CheckActivationStatus(){
@@ -45,10 +47,10 @@ public class AppActivation {
                     Date dt = new Date();
                     Date compare = new Date(dt.getYear(),dt.getMonth(),dt.getDate());
                     Common.isActivated = expireDate.compareTo(compare)>=0;
-                    HomeActivity.getInstance().ValidateActivationResponse(res);
+                    homeActivity.ValidateActivationResponse(res);
                 }
                 catch (ParseException e){
-                    HomeActivity.getInstance().ValidateActivationResponse(res);
+                    homeActivity.ValidateActivationResponse(res);
                 }
                 catch (Exception ex){
                     ex.printStackTrace();

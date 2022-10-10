@@ -15,7 +15,7 @@
         tools:ignore="MissingConstraints">
 
         <GridLayout
-            android:layout_width="321dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:columnCount="3"
             tools:ignore="MissingConstraints">
@@ -30,14 +30,19 @@
 
             <TextView
                 android:id="@+id/totalAmt"
-                android:layout_width="fill_parent"
+                android:layout_width="170dp"
                 android:layout_height="wrap_content"
-                android:layout_columnSpan="2"
                 android:layout_marginLeft="10dp"
                 android:text="000"
-                android:textSize="40dp"
+                android:textSize="30dp"
                 android:textColor="@android:color/holo_green_dark"
                 android:textStyle="bold"></TextView>
+
+            <ImageButton
+                android:id="@+id/btnshare"
+                android:layout_width="150px"
+                android:layout_height="150px"
+                android:background="@drawable/shareimage"></ImageButton>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -70,9 +75,10 @@
 
         <ScrollView
             android:id="@+id/scrollviews"
-            android:layout_width="match_parent"
-            android:layout_height="308dp"
-            android:contentDescription="@string/app_name">
+            android:layout_width="367dp"
+            android:layout_height="290dp"
+            android:contentDescription="@string/app_name"
+            android:scrollbars="vertical">
 
             <GridLayout
                 android:id="@+id/gridData"
@@ -80,35 +86,36 @@
                 android:layout_height="wrap_content"
                 android:columnCount="5"
                 tools:ignore="MissingConstraints">
+
                 <TextView
-                    android:padding="50px"
+                    android:padding="35px"
                     android:text=""
                     android:textStyle="bold"></TextView>
 
                 <TextView
-                    android:padding="50px"
+                    android:padding="35px"
                     android:text="Sno"
                     android:textStyle="bold"></TextView>
 
                 <TextView
-                    android:padding="50px"
+                    android:padding="35px"
                     android:text="QTY"
                     android:textStyle="bold"></TextView>
 
                 <TextView
-                    android:padding="50px"
+                    android:padding="35px"
                     android:text="Price"
                     android:textStyle="bold"></TextView>
 
                 <TextView
-                    android:padding="50px"
+                    android:padding="35px"
                     android:text="Amount"
                     android:textStyle="bold"></TextView>
             </GridLayout>
         </ScrollView>
 
         <GridLayout
-            android:layout_width="fill_parent"
+            android:layout_width="285dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:columnCount="4"
@@ -176,6 +183,7 @@
                 android:text="6"
                 android:textSize="15dp"
                 android:textStyle="bold" />
+
             <Button
                 android:id="@+id/_0"
                 android:layout_width="70dp"
