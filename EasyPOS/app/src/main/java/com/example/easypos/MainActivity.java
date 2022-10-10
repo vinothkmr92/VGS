@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String txttotal = "TOTAL: "+totalamt+"/-";
             posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
             posPtr.lineFeed(1);
-            String totalqty =String.valueOf(totalQty);
+            String totalqty =String.format("%.0f",totalQty);
             String txttotalqty = "TOTAL QTY: "+totalqty;
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+txttotalqty+"\n\n");
             posPtr.lineFeed(4);
