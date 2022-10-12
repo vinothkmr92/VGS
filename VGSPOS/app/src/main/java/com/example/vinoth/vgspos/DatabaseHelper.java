@@ -9,7 +9,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -108,7 +111,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int GetNextBillNo(){
         int id = 0;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT MAX(BILL_NO) FROM BILLS_ITEM",null);
+        Date dt = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String sr = simpleDateFormat.format(dt);
+        Cursor cur = db.rawQuery("SELECT MAX(BILL_NO) FROM BILLS WHERE BILL_DATE='"+sr+"'",null);
         if(cur.getCount()>0){
             while (cur.moveToNext()){
                 id = cur.getInt(0);

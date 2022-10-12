@@ -62,8 +62,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         progressBar.setTitle("Loading");
         connectionClass = new ConnectionClass();
         String shopname = this.getApplicationContext().getString(R.string.Shop_Name);
-        String welcommsg = "WELCOME TO "+shopname;
-        txtViewWelcome.setText(welcommsg);
+        txtViewWelcome.setText(shopname);
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         CheckSQLSettings();
     }

@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="WELCOME TO VGPOS"
             android:id="@+id/txtViewWelcome"
-            android:textStyle="bold"
+            android:textStyle="bold|italic"
             android:textSize="30dp"
             android:textColor="#1E90FF"/>
 
@@ -36,8 +36,8 @@
 
         <Button
             android:id="@+id/btnLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="79dp"
+            android:layout_width="130dp"
+            android:layout_height="93dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/round_button"
             android:text="LOGIN"

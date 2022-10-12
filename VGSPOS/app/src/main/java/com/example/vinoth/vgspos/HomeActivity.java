@@ -734,6 +734,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         estAmt.setText("₹ 000");
         int newbillno = dbHelper.GetNextBillNo();
         billnoTxtView.setText(String.valueOf(newbillno));
+        searchTxtView.setText("NONE");
         progressBar.hide();
         itemName.requestFocus();
     }
