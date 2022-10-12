@@ -191,12 +191,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
 
             }
         });
-        //dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-        // public void onClick(DialogInterface dialog, int whichButton) {
-        //   //pass
-        //}
-        //});
         AlertDialog b = dialogBuilder.create();
+        b.setCanceledOnTouchOutside(false);
+        b.setCancelable(false);
         b.show();
     }
 }

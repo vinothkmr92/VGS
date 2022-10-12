@@ -15,9 +15,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Connection;
@@ -31,6 +34,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Dialog progressBar;
     Button login;
     EditText usrName;
+    TextView txtViewWelcome;
     private static LoginActivity mInstance;
     private MySharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
@@ -50,10 +54,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login = (Button)findViewById(R.id.btnLogin);
         login.setOnClickListener(this);
         usrName = (EditText)findViewById(R.id.userText);
+        txtViewWelcome = (TextView)findViewById(R.id.txtViewWelcome);
         progressBar = new Dialog(LoginActivity.this);
         progressBar.setContentView(R.layout.custom_progress_dialog);
+        progressBar.setCanceledOnTouchOutside(false);
+        progressBar.setCancelable(false);
         progressBar.setTitle("Loading");
         connectionClass = new ConnectionClass();
+        String shopname = this.getApplicationContext().getString(R.string.Shop_Name);
+        String welcommsg = "WELCOME TO "+shopname;
+        txtViewWelcome.setText(welcommsg);
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         CheckSQLSettings();
     }
@@ -62,6 +72,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Intent st = new Intent(this, Settings.class);
         //st.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(st);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.loginmenu, menu);//Menu Resource, Menu
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.Settings:
+                Intent settingsPage = new Intent(this,Settings.class);
+                //settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(settingsPage);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
     public void  CheckSQLSettings(){
         String sqlserver = this.getApplicationContext().getString(R.string.SQL_SERVER);
@@ -126,6 +155,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //}
         //});
         AlertDialog b = dialogBuilder.create();
+        b.setCanceledOnTouchOutside(false);
+        b.setCancelable(false);
         b.show();
     }
 
@@ -146,6 +177,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
         AlertDialog b = dialogBuilder.create();
+        b.setCanceledOnTouchOutside(false);
+        b.setCancelable(false);
         b.show();
     }
     public class LoadDropDownData extends AsyncTask<String,String,String>

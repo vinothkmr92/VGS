@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             _thisContext = this.getApplicationContext();
             progressBar = new Dialog(MainActivity.this);
             progressBar.setContentView(R.layout.custom_progress_dialog);
+            progressBar.setCanceledOnTouchOutside(false);
+            progressBar.setCancelable(false);
             progressBar.setTitle("Loading");
             searchTxtView = (TextView)findViewById(R.id.testView);
             searchTxtView.setText("<SELECT PRODUCT>");
@@ -248,6 +250,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //}
         //});
         AlertDialog b = dialogBuilder.create();
+        b.setCanceledOnTouchOutside(false);
+        b.setCancelable(false);
         b.show();
     }
     @Override
@@ -388,11 +392,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 searchTxtView.setText("<SELECT PRODUCT>");
                 LoadDataGrid();
             }
-
-            // if(isSuccess) {
-            //   Toast.makeText(LoginActivity.this,r,Toast.LENGTH_SHORT).show();
-            //}
-
         }
 
         @Override

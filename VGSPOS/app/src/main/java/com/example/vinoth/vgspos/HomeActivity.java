@@ -164,7 +164,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             Date dt = new Date();
             Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -1);
+            cal.add(Calendar.DATE, 5);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
             String expiredtstr = sharedpreferences.getString(EXPIRE_DT,simpleDateFormat.format(cal.getTime()));
             Date expireDt = simpleDateFormat.parse(expiredtstr);
