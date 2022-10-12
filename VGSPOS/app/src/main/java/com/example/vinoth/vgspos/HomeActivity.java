@@ -191,7 +191,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     dialog.setContentView(R.layout.dialog_searchable_spinner);
 
                     // set custom height and width
-                    dialog.getWindow().setLayout(500,500);
+                    dialog.getWindow().setLayout(800,800);
 
                     // set transparent background
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -610,8 +610,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else{
                     PrintViaBlueTooth();
+                    RefreshViews();
                 }
-                RefreshViews();
                break;
            case  R.id.enter:
                if(priceTxt.isFocused()){
@@ -724,7 +724,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         billnoTxtView.setText(String.valueOf(nextBillNo));
         return newbillno;
     }
-    private void RefreshViews(){
+    public void RefreshViews(){
         this.itemName.setText("");
         this.Quantity.setText("");
         Common.itemsCarts.clear();

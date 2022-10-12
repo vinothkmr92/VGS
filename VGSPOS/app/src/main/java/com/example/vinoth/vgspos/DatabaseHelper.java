@@ -9,14 +9,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String EXPIRE_DT = "EXPIRE_DT";
+    private MySharedPreferences sharedpreferences;
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 4);
         SQLiteDatabase db = this.getWritableDatabase();
+        sharedpreferences = MySharedPreferences.getInstance(context,MyPREFERENCES);
     }
 
     @Override
@@ -30,7 +37,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT)");
       db.execSQL("CREATE TABLE CUSTOMERS (NAME TEXT,MOBILE_NUMBER TEXT,ADDRESS TEXT,PRIMARY KEY (MOBILE_NUMBER))");
       InsertMasterUser(db);
-
+      Calendar cal = Calendar.getInstance();
+      cal.add(Calendar.DATE, 5);
+      SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+      sharedpreferences.putString(EXPIRE_DT,simpleDateFormat.format(cal.getTime()));
+      sharedpreferences.commit();
     }
 
     @Override

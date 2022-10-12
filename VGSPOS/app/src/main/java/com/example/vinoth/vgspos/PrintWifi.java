@@ -290,6 +290,7 @@ public class PrintWifi {
                     }
                     else if(printSale){
                         PrintBillData();
+                        HomeActivity.getInstance().RefreshViews();
                     }
                     else{
                        PrintSaleReport();
