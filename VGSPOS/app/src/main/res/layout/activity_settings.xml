@@ -71,6 +71,18 @@
                 android:id="@+id/bltDevice"></Spinner>
             <TextView
                 android:padding="20px"
+                android:id="@+id/rptsizetxt"
+                android:text="Receipt Size"
+                android:textStyle="bold"></TextView>
+            <CheckBox
+                android:id="@+id/RptSize3inch"
+                android:layout_columnSpan="3"
+                android:checked="true"
+                android:padding="20px"
+                android:text="3 INCH"
+                android:textStyle="bold|italic"></CheckBox>
+            <TextView
+                android:padding="20px"
                 android:text="Printer IP"
                 android:id="@+id/txtViewIPAddress"
                 android:textStyle="bold"></TextView>

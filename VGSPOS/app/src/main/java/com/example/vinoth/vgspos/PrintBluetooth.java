@@ -95,6 +95,21 @@ public class PrintBluetooth {
             throw ex;
         }
     }
+    public void PaperCut(){
+        try{
+            byte[] cut = new byte[]{ 0x1D,
+                    0x56,
+                    66,
+                    0x00};
+            mOutputStream = mBluetoothSocket.getOutputStream();
+            mOutputStream.write(cut);
+            mOutputStream.flush();
+        }
+        catch (Exception ex){
+            Log.e("ERR","Exception during write",ex);
+            HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
+        }
+    }
     public void PrintData(String txt,final byte[] pFormat, final byte[] pAlignment) {
         try {
             mOutputStream = mBluetoothSocket.getOutputStream();
@@ -136,10 +151,19 @@ public class PrintBluetooth {
         PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
         PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
         PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
-        PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
-        String hed =  "BILL NO   BILL_DATE       AMOUNT";
-        PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
-        PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+        if(Common.is3Inch){
+            PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+            String hed =  "BILL NO         BILL_DATE               AMOUNT";
+            PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+            PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+        }
+        else{
+            PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+            String hed =  "BILL NO   BILL_DATE       AMOUNT";
+            PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+            PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+        }
+
         double totalAmt = 0;
         for(int k=0;k<Common.saleReports.size();k++){
             SaleReport sr = Common.saleReports.get(k);
@@ -148,8 +172,18 @@ public class PrintBluetooth {
             Double saleAmt = sr.getBillAmount();
             String billAmt = String.format("%.0f",saleAmt);
             totalAmt+=saleAmt;
-            String line = StringUtils.rightPad(billno,10)+StringUtils.rightPad(billdate,11)+StringUtils.leftPad(billAmt,11);
-            PrintData(line,new Formatter().get(),Formatter.leftAlign());
+            if(Common.is3Inch){
+                billno = StringUtils.rightPad(billno,7);
+                billdate = StringUtils.leftPad(billdate,18);
+                billAmt = StringUtils.leftPad(billAmt,21);
+                String line = billno+billdate+billAmt;
+                PrintData(line,new Formatter().get(),Formatter.leftAlign());
+            }
+            else{
+                String line = StringUtils.rightPad(billno,10)+StringUtils.rightPad(billdate,11)+StringUtils.leftPad(billAmt,11);
+                PrintData(line,new Formatter().get(),Formatter.leftAlign());
+            }
+
         }
         PrintData("   ",new Formatter().get(),Formatter.leftAlign());
         PrintData("   ",new Formatter().get(),Formatter.leftAlign());
@@ -157,6 +191,9 @@ public class PrintBluetooth {
         PrintData(ttAmtTxt,new Formatter().bold().get(),Formatter.centerAlign());
         PrintData("  ",new Formatter().get(),Formatter.leftAlign());
         PrintData("  ",new Formatter().get(),Formatter.leftAlign());
+        if(Common.is3Inch){
+            PaperCut();
+        }
         Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
     }
     public void PrintItemWiseReport(){
@@ -164,23 +201,42 @@ public class PrintBluetooth {
         PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
         PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
         PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
-        PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
-        String hed =  "ITEM NAME               QTY SOLD";
-        PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
-        PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+        if(Common.is3Inch){
+            PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+            String hed =  "ITEM NAME                             QTY SOLD";
+            PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+            PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+        }
+        else{
+            PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+            String hed =  "ITEM NAME               QTY SOLD";
+            PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+            PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+        }
         double totalAmt = 0;
         for(int k=0;k<Common.itemsRpts.size();k++){
             ItemsRpt sr = Common.itemsRpts.get(k);
             String name = sr.getItemName();
             Double qty = sr.getQuantity();
             String qtystr = String.format("%.0f",qty);
-            String line = StringUtils.rightPad(name,24)+StringUtils.leftPad(qtystr,8);
+            int namepadlength=0;
+            if(Common.is3Inch){
+                namepadlength=38;
+            }
+            else{
+                namepadlength = 24;
+            }
+            String line = StringUtils.rightPad(name,namepadlength)+StringUtils.leftPad(qtystr,8);
             PrintData(line,new Formatter().get(),Formatter.leftAlign());
         }
         PrintData("   ",new Formatter().get(),Formatter.leftAlign());
         PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+        if(Common.is3Inch){
+            PaperCut();
+        }
         Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
     }
+
     public  void Print() {
         int sl = 0;
         try {
@@ -193,10 +249,19 @@ public class PrintBluetooth {
             }
             PrintData("BILL NO  :"+Common.billNo,new Formatter().get(),Formatter.leftAlign());
             PrintData("DATE     : " + format.format(date),new Formatter().get(),Formatter.leftAlign());
-            PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
-            String hed = "ITEM        QTY    RATE   AMOUNT";
-            PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
-            PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+            if(Common.is3Inch){
+                PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+                String hed =  "ITEM NAME             QTY      PRICE    AMOUNT";
+                PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+                PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+            }
+            else{
+                PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+                String hed =  "ITEM        QTY    RATE   AMOUNT";
+                PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+                PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+            }
+
             double totalAmt=0;
             for(int k=0;k<Common.itemsCarts.size();k++){
                 String name = Common.itemsCarts.get(k).getItem_Name();
@@ -205,9 +270,20 @@ public class PrintBluetooth {
                 Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
                 totalAmt+=amt;
                 String amts=String.format("%.0f",amt);
-                PrintData(name,new Formatter().get(),Formatter.leftAlign());
-                PrintData("           "+GetFormatedString(qty,4)+GetFormatedString(price,9)+GetFormatedString(amts,8),
-                        new Formatter().get(),Formatter.leftAlign());
+                if(Common.is3Inch){
+                    name = StringUtils.rightPad(name,20);
+                    qty = StringUtils.leftPad(qty,5);
+                    price = StringUtils.leftPad(price,11);
+                    amts = StringUtils.leftPad(amts,10);
+                    String line = name+qty+price+amts;
+                    PrintData(line,new Formatter().get(),Formatter.leftAlign());
+                }
+                else{
+                    PrintData(name,new Formatter().get(),Formatter.leftAlign());
+                    PrintData("           "+GetFormatedString(qty,4)+GetFormatedString(price,9)+GetFormatedString(amts,8),
+                            new Formatter().get(),Formatter.leftAlign());
+                }
+
             }
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
@@ -217,6 +293,9 @@ public class PrintBluetooth {
             PrintData(Common.footerMsg,new Formatter().get(),Formatter.centerAlign());
             PrintData(" ",new Formatter().get(),Formatter.leftAlign());
             PrintData("  ",new Formatter().get(),Formatter.leftAlign());
+            if(Common.is3Inch){
+                PaperCut();
+            }
             Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
 
         } catch (Exception e) {

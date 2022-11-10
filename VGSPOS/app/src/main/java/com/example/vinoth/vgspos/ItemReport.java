@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -156,7 +156,8 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
                     // arg3 = day
                     String monthstr = String.valueOf(arg2+1);
                     monthstr = StringUtils.leftPad(monthstr,2,'0');
-                    StringBuilder sb = new StringBuilder().append(arg3).append("/")
+                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
+                    StringBuilder sb = new StringBuilder().append(dt).append("/")
                             .append(monthstr).append("/").append(arg1);
                     toDateTextView.setText(sb.toString());
                 }
@@ -173,7 +174,8 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
                     //setDate(arg1, arg2+1, arg3);
                     String monthstr = String.valueOf(arg2+1);
                     monthstr = StringUtils.leftPad(monthstr,2,'0');
-                    StringBuilder sb = new StringBuilder().append(arg3).append("/")
+                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
+                    StringBuilder sb = new StringBuilder().append(dt).append("/")
                             .append(monthstr).append("/").append(arg1);
                     frmDateTextView.setText(sb.toString());
                 }
@@ -231,6 +233,8 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             }
         });
         AlertDialog b = dialogBuilder.create();
+        b.setCanceledOnTouchOutside(false);
+        b.setCancelable(false);
         b.show();
     }
 
@@ -261,8 +265,10 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         String todt = toDateTextView.getText().toString();
         String waiter  = searchTxtView.getText().toString();
         ArrayList<ItemsRpt> itemsRpts = dbHelper.GetReports(frmdt,todt,waiter);
-        if(gridView.getRowCount()>1){
-            gridView.removeViews(2,itemsRpts.size()*2);
+        int rc = gridView.getRowCount();
+        if(rc>1){
+            int count = (rc-1)*2;
+            gridView.removeViews(2,count);
         }
         for(int i=0;i<itemsRpts.size();i++){
             ItemsRpt item = itemsRpts.get(i);

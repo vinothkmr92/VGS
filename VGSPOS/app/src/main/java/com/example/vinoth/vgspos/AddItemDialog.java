@@ -51,7 +51,10 @@ public class AddItemDialog extends AppCompatDialogFragment {
         if(!ItemPrice.isEmpty()){
             editTextItemPrice.setText(ItemPrice);
         }
-        return builder.create();
+        Dialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        return dialog;
     }
     @Override
     public void onAttach(@NonNull Context context) {

@@ -347,7 +347,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void SaveOrder(){
        if(orderProductsArraList.size()>0){
-           new SaveOrderDb().execute("");
+           double ordervalue = 0;
+           for(int i=0;i<orderProductsArraList.size();i++){
+               OrderProducts op = orderProductsArraList.get(i);
+               ordervalue+=op.getAmt();
+           }
+           if(ordervalue<500d){
+               showCustomDialog("Warning","Minimum order should be 500.");
+           }
+           else{
+               new SaveOrderDb().execute("");
+           }
        }
        else{
            showCustomDialog("Warning","No items selected for Order");

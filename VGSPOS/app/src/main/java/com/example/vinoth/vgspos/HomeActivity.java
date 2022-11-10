@@ -84,6 +84,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String PRINTERIP = "PRINTERIP";
     public static final String BLUETOOTNAME = "BLUETOOTHNAME";
     public static final String ISWIFI = "ISWIFI";
+    public static final String IS3INCH = "IS3INCH";
     public static final String EXPIRE_DT = "EXPIRE_DT";
     String headerMsg ;
     String footerMsg ;
@@ -248,6 +249,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     ttq = ttq + ic.getQty();
                 }
                 tQty.setText(String.valueOf(ttq));
+                LoadTotalAmt();
             }
             footerMsg = sharedpreferences.getString(FOOTERMSG,"");
             printerip = sharedpreferences.getString(PRINTERIP,"");
@@ -256,7 +258,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Common.footerMsg = footerMsg;
             bluetothName = sharedpreferences.getString(BLUETOOTNAME,"");
             Common.bluetoothDeviceName = bluetothName;
-            String isWifi = sharedpreferences.getString(ISWIFI,"");
+            String is3Inch = sharedpreferences.getString(IS3INCH,"YES");
+            Common.is3Inch = is3Inch.equalsIgnoreCase("YES");
+            String isWifi = sharedpreferences.getString(ISWIFI,"YES");
             isWifiPrint = isWifi.equalsIgnoreCase("YES");
             Common.isWifiPrint = isWifiPrint;
             if(!isWifiPrint){

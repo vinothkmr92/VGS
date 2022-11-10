@@ -10,8 +10,6 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -20,6 +18,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -241,6 +242,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
         b.show();
     }
     private void RecreateActivity(){

@@ -20,4 +20,5 @@ public class Common {
     public static boolean isWifiPrint;
     public static boolean isActivated;
     public static Date expireDate;
+    public static boolean is3Inch;
 }

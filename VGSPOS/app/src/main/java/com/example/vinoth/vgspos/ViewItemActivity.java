@@ -1,11 +1,11 @@
 package com.example.vinoth.vgspos;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.GridLayout;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ViewItemActivity extends AppCompatActivity {
 
@@ -20,6 +20,12 @@ public class ViewItemActivity extends AppCompatActivity {
         gridLayout = (GridLayout)findViewById(R.id.gridData);
         LoadData();
         instance = this;
+    }
+    @Override
+    public void onBackPressed() {
+        Intent page = new Intent(this,HomeActivity.class);
+        page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(page);
     }
     public static ViewItemActivity getInstance() {
         return instance;

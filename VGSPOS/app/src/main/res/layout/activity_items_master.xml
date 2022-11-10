@@ -15,7 +15,7 @@
         <TextView
             android:layout_marginRight="20dp"
             android:text="ITEM NO"
-            android:textColor="@android:color/holo_green_light"
+            android:textColor="@color/colorAccent"
             android:textStyle="bold" />
 
         <EditText
@@ -43,7 +43,7 @@
         tools:ignore="MissingConstraints">
         <TextView
             android:text="ITEM NO"
-            android:textColor="@android:color/holo_green_light"
+            android:textColor="@android:color/holo_blue_dark"
             android:textStyle="italic" />
 
         <TextView
@@ -57,7 +57,7 @@
 
         <TextView
             android:text="ITEM NAME"
-            android:textColor="@android:color/holo_green_light"
+            android:textColor="@android:color/holo_blue_dark"
             android:textStyle="italic" />
 
         <TextView
@@ -70,7 +70,7 @@
 
         <TextView
             android:text="PRICE"
-            android:textColor="@android:color/holo_green_light"
+            android:textColor="@android:color/holo_blue_dark"
             android:textStyle="italic" />
 
         <TextView

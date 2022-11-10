@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,8 +28,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -194,7 +195,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     // arg3 = day
                     String monthstr = String.valueOf(arg2+1);
                     monthstr = StringUtils.leftPad(monthstr,2,'0');
-                    StringBuilder sb = new StringBuilder().append(arg3).append("/")
+                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
+                    StringBuilder sb = new StringBuilder().append(dt).append("/")
                             .append(monthstr).append("/").append(arg1);
                     toDateTextView.setText(sb.toString());
                 }
@@ -211,7 +213,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     //setDate(arg1, arg2+1, arg3);
                     String monthstr = String.valueOf(arg2+1);
                     monthstr = StringUtils.leftPad(monthstr,2,'0');
-                    StringBuilder sb = new StringBuilder().append(arg3).append("/")
+                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
+                    StringBuilder sb = new StringBuilder().append(dt).append("/")
                             .append(monthstr).append("/").append(arg1);
                     frmDateTextView.setText(sb.toString());
                 }
@@ -227,15 +230,29 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
     }
-    private void LoadSaleReport(){
+    private ArrayList<SaleReport> GetSaleReport(){
         String frmdt = frmDateTextView.getText().toString();
         String todt = toDateTextView.getText().toString();
         String waiter  = searchTxtView.getText().toString();
-        //ArrayList<SaleReport> items = dbHelper.GetAllSales(waiter);
-        ArrayList<SaleReport> items = dbHelper.GetSaleReport(frmdt,todt,waiter);
+        ArrayList<SaleReport> sales = dbHelper.GetAllSales(waiter);
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Date fromDate = format.parse(frmdt,new ParsePosition(0));
+        Date toDate = format.parse(todt,new ParsePosition(0));
+        ArrayList<SaleReport> items = new ArrayList<SaleReport>();
+        for(int i=0;i<sales.size();i++){
+            SaleReport sr = sales.get(i);
+            if(sr.getBillDt().compareTo(fromDate) >= 0 && sr.getBillDt().compareTo(toDate) <=0 ){
+                items.add(sr);
+            }
+        }
+        return items;
+    }
+    private void LoadSaleReport(){
+        ArrayList<SaleReport> items = GetSaleReport();
         int rc = gridLayout.getRowCount();
-        if(gridLayout.getRowCount()>1){
-            gridLayout.removeViews(3,items.size()*3);
+        if(rc>1){
+            int count = (rc-1)*3;
+            gridLayout.removeViews(3,count);
         }
         double totalSaleamt=0;
         for(int i=0;i<items.size();i++){
@@ -262,6 +279,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
             }
         });
         AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
         b.show();
     }
     @Override
@@ -282,14 +301,11 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
             case R.id.btnsalerptprint:
                 progressBar.show();
                 try{
-                    String frmdt = frmDateTextView.getText().toString();
-                    String todt = toDateTextView.getText().toString();
-                    String waiter  = searchTxtView.getText().toString();
-                    ArrayList<SaleReport> items = dbHelper.GetSaleReport(frmdt,todt,waiter);
+                    ArrayList<SaleReport> items = GetSaleReport();
                     if(items.size()>0){
                         Common.saleReports = items;
-                        Common.saleReportFrmDate = frmdt;
-                        Common.saleReportToDate = todt;
+                        Common.saleReportFrmDate = frmDateTextView.getText().toString();
+                        Common.saleReportToDate = toDateTextView.getText().toString();
                         if(Common.isWifiPrint){
                             PrintWifi printWifi = new PrintWifi(SaleReportActivity.this,false);
                             printWifi.Print();

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -34,6 +35,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     TextView txtViewBluetooth;
     TextView txtViewPrinterIP;
     EditText editTextPrinterIP;
+    public static final String IS3INCH = "IS3INCH";
+    TextView rptsizetextview;
     Spinner spinnerbluetothDevice;
     Button saveBtn;
     private MySharedPreferences sharedpreferences;
@@ -42,6 +45,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     public static final String FOOTERMSG= "FOOTERMSG";
     public static final String PRINTERIP = "PRINTERIP";
     public static final String BLUETOOTNAME = "BLUETOOTHNAME";
+    CheckBox rpt3inch;
     public static final String ISWIFI = "ISWIFI";
     Set<BluetoothDevice> pairedDevices = null;
     private BluetoothAdapter mBluetoothAdapter = null;
@@ -50,6 +54,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     };
     ArrayList<String> bluethootnamelist;
     private Dialog progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +66,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         txtViewBluetooth = (TextView) findViewById(R.id.txtViewBlutooth);
         txtViewPrinterIP = (TextView) findViewById(R.id.txtViewIPAddress);
         editTextPrinterIP = (EditText) findViewById(R.id.printerIP);
+        rptsizetextview = (TextView)findViewById(R.id.rptsizetxt);
+        rpt3inch = (CheckBox)findViewById(R.id.RptSize3inch);
         spinnerbluetothDevice = (Spinner) findViewById(R.id.bltDevice);
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         String headerMsg = sharedpreferences.getString(HEADERMSG,"");
@@ -68,12 +75,18 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         String printerip = sharedpreferences.getString(PRINTERIP,"");
         String bluetothName = sharedpreferences.getString(BLUETOOTNAME,"");
         String isWifi = sharedpreferences.getString(ISWIFI,"YES");
+        String is3inch = sharedpreferences.getString(IS3INCH,"YES");
+        rpt3inch.setChecked(is3inch.equalsIgnoreCase("YES"));
         editTextHeaderMsg.setText(headerMsg);
         editTextFooterMsg.setText(footerMsg);
         editTextPrinterIP.setText(printerip);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         radioButtonBluetooth.setChecked(false);
         radioButtonWifi.setChecked(true);
+        txtViewBluetooth.setVisibility(View.INVISIBLE);
+        spinnerbluetothDevice.setVisibility(View.INVISIBLE);
+        rptsizetextview.setVisibility(View.INVISIBLE);
+        rpt3inch.setVisibility(View.INVISIBLE);
         saveBtn = (Button) findViewById(R.id.btnSave);
         radioButtonWifi.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener(){
             @Override
@@ -82,10 +95,14 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     radioButtonBluetooth.setChecked(false);
                     txtViewBluetooth.setVisibility(View.INVISIBLE);
                     spinnerbluetothDevice.setVisibility(View.INVISIBLE);
+                    rptsizetextview.setVisibility(View.INVISIBLE);
+                    rpt3inch.setVisibility(View.INVISIBLE);
                 }
                 else{
                     txtViewBluetooth.setVisibility(View.VISIBLE);
                     spinnerbluetothDevice.setVisibility(View.VISIBLE);
+                    rptsizetextview.setVisibility(View.VISIBLE);
+                    rpt3inch.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -136,6 +153,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
           radioButtonBluetooth.setChecked(false);
           txtViewBluetooth.setVisibility(View.INVISIBLE);
           spinnerbluetothDevice.setVisibility(View.INVISIBLE);
+            rptsizetextview.setVisibility(View.INVISIBLE);
+            rpt3inch.setVisibility(View.INVISIBLE);
         }
         else{
             radioButtonWifi.setChecked(false);
@@ -169,6 +188,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         //}
         //});
         AlertDialog b = dialogBuilder.create();
+        b.setCanceledOnTouchOutside(false);
+        b.setCancelable(false);
         b.show();
     }
     public  void  GoHome(){
@@ -178,22 +199,31 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     }
     @Override
     public void onClick(View v) {
-        String headerMsg = editTextHeaderMsg.getText().toString();
-        String footerMsg = editTextFooterMsg.getText().toString();
-        String printer = editTextPrinterIP.getText().toString();
-        String bluetoothName = radioButtonBluetooth.isChecked()? spinnerbluetothDevice.getSelectedItem().toString(): " ";
-        String isWifi = radioButtonWifi.isChecked() ? "YES":"NO";
-        sharedpreferences.putString(HEADERMSG,headerMsg);
-        sharedpreferences.putString(FOOTERMSG,footerMsg);
-        sharedpreferences.putString(PRINTERIP,printer);
-        sharedpreferences.putString(BLUETOOTNAME,bluetoothName);
-        sharedpreferences.putString(ISWIFI,isWifi);
-        sharedpreferences.commit();
-        Common.printerIP = printer;
-        Common.headerMeg = headerMsg;
-        Common.footerMsg = footerMsg;
-        Common.bluetoothDeviceName = bluetoothName;
-        Common.isWifiPrint = radioButtonWifi.isChecked();
-        showCustomDialog("Saved","Successfully Saved Data",true);
+        try{
+            String headerMsg = editTextHeaderMsg.getText().toString();
+            String footerMsg = editTextFooterMsg.getText().toString();
+            String printer = editTextPrinterIP.getText().toString();
+            String bluetoothName = radioButtonBluetooth.isChecked()? spinnerbluetothDevice.getSelectedItem().toString(): " ";
+            String isWifi = radioButtonWifi.isChecked() ? "YES":"NO";
+            String is3inch = rpt3inch.isChecked()?"YES":"NO";
+            sharedpreferences.putString(HEADERMSG,headerMsg);
+            sharedpreferences.putString(FOOTERMSG,footerMsg);
+            sharedpreferences.putString(PRINTERIP,printer);
+            sharedpreferences.putString(BLUETOOTNAME,bluetoothName);
+            sharedpreferences.putString(ISWIFI,isWifi);
+            sharedpreferences.putString(IS3INCH,is3inch);
+            sharedpreferences.commit();
+            Common.printerIP = printer;
+            Common.headerMeg = headerMsg;
+            Common.footerMsg = footerMsg;
+            Common.bluetoothDeviceName = bluetoothName;
+            Common.isWifiPrint = radioButtonWifi.isChecked();
+            Common.is3Inch = rpt3inch.isChecked();
+            showCustomDialog("Saved","Successfully Saved Data",true);
+        }
+        catch (Exception ex){
+            showCustomDialog("Exception",ex.getMessage().toString(),false);
+        }
+
     }
 }

@@ -37,7 +37,10 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
         customerAddressEditText = view.findViewById(R.id.customerAddress);
         customerNameEditText = view.findViewById(R.id.customerName);
         customerMobileNumberEditText = view.findViewById(R.id.customerMobileNo);
-        return builder.create();
+        Dialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        return dialog;
     }
 
     @Override

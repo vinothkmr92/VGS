@@ -1,9 +1,21 @@
 package com.example.vinoth.vgspos;
 
+import java.util.Date;
+
 public class SaleReport {
     private String BillDate;
     private String BillNo;
     private Double BillAmount;
+
+    private Date billDt;
+
+    public Date getBillDt() {
+        return billDt;
+    }
+
+    public void setBillDt(Date billDt) {
+        this.billDt = billDt;
+    }
 
     public String getBillDate() {
         return BillDate;

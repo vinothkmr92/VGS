@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -153,6 +154,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String res = padRight(name,25);
         return res.substring(0,25);
     }
+    public ArrayList<ItemsRpt> GetAllItemsReports(String waiter){
+        ArrayList<ItemsRpt> report = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM GROUP BY ITEM_NAME";
+        if(!waiter.equals("ALL")){
+            query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE WAITER='"+waiter+"' GROUP BY ITEM_NAME";
+        }
+        Cursor cur = db.rawQuery(query,null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                ItemsRpt r = new ItemsRpt();
+                String name = cur.getString(0);
+                r.setItemName(name);
+                r.setQuantity(cur.getDouble(1));
+                report.add(r);
+            }
+        }
+        return  report;
+    }
     public  ArrayList<SaleReport> GetAllSales(String waiter){
         ArrayList<SaleReport> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
@@ -169,6 +189,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String billDate = cur.getString(1);
                 r.setBillDate(billDate);
                 r.setBillAmount(cur.getDouble(2));
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                Date bd = format.parse(r.getBillDate(),new ParsePosition(0));
+                r.setBillDt(bd);
                 report.add(r);
             }
         }

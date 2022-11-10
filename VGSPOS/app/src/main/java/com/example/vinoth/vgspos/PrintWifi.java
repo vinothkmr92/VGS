@@ -198,7 +198,7 @@ public class PrintWifi {
             posPtr.printNormal("\n");
             posPtr.printNormal(ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
             posPtr.printNormal(ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
-            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"BILL NO   BILL_DATE            AMOUNT\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"BILL NO         BILL_DATE               AMOUNT\n");
             double totalQty = 0d;
             double totalAmt = 0d;
             for(int k=0;k<Common.saleReports.size();k++){
@@ -209,8 +209,8 @@ public class PrintWifi {
                 totalAmt+=amt;
                 String amts=String.format("%.0f",amt);
                 billno = StringUtils.rightPad(billno,7);
-                billDate = StringUtils.leftPad(billDate,12);
-                amts = StringUtils.leftPad(amts,18);
+                billDate = StringUtils.leftPad(billDate,18);
+                amts = StringUtils.leftPad(amts,21);
                 String line = billno+billDate+amts+"\n";
                 posPtr.printNormal(line);
             }
@@ -247,7 +247,7 @@ public class PrintWifi {
         @Override
         protected void onPreExecute()
         {
-            dialog.setTitle(" ");
+            dialog.setTitle("Please Wait");
             dialog.setMessage("Printing.....");
             dialog.show();
             super.onPreExecute();
@@ -261,14 +261,12 @@ public class PrintWifi {
             {
                 // ip
                 wifiPort.connect(params[0]);
-                //connection = wifiPort.open(params[0]);
-
-                //lastConnAddr = params[0];
                 retVal = new Integer(0);
             }
             catch (IOException e)
             {
-                Log.e("Wificonnection:",e.getMessage(),e);
+                Log.e("Wifi-connection:",e.getMessage(),e);
+                //Toast.makeText(HomeActivity.getInstance().getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_LONG);
                 retVal = new Integer(-1);
             }
             return retVal;
@@ -311,6 +309,7 @@ public class PrintWifi {
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
+                HomeActivity.getInstance().showCustomDialog("Error","Printer Connection Failed.");
             }
             super.onPostExecute(result);
         }
