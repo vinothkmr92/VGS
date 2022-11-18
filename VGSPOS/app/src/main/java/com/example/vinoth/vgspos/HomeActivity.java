@@ -116,7 +116,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             billnoTxtView = (TextView)findViewById(R.id.billnoTxt);
             int newbillno = dbHelper.GetNextBillNo();
             billnoTxtView.setText(String.valueOf(newbillno));
-            searchTxtView.setText("NONE");
+            //searchTxtView.setText("NONE");
             btn1 = (Button) findViewById(R.id._1);
             btn2 = (Button) findViewById(R.id._2);
             btn3 = (Button) findViewById(R.id._3);
