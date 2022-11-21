@@ -8,6 +8,7 @@ public class Common {
     public static String printerIP;
     public static String bluetoothDeviceName;
     public static String headerMeg;
+    public static String addressline;
     public static String footerMsg;
     public static String waiter;
     public static int billNo;

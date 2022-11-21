@@ -94,6 +94,7 @@ public class PrintWifi {
         Date date = new Date();
         String dateStr = format.format(date);
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
+        posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
         posPtr.printNormal(ESC+"|lABILL NO: "+Common.billNo+"\n");
         if(!Common.waiter.equals("NONE")){
@@ -202,27 +203,21 @@ public class PrintWifi {
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
             Date date = new Date();
             String dateStr = format.format(date);
-            posPtr.printNormal(ESC+"|cA"+ESC+"|3CITEM WISE REPORT\r\n");
+            posPtr.printNormal(ESC+"|cA"+ESC+"|2CITEM WISE REPORT\r\n");
             posPtr.printNormal("\n");
             posPtr.printNormal(ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
             posPtr.printNormal(ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
-            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME             QTY\n");
-            double totalQty = 0d;
-            double totalAmt = 0d;
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                                  QTY\n");
             for(int k=0;k<Common.itemsRpts.size();k++){
                 ItemsRpt itemsRpt = Common.itemsRpts.get(k);
                 String itemname = itemsRpt.getItemName();
                 Double qty = itemsRpt.getQuantity();
                 String qtystr=String.format("%.0f",qty);
-                itemname = StringUtils.rightPad(itemname,20);
-                qtystr = StringUtils.leftPad(qtystr,5);
+                itemname = StringUtils.rightPad(itemname,38);
+                qtystr = StringUtils.leftPad(qtystr,8);
                 String line = itemname+qtystr+"\n";
                 posPtr.printNormal(line);
             }
-            String totalamt = String.format("%.0f",totalAmt);
-            String txttotal = "TOTAL AMOUNT: "+totalamt+"/-";
-            //posPtr.lineFeed(1);
-            //posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
             posPtr.lineFeed(5);
             posPtr.cutPaper();
             wifiPort.disconnect();
@@ -256,7 +251,7 @@ public class PrintWifi {
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
             Date date = new Date();
             String dateStr = format.format(date);
-            posPtr.printNormal(ESC+"|cA"+ESC+"|3CSALE REPORT\r\n");
+            posPtr.printNormal(ESC+"|cA"+ESC+"|2CSALE REPORT\r\n");
             posPtr.printNormal("\n");
             posPtr.printNormal(ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
             posPtr.printNormal(ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");

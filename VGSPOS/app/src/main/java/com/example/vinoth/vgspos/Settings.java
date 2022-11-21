@@ -42,6 +42,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     EditText editTextbillcopies;
     EditText editTextkotprinterip;
     CheckBox enablekot;
+    public static final String ADDRESSLINE = "ADDRESSLINE";
     public static final String IS3INCH = "IS3INCH";
     TextView rptsizetextview;
     Spinner spinnerbluetothDevice;
@@ -55,6 +56,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     public static final String PRINTKOT = "PRINTKOT";
     public static final String KOTPRINTERIP = "KOTPRINTERIP";
     public static final String BILLCOPIES = "BILLCOPIES";
+    EditText editTextaddressline;
     CheckBox rpt3inch;
     public static final String ISWIFI = "ISWIFI";
     Set<BluetoothDevice> pairedDevices = null;
@@ -84,6 +86,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         editTextkotprinterip = (EditText) findViewById(R.id.KOTprinterIP);
         enablekot = (CheckBox) findViewById(R.id.enableKOT);
         editTextbillcopies = (EditText)findViewById(R.id.billcopies);
+        editTextaddressline = (EditText)findViewById(R.id.addressMsg);
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         String headerMsg = sharedpreferences.getString(HEADERMSG,"");
         String footerMsg = sharedpreferences.getString(FOOTERMSG,"");
@@ -94,6 +97,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         String printkot = sharedpreferences.getString(PRINTKOT,"NO");
         String kotprinterip = sharedpreferences.getString(KOTPRINTERIP,"");
         String billcopies = sharedpreferences.getString(BILLCOPIES,"1");
+        String addressline = sharedpreferences.getString(ADDRESSLINE,"");
         enablekot.setChecked(printkot.equalsIgnoreCase("YES"));
         editTextkotprinterip.setText(kotprinterip);
         rpt3inch.setChecked(is3inch.equalsIgnoreCase("YES"));
@@ -101,6 +105,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         editTextHeaderMsg.setText(headerMsg);
         editTextFooterMsg.setText(footerMsg);
         editTextPrinterIP.setText(printerip);
+        editTextaddressline.setText(addressline);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         radioButtonBluetooth.setChecked(false);
         radioButtonWifi.setChecked(true);
@@ -247,6 +252,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             String printKOT = enablekot.isChecked()?"YES":"NO";
             String kotprinterip = editTextkotprinterip.getText().toString();
             String nocopies = editTextbillcopies.getText().toString();
+            String addressline = editTextaddressline.getText().toString();
             sharedpreferences.putString(HEADERMSG,headerMsg);
             sharedpreferences.putString(FOOTERMSG,footerMsg);
             sharedpreferences.putString(PRINTERIP,printer);
@@ -256,10 +262,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             sharedpreferences.putString(PRINTKOT,printKOT);
             sharedpreferences.putString(KOTPRINTERIP,kotprinterip);
             sharedpreferences.putString(BILLCOPIES,nocopies);
+            sharedpreferences.putString(ADDRESSLINE,addressline);
             sharedpreferences.commit();
             int billcopies = Integer.parseInt(nocopies);
             Common.printerIP = printer;
             Common.headerMeg = headerMsg;
+            Common.addressline = addressline;
             Common.footerMsg = footerMsg;
             Common.billcopies = billcopies;
             Common.bluetoothDeviceName = bluetoothName;

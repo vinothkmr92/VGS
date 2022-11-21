@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -52,6 +53,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     DatePickerDialog todatePickerDialog;
     TextView searchTxtView;
     Dialog dialog;
+    CheckBox stockReport;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +74,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         btnFrmDatePicker.setOnClickListener(this);
         btnToDatePicker.setOnClickListener(this);
         searchTxtView = (TextView)findViewById(R.id.customerinfoitemwise);
+        stockReport = (CheckBox)findViewById(R.id.stocksRpt);
         searchTxtView.setText("ALL");
         ArrayList<String> wts = new ArrayList<String>();
         wts.add("ALL");
@@ -264,7 +267,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         String frmdt = frmDateTextView.getText().toString();
         String todt = toDateTextView.getText().toString();
         String waiter  = searchTxtView.getText().toString();
-        ArrayList<ItemsRpt> itemsRpts = dbHelper.GetReports(frmdt,todt,waiter);
+        ArrayList<ItemsRpt> itemsRpts = dbHelper.GetReports(frmdt,todt,waiter,stockReport.isChecked());
         int rc = gridView.getRowCount();
         if(rc>1){
             int count = (rc-1)*2;
@@ -294,7 +297,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
                 String frmdt = frmDateTextView.getText().toString();
                 String todt = toDateTextView.getText().toString();
                 String waiter  = searchTxtView.getText().toString();
-                ArrayList<ItemsRpt> items = dbHelper.GetReports(frmdt,todt,waiter);
+                ArrayList<ItemsRpt> items = dbHelper.GetReports(frmdt,todt,waiter,stockReport.isChecked());
                 if(items.size()>0){
                     PrintReport(items);
                 }

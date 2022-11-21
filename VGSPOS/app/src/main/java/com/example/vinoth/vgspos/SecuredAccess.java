@@ -1,7 +1,5 @@
 package com.example.vinoth.vgspos;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.Set;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class SecuredAccess extends AppCompatActivity implements View.OnClickListener {
 
@@ -36,7 +34,7 @@ public class SecuredAccess extends AppCompatActivity implements View.OnClickList
             startActivity(page);
         }
         else{
-            showCustomDialog("Status","Activation Failed. Invalid activation code.",true);
+            showCustomDialog("Status","Access Failed. Invalid Pass code.",true);
         }
     }
     public  void  GoHome(){

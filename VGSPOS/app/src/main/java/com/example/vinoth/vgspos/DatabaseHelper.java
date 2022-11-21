@@ -218,22 +218,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return  report;
     }
-    public ArrayList<ItemsRpt> GetReports(String frmDt,String toDt,String waiter){
+    public ArrayList<ItemsRpt> GetReports(String frmDt,String toDt,String waiter,boolean isStockRpt){
        ArrayList<ItemsRpt> report = new ArrayList<>();
-       SQLiteDatabase db = this.getWritableDatabase();
-       String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE>='"+frmDt+"' AND BILL_DATE<='"+toDt+"' GROUP BY ITEM_NAME";
-       if(!waiter.equals("ALL")){
-        query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE>='"+frmDt+"' AND BILL_DATE<='"+toDt+"' AND WAITER='"+waiter+"' GROUP BY ITEM_NAME";
-       }
-       Cursor cur = db.rawQuery(query,null);
-       if(cur.getCount()>0){
-           while (cur.moveToNext()){
-               ItemsRpt r = new ItemsRpt();
-               String name = cur.getString(0);
-               r.setItemName(name);
-               r.setQuantity(cur.getDouble(1));
-               report.add(r);
+       if(isStockRpt){
+           ArrayList<Item> items = GetItems();
+           for (Item item:
+                items) {
+               ItemsRpt rpt = new ItemsRpt();
+               rpt.setItemName(item.getItem_Name());
+               rpt.setQuantity(item.getStocks());
+               report.add(rpt);
            }
+       }
+       else{
+           SQLiteDatabase db = this.getWritableDatabase();
+           String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE>='"+frmDt+"' AND BILL_DATE<='"+toDt+"' GROUP BY ITEM_NAME";
+           if(!waiter.equals("ALL")){
+               query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE>='"+frmDt+"' AND BILL_DATE<='"+toDt+"' AND WAITER='"+waiter+"' GROUP BY ITEM_NAME";
+           }
+           Cursor cur = db.rawQuery(query,null);
+           if(cur.getCount()>0){
+               while (cur.moveToNext()){
+                   ItemsRpt r = new ItemsRpt();
+                   String name = cur.getString(0);
+                   r.setItemName(name);
+                   r.setQuantity(cur.getDouble(1));
+                   report.add(r);
+               }
+           }   
        }
        return  report;
     }

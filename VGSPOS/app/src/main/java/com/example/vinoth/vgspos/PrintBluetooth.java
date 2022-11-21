@@ -244,6 +244,8 @@ public class PrintBluetooth {
             Date date = new Date();
             String msg = Common.headerMeg+"\n";
             PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
+            String address = Common.addressline+"\n";
+            PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().small().get(),Formatter.centerAlign());
             if(!Common.waiter.equals("NONE")){
                 PrintData("USER     :"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
             }
