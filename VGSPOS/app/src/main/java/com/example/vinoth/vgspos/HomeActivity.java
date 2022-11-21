@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -30,6 +32,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -52,6 +55,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tItem;
     private TextView estAmt;
     private TextView billnoTxtView;
+    private CheckBox isAcPrice;
     private Button btn1;
     private Button btn2;
     private Button btn3;
@@ -114,6 +118,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             priceTxt = (EditText)findViewById(R.id.itemPrice);
             searchTxtView = (TextView)findViewById(R.id.customerInfoTxtView);
             billnoTxtView = (TextView)findViewById(R.id.billnoTxt);
+            isAcPrice = (CheckBox) findViewById(R.id.isAC);
             int newbillno = dbHelper.GetNextBillNo();
             billnoTxtView.setText(String.valueOf(newbillno));
             //searchTxtView.setText("NONE");
@@ -264,22 +269,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             isWifiPrint = isWifi.equalsIgnoreCase("YES");
             Common.isWifiPrint = isWifiPrint;
             if(!isWifiPrint){
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                if(!checkBLuetoothPermission()){
                     ActivityCompat.requestPermissions(HomeActivity.this,PERMISSIONS_BLUETOOTH
                             ,1);
-                    return;
                 }
             }
             instance = this;
         } catch (Exception ex) {
             showCustomDialog("Error", ex.getMessage());
+        }
+    }
+    private boolean checkBLuetoothPermission(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+            int bluetooth = ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT);
+            return  bluetooth==PackageManager.PERMISSION_GRANTED;
+        }
+        else{
+            int bluetooth = ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH);
+            return  bluetooth==PackageManager.PERMISSION_GRANTED;
         }
     }
     public void ValidateActivationResponse(String response){
@@ -380,6 +387,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(itemmaster);
                 return true;
             case R.id.settings:
+                Common.openSettings = false;
                 Intent settingsPage = new Intent(this,Settings.class);
                 settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(settingsPage);
@@ -483,7 +491,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     Item item = dbHelper.GetItem(ino);
                     if(item!=null){
                         itemName.setText(item.getItem_Name());
-                        String price =String.format("%.0f", item.getPrice());
+                        String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
                         priceTxt.setText(price);
                         Quantity.requestFocus();
                     }
@@ -709,6 +717,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         for(int i=0;i<QuantityListener.itemsCarts.size();i++){
             Bills_Item bi = new Bills_Item();
             bi.setBill_No(newbillno);
+            bi.setItem_No(QuantityListener.itemsCarts.get(i).getItem_No());
             bi.setBill_DateStr(format.format(date));
             String name = QuantityListener.itemsCarts.get(i).getItem_Name();
             bi.setItem_Name(name);
@@ -739,6 +748,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         int newbillno = dbHelper.GetNextBillNo();
         billnoTxtView.setText(String.valueOf(newbillno));
         searchTxtView.setText("NONE");
+        isAcPrice.setChecked(false);
         progressBar.hide();
         itemName.requestFocus();
     }

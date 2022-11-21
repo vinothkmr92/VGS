@@ -332,6 +332,8 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                 row.getCell(0,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
                                 row.getCell(1,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
                                 row.getCell(2,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
+                                row.getCell(3,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
+                                row.getCell(4,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
                                 String itemname = row.getCell(0,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                                 if(itemname.equals("ITEM NAME") || itemname.isEmpty()){
                                     continue;
@@ -341,10 +343,16 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                     Integer itemno = isNumeric(itemnostr) ? Integer.parseInt(itemnostr):0;
                                     String pricestr = row.getCell(2,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                                     double price = isDouble(pricestr) ? Double.parseDouble(pricestr):0;
+                                    String acpricestr = row.getCell(3,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                                    double acprice = isDouble(acpricestr) ? Double.parseDouble(acpricestr):0;
+                                    String stockstr = row.getCell(4,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                                    double stock = isDouble(stockstr) ? Double.parseDouble(stockstr):0;
                                     Item item = new Item();
                                     item.setItem_No(itemno);
                                     item.setItem_Name(itemname);
                                     item.setPrice(price);
+                                    item.setAcPrice(acprice);
+                                    item.setStocks(stock);
                                     try{
                                         ArrayList<Item> s = dbHelper.GetItems();
                                         for(int k=0;k<s.size();k++){

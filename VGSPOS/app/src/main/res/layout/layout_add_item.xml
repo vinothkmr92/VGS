@@ -24,5 +24,19 @@
         android:layout_below="@id/ItemNameadd"
         android:hint="Price"
         android:inputType="number"></EditText>
+    <EditText
+        android:id="@+id/ItemStockadd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ItemPriceadd"
+        android:hint="Stock"
+        android:inputType="number"></EditText>
+    <EditText
+        android:id="@+id/ItemAcpriceadd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ItemStockadd"
+        android:hint="Special Price"
+        android:inputType="number"></EditText>
 
 </RelativeLayout>

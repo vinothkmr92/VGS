@@ -17,10 +17,14 @@ public class AddItemDialog extends AppCompatDialogFragment {
     private EditText editTextItemNo;
     private EditText editTextItemName;
     private EditText editTextItemPrice;
+    private EditText editTextItemStock;
+    private EditText editTextItemAcPrice;
     private AddItemDialog.CustomerDialogListener listener;
     public String ItemNo="";
     public String ItemName="";
     public String ItemPrice="";
+    public String ItemStock = "";
+    public String ItemAcPrice = "";
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -37,11 +41,17 @@ public class AddItemDialog extends AppCompatDialogFragment {
                     String ItemName = editTextItemName.getText().toString();
                     String priceString = editTextItemPrice.getText().toString();
                     double price = Double.parseDouble(priceString);
-                    listener.getCustomerInfo(ItemNo,ItemName,price);
+                    String stockString = editTextItemStock.getText().toString();
+                    double stock = Double.parseDouble(stockString);
+                    String acpriceString = editTextItemAcPrice.getText().toString();
+                    double acPrice = Double.parseDouble(acpriceString);
+                    listener.getCustomerInfo(ItemNo,ItemName,price,stock,acPrice);
                 });
         editTextItemNo = view.findViewById(R.id.ItemNoadd);
         editTextItemName = view.findViewById(R.id.ItemNameadd);
         editTextItemPrice = view.findViewById(R.id.ItemPriceadd);
+        editTextItemStock = view.findViewById(R.id.ItemStockadd);
+        editTextItemAcPrice = view.findViewById(R.id.ItemAcpriceadd);
         if(!ItemNo.isEmpty()){
             editTextItemNo.setText(ItemNo);
         }
@@ -50,6 +60,12 @@ public class AddItemDialog extends AppCompatDialogFragment {
         }
         if(!ItemPrice.isEmpty()){
             editTextItemPrice.setText(ItemPrice);
+        }
+        if(!ItemStock.isEmpty()){
+            editTextItemStock.setText(ItemStock);
+        }
+        if(!ItemAcPrice.isEmpty()){
+            editTextItemAcPrice.setText(ItemAcPrice);
         }
         Dialog dialog = builder.create();
         dialog.setCancelable(false);
@@ -69,6 +85,6 @@ public class AddItemDialog extends AppCompatDialogFragment {
     }
 
     public interface CustomerDialogListener{
-        void getCustomerInfo(String ItemNo,String ItemName,Double Price);
+        void getCustomerInfo(String ItemNo,String ItemName,Double Price,Double Stock,Double AcPrice);
     }
 }

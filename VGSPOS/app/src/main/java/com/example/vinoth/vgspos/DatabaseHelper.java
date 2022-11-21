@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 4);
+        super(context, DATABASE_NAME, null, 5);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -28,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "Create application database");
       db.execSQL("CREATE TABLE USERS (USER_ID INTEGER PRIMARY KEY,USER_NAME TEXT,MOBILE_NUMBER TEXT,PASSWORD TEXT)");
       db.execSQL("CREATE TABLE TAX (TAX_ID INTEGER PRIMARY KEY,TAX_VALUE NUMERIC)");
-      db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC)");
+      db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,PRIMARY KEY (BILL_NO,BILL_DATE))");
       db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT)");
@@ -247,6 +247,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 itm.setItem_No(cur.getInt(0));
                 itm.setItem_Name(cur.getString(1));
                 itm.setPrice(cur.getDouble(2));
+                itm.setAcPrice(cur.getDouble(3));
+                itm.setStocks(cur.getDouble(4));
                 ItemList.add(itm);
             }
          }
@@ -256,13 +258,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Item GetItem(Integer itemNo){
         Item item=null;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT ITEM_NAME,PRICE FROM ITEMS WHERE ITEM_NO="+itemNo,null);
+        Cursor cur = db.rawQuery("SELECT ITEM_NAME,PRICE,AC_PRICE,STOCK FROM ITEMS WHERE ITEM_NO="+itemNo,null);
         if(cur.getCount()>0){
             if(cur.moveToNext()){
                 item = new Item();
                 item.setItem_Name( cur.getString(0));
                 item.setItem_No(itemNo);
                 item.setPrice(cur.getDouble(1));
+                item.setAcPrice(cur.getDouble(2));
+                item.setStocks(cur.getDouble(3));
             }
         }
         return item;
@@ -277,6 +281,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cont.put("ITEM_NO",item.getItem_No());
         cont.put("ITEM_NAME",item.getItem_Name());
         cont.put("PRICE",item.getPrice());
+        cont.put("AC_PRICE",item.getAcPrice());
+        cont.put("STOCK",item.getStocks());
         Item it = GetItem(item.getItem_No());
         if(it!=null){
             db.update("ITEMS",cont,"ITEM_NO = ?",new String[]{String.valueOf(item.getItem_No())});
@@ -311,11 +317,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cont.put("WAITER",billsItem.getWaiter());
         long s = db.insert("BILLS_ITEM",null,cont);
         if(s>0){
-            Log.println(Log.ASSERT,"","Sucessfully inserted bill items");
+            Log.println(Log.ASSERT,"","Successfully inserted bill items");
+            UpdateStock(billsItem.getItem_No(),billsItem.getQty());
         }
         else {
             Log.println(Log.ASSERT,"","Failed to insert bill items...ITEM_NAME: "+billsItem.getItem_Name());
         }
+    }
+    public void UpdateStock(int itemno,double qty){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE ITEMS SET STOCK=STOCK-"+qty+" WHERE ITEM_NO="+itemno);
     }
     public void Insert_Bills(Bills bills){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -326,7 +337,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cnt.put("WAITER",bills.getUser());
         long s =db.insert("BILLS",null,cnt);
         if(s>0){
-            Log.println(Log.ASSERT,"","Sucessfully inserted bills");
+            Log.println(Log.ASSERT,"","Successfully inserted bills");
         }
         else {
             Log.println(Log.ASSERT,"","Failed to insert bill no: "+bills.getBill_No());

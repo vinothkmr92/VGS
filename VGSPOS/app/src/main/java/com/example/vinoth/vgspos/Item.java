@@ -4,6 +4,24 @@ public class Item {
     private int Item_No;
     private String Item_Name;
     private double Price;
+    private double AcPrice;
+    private double Stocks;
+
+    public double getStocks() {
+        return Stocks;
+    }
+
+    public void setStocks(double stocks) {
+        Stocks = stocks;
+    }
+
+    public double getAcPrice() {
+        return AcPrice;
+    }
+
+    public void setAcPrice(double acPrice) {
+        AcPrice = acPrice;
+    }
 
     public double getPrice() {
         return Price;

@@ -22,13 +22,8 @@
             android:textSize="30dp"
             android:textStyle="bold|italic" />
         <TextView
-            android:text="CUSTOMER"
-            android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
-            android:textStyle="bold" />
-        <TextView
             android:id="@+id/customerInfoTxtView"
-            android:layout_width="wrap_content"
+            android:layout_width="400px"
             android:layout_height="wrap_content"
             android:background="@android:drawable/editbox_background"
             android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
@@ -44,6 +39,10 @@
             android:contentDescription="@string/app_name"
             android:paddingLeft="20dp"
             tools:ignore="TouchTargetSizeCheck"></ImageButton>
+        <CheckBox
+            android:id="@+id/isAC"
+            android:text="AC"
+            android:textStyle="bold|italic"></CheckBox>
     </GridLayout>
     <GridLayout
         android:layout_width="fill_parent"

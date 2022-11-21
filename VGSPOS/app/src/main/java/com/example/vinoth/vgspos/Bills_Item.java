@@ -10,6 +10,15 @@ public class Bills_Item {
     private String Item_Name;
     private double Qty;
     private String Waiter;
+    private int Item_No;
+
+    public int getItem_No() {
+        return Item_No;
+    }
+
+    public void setItem_No(int item_No) {
+        Item_No = item_No;
+    }
 
     public String getWaiter() {
         return Waiter;

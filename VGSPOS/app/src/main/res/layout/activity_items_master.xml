@@ -80,6 +80,30 @@
             android:textColor="@android:color/black"
             android:textSize="30dp"
             android:textStyle="bold" />
+        <TextView
+            android:text="STOCK"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/txtViewItemStock"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+        <TextView
+            android:text="SPECIAL PRICE"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/txtViewItemAcPrice"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="30dp"
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/btnupdateitems"

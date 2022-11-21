@@ -20,6 +20,8 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
     TextView txtViewItemNo;
     TextView txtViewItemName;
     TextView txtViewItemPrice;
+    TextView txtviewItemStock;
+    TextView txtviewItemAcPrice;
     ImageButton btnUpdateItem;
     DatabaseHelper dbHelper;
     GridLayout gridLayout;
@@ -34,7 +36,9 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
         txtViewItemNo = (TextView) findViewById(R.id.txtViewItemID);
         txtViewItemName = (TextView) findViewById(R.id.txtViewItemName);
         txtViewItemPrice = (TextView) findViewById(R.id.txtViewItemPrice);
+        txtviewItemStock = (TextView)findViewById(R.id.txtViewItemStock);
         btnUpdateItem = (ImageButton) findViewById(R.id.btnupdateitems);
+        txtviewItemAcPrice = (TextView)findViewById(R.id.txtViewItemAcPrice);
         gridLayout = (GridLayout)findViewById(R.id.itemViewGrid);
         gridLayout.setVisibility(View.INVISIBLE);
         btnUpdateItem.setEnabled(false);
@@ -67,6 +71,8 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
             }
         });
         AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
         b.show();
     }
     public void OpenAddItemDialog(){
@@ -96,12 +102,17 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
                 txtViewItemNo.setText(String.valueOf(item.getItem_No()));
                 txtViewItemName.setText(item.getItem_Name());
                 txtViewItemPrice.setText(String.format("%.0f", item.getPrice()));
+                txtViewItemPrice.setText(String.format("%.0f",item.getPrice()));
+                txtviewItemStock.setText(String.format("%.0f",item.getStocks()));
+                txtviewItemAcPrice.setText(String.format("%.0f",item.getAcPrice()));
                 gridLayout.setVisibility(View.VISIBLE);
                 btnUpdateItem.setEnabled(true);
             } else {
                 txtViewItemPrice.setText("");
                 txtViewItemName.setText("");
                 txtViewItemNo.setText("");
+                txtviewItemStock.setText("");
+                txtviewItemAcPrice.setText("");
                 gridLayout.setVisibility(View.INVISIBLE);
                 btnUpdateItem.setEnabled(false);
             }
@@ -117,6 +128,8 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
                     txtViewItemNo.setText(String.valueOf(item.getItem_No()));
                     txtViewItemName.setText(item.getItem_Name());
                     txtViewItemPrice.setText(String.format("%.0f",item.getPrice()));
+                    txtviewItemStock.setText(String.format("%.0f",item.getStocks()));
+                    txtviewItemAcPrice.setText(String.format("%.0f",item.getAcPrice()));
                     gridLayout.setVisibility(View.VISIBLE);
                     btnUpdateItem.setEnabled(true);
                 }
@@ -141,6 +154,8 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
             addItemDialog.ItemNo = txtViewItemNo.getText().toString();
             addItemDialog.ItemName = txtViewItemName.getText().toString();
             addItemDialog.ItemPrice = txtViewItemPrice.getText().toString();
+            addItemDialog.ItemStock = txtviewItemStock.getText().toString();
+            addItemDialog.ItemAcPrice = txtviewItemAcPrice.getText().toString();
             addItemDialog.show(getSupportFragmentManager(),"Update Item Dialog");
         }
         catch (Exception ex){
@@ -162,13 +177,15 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
-    public void getCustomerInfo(String ItemNo, String ItemName, Double Price) {
+    public void getCustomerInfo(String ItemNo, String ItemName, Double Price,Double Stock,Double AcPrice) {
         try{
             Item item = new Item();
             if(isNumeric(ItemNo)){
                 item.setItem_No(Integer.parseInt(ItemNo));
                 item.setItem_Name(ItemName);
                 item.setPrice(Price);
+                item.setStocks(Stock);
+                item.setAcPrice(AcPrice);
                 dbHelper.Insert_Item(item);
                 showCustomDialog("Msg","Successfully saved item details");
             }

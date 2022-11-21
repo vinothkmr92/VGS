@@ -83,13 +83,45 @@
                 android:textStyle="bold|italic"></CheckBox>
             <TextView
                 android:padding="20px"
-                android:text="Printer IP"
+                android:text="Receipt Printer"
                 android:id="@+id/txtViewIPAddress"
                 android:textStyle="bold"></TextView>
             <EditText
                 android:padding="20px"
                 android:layout_width="match_parent"
                 android:id="@+id/printerIP"
+                android:layout_columnSpan="3"></EditText>
+            <TextView
+                android:padding="20px"
+                android:id="@+id/kotoption"
+                android:text="KOT Selection"
+                android:textStyle="bold"></TextView>
+            <CheckBox
+                android:id="@+id/enableKOT"
+                android:layout_columnSpan="3"
+                android:checked="true"
+                android:padding="20px"
+                android:text="Print KOT"
+                android:textStyle="bold|italic"></CheckBox>
+            <TextView
+                android:padding="20px"
+                android:text="KOT Printer"
+                android:id="@+id/txtViewIPAddressKOT"
+                android:textStyle="bold"></TextView>
+            <EditText
+                android:padding="20px"
+                android:layout_width="match_parent"
+                android:id="@+id/KOTprinterIP"
+                android:layout_columnSpan="3"></EditText>
+            <TextView
+                android:padding="20px"
+                android:text="No of Bill Copies"
+                android:textStyle="bold"></TextView>
+            <EditText
+                android:padding="20px"
+                android:layout_width="wrap_content"
+                android:inputType="number"
+                android:id="@+id/billcopies"
                 android:layout_columnSpan="3"></EditText>
             <Button android:layout_column="2"
                 android:text="Save"
