@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 5);
+        super(context, DATABASE_NAME, null, 6);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,PRIMARY KEY (BILL_NO,BILL_DATE))");
-      db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT)");
+      db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT,PRICE DOUBLE)");
       db.execSQL("CREATE TABLE CUSTOMERS (NAME TEXT,MOBILE_NUMBER TEXT,ADDRESS TEXT,PRIMARY KEY (MOBILE_NUMBER))");
       InsertMasterUser(db);
     }
@@ -62,6 +62,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.update("CUSTOMERS",cntVal,"MOBILE_NUMBER",new String[]{customer.getMobileNumber()});
         }
 
+    }
+    public  Item GetItem(String itemname){
+        Item itm =null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT * FROM ITEMS WHERE ITEM_NAME='"+itemname+"'",null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                itm = new Item();
+                itm.setItem_No(cur.getInt(0));
+                itm.setItem_Name(cur.getString(1));
+                itm.setPrice(cur.getDouble(2));
+                itm.setAcPrice(cur.getDouble(3));
+                itm.setStocks(cur.getDouble(4));
+            }
+        }
+        return itm;
+    }
+    public  ArrayList<Bills_Item> GetBills_Item(String billdt,String billno){
+        ArrayList<Bills_Item> report = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT * FROM BILLS_ITEM WHERE BILL_DATE='"+billdt+"' AND BILL_NO="+billno,null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                Bills_Item r = new Bills_Item();
+                r.setBill_No(cur.getInt(0));
+                r.setBill_DateStr(cur.getString(1));
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                Date bd = format.parse(r.getBill_DateStr(),new ParsePosition(0));
+                r.setBill_Date(bd);
+                r.setItem_Name(cur.getString(2));
+                r.setQty(cur.getDouble(3));
+                r.setWaiter(cur.getString(4));
+                r.setPrice(cur.getDouble(5));
+                Item item = GetItem(r.getItem_Name());
+                if(null!=item){
+                    r.setItem_No(item.getItem_No());
+                }
+                report.add(r);
+            }
+        }
+        return  report;
     }
     public Customer GetCustomer(String mobileNumber){
         Customer customer =null;
@@ -137,16 +178,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         id++;
         return  id;
     }
-    public  void GetBills_Item(){
-        ArrayList<String> report = new ArrayList<>();
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT ITEM_NAME FROM BILLS_ITEM  GROUP BY ITEM_NAME",null);
-        if(cur.getCount()>0){
-            while (cur.moveToNext()){
-                report.add(cur.getString(0));
-            }
-        }
-    }
+
     public  String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);
     }
@@ -213,6 +245,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String billDate = cur.getString(1);
                 r.setBillDate(billDate);
                 r.setBillAmount(cur.getDouble(2));
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                Date bd = format.parse(r.getBillDate(),new ParsePosition(0));
+                r.setBillDt(bd);
                 report.add(r);
             }
         }
@@ -327,6 +362,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cont.put("ITEM_NAME",billsItem.getItem_Name());
         cont.put("QUANTITY",billsItem.getQty());
         cont.put("WAITER",billsItem.getWaiter());
+        cont.put("PRICE",billsItem.getPrice());
         long s = db.insert("BILLS_ITEM",null,cont);
         if(s>0){
             Log.println(Log.ASSERT,"","Successfully inserted bill items");

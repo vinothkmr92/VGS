@@ -616,6 +616,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                SortItemsCarts();
                int billno = SaveDetails();
                Common.billNo = billno;
+               Common.billDate = new Date();
                Common.waiter  = searchTxtView.getText().toString();
                 if(isWifiPrint){
                     PrintWifi();
@@ -719,10 +720,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             bi.setBill_No(newbillno);
             bi.setItem_No(QuantityListener.itemsCarts.get(i).getItem_No());
             bi.setBill_DateStr(format.format(date));
+            bi.setBill_Date(date);
             String name = QuantityListener.itemsCarts.get(i).getItem_Name();
             bi.setItem_Name(name);
             bi.setQty(QuantityListener.itemsCarts.get(i).getQty());
             bi.setWaiter(waiter);
+            double price = QuantityListener.itemsCarts.get(i).getPrice();
+            bi.setPrice(price);
             double amt = QuantityListener.itemsCarts.get(i).getQty()*QuantityListener.itemsCarts.get(i).getPrice();
             saleAmt+=amt;
             dbHelper.Insert_Bill_Items(bi);
@@ -740,8 +744,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void RefreshViews(){
         this.itemName.setText("");
         this.Quantity.setText("");
-        Common.itemsCarts.clear();
-        QuantityListener.itemsCarts.clear();
+        if(Common.itemsCarts!=null){
+            Common.itemsCarts.clear();
+        }
+        if(QuantityListener.itemsCarts!=null){
+            QuantityListener.itemsCarts.clear();
+        }
         tItem.setText("0");
         tQty.setText("0");
         estAmt.setText("₹ 000");

@@ -56,6 +56,18 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     private Dialog progressBar;
     TextView searchTxtView;
     Dialog dialog;
+    private static SaleReportActivity instance;
+
+    public static SaleReportActivity getInstance() {
+        return instance;
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);//Menu Resource, Menu
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,14 +161,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         GetDefaultDate();
         datePickerDialog = new DatePickerDialog(SaleReportActivity.this,myDateListener,year,month,day);
         todatePickerDialog = new DatePickerDialog(SaleReportActivity.this,mytoDateListener,year,month,day);
+        instance = this;
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu, menu);//Menu Resource, Menu
-        return true;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -247,12 +253,13 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         }
         return items;
     }
+
     private void LoadSaleReport(){
         ArrayList<SaleReport> items = GetSaleReport();
         int rc = gridLayout.getRowCount();
         if(rc>1){
-            int count = (rc-1)*3;
-            gridLayout.removeViews(3,count);
+            int count = (rc-1)*4;
+            gridLayout.removeViews(4,count);
         }
         double totalSaleamt=0;
         for(int i=0;i<items.size();i++){
@@ -262,6 +269,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
             gridLayout.addView(dynamicView.billDateTextView(this,sr.getBillDate()));
             String saleAmtStr = String.format("%.0f",sr.getBillAmount());
             gridLayout.addView(dynamicView.billAmountTextView(this,saleAmtStr));
+            String billdetails = sr.getBillNo()+"~"+sr.getBillDate();
+            gridLayout.addView(dynamicView.printButton(this,billdetails));
             totalSaleamt+=sr.getBillAmount();
         }
         String ttSaleAmtstring = String.format("%.0f",totalSaleamt);
@@ -327,6 +336,46 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                         progressBar.cancel();
                     }
                 }
+        }
+    }
+    public void PrintBill(String billdetail){
+        try{
+            String[] bd = billdetail.split("~");
+            if(bd.length>1){
+                int billno = 0;
+                String user = "";
+                Date billdt = new Date();
+                ArrayList<Bills_Item> bills = dbHelper.GetBills_Item(bd[1],bd[0]);
+                ArrayList<ItemsCart> itemsCarts = new ArrayList<>();
+                for (Bills_Item bi:
+                     bills) {
+                    ItemsCart ic = new ItemsCart();
+                    ic.setItem_No(bi.getItem_No());
+                    ic.setItem_Name(bi.getItem_Name());
+                    ic.setPrice(bi.getPrice());
+                    ic.setQty((int) bi.getQty());
+                    user = bi.getWaiter();
+                    billno = bi.getBill_No();
+                    billdt = bi.getBill_Date();
+                    itemsCarts.add(ic);
+                }
+                Common.billDate = billdt;
+                Common.billNo = billno;
+                Common.itemsCarts = itemsCarts;
+                Common.waiter = user;
+                if(Common.isWifiPrint){
+                    PrintWifi printWifi = new PrintWifi(SaleReportActivity.this,true);
+                    printWifi.onlyBill = true;
+                    printWifi.Print();
+                }
+                else{
+                    PrintBluetooth printBluetooth = new PrintBluetooth(SaleReportActivity.this);
+                    printBluetooth.Print();
+                }
+            }
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
         }
     }
 }

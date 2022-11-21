@@ -11,6 +11,19 @@ public class Bills_Item {
     private double Qty;
     private String Waiter;
     private int Item_No;
+    private double Price;
+
+    public void setBill_Date(Date bill_Date) {
+        Bill_Date = bill_Date;
+    }
+
+    public double getPrice() {
+        return Price;
+    }
+
+    public void setPrice(double price) {
+        Price = price;
+    }
 
     public int getItem_No() {
         return Item_No;

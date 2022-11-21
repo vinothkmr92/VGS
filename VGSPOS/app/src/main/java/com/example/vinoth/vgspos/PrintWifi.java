@@ -25,6 +25,7 @@ public class PrintWifi {
     public ESCPOSPrinter posPtr;
     private int rtn;
     private boolean printSale;
+    public boolean onlyBill;
     // 0x1B
     private final char ESC = ESCPOS.ESC;
     public  PrintWifi(Context cntx,boolean prtSale) {
@@ -91,8 +92,7 @@ public class PrintWifi {
     }
     private void PrintBill() throws UnsupportedEncodingException {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
-        Date date = new Date();
-        String dateStr = format.format(date);
+        String dateStr = format.format(Common.billDate);
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
         posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
@@ -422,7 +422,7 @@ public class PrintWifi {
                     }
                     if(dialog.isShowing())
                         dialog.dismiss();
-                    if(printSale){
+                    if(!onlyBill && printSale){
                         if(Common.printKOT){
                             new ConnectPrinterKOT().execute(Common.kotprinterIP);
                         }

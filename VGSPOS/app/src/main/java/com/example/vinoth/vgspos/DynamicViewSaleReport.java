@@ -5,9 +5,11 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class DynamicViewSaleReport {
+public class DynamicViewSaleReport implements View.OnClickListener {
     Context ctx;
     private final int textSize = 15;
     private final int txtPadding = 15;
@@ -49,5 +51,19 @@ public class DynamicViewSaleReport {
         textView.setText(" "+text+" ");
         textView.setMaxEms(8);
         return textView;
+    }
+    public Button printButton(Context context, String billno){
+        final ViewGroup.LayoutParams lparams =new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        final Button btnView = new Button(context);
+        btnView.setBackgroundResource(R.drawable.ic_baseline_print_24);
+        btnView.setOnClickListener(this);
+        btnView.setTag(billno);
+        btnView.setLayoutParams(new LinearLayout.LayoutParams(50, 50));
+        return btnView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        SaleReportActivity.getInstance().PrintBill((String) v.getTag());
     }
 }

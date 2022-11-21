@@ -28,4 +28,5 @@ public class Common {
     public static int billcopies;
     public static boolean isAcPrice;
     public static boolean openSettings;
+    public static Date billDate;
 }
