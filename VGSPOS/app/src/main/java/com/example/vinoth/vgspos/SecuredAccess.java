@@ -23,7 +23,10 @@ public class SecuredAccess extends AppCompatActivity implements View.OnClickList
         settingspwd = (EditText) findViewById(R.id.activationcode);
         activateBtn.setOnClickListener(this);
     }
-
+    @Override
+    public void onBackPressed(){
+        GoHome();
+    }
     @Override
     public void onClick(View v) {
         String actcod = settingspwd.getText().toString();
@@ -34,15 +37,15 @@ public class SecuredAccess extends AppCompatActivity implements View.OnClickList
             startActivity(page);
         }
         else{
-            showCustomDialog("Status","Access Failed. Invalid Pass code.",true);
+            showCustomDialog("Status","Access Failed. Invalid Pass code.");
         }
     }
     public  void  GoHome(){
-        Intent page = new Intent(this,MainActivity.class);
+        Intent page = new Intent(this,HomeActivity.class);
         page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(page);
     }
-    public void showCustomDialog(String title, String Message, final boolean closeapp) {
+    public void showCustomDialog(String title, String Message) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
@@ -54,13 +57,7 @@ public class SecuredAccess extends AppCompatActivity implements View.OnClickList
         dialogBuilder.setMessage("\n"+Message);
         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                if(closeapp){
-                    finishAffinity(); // ClosingAlert();//do something with edt.getText().toString();
-                }
-                else{
-                    GoHome();
-                }
-
+                GoHome();
             }
         });
         //dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

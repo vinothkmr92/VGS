@@ -99,17 +99,17 @@ public class PrintWifi {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(Common.billDate);
         if(onlyBill){
-            posPtr.printNormal(ESC+"|cA"+ESC+"|2CCOPY\r\n");
+            posPtr.printNormal(ESC+"|cA"+ESC+"|2CCOPY BILL\r\n");
         }
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
         posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
-        posPtr.printNormal(ESC+"|lABILL NO: "+Common.billNo+"\n");
+        posPtr.printNormal(ESC+"|lABILL NO  : "+Common.billNo+"\n");
         if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
-            posPtr.printNormal(ESC+"|lACustomer Name: "+Common.waiter);
+            posPtr.printNormal(ESC+"|lANAME     : "+Common.waiter);
             posPtr.printNormal("\n");
         }
-        posPtr.printNormal(ESC+"|lADate: "+dateStr+"\n\n");
+        posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
         posPtr.printNormal("----------------------------------------------\n");
         posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME             QTY      PRICE    AMOUNT\n");
         posPtr.printNormal("----------------------------------------------\n");
@@ -162,12 +162,12 @@ public class PrintWifi {
             posPtr.printNormal(ESC+"|cA"+ESC+"|2CKOT\r\n");
             posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
             posPtr.printNormal("\n");
-            posPtr.printNormal(ESC+"|lABILL NO: "+Common.billNo+"\n");
+            posPtr.printNormal(ESC+"|lABILL NO  : "+Common.billNo+"\n");
             if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
-                posPtr.printNormal(ESC+"|lACustomer Name: "+Common.waiter);
+                posPtr.printNormal(ESC+"|lANAME     : "+Common.waiter);
                 posPtr.printNormal("\n");
             }
-            posPtr.printNormal(ESC+"|lADate: "+dateStr+"\n\n");
+            posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
             posPtr.printNormal("----------------------------------------------\n");
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                                   QTY\n");
             posPtr.printNormal("----------------------------------------------\n");

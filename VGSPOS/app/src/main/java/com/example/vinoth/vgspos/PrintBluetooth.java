@@ -283,14 +283,15 @@ public class PrintBluetooth {
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
             Date date = Common.billDate;
             String msg = Common.headerMeg+"\n";
+            PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             if(isReprint){
-                PrintWithFormat("COPY\n\n".getBytes(StandardCharsets.UTF_8),new Formatter().underlined().get(),Formatter.centerAlign());
+                PrintWithFormat("COPY BILL\n\n".getBytes(StandardCharsets.UTF_8),new Formatter().underlined().get(),Formatter.centerAlign());
             }
             PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
             String address = Common.addressline+"\n";
             PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().small().get(),Formatter.centerAlign());
             if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
-                PrintData("Customer Name:"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
+                PrintData("NAME     :"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
             }
             PrintData("BILL NO  :"+Common.billNo,new Formatter().get(),Formatter.leftAlign());
             PrintData("DATE     : " + format.format(date),new Formatter().get(),Formatter.leftAlign());
