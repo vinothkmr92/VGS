@@ -106,7 +106,7 @@ public class PrintWifi {
         posPtr.printNormal("\n");
         posPtr.printNormal(ESC+"|lABILL NO: "+Common.billNo+"\n");
         if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
-            posPtr.printNormal(ESC+"|lAUSER: "+Common.waiter);
+            posPtr.printNormal(ESC+"|lACustomer Name: "+Common.waiter);
             posPtr.printNormal("\n");
         }
         posPtr.printNormal(ESC+"|lADate: "+dateStr+"\n\n");
@@ -164,7 +164,7 @@ public class PrintWifi {
             posPtr.printNormal("\n");
             posPtr.printNormal(ESC+"|lABILL NO: "+Common.billNo+"\n");
             if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
-                posPtr.printNormal(ESC+"|lAUSER: "+Common.waiter);
+                posPtr.printNormal(ESC+"|lACustomer Name: "+Common.waiter);
                 posPtr.printNormal("\n");
             }
             posPtr.printNormal(ESC+"|lADate: "+dateStr+"\n\n");

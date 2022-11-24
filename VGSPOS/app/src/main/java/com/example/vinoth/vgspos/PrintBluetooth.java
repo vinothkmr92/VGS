@@ -206,6 +206,9 @@ public class PrintBluetooth {
             Date dt = format.parse(sr.getBillDate(),new ParsePosition(0));
             SimpleDateFormat formatdt = new SimpleDateFormat("yyyy-MM-dd hh:mm aaa",Locale.getDefault());
             String billdate = formatdt.format(dt);
+            if(!Common.is3Inch){
+                billdate = billdate.substring(0,10);
+            }
             Double saleAmt = sr.getBillAmount();
             String billAmt = String.format("%.0f",saleAmt);
             totalAmt+=saleAmt;
@@ -287,7 +290,7 @@ public class PrintBluetooth {
             String address = Common.addressline+"\n";
             PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().small().get(),Formatter.centerAlign());
             if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
-                PrintData("USER     :"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
+                PrintData("Customer Name:"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
             }
             PrintData("BILL NO  :"+Common.billNo,new Formatter().get(),Formatter.leftAlign());
             PrintData("DATE     : " + format.format(date),new Formatter().get(),Formatter.leftAlign());

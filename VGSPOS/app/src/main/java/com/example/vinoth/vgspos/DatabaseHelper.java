@@ -79,6 +79,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return itm;
     }
+    public ArrayList<String> GetItemNames(){
+        ArrayList<String> nameList = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT ITEM_NAME FROM ITEMS",null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                String itm = cur.getString(0);
+                nameList.add(itm);
+            }
+        }
+        return nameList;
+    }
     public  ArrayList<Bills_Item> GetBills_Item(String billdt,String billno){
         ArrayList<Bills_Item> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();

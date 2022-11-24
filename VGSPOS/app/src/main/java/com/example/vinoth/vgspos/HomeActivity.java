@@ -102,6 +102,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     Button btnScanQr;
     TextView searchTxtView;
     Dialog dialog;
+    Dialog itemSearchdialog;
     ArrayList<String> waiters;
     String android_id;
     @Override
@@ -290,6 +291,70 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception ex) {
             showCustomDialog("Error", ex.getMessage());
         }
+    }
+    private void OpenItemSearchDialog(){
+         itemSearchdialog =new Dialog(HomeActivity.this);
+
+        // set custom dialog
+        itemSearchdialog.setContentView(R.layout.dialog_items_search);
+
+        // set custom height and width
+        itemSearchdialog.getWindow().setLayout(800,800);
+
+        // set transparent background
+        itemSearchdialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        // show dialog
+        itemSearchdialog.show();
+
+        // Initialize and assign variable
+        EditText editText=itemSearchdialog.findViewById(R.id.edit_textItem);
+        ListView listView=itemSearchdialog.findViewById(R.id.list_viewItem);
+
+        // Initialize array adapter
+        ArrayList<String> itemnames = dbHelper.GetItemNames();
+        ArrayAdapter<String> adapter=new ArrayAdapter<>(HomeActivity.this, android.R.layout.simple_list_item_1,itemnames);
+
+        // set adapter
+        listView.setAdapter(adapter);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // when item selected from list
+                // set selected item on textView
+                String selectredName = adapter.getItem(position);
+
+                // Dismiss dialog
+                itemSearchdialog.dismiss();
+                Item item = dbHelper.GetItem(selectredName);
+                if(item!=null){
+                    itemNo.setText(String.valueOf(item.getItem_No()));
+                    itemName.setText(item.getItem_Name());
+                    String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
+                    priceTxt.setText(price);
+                    Quantity.setText("1");
+                    Quantity.selectAll();
+                    Quantity.requestFocus();
+                }
+            }
+        });
     }
     private boolean checkBLuetoothPermission(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
@@ -510,6 +575,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         itemName.setText(item.getItem_Name());
                         String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
                         priceTxt.setText(price);
+                        Quantity.setText("1");
+                        Quantity.selectAll();
                         Quantity.requestFocus();
                     }
                     else{
@@ -520,6 +587,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     showCustomDialog("Msg","Item No should not be a String.");
                 }
 
+            }
+            else{
+                if(itemSearchdialog !=null){
+                    if(!itemSearchdialog.isShowing()){
+                        OpenItemSearchDialog();
+                    }
+                }
+                else {
+                    OpenItemSearchDialog();
+                }
             }
 
         }
@@ -670,9 +747,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                        itemNo.setText(sr);
                    }
                    else if(Quantity.isFocused()){
-                       String sr = Quantity.getText().toString();
-                       sr+=addstr;
-                       Quantity.setText(sr);
+                       int startSelection=Quantity.getSelectionStart();
+                       int endSelection=Quantity.getSelectionEnd();
+
+                       String selectedText = Quantity.getText().toString().substring(startSelection, endSelection);
+                       if(!selectedText.isEmpty()){
+                           Quantity.setText(addstr);
+                       }
+                       else{
+                           String sr = Quantity.getText().toString();
+                           sr+=addstr;
+                           Quantity.setText(sr);
+                       }
+
                    }
                    else if(priceTxt.isFocused()){
                        String sr = priceTxt.getText().toString();
