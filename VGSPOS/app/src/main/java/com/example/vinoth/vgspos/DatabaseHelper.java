@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 6);
+        super(context, DATABASE_NAME, null, 10);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -82,13 +82,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public  ArrayList<Bills_Item> GetBills_Item(String billdt,String billno){
         ArrayList<Bills_Item> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM BILLS_ITEM WHERE BILL_DATE='"+billdt+"' AND BILL_NO="+billno,null);
+        Cursor cur = db.rawQuery("SELECT * FROM BILLS_ITEM WHERE DATE(BILL_DATE)='"+billdt+"' AND BILL_NO="+billno,null);
         if(cur.getCount()>0){
             while (cur.moveToNext()){
                 Bills_Item r = new Bills_Item();
                 r.setBill_No(cur.getInt(0));
                 r.setBill_DateStr(cur.getString(1));
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 Date bd = format.parse(r.getBill_DateStr(),new ParsePosition(0));
                 r.setBill_Date(bd);
                 r.setItem_Name(cur.getString(2));
@@ -154,9 +154,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int id = 0;
         SQLiteDatabase db = this.getWritableDatabase();
         Date dt = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String sr = simpleDateFormat.format(dt);
-        Cursor cur = db.rawQuery("SELECT MAX(BILL_NO) FROM BILLS WHERE BILL_DATE='"+sr+"'",null);
+        Cursor cur = db.rawQuery("SELECT MAX(BILL_NO) FROM BILLS WHERE DATE(BILL_DATE)='"+sr+"'",null);
         if(cur.getCount()>0){
             while (cur.moveToNext()){
                 id = cur.getInt(0);
@@ -205,12 +205,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return  report;
     }
-    public  ArrayList<SaleReport> GetAllSales(String waiter){
+    public  ArrayList<SaleReport> GetSalesReport(String frmDate,String toDate,String waiter){
         ArrayList<SaleReport> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT FROM BILLS";
+        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT FROM BILLS WHERE DATE(BILL_DATE)>='"+frmDate+"' AND DATE(BILL_DATE)<='"+toDate+"'";
         if(!waiter.equals("ALL")){
-            query = "SELECT BILL_NO,BILL_DATE,SALE_AMT FROM BILLS WHERE USER_ID='"+waiter+"'";
+            query = query+" AND USER_ID='"+waiter+"'";
         }
         Cursor cur = db.rawQuery(query,null);
         if(cur.getCount()>0){
@@ -221,7 +221,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String billDate = cur.getString(1);
                 r.setBillDate(billDate);
                 r.setBillAmount(cur.getDouble(2));
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 Date bd = format.parse(r.getBillDate(),new ParsePosition(0));
                 r.setBillDt(bd);
                 report.add(r);
@@ -229,30 +229,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return  report;
     }
-    public ArrayList<SaleReport> GetSaleReport(String frmDate,String toDate,String waiter){
-        ArrayList<SaleReport> report = new ArrayList<>();
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT FROM BILLS WHERE BILL_DATE>='"+frmDate+"' AND BILL_DATE<='"+toDate+"'";
-        if(!waiter.equals("ALL")){
-            query = "SELECT BILL_NO,BILL_DATE,SALE_AMT FROM BILLS WHERE BILL_DATE='"+frmDate+"' AND BILL_DATE<='"+toDate+"' AND USER_ID='"+waiter+"'";
-        }
-        Cursor cur = db.rawQuery(query,null);
-        if(cur.getCount()>0){
-            while (cur.moveToNext()){
-                SaleReport r = new SaleReport();
-                String billno = cur.getString(0);
-                r.setBillNo(billno);
-                String billDate = cur.getString(1);
-                r.setBillDate(billDate);
-                r.setBillAmount(cur.getDouble(2));
-                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                Date bd = format.parse(r.getBillDate(),new ParsePosition(0));
-                r.setBillDt(bd);
-                report.add(r);
-            }
-        }
-        return  report;
-    }
+
     public ArrayList<ItemsRpt> GetReports(String frmDt,String toDt,String waiter,boolean isStockRpt){
        ArrayList<ItemsRpt> report = new ArrayList<>();
        if(isStockRpt){
@@ -267,9 +244,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
        }
        else{
            SQLiteDatabase db = this.getWritableDatabase();
-           String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE>='"+frmDt+"' AND BILL_DATE<='"+toDt+"' GROUP BY ITEM_NAME";
+           String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE DATE(BILL_DATE)>='"+frmDt+"' AND DATE(BILL_DATE)<='"+toDt+"' GROUP BY ITEM_NAME";
            if(!waiter.equals("ALL")){
-               query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE BILL_DATE>='"+frmDt+"' AND BILL_DATE<='"+toDt+"' AND WAITER='"+waiter+"' GROUP BY ITEM_NAME";
+               query = query+" AND WAITER='"+waiter+"' GROUP BY ITEM_NAME";
            }
            Cursor cur = db.rawQuery(query,null);
            if(cur.getCount()>0){
@@ -358,6 +335,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cont = new ContentValues();
         cont.put("BILL_NO",billsItem.getBill_No());
+        //SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
         cont.put("BILL_DATE",billsItem.getBill_DateStr());
         cont.put("ITEM_NAME",billsItem.getItem_Name());
         cont.put("QUANTITY",billsItem.getQty());

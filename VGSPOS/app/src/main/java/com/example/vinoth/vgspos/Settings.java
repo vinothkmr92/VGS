@@ -62,7 +62,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     Set<BluetoothDevice> pairedDevices = null;
     private BluetoothAdapter mBluetoothAdapter = null;
     private static String[] PERMISSIONS_BLUETOOTH = {
-            Manifest.permission.BLUETOOTH_CONNECT
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH
     };
     ArrayList<String> bluethootnamelist;
     private Dialog progressBar;

@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,6 +67,69 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         return true;
     }
 
+    private DatePickerDialog.OnDateSetListener mytoDateListener = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0,
+                                      int arg1, int arg2, int arg3) {
+                    // TODO Auto-generated method stub
+                    // arg1 = year
+                    // arg2 = month
+                    // arg3 = day
+                    String monthstr = String.valueOf(arg2+1);
+                    monthstr = StringUtils.leftPad(monthstr,2,'0');
+                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
+                    StringBuilder sb = new StringBuilder().append(arg1).append("-")
+                            .append(monthstr).append("-").append(dt);
+                    toDateTextView.setText(sb.toString());
+                }
+            };
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.exit:
+                finish();
+                System.exit(0);
+                return true;
+            case R.id.uploadExcel:
+                Intent dcpage = new Intent(this,UploadActivity.class);
+                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(dcpage);
+                return  true;
+            case R.id.settings:
+                Intent settingsPage = new Intent(this,Settings.class);
+                settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(settingsPage);
+                return  true;
+            case R.id.homemenu:
+                Intent page = new Intent(this,HomeActivity.class);
+                page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(page);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    private DatePickerDialog.OnDateSetListener myDateListener = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0,
+                                      int arg1, int arg2, int arg3) {
+                    // TODO Auto-generated method stub
+                    // arg1 = year
+                    // arg2 = month
+                    // arg3 = day
+                    //setDate(arg1, arg2+1, arg3);
+                    String monthstr = String.valueOf(arg2+1);
+                    monthstr = StringUtils.leftPad(monthstr,2,'0');
+                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
+                    StringBuilder sb = new StringBuilder().append(arg1).append("-")
+                            .append(monthstr).append("-").append(dt);
+                    frmDateTextView.setText(sb.toString());
+                }
+            };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +158,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         for(int i=0;i<customers.size();i++){
             wts.add(customers.get(i).getCustomerName());
         }
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = new Date();
         frmDateTextView.setText(format.format(date));
         toDateTextView.setText(format.format(date));
@@ -163,95 +225,20 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         todatePickerDialog = new DatePickerDialog(SaleReportActivity.this,mytoDateListener,year,month,day);
         instance = this;
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.exit:
-                finish();
-                System.exit(0);
-                return true;
-            case R.id.uploadExcel:
-                Intent dcpage = new Intent(this,UploadActivity.class);
-                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(dcpage);
-                return  true;
-            case R.id.settings:
-                Intent settingsPage = new Intent(this,Settings.class);
-                settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(settingsPage);
-                return  true;
-            case R.id.homemenu:
-                Intent page = new Intent(this,HomeActivity.class);
-                page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(page);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-    private DatePickerDialog.OnDateSetListener mytoDateListener = new
-            DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker arg0,
-                                      int arg1, int arg2, int arg3) {
-                    // TODO Auto-generated method stub
-                    // arg1 = year
-                    // arg2 = month
-                    // arg3 = day
-                    String monthstr = String.valueOf(arg2+1);
-                    monthstr = StringUtils.leftPad(monthstr,2,'0');
-                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
-                    StringBuilder sb = new StringBuilder().append(dt).append("/")
-                            .append(monthstr).append("/").append(arg1);
-                    toDateTextView.setText(sb.toString());
-                }
-            };
-    private DatePickerDialog.OnDateSetListener myDateListener = new
-            DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker arg0,
-                                      int arg1, int arg2, int arg3) {
-                    // TODO Auto-generated method stub
-                    // arg1 = year
-                    // arg2 = month
-                    // arg3 = day
-                    //setDate(arg1, arg2+1, arg3);
-                    String monthstr = String.valueOf(arg2+1);
-                    monthstr = StringUtils.leftPad(monthstr,2,'0');
-                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
-                    StringBuilder sb = new StringBuilder().append(dt).append("/")
-                            .append(monthstr).append("/").append(arg1);
-                    frmDateTextView.setText(sb.toString());
-                }
-            };
-    private void setDate(int year, int month, int day){
-        StringBuilder sb = new StringBuilder().append(day).append("/")
-                .append(month).append("/").append(year);
-        selectedDate = sb.toString();
-    }
+
     private  void GetDefaultDate(){
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
     }
+
     private ArrayList<SaleReport> GetSaleReport(){
         String frmdt = frmDateTextView.getText().toString();
         String todt = toDateTextView.getText().toString();
         String waiter  = searchTxtView.getText().toString();
-        ArrayList<SaleReport> sales = dbHelper.GetAllSales(waiter);
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        Date fromDate = format.parse(frmdt,new ParsePosition(0));
-        Date toDate = format.parse(todt,new ParsePosition(0));
-        ArrayList<SaleReport> items = new ArrayList<SaleReport>();
-        for(int i=0;i<sales.size();i++){
-            SaleReport sr = sales.get(i);
-            if(sr.getBillDt().compareTo(fromDate) >= 0 && sr.getBillDt().compareTo(toDate) <=0 ){
-                items.add(sr);
-            }
-        }
-        return items;
+        ArrayList<SaleReport> sal = dbHelper.GetSalesReport(frmdt,todt,waiter);
+        return sal;
     }
 
     private void LoadSaleReport(){
@@ -265,8 +252,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         for(int i=0;i<items.size();i++){
             SaleReport sr = items.get(i);
             dynamicView = new DynamicViewSaleReport(this);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm aaa",Locale.getDefault());
             gridLayout.addView(dynamicView.billNoTextView(this,sr.getBillNo()));
-            gridLayout.addView(dynamicView.billDateTextView(this,sr.getBillDate()));
+            gridLayout.addView(dynamicView.billDateTextView(this,format.format(sr.getBillDt())));
             String saleAmtStr = String.format("%.0f",sr.getBillAmount());
             gridLayout.addView(dynamicView.billAmountTextView(this,saleAmtStr));
             String billdetails = sr.getBillNo()+"~"+sr.getBillDate();
@@ -322,6 +310,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                         else{
                             PrintBluetooth printBluetooth = new PrintBluetooth(SaleReportActivity.this);
                             printBluetooth.PrintSaleReport();
+                            printBluetooth.CloseBT();
                         }
                     }
                     else {
@@ -344,8 +333,11 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
             if(bd.length>1){
                 int billno = 0;
                 String user = "";
-                Date billdt = new Date();
-                ArrayList<Bills_Item> bills = dbHelper.GetBills_Item(bd[1],bd[0]);
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+                SimpleDateFormat formatwithtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
+                Date billds = format.parse(bd[1]);
+                Date billdt = formatwithtime.parse(bd[1]);
+                ArrayList<Bills_Item> bills = dbHelper.GetBills_Item(format.format(billds),bd[0]);
                 ArrayList<ItemsCart> itemsCarts = new ArrayList<>();
                 for (Bills_Item bi:
                      bills) {
@@ -370,7 +362,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 }
                 else{
                     PrintBluetooth printBluetooth = new PrintBluetooth(SaleReportActivity.this);
+                    printBluetooth.isReprint = true;
                     printBluetooth.Print();
+                    printBluetooth.CloseBT();
                 }
             }
         }

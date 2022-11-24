@@ -90,6 +90,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ISWIFI = "ISWIFI";
     public static final String IS3INCH = "IS3INCH";
     public static final String EXPIRE_DT = "EXPIRE_DT";
+    public static final String PRINTKOT = "PRINTKOT";
+    public static final String KOTPRINTERIP = "KOTPRINTERIP";
+    public static final String BILLCOPIES = "BILLCOPIES";
+    public static final String ADDRESSLINE = "ADDRESSLINE";
     String headerMsg ;
     String footerMsg ;
     String printerip ;
@@ -258,6 +262,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             footerMsg = sharedpreferences.getString(FOOTERMSG,"");
             printerip = sharedpreferences.getString(PRINTERIP,"");
+            String printkot = sharedpreferences.getString(PRINTKOT,"NO");
+            String kotprinterip = sharedpreferences.getString(KOTPRINTERIP,"");
+            String billcopies = sharedpreferences.getString(BILLCOPIES,"1");
+            String addressline = sharedpreferences.getString(ADDRESSLINE,"");
+            Common.printKOT = printkot.equalsIgnoreCase("YES");
+            Common.kotprinterIP = kotprinterip;
+            Common.billcopies = Integer.parseInt(billcopies);
+            Common.addressline = addressline;
             Common.printerIP = printerip;
             Common.headerMeg = headerMsg;
             Common.footerMsg = footerMsg;
@@ -322,7 +334,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             try{
                 PrintBluetooth printBluetooth = new PrintBluetooth(HomeActivity.this);
-                printBluetooth.Print();
+                int copiesprinted = Common.billcopies;
+                while (copiesprinted>0){
+                    printBluetooth.Print();
+                    copiesprinted--;
+                }
+                printBluetooth.CloseBT();
             }
             catch (Exception ex){
                 showCustomDialog("Exception",ex.getMessage().toString());
@@ -711,7 +728,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private int SaveDetails(){
         int newbillno = dbHelper.GetNextBillNo();
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date date = new Date();
         String waiter  = searchTxtView.getText().toString();
         double saleAmt = 0;

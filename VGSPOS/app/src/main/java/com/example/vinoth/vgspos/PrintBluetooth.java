@@ -6,16 +6,19 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -28,23 +31,20 @@ public class PrintBluetooth {
     private BluetoothSocket mBluetoothSocket;
     private OutputStream mOutputStream;
     Set<BluetoothDevice> pairedDevices;
+    private static String[] PERMISSIONS_BLUETOOTH = {
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH
+    };
     private Context context;
+    public boolean isReprint;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     public PrintBluetooth(Context ctx) throws Exception {
         context = ctx;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(HomeActivity.getInstance(),new String[]{Manifest.permission.BLUETOOTH_CONNECT}
-                    ,1);
-            return ;
+        if (!checkBluetoothPermission()) {
+            ActivityCompat.requestPermissions(HomeActivity.getInstance(), PERMISSIONS_BLUETOOTH
+                    , 1);
         }
         pairedDevices = mBluetoothAdapter.getBondedDevices();
         String getName = mBluetoothAdapter.getName();
@@ -59,22 +59,54 @@ public class PrintBluetooth {
         ConnectBluetooth(getName);
     }
 
+    public  void CloseBT(){
+        try {
+            if (mOutputStream != null)
+                mOutputStream.close();
+            if (mBluetoothSocket != null)
+                mBluetoothSocket.close();
+        } catch (Exception e) {
+            Log.e("ERR", e.getMessage(), e);
+        }
+    }
     @Override
     protected void finalize() throws Throwable {
-        try
-        {
-            if(mOutputStream!=null)
+        try {
+            if (mOutputStream != null)
                 mOutputStream.close();
-            if(mBluetoothSocket != null)
+            if (mBluetoothSocket != null)
                 mBluetoothSocket.close();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e("ERR", e.getMessage(), e);
         }
         super.finalize();
     }
 
+    private boolean checkBluetoothPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            int bluetooth = ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT);
+            return bluetooth == PackageManager.PERMISSION_GRANTED;
+        } else {
+            int bluetooth = ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH);
+            return bluetooth == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    /*public void ConnectBluetooth(String btName) throws Exception {
+        try {
+            mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(btName);
+            if(checkBluetoothPermission()){
+                mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(SPP_UUID);
+                mBluetoothSocket.connect();
+            }
+            else{
+                HomeActivity.getInstance().showCustomDialog("Error","Failed to access Bluetooth.");
+            }
+        }
+        catch (Exception ex){
+            throw ex;
+        }
+    }*/
     public void ConnectBluetooth(String btName) throws Exception {
         try {
             mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(btName);
@@ -86,10 +118,12 @@ public class PrintBluetooth {
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
-                return;
+                ActivityCompat.requestPermissions(HomeActivity.getInstance(), PERMISSIONS_BLUETOOTH
+                        , 1);
             }
             mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(SPP_UUID);
             mBluetoothSocket.connect();
+
         }
         catch (Exception ex){
             throw ex;
@@ -168,7 +202,10 @@ public class PrintBluetooth {
         for(int k=0;k<Common.saleReports.size();k++){
             SaleReport sr = Common.saleReports.get(k);
             String billno = sr.getBillNo();
-            String billdate = sr.getBillDate();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
+            Date dt = format.parse(sr.getBillDate(),new ParsePosition(0));
+            SimpleDateFormat formatdt = new SimpleDateFormat("yyyy-MM-dd hh:mm aaa",Locale.getDefault());
+            String billdate = formatdt.format(dt);
             Double saleAmt = sr.getBillAmount();
             String billAmt = String.format("%.0f",saleAmt);
             totalAmt+=saleAmt;
@@ -240,13 +277,16 @@ public class PrintBluetooth {
     public  void Print() {
         int sl = 0;
         try {
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
-            Date date = new Date();
+            SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
+            Date date = Common.billDate;
             String msg = Common.headerMeg+"\n";
+            if(isReprint){
+                PrintWithFormat("COPY\n\n".getBytes(StandardCharsets.UTF_8),new Formatter().underlined().get(),Formatter.centerAlign());
+            }
             PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
             String address = Common.addressline+"\n";
             PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().small().get(),Formatter.centerAlign());
-            if(!Common.waiter.equals("NONE")){
+            if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
                 PrintData("USER     :"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
             }
             PrintData("BILL NO  :"+Common.billNo,new Formatter().get(),Formatter.leftAlign());

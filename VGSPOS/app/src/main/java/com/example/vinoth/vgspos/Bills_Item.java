@@ -59,7 +59,7 @@ public class Bills_Item {
 
     public Date getBill_Date() {
         try{
-            Bill_Date=new SimpleDateFormat("dd-MMM-yyyy").parse(getBill_DateStr());
+            Bill_Date=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(getBill_DateStr());
             return Bill_Date;
         }
         catch (Exception ex){
@@ -71,7 +71,7 @@ public class Bills_Item {
     public void setBill_Date(String bill_Date) {
         try
         {
-            Bill_Date=new SimpleDateFormat("dd-MMM-yyyy").parse(bill_Date);
+            Bill_Date=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(bill_Date);
         }
         catch (Exception ex){
             Bill_Date = new Date();

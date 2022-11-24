@@ -54,6 +54,43 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     TextView searchTxtView;
     Dialog dialog;
     CheckBox stockReport;
+    public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    private DatePickerDialog.OnDateSetListener mytoDateListener = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0,
+                                      int arg1, int arg2, int arg3) {
+                    // TODO Auto-generated method stub
+                    // arg1 = year
+                    // arg2 = month
+                    // arg3 = day
+                    String monthstr = String.valueOf(arg2+1);
+                    monthstr = StringUtils.leftPad(monthstr,2,'0');
+                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
+                    StringBuilder sb = new StringBuilder().append(arg1).append("-")
+                            .append(monthstr).append("-").append(dt);
+                    toDateTextView.setText(sb.toString());
+                }
+            };
+    private DatePickerDialog.OnDateSetListener myDateListener = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0,
+                                      int arg1, int arg2, int arg3) {
+                    // TODO Auto-generated method stub
+                    // arg1 = year
+                    // arg2 = month
+                    // arg3 = day
+                    //setDate(arg1, arg2+1, arg3);
+                    String monthstr = String.valueOf(arg2+1);
+                    monthstr = StringUtils.leftPad(monthstr,2,'0');
+                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
+                    StringBuilder sb = new StringBuilder().append(arg1).append("-")
+                            .append(monthstr).append("-").append(dt);
+                    frmDateTextView.setText(sb.toString());
+                }
+            };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,7 +177,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
                 });
             }
         });
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = new Date();
         frmDateTextView.setText(format.format(date));
         toDateTextView.setText(format.format(date));
@@ -148,41 +185,6 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         datePickerDialog = new DatePickerDialog(ItemReport.this,myDateListener,year,month,day);
         todatePickerDialog = new DatePickerDialog(ItemReport.this,mytoDateListener,year,month,day);
     }
-    private DatePickerDialog.OnDateSetListener mytoDateListener = new
-            DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker arg0,
-                                      int arg1, int arg2, int arg3) {
-                    // TODO Auto-generated method stub
-                    // arg1 = year
-                    // arg2 = month
-                    // arg3 = day
-                    String monthstr = String.valueOf(arg2+1);
-                    monthstr = StringUtils.leftPad(monthstr,2,'0');
-                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
-                    StringBuilder sb = new StringBuilder().append(dt).append("/")
-                            .append(monthstr).append("/").append(arg1);
-                    toDateTextView.setText(sb.toString());
-                }
-            };
-    private DatePickerDialog.OnDateSetListener myDateListener = new
-            DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker arg0,
-                                      int arg1, int arg2, int arg3) {
-                    // TODO Auto-generated method stub
-                    // arg1 = year
-                    // arg2 = month
-                    // arg3 = day
-                    //setDate(arg1, arg2+1, arg3);
-                    String monthstr = String.valueOf(arg2+1);
-                    monthstr = StringUtils.leftPad(monthstr,2,'0');
-                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
-                    StringBuilder sb = new StringBuilder().append(dt).append("/")
-                            .append(monthstr).append("/").append(arg1);
-                    frmDateTextView.setText(sb.toString());
-                }
-            };
     private  void GetDefaultDate(){
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
@@ -256,6 +258,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             else{
                 PrintBluetooth printBluetooth = new PrintBluetooth(ItemReport.this);
                 printBluetooth.PrintItemWiseReport();
+                printBluetooth.CloseBT();
             }
 
         } catch (Exception e) {
@@ -267,6 +270,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         String frmdt = frmDateTextView.getText().toString();
         String todt = toDateTextView.getText().toString();
         String waiter  = searchTxtView.getText().toString();
+
         ArrayList<ItemsRpt> itemsRpts = dbHelper.GetReports(frmdt,todt,waiter,stockReport.isChecked());
         int rc = gridView.getRowCount();
         if(rc>1){

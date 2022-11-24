@@ -75,10 +75,15 @@ public class PrintWifi {
 
         try
         {
-            int copiesprinted = Common.billcopies;
-            while (copiesprinted>0){
+            if(onlyBill){
                 PrintBill();
-                copiesprinted--;
+            }
+            else {
+                int copiesprinted = Common.billcopies;
+                while (copiesprinted>0){
+                    PrintBill();
+                    copiesprinted--;
+                }
             }
             wifiPort.disconnect();
             return 1;
@@ -91,19 +96,23 @@ public class PrintWifi {
         return 0;
     }
     private void PrintBill() throws UnsupportedEncodingException {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(Common.billDate);
+        if(onlyBill){
+            posPtr.printNormal(ESC+"|cA"+ESC+"|2CCOPY\r\n");
+        }
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
         posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
         posPtr.printNormal(ESC+"|lABILL NO: "+Common.billNo+"\n");
-        if(!Common.waiter.equals("NONE")){
+        if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
             posPtr.printNormal(ESC+"|lAUSER: "+Common.waiter);
             posPtr.printNormal("\n");
         }
         posPtr.printNormal(ESC+"|lADate: "+dateStr+"\n\n");
+        posPtr.printNormal("----------------------------------------------\n");
         posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME             QTY      PRICE    AMOUNT\n");
-        double totalQty = 0d;
+        posPtr.printNormal("----------------------------------------------\n");
         double totalAmt = 0d;
         for(int k=0;k<Common.itemsCarts.size();k++){
             String name = Common.itemsCarts.get(k).getItem_Name();
@@ -147,21 +156,21 @@ public class PrintWifi {
 
         try
         {
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
+            SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
             Date date = new Date();
             String dateStr = format.format(date);
             posPtr.printNormal(ESC+"|cA"+ESC+"|2CKOT\r\n");
             posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
             posPtr.printNormal("\n");
             posPtr.printNormal(ESC+"|lABILL NO: "+Common.billNo+"\n");
-            if(!Common.waiter.equals("NONE")){
+            if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
                 posPtr.printNormal(ESC+"|lAUSER: "+Common.waiter);
                 posPtr.printNormal("\n");
             }
             posPtr.printNormal(ESC+"|lADate: "+dateStr+"\n\n");
+            posPtr.printNormal("----------------------------------------------\n");
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                                   QTY\n");
-            double totalQty = 0d;
-            double totalAmt = 0d;
+            posPtr.printNormal("----------------------------------------------\n");
             for(int k=0;k<Common.itemsCarts.size();k++){
                 String name = Common.itemsCarts.get(k).getItem_Name();
                 String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
@@ -200,14 +209,13 @@ public class PrintWifi {
         }
         try
         {
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
-            Date date = new Date();
-            String dateStr = format.format(date);
             posPtr.printNormal(ESC+"|cA"+ESC+"|2CITEM WISE REPORT\r\n");
             posPtr.printNormal("\n");
             posPtr.printNormal(ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
             posPtr.printNormal(ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
+            posPtr.printNormal("----------------------------------------------\n");
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                                  QTY\n");
+            posPtr.printNormal("----------------------------------------------\n");
             for(int k=0;k<Common.itemsRpts.size();k++){
                 ItemsRpt itemsRpt = Common.itemsRpts.get(k);
                 String itemname = itemsRpt.getItemName();
@@ -248,15 +256,13 @@ public class PrintWifi {
         }
         try
         {
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
-            Date date = new Date();
-            String dateStr = format.format(date);
             posPtr.printNormal(ESC+"|cA"+ESC+"|2CSALE REPORT\r\n");
             posPtr.printNormal("\n");
             posPtr.printNormal(ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
             posPtr.printNormal(ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
+            posPtr.printNormal("----------------------------------------------\n");
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"BILL NO         BILL_DATE               AMOUNT\n");
-            double totalQty = 0d;
+            posPtr.printNormal("----------------------------------------------\n");
             double totalAmt = 0d;
             for(int k=0;k<Common.saleReports.size();k++){
                 SaleReport saleReport = Common.saleReports.get(k);
