@@ -67,7 +67,7 @@ public class AppActivation {
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
             dialog.setTitle(" ");
-            dialog.setMessage("Checking Activation Status.....");
+            dialog.setMessage("Loading.....");
             dialog.show();
             super.onPreExecute();
         }
@@ -78,7 +78,7 @@ public class AppActivation {
             {
                 String host= context.getApplicationContext().getString(R.string.ActivationAPIHost);
                 String imei = params[0];
-                java.net.URL url = new URL("http://"+host+":9092/api/ActivationAPI/GetActivationStatus?imei="+imei);
+                java.net.URL url = new URL("http://"+host+"/api/ActivationAPI/GetActivationStatus?imei="+imei);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");

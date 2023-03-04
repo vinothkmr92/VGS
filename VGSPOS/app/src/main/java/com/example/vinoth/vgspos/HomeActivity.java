@@ -180,7 +180,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             String expiredtstr = sharedpreferences.getString(EXPIRE_DT,simpleDateFormat.format(cal.getTime()));
             Date expireDt = simpleDateFormat.parse(expiredtstr);
             Date compare = new Date(dt.getYear(),dt.getMonth(),dt.getDate());
-            if(expireDt.compareTo(compare)<0){
+            boolean internetav = Is_InternetWorking();
+            if(internetav){
+                Common.isActivated = false;
+                android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+                AppActivation appActivation = new AppActivation(HomeActivity.this,android_id,this);
+                appActivation.CheckActivationStatus();
+            }
+            else{
+                showCustomDialog("Msg","Please connect to internet and Try again.",true);
+            }
+            /*if(expireDt.compareTo(compare)<0){
                 boolean internetav = Is_InternetWorking();
                 if(internetav){
                     Common.isActivated = false;
@@ -191,7 +201,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 else{
                     showCustomDialog("Msg","Your application expired.\nPlease connect to internet and Try again.",true);
                 }
-            }
+            }*/
             searchTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

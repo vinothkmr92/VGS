@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Activator</string>
-    <string name="ActivationAPIHost">60.243.50.58</string>
+    <string name="ActivationAPIHost">vgsandroidapi.somee.com/AndroidActivationAPI</string>
 </resources>

@@ -276,9 +276,77 @@ public class PrintBluetooth {
         }
         Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
     }
+    public void PrintKOT(){
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
+            Date date = Common.billDate;
+            String msg = Common.headerMeg+"\n";
+            PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            PrintWithFormat("KOT\n".getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
+            PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
+            String address = Common.addressline+"\n";
+            PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().small().get(),Formatter.centerAlign());
+            if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
+                PrintData("NAME     :"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
+            }
+            PrintData("BILL NO  :"+Common.billNo,new Formatter().get(),Formatter.leftAlign());
+            PrintData("DATE     : " + format.format(date),new Formatter().get(),Formatter.leftAlign());
+            if(Common.is3Inch){
+                PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+                String hed =  "ITEM NAME             QTY      PRICE    AMOUNT";
+                PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+                PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+            }
+            else{
+                PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+                String hed =  "ITEM        QTY    RATE   AMOUNT";
+                PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+                PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
+            }
 
+            double totalAmt=0;
+            for(int k=0;k<Common.itemsCarts.size();k++){
+                String name = Common.itemsCarts.get(k).getItem_Name();
+                String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
+                String price = String.format("%.0f",Common.itemsCarts.get(k).getPrice());
+                Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
+                totalAmt+=amt;
+                String amts=String.format("%.0f",amt);
+                if(Common.is3Inch){
+                    name = StringUtils.rightPad(name,20);
+                    qty = StringUtils.leftPad(qty,5);
+                    price = StringUtils.leftPad(price,11);
+                    amts = StringUtils.leftPad(amts,10);
+                    String line = name+qty+price+amts;
+                    PrintData(line,new Formatter().get(),Formatter.leftAlign());
+                }
+                else{
+                    PrintData(name,new Formatter().get(),Formatter.leftAlign());
+                    PrintData("           "+GetFormatedString(qty,4)+GetFormatedString(price,9)+GetFormatedString(amts,8),
+                            new Formatter().get(),Formatter.leftAlign());
+                }
+
+            }
+            PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            //String ttAmtTxt = "TOTAL AMT:"+String.format("%.0f",totalAmt)+"/-";
+            //PrintData(ttAmtTxt,new Formatter().bold().get(),Formatter.centerAlign());
+            PrintData("  ",new Formatter().get(),Formatter.leftAlign());
+            //PrintData(Common.footerMsg,new Formatter().get(),Formatter.centerAlign());
+            PrintData(" ",new Formatter().get(),Formatter.leftAlign());
+            PrintData("  ",new Formatter().get(),Formatter.leftAlign());
+            if(Common.is3Inch){
+                PaperCut();
+            }
+            Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
+
+        } catch (Exception e) {
+            //Toast.makeText(MainActivity.this, e.getMessage(), 1).show();
+            e.printStackTrace();
+            HomeActivity.getInstance().showCustomDialog("Error",e.getMessage());
+        }
+    }
     public  void Print() {
-        int sl = 0;
         try {
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
             Date date = Common.billDate;
@@ -343,7 +411,9 @@ public class PrintBluetooth {
                 PaperCut();
             }
             Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
-
+            if(Common.printKOT && !isReprint){
+                PrintKOT();
+            }
         } catch (Exception e) {
             //Toast.makeText(MainActivity.this, e.getMessage(), 1).show();
             e.printStackTrace();

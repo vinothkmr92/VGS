@@ -143,7 +143,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                      txtviewkotprinter.setVisibility(View.INVISIBLE);
                      txtviewkotselection.setVisibility(View.INVISIBLE);
                      editTextkotprinterip.setVisibility(View.INVISIBLE);
-                     enablekot.setVisibility(View.INVISIBLE);
                  }
                  else{
                      txtViewPrinterIP.setVisibility(View.VISIBLE);
@@ -151,7 +150,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                      txtviewkotprinter.setVisibility(View.VISIBLE);
                      txtviewkotselection.setVisibility(View.VISIBLE);
                      editTextkotprinterip.setVisibility(View.VISIBLE);
-                     enablekot.setVisibility(View.VISIBLE);
                  }
             }
         });

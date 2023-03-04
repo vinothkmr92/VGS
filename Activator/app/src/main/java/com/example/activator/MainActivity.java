@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 String host= MainActivity.this.getApplicationContext().getString(R.string.ActivationAPIHost);
                 String imei = params[0];
-                java.net.URL url = new URL("http://"+host+":9092/api/ActivationAPI/GetDeviceDetails?imei="+imei);
+                java.net.URL url = new URL("http://"+host+"/api/ActivationAPI/GetDeviceDetails?imei="+imei);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String imei = params[0];
                 String devicename= params[1];
                 String expiredt = params[2];
-                java.net.URL url = new URL("http://"+host+":9092/api/ActivationAPI/ActivateDevice?imei="+imei+"&devicename="+devicename+"&expiredt="+expiredt);
+                java.net.URL url = new URL("http://"+host+"/api/ActivationAPI/ActivateDevice?imei="+imei+"&devicename="+devicename+"&expiredt="+expiredt);
                 //URL url = new URL("http://www.android.com/");
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {

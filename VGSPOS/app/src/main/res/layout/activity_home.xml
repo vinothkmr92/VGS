@@ -140,27 +140,27 @@
             android:columnCount="6"
             android:orientation="horizontal">
             <TextView
-                android:text="TOTAL QTY:  "
+                android:text="    TOTAL QTY:  "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/ttQty"
-                android:text="000               "
+                android:text="000     "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
                 android:layout_columnSpan="2"
                 android:textStyle="bold" />
             <TextView
-                android:text="          TOTAL ITEMS:  "
+                android:text="     TOTAL ITEMS:  "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/ttItem"
-                android:text="000            "
+                android:text="000   "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
                 android:layout_columnSpan="2"

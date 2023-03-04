@@ -25,6 +25,8 @@ public class ConnectionClass {
             Class.forName(classs);
             Log.e("MSG","JDBC Class registered sucessfuly");
             Log.e("MSG","Server: "+server);
+            //ConnURL = "jdbc:sqlserver://localhost;databaseName=<DATABASE_NAME>;socketFactoryClass=com.google.cloud.sql.sqlserver.SocketFactory;socketFactoryConstructorArg=<INSTANCE_CONNECTION_NAME>;user=<USER_NAME>;password=<PASSWORD>
+
             ConnURL = "jdbc:jtds:sqlserver://" + server + ";"
                     + "databaseName=" + db + ";user=" + userName + ";password="
                     + Password + ";";
