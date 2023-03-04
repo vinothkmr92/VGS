@@ -1,6 +1,7 @@
 package com.example.activator;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,9 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -24,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -33,6 +38,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText editTextDeviceName;
     EditText editTextExpireDt;
     ImageButton btnSync;
+    ImageButton btnDtPicker;
+    DatePickerDialog datePickerDialog;
+    private Calendar calendar;
+    private int year, month, day;
+    public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    private DatePickerDialog.OnDateSetListener myDateLisenter = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0,
+                                      int arg1, int arg2, int arg3) {
+                    // TODO Auto-generated method stub
+                    // arg1 = year
+                    // arg2 = month
+                    // arg3 = day
+                    String monthstr = String.valueOf(arg2+1);
+                    monthstr = StringUtils.leftPad(monthstr,2,'0');
+                    String dt = StringUtils.leftPad(String.valueOf(arg3),2,'0');
+                    StringBuilder sb = new StringBuilder().append(dt).append("/")
+                            .append(monthstr).append("/").append(arg1);
+                    editTextExpireDt.setText(sb.toString());
+                }
+            };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editTextDeviceName = (EditText) findViewById(R.id.editTextDeviceName);
         editTextExpireDt = (EditText) findViewById(R.id.editTextExpireDt);
         btnSync = (ImageButton) findViewById(R.id.btnsync);
+        btnDtPicker = (ImageButton)findViewById(R.id.btnDtPicker);
         editTextDeviceID.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -57,7 +85,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         btnSync.setOnClickListener(this);
+        btnDtPicker.setOnClickListener(this);
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Date date = new Date();
+        editTextExpireDt.setText(format.format(date));
+        GetDefaultDate();
+        datePickerDialog = new DatePickerDialog(MainActivity.this,myDateLisenter,year,month,day);
     }
+    private  void GetDefaultDate(){
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
     public void showCustomDialog(String title, String Message) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -75,9 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         b.setCanceledOnTouchOutside(false);
         b.show();
     }
-
-    @Override
-    public void onClick(View v) {
+    private void SyncDb(){
         try{
             String deviceid = editTextDeviceID.getText().toString();
             String devicename = editTextDeviceName.getText().toString();
@@ -91,6 +130,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         catch (Exception ex){
             showCustomDialog("Exception",ex.toString());
         }
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnsync:
+                SyncDb();
+                break;
+            case R.id.btnDtPicker:
+                datePickerDialog.show();
+                break;
+        }
+
     }
 
     class GetDeviceDetails extends AsyncTask<String,Void,String> {
