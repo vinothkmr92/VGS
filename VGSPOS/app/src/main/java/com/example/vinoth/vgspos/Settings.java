@@ -8,8 +8,14 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,6 +23,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,11 +32,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Set;
 
 public class Settings extends AppCompatActivity implements View.OnClickListener {
 
+    public static final String INCLUDEMRP = "INCLUDEMRP";
+    private static int RESULT_LOAD_IMAGE = 1;
     EditText editTextHeaderMsg;
     EditText editTextFooterMsg;
     RadioButton radioButtonBluetooth;
@@ -41,12 +51,16 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     TextView txtviewkotprinter;
     EditText editTextbillcopies;
     EditText editTextkotprinterip;
+    DatabaseHelper dbHelper;
+    TextView txtviewIncludeMRP;
     CheckBox enablekot;
     public static final String ADDRESSLINE = "ADDRESSLINE";
     public static final String IS3INCH = "IS3INCH";
     TextView rptsizetextview;
     Spinner spinnerbluetothDevice;
     Button saveBtn;
+    CheckBox checkBoxIncludeMRP;
+    Button loadPictureBtn;
     private MySharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String HEADERMSG = "HEADERMSG";
@@ -56,6 +70,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     public static final String PRINTKOT = "PRINTKOT";
     public static final String KOTPRINTERIP = "KOTPRINTERIP";
     public static final String BILLCOPIES = "BILLCOPIES";
+    ImageView imageView;
     EditText editTextaddressline;
     CheckBox rpt3inch;
     public static final String ISWIFI = "ISWIFI";
@@ -72,6 +87,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        dbHelper = new DatabaseHelper(this);
         editTextHeaderMsg = (EditText) findViewById(R.id.headerMsg);
         editTextFooterMsg = (EditText) findViewById(R.id.footerMsg);
         radioButtonBluetooth = (RadioButton) findViewById(R.id.radioBtnBluetooth);
@@ -88,6 +104,15 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         enablekot = (CheckBox) findViewById(R.id.enableKOT);
         editTextbillcopies = (EditText)findViewById(R.id.billcopies);
         editTextaddressline = (EditText)findViewById(R.id.addressMsg);
+        txtviewIncludeMRP = (TextView)findViewById(R.id.includeMRPTxt);
+        checkBoxIncludeMRP = (CheckBox)findViewById(R.id.includeMRP);
+        loadPictureBtn = (Button)findViewById(R.id.buttonLoadPicture);
+        imageView = (ImageView)findViewById(R.id.imgView);
+        byte[] ic = dbHelper.GetReceiptIcon();
+        if(ic!=null){
+            Bitmap bitmap = BitmapFactory.decodeByteArray(ic,0,ic.length);
+            imageView.setImageBitmap(bitmap);
+        }
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         String headerMsg = sharedpreferences.getString(HEADERMSG,"");
         String footerMsg = sharedpreferences.getString(FOOTERMSG,"");
@@ -99,6 +124,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         String kotprinterip = sharedpreferences.getString(KOTPRINTERIP,"");
         String billcopies = sharedpreferences.getString(BILLCOPIES,"1");
         String addressline = sharedpreferences.getString(ADDRESSLINE,"");
+        String includeMRP = sharedpreferences.getString(INCLUDEMRP,"NO");
         enablekot.setChecked(printkot.equalsIgnoreCase("YES"));
         editTextkotprinterip.setText(kotprinterip);
         rpt3inch.setChecked(is3inch.equalsIgnoreCase("YES"));
@@ -107,6 +133,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         editTextFooterMsg.setText(footerMsg);
         editTextPrinterIP.setText(printerip);
         editTextaddressline.setText(addressline);
+        checkBoxIncludeMRP.setChecked(includeMRP.equalsIgnoreCase("YES"));
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         radioButtonBluetooth.setChecked(false);
         radioButtonWifi.setChecked(true);
@@ -115,6 +142,20 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         rptsizetextview.setVisibility(View.INVISIBLE);
         rpt3inch.setVisibility(View.INVISIBLE);
         saveBtn = (Button) findViewById(R.id.btnSave);
+        rpt3inch.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    txtviewIncludeMRP.setVisibility(View.VISIBLE);
+                    checkBoxIncludeMRP.setVisibility(View.VISIBLE);
+                }
+                else{
+                    txtviewIncludeMRP.setVisibility(View.INVISIBLE);
+                    checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
         radioButtonWifi.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -175,10 +216,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         spinnerbluetothDevice.setAdapter(adapter);
         spinnerbluetothDevice.setSelection(selectedindex);
         if(isWifi.equalsIgnoreCase("YES")){
-          radioButtonWifi.setChecked(true);
-          radioButtonBluetooth.setChecked(false);
-          txtViewBluetooth.setVisibility(View.INVISIBLE);
-          spinnerbluetothDevice.setVisibility(View.INVISIBLE);
+            radioButtonWifi.setChecked(true);
+            radioButtonBluetooth.setChecked(false);
+            txtViewBluetooth.setVisibility(View.INVISIBLE);
+            spinnerbluetothDevice.setVisibility(View.INVISIBLE);
             rptsizetextview.setVisibility(View.INVISIBLE);
             rpt3inch.setVisibility(View.INVISIBLE);
         }
@@ -189,6 +230,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             editTextPrinterIP.setVisibility(View.INVISIBLE);
         }
         saveBtn.setOnClickListener(this);
+        loadPictureBtn.setOnClickListener(this);
         if(!Common.openSettings){
             Intent page = new Intent(this,SecuredAccess.class);
             page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -239,8 +281,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(page);
     }
-    @Override
-    public void onClick(View v) {
+    private void SaveSettings(){
         try{
             String headerMsg = editTextHeaderMsg.getText().toString();
             String footerMsg = editTextFooterMsg.getText().toString();
@@ -249,6 +290,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             String isWifi = radioButtonWifi.isChecked() ? "YES":"NO";
             String is3inch = rpt3inch.isChecked()?"YES":"NO";
             String printKOT = enablekot.isChecked()?"YES":"NO";
+            String includeMRP = checkBoxIncludeMRP.isChecked()?"YES":"NO";
             String kotprinterip = editTextkotprinterip.getText().toString();
             String nocopies = editTextbillcopies.getText().toString();
             String addressline = editTextaddressline.getText().toString();
@@ -262,7 +304,25 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             sharedpreferences.putString(KOTPRINTERIP,kotprinterip);
             sharedpreferences.putString(BILLCOPIES,nocopies);
             sharedpreferences.putString(ADDRESSLINE,addressline);
+            sharedpreferences.putString(INCLUDEMRP,includeMRP);
             sharedpreferences.commit();
+            BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+            if(drawable!=null){
+                Bitmap bitmap = drawable.getBitmap();
+                if(bitmap!=null){
+                    ByteArrayOutputStream bytearray = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG,100,bytearray);
+                    byte[] image = bytearray.toByteArray();
+                    dbHelper.InsertIcon(image);
+                    Common.shopLogo = bitmap;
+                }
+                else{
+                    Common.shopLogo = null;
+                }
+            }
+            else{
+                Common.shopLogo = null;
+            }
             int billcopies = Integer.parseInt(nocopies);
             Common.printerIP = printer;
             Common.headerMeg = headerMsg;
@@ -270,6 +330,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             Common.footerMsg = footerMsg;
             Common.billcopies = billcopies;
             Common.bluetoothDeviceName = bluetoothName;
+            Common.includeMRPinReceipt = includeMRP.equalsIgnoreCase("YES");
             Common.isWifiPrint = radioButtonWifi.isChecked();
             Common.is3Inch = rpt3inch.isChecked();
             Common.printKOT = enablekot.isChecked();
@@ -278,6 +339,38 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
         catch (Exception ex){
             showCustomDialog("Exception",ex.getMessage().toString(),false);
+        }
+    }
+    private void LoadPictureToUpload(){
+        Intent i = new Intent(
+                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, RESULT_LOAD_IMAGE);
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+        }
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnSave:
+                SaveSettings();
+                break;
+            case R.id.buttonLoadPicture:
+                LoadPictureToUpload();
+                break;
         }
 
     }

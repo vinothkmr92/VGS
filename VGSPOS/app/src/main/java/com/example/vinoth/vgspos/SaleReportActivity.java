@@ -85,6 +85,14 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 }
             };
     @Override
+    public void onBackPressed(){
+        Common.billDate = new Date();
+        Common.billNo = 0;
+        Common.itemsCarts = null;
+        Common.waiter = "";
+        super.onBackPressed();
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
@@ -103,6 +111,10 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 startActivity(settingsPage);
                 return  true;
             case R.id.homemenu:
+                Common.billDate = new Date();
+                Common.billNo = 0;
+                Common.itemsCarts = null;
+                Common.waiter = "";
                 Intent page = new Intent(this,HomeActivity.class);
                 page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(page);
@@ -346,6 +358,10 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     ic.setItem_Name(bi.getItem_Name());
                     ic.setPrice(bi.getPrice());
                     ic.setQty((int) bi.getQty());
+                    Item it = dbHelper.GetItem(bi.getItem_No());
+                    if(it!=null){
+                        ic.setMRP(it.getAcPrice());
+                    }
                     user = bi.getWaiter();
                     billno = bi.getBill_No();
                     billdt = bi.getBill_Date();

@@ -5,6 +5,15 @@ public class ItemsCart {
     private String Item_Name;
     private int Qty;
     private double Price;
+    private double MRP;
+
+    public double getMRP() {
+        return MRP;
+    }
+
+    public void setMRP(double MRP) {
+        this.MRP = MRP;
+    }
 
     public double getPrice() {
         return Price;

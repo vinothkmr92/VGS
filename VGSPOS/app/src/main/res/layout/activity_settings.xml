@@ -93,6 +93,17 @@
                 android:textStyle="bold|italic"></CheckBox>
             <TextView
                 android:padding="20px"
+                android:id="@+id/includeMRPTxt"
+                android:text="Include MRP"
+                android:textStyle="bold"></TextView>
+            <CheckBox
+                android:id="@+id/includeMRP"
+                android:layout_columnSpan="3"
+                android:padding="20px"
+                android:text="Include MRP in Receipt"
+                android:textStyle="bold|italic"></CheckBox>
+            <TextView
+                android:padding="20px"
                 android:text="Receipt Printer"
                 android:id="@+id/txtViewIPAddress"
                 android:textStyle="bold"></TextView>
@@ -133,6 +144,19 @@
                 android:inputType="number"
                 android:id="@+id/billcopies"
                 android:layout_columnSpan="3"></EditText>
+            <ImageView
+                android:id="@+id/imgView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"></ImageView>
+            <Button
+                android:id="@+id/buttonLoadPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center"
+                android:layout_weight="0"
+                android:text="Load Picture"></Button>
             <Button android:layout_column="2"
                 android:text="Save"
                 android:id="@+id/btnSave"></Button>

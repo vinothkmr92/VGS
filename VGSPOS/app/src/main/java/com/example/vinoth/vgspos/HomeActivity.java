@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -94,6 +96,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String KOTPRINTERIP = "KOTPRINTERIP";
     public static final String BILLCOPIES = "BILLCOPIES";
     public static final String ADDRESSLINE = "ADDRESSLINE";
+    public static final String INCLUDEMRP = "INCLUDEMRP";
     String headerMsg ;
     String footerMsg ;
     String printerip ;
@@ -271,13 +274,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tQty.setText(String.valueOf(ttq));
                 LoadTotalAmt();
             }
+            byte[] ic = dbHelper.GetReceiptIcon();
+            if(ic!=null){
+                Bitmap bitmap = BitmapFactory.decodeByteArray(ic,0,ic.length);
+                Common.shopLogo = bitmap;
+            }
             footerMsg = sharedpreferences.getString(FOOTERMSG,"");
             printerip = sharedpreferences.getString(PRINTERIP,"");
             String printkot = sharedpreferences.getString(PRINTKOT,"NO");
             String kotprinterip = sharedpreferences.getString(KOTPRINTERIP,"");
             String billcopies = sharedpreferences.getString(BILLCOPIES,"1");
             String addressline = sharedpreferences.getString(ADDRESSLINE,"");
+            String includeMRP = sharedpreferences.getString(INCLUDEMRP,"NO");
             Common.printKOT = printkot.equalsIgnoreCase("YES");
+            Common.includeMRPinReceipt = includeMRP.equalsIgnoreCase("YES");
             Common.kotprinterIP = kotprinterip;
             Common.billcopies = Integer.parseInt(billcopies);
             Common.addressline = addressline;
@@ -804,6 +814,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         itc.setItem_Name(itemName.getText().toString());
         itc.setQty(Integer.valueOf(Quantity.getText().toString()));
         itc.setPrice(Double.valueOf(priceTxt.getText().toString()));
+
+        if(isNumeric(itemNo.getText().toString())){
+            Integer ino = Integer.parseInt(itemNo.getText().toString());
+            Item item = dbHelper.GetItem(ino);
+            if(item!=null){
+                itc.setMRP(item.getAcPrice());
+            }
+        }
+
         if(itemsCarts == null){
             itemsCarts = new ArrayList<ItemsCart>();
         }

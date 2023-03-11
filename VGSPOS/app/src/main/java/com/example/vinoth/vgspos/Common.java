@@ -1,16 +1,20 @@
 package com.example.vinoth.vgspos;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Common {
     public static ArrayList<ItemsCart> itemsCarts;
+    public static Bitmap shopLogo;
     public static String printerIP;
     public static String bluetoothDeviceName;
     public static String headerMeg;
     public static String addressline;
     public static String footerMsg;
     public static String waiter;
+    public static boolean includeMRPinReceipt;
     public static int billNo;
     public static String saleReportFrmDate;
     public static String saleReportToDate;

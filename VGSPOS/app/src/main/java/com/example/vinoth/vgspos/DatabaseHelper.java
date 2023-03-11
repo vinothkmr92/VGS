@@ -19,13 +19,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 10);
+        super(context, DATABASE_NAME, null, 11);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "Create application database");
+        db.execSQL("CREATE TABLE ICONS (IMAGE BLOB)");
       db.execSQL("CREATE TABLE USERS (USER_ID INTEGER PRIMARY KEY,USER_NAME TEXT,MOBILE_NUMBER TEXT,PASSWORD TEXT)");
       db.execSQL("CREATE TABLE TAX (TAX_ID INTEGER PRIMARY KEY,TAX_VALUE NUMERIC)");
       db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC,STOCK NUMERIC)");
@@ -46,7 +47,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS BILLS");
         db.execSQL("DROP TABLE IF EXISTS BILLS_ITEM");
         db.execSQL("DROP TABLE IF EXISTS CUSTOMERS");
+        db.execSQL("DROP TABLE IF EXISTS ICONS");
         onCreate(db);
+    }
+    public byte[] GetReceiptIcon(){
+        byte[] icon =null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT * FROM ICONS",null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                icon = cur.getBlob(0);
+            }
+        }
+        return icon;
+    }
+    public void InsertIcon(byte[] image){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cntVal = new ContentValues();
+        cntVal.put("IMAGE",image);
+        byte[] im = GetReceiptIcon();
+        if(im!=null){
+            db.update("ICONS",cntVal,null,null);
+        }
+        else{
+            db.insert("ICONS",null,cntVal);
+        }
+
     }
     public void InsertCustomer(Customer customer){
         SQLiteDatabase db = this.getWritableDatabase();

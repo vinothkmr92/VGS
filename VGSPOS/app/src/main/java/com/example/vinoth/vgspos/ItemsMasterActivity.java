@@ -1,18 +1,28 @@
 package com.example.vinoth.vgspos;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
 
 public class ItemsMasterActivity extends AppCompatActivity implements View.OnClickListener,AddItemDialog.CustomerDialogListener {
 
@@ -26,6 +36,7 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
     DatabaseHelper dbHelper;
     GridLayout gridLayout;
     private  ProgressDialog dialog;
+    Dialog itemSearchdialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +132,9 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
     private void SearchItems(){
         try{
             String itemno = editTextItemNo.getText().toString();
+            if(itemno.isEmpty()){
+                OpenItemSearchDialog();
+            }
             if(isNumeric(itemno)){
                 int iNo = Integer.parseInt(itemno);
                 Item item = dbHelper.GetItem(iNo);
@@ -147,6 +161,70 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
             if(dialog.isShowing())
                 dialog.dismiss();
         }
+    }
+    private void OpenItemSearchDialog(){
+        itemSearchdialog =new Dialog(ItemsMasterActivity.this);
+
+        // set custom dialog
+        itemSearchdialog.setContentView(R.layout.dialog_items_search);
+
+        // set custom height and width
+        itemSearchdialog.getWindow().setLayout(800,800);
+
+        // set transparent background
+        itemSearchdialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        // show dialog
+        itemSearchdialog.show();
+
+        // Initialize and assign variable
+        EditText editText=itemSearchdialog.findViewById(R.id.edit_textItem);
+        ListView listView=itemSearchdialog.findViewById(R.id.list_viewItem);
+
+        // Initialize array adapter
+        ArrayList<String> itemnames = dbHelper.GetItemNames();
+        ArrayAdapter<String> adapter=new ArrayAdapter<>(ItemsMasterActivity.this, android.R.layout.simple_list_item_1,itemnames);
+
+        // set adapter
+        listView.setAdapter(adapter);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // when item selected from list
+                // set selected item on textView
+                String selectredName = adapter.getItem(position);
+
+                // Dismiss dialog
+                itemSearchdialog.dismiss();
+                Item item = dbHelper.GetItem(selectredName);
+                if(item!=null){
+                    txtViewItemNo.setText(String.valueOf(item.getItem_No()));
+                    txtViewItemName.setText(item.getItem_Name());
+                    txtViewItemPrice.setText(String.format("%.0f",item.getPrice()));
+                    txtviewItemStock.setText(String.format("%.0f",item.getStocks()));
+                    txtviewItemAcPrice.setText(String.format("%.0f",item.getAcPrice()));
+                    gridLayout.setVisibility(View.VISIBLE);
+                    btnUpdateItem.setEnabled(true);
+                }
+            }
+        });
     }
     private void UpdateItems(){
         try{

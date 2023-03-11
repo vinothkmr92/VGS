@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
@@ -141,6 +142,18 @@ public class PrintBluetooth {
         }
         catch (Exception ex){
             Log.e("ERR","Exception during write",ex);
+            HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
+        }
+    }
+    public void PrintImage(Bitmap image){
+        try {
+            byte[] command = PrinterUtils.decodeBitmap(image);
+            mOutputStream = mBluetoothSocket.getOutputStream();
+            mOutputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
+            mOutputStream.write(command);
+            mOutputStream.flush();
+        } catch (Exception ex) {
+            Log.e("ERR", "Exception during write", ex);
             HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
         }
     }
@@ -350,6 +363,10 @@ public class PrintBluetooth {
         try {
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
             Date date = Common.billDate;
+            Bitmap bitmapIcon = Common.shopLogo;
+            if(bitmapIcon!=null){
+                PrintImage(bitmapIcon);
+            }
             String msg = Common.headerMeg+"\n";
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             if(isReprint){
@@ -364,8 +381,11 @@ public class PrintBluetooth {
             PrintData("BILL NO  :"+Common.billNo,new Formatter().get(),Formatter.leftAlign());
             PrintData("DATE     : " + format.format(date),new Formatter().get(),Formatter.leftAlign());
             if(Common.is3Inch){
-                PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
                 String hed =  "ITEM NAME             QTY      PRICE    AMOUNT";
+                if(Common.includeMRPinReceipt){
+                    hed =  "ITEM NAME       QTY    MRP     PRICE    AMOUNT";
+                }
+                PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
                 PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
                 PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
             }
@@ -377,19 +397,37 @@ public class PrintBluetooth {
             }
 
             double totalAmt=0;
+            double mrpTotalAmt = 0d;
+            double discountAmt = 0d;
             for(int k=0;k<Common.itemsCarts.size();k++){
                 String name = Common.itemsCarts.get(k).getItem_Name();
                 String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
                 String price = String.format("%.0f",Common.itemsCarts.get(k).getPrice());
                 Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
+                String mrp = String.format("%.0f",Common.itemsCarts.get(k).getMRP());
+                double mrpd = Common.itemsCarts.get(k).getMRP();
+                double mrpamt = mrpd*Common.itemsCarts.get(k).getQty();
+                mrpTotalAmt+=mrpamt;
                 totalAmt+=amt;
                 String amts=String.format("%.0f",amt);
                 if(Common.is3Inch){
-                    name = StringUtils.rightPad(name,20);
-                    qty = StringUtils.leftPad(qty,5);
-                    price = StringUtils.leftPad(price,11);
-                    amts = StringUtils.leftPad(amts,10);
-                    String line = name+qty+price+amts;
+                    String line = "";
+                    if(Common.includeMRPinReceipt){
+                        name = StringUtils.rightPad(name,14);
+                        name = name.substring(0,14);
+                        qty = StringUtils.leftPad(qty,5);
+                        mrp = StringUtils.leftPad(mrp,7);
+                        price = StringUtils.leftPad(price,10);
+                        amts = StringUtils.leftPad(amts,10);
+                        line = name+qty+mrp+price+amts;
+                    }
+                    else{
+                        name = StringUtils.rightPad(name,20);
+                        qty = StringUtils.leftPad(qty,5);
+                        price = StringUtils.leftPad(price,11);
+                        amts = StringUtils.leftPad(amts,10);
+                        line = name+qty+price+amts;
+                    }
                     PrintData(line,new Formatter().get(),Formatter.leftAlign());
                 }
                 else{
@@ -401,6 +439,13 @@ public class PrintBluetooth {
             }
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            if(Common.is3Inch && Common.includeMRPinReceipt){
+                discountAmt = mrpTotalAmt-totalAmt;
+                String discountAmtStr = String.format("%.0f",discountAmt);
+                String discountxt = "AMOUNT YOU HAVE SAVED: "+discountAmtStr+"/-";
+                PrintData(discountxt,new Formatter().get(),Formatter.rightAlign());
+                PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            }
             String ttAmtTxt = "TOTAL AMT:"+String.format("%.0f",totalAmt)+"/-";
             PrintData(ttAmtTxt,new Formatter().bold().get(),Formatter.centerAlign());
             PrintData("  ",new Formatter().get(),Formatter.leftAlign());

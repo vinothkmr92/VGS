@@ -2,6 +2,7 @@ package com.example.vinoth.vgspos;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -76,12 +77,23 @@ public class PrintWifi {
         try
         {
             if(onlyBill){
-                PrintBill();
+                if(Common.includeMRPinReceipt){
+                    PrintBillWithMRP();
+                }
+                else{
+                    PrintBill();
+                }
+
             }
             else {
                 int copiesprinted = Common.billcopies;
                 while (copiesprinted>0){
-                    PrintBill();
+                    if(Common.includeMRPinReceipt){
+                        PrintBillWithMRP();
+                    }
+                    else{
+                        PrintBill();
+                    }
                     copiesprinted--;
                 }
             }
@@ -95,9 +107,84 @@ public class PrintWifi {
         }
         return 0;
     }
+    private void PrintBillWithMRP() throws UnsupportedEncodingException {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
+        String dateStr = format.format(Common.billDate);
+        Bitmap bitmapIcon = Common.shopLogo;
+        if(bitmapIcon!=null){
+            try {
+                posPtr.printBitmap(bitmapIcon,1,400);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(onlyBill){
+            posPtr.printNormal(ESC+"|cA"+ESC+"|2CCOPY BILL\r\n");
+        }
+        posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
+        posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
+        posPtr.printNormal("\n");
+        posPtr.printNormal(ESC+"|lABILL NO  : "+Common.billNo+"\n");
+        if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
+            posPtr.printNormal(ESC+"|lANAME     : "+Common.waiter);
+            posPtr.printNormal("\n");
+        }
+        posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
+        posPtr.printNormal("----------------------------------------------\n");
+        posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME       QTY    MRP     PRICE    AMOUNT\n");
+        posPtr.printNormal("----------------------------------------------\n");
+        double totalAmt = 0d;
+        double mrpTotalAmt = 0d;
+        double discountAmt = 0d;
+        for(int k=0;k<Common.itemsCarts.size();k++){
+            String name = Common.itemsCarts.get(k).getItem_Name();
+            String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
+            String price = String.format("%.0f",Common.itemsCarts.get(k).getPrice());
+            String mrp = String.format("%.0f",Common.itemsCarts.get(k).getMRP());
+            double mrpd = Common.itemsCarts.get(k).getMRP();
+            Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
+            totalAmt+=amt;
+            double mrpamt = mrpd*Common.itemsCarts.get(k).getQty();
+            mrpTotalAmt+=mrpamt;
+            String amts=String.format("%.0f",amt);
+            name = StringUtils.rightPad(name,14);
+            name = name.substring(0,14);
+            qty = StringUtils.leftPad(qty,5);
+            mrp = StringUtils.leftPad(mrp,7);
+            price = StringUtils.leftPad(price,10);
+            amts = StringUtils.leftPad(amts,10);
+            String line = name+qty+mrp+price+amts+"\n";
+            posPtr.printNormal(line);
+        }
+        String totalamt = String.format("%.0f",totalAmt);
+        String mrptotalStr = String.format("%.0f",mrpTotalAmt);
+        discountAmt = mrpTotalAmt-totalAmt;
+        String discountAmtStr = String.format("%.0f",discountAmt);
+        String txttotal = "TOTAL: "+totalamt+"/-";
+        String mrptxt = "MRP TOTAL: "+mrptotalStr+"/-";
+        String discountTxt = "DISCOUNT AMT: "+discountAmtStr+"/-";
+        posPtr.lineFeed(1);
+        posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+        posPtr.lineFeed(1);
+        posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+mrptxt+"\n");
+        posPtr.lineFeed(1);
+        posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+discountTxt+"\n");
+        posPtr.lineFeed(1);
+        posPtr.printNormal(ESC+"|cA"+Common.footerMsg+"\n");
+        posPtr.lineFeed(5);
+        posPtr.cutPaper();
+    }
     private void PrintBill() throws UnsupportedEncodingException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(Common.billDate);
+        Bitmap bitmapIcon = Common.shopLogo;
+        if(bitmapIcon!=null){
+            try {
+                posPtr.printBitmap(bitmapIcon,1,400);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         if(onlyBill){
             posPtr.printNormal(ESC+"|cA"+ESC+"|2CCOPY BILL\r\n");
         }
