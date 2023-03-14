@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="409dp"
         android:layout_height="wrap_content"
-        android:text="VG SOLUTIONS APK ACTIVATION"
+        android:text="POS ACTIVATION"
         android:textAlignment="center"
         android:textSize="40dp"
         android:textStyle="bold|italic"
@@ -31,61 +31,73 @@
 
         <TextView
             android:layout_marginRight="10dp"
-            android:text="DEVICE ID"
+            android:text="MACHINE CODE"
             android:textColor="@android:color/black"
             android:textStyle="bold|italic" />
 
         <EditText
-            android:id="@+id/editTextDeviceID"
+            android:id="@+id/editTextBoxMachineCode"
             android:layout_width="211dp"
             android:layout_height="wrap_content"
             android:layout_columnSpan="2"
             android:gravity="center_vertical"
-            android:hint="Enter Device ID"
+            android:hint="Enter Machine Code"
             android:imeOptions="actionDone"
             android:inputType="text"
+            android:maxLength="5"
             android:singleLine="true"></EditText>
 
         <TextView
             android:layout_marginRight="10dp"
-            android:text="CUSTOMER NAME"
+            android:text="NO of Days"
             android:textColor="@android:color/black"
             android:textStyle="bold|italic" />
 
         <EditText
-            android:id="@+id/editTextDeviceName"
+            android:id="@+id/editTextBoxNoOfDays"
             android:layout_width="210dp"
             android:layout_height="wrap_content"
             android:layout_columnSpan="2"
             android:gravity="center_vertical"
-            android:hint="Enter Customer Name"
+            android:hint="No of Days"
             android:imeOptions="actionNext"
-            android:inputType="textCapCharacters"
+            android:inputType="number"
+            android:maxLength="3"
             android:singleLine="true"></EditText>
 
-        <TextView
-            android:layout_marginRight="10dp"
-            android:text="EXPIRE DATE"
-            android:textColor="@android:color/black"
-            android:textStyle="bold|italic" />
 
         <EditText
-            android:id="@+id/editTextExpireDt"
-            android:layout_width="210dp"
-            android:layout_height="wrap_content"
-            android:layout_columnSpan="1"
+            android:id="@+id/editTextBoxActivationKey"
+            android:layout_width="226dp"
+            android:layout_height="75dp"
+            android:layout_columnSpan="2"
+            android:editable="false"
             android:gravity="center_vertical"
             android:imeOptions="actionDone"
-            android:singleLine="true"
-            android:editable="false"
-            android:hint="dd/MM/yyyy"></EditText>
+            android:singleLine="true"></EditText>
 
         <ImageButton
-            android:id="@+id/btnDtPicker"
-            android:layout_width="40dp"
-            android:layout_height="39dp"
-            android:background="@drawable/ic_baseline_date_range_24"></ImageButton>
-
+            android:id="@+id/btnShare"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_share_24"></ImageButton>
+        <CheckBox android:id="@+id/checkBoxISServer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="3"
+            android:text="IS_SERVER"></CheckBox>
+        <CheckBox android:id="@+id/checkBoxSMS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="3"
+            android:text="SMS"></CheckBox>
+        <CheckBox android:id="@+id/checkBoxEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="3"
+            android:text="E-MAIL"></CheckBox>
         <ImageButton
             android:id="@+id/btnsync"
             android:layout_width="200px"
