@@ -3,8 +3,6 @@
 
 	<item android:id="@+id/Settings"
 		android:title="Settings"/>
-	<item android:id="@+id/payment"
-		android:title="Payment"/>
 	<item android:id="@+id/exit"
 		android:title="EXIT"/>
     

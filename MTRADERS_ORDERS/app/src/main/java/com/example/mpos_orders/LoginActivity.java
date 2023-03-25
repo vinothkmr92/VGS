@@ -31,8 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     ConnectionClass connectionClass;
     Dialog progressBar;
     Button login;
-    EditText usrName;
-    EditText pass;
+    EditText mobileNoTx;
     private static LoginActivity mInstance;
     private MySharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
@@ -51,8 +50,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         login = (Button)findViewById(R.id.btnLogin);
         login.setOnClickListener(this);
-        usrName = (EditText)findViewById(R.id.userText);
-        pass = (EditText)findViewById(R.id.passText);
+        mobileNoTx = (EditText)findViewById(R.id.mobilenoTxt);
         progressBar = new Dialog(LoginActivity.this);
         progressBar.setContentView(R.layout.custom_progress_dialog);
         progressBar.setTitle("Loading");
@@ -149,14 +147,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         dialogBuilder.setMessage("\n"+Message);
         dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
             }
         });
-        //dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-        // public void onClick(DialogInterface dialog, int whichButton) {
-        //   //pass
-        //}
-        //});
         AlertDialog b = dialogBuilder.create();
         b.show();
     }
@@ -166,15 +158,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
         dialogBuilder.setView(dialogView);
-
-        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
-
         dialogBuilder.setTitle(title);
         dialogBuilder.setMessage("\n"+Message);
         dialogBuilder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 finish();
-                //do something with edt.getText().toString();
             }
         });
         AlertDialog b = dialogBuilder.create();
@@ -252,8 +240,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         double pendingAmt = 0d;
 
 
-        String userid = usrName.getText().toString();
-        String password = pass.getText().toString();
+        String mobileno = mobileNoTx.getText().toString();
 
 
         @Override
@@ -269,7 +256,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(pendingAmt>0){
 
                     showCustomDialog("Error","Please Pay your balance amount to proceed. Pending Amount:"+pendingAmt);
-                    LoadPaymentPage();
+                    //LoadPaymentPage();
                 }
                 else{
                     LoadHome();
@@ -278,16 +265,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             else {
                 showCustomDialog("Error",r);
             }
-            // if(isSuccess) {
-            //   Toast.makeText(LoginActivity.this,r,Toast.LENGTH_SHORT).show();
-            //}
-
         }
 
         @Override
         protected String doInBackground(String... params) {
-            if(userid.trim().equals("")|| password.trim().equals(""))
-                z = "Please enter User Id and Password";
+            if(mobileno.trim().equals(""))
+                z = "Please enter valid mobile number";
             else
             {
                 try {
@@ -295,17 +278,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (con == null) {
                         z = "Error in connection with SQL server";
                     } else {
-                        String query = "SELECT * FROM MEMBERS WHERE MEMBER_ID="+userid+" AND PASSWORD='"+password+"'";
+                        String query = "SELECT * FROM MEMBERS WHERE MOBILE_NUMBER='"+mobileno+"'";
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
 
                         if(rs.next())
                         {
                             Member member = new Member();
-                            Integer mid = Integer.parseInt(userid);
+                            Integer mid = rs.getInt("MEMBER_ID");
                             member.setMemberID(mid);
                             String membername = rs.getString("FIRSTNAME");
                             member.setMemberName(membername);
+                            String password = rs.getString("PASSWORD");
                             member.setPassword(password);
                             double balance = rs.getDouble("Current_Balance");
                             if(balance ==0){
