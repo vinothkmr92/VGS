@@ -3,13 +3,17 @@ package com.example.vinoth.vgspos;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,9 +29,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,6 +58,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     ImageButton btnToDatePicker;
     Button btnGetReport;
     ImageButton btnPrintReport;
+
+    private static Sheet sheet = null;
+
     private DatePicker datePicker;
     private Calendar calendar;
     private int year, month, day;
@@ -55,6 +74,11 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     private Dialog progressBar;
     TextView searchTxtView;
     Dialog dialog;
+    private static String EXCEL_SHEET_NAME = "Sheet1";
+    private static Workbook workbook =null;
+    private static Cell cell=null;
+    private static CellStyle headerCellStyle=null;
+    ImageButton btnExportExcel;
     private static SaleReportActivity instance;
 
     public static SaleReportActivity getInstance() {
@@ -142,6 +166,150 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 }
             };
 
+    public static boolean exportDataIntoWorkbook(Context context, String fileName,
+                                                 ArrayList<SaleReport> dataList) {
+        boolean isWorkbookWrittenIntoStorage;
+
+        // Check if available and not read only
+        if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
+            Log.e("error", "Storage not available or read only");
+            return false;
+        }
+
+        // Creating a New HSSF Workbook (.xls format)
+        workbook = new HSSFWorkbook();
+
+        setHeaderCellStyle();
+
+        // Creating a New Sheet and Setting width for each column
+        sheet = workbook.createSheet(EXCEL_SHEET_NAME);
+        sheet.setColumnWidth(0, (15 * 300));
+        sheet.setColumnWidth(1, (15 * 200));
+        sheet.setColumnWidth(2, (15 * 200));
+
+        setHeaderRow();
+        fillDataIntoExcel(dataList);
+        isWorkbookWrittenIntoStorage = storeExcelInStorage(context, fileName);
+
+        return isWorkbookWrittenIntoStorage;
+    }
+
+    private  void GetDefaultDate(){
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * Checks if Storage is READ-ONLY
+     *
+     * @return boolean
+     */
+    private static boolean isExternalStorageReadOnly() {
+        String externalStorageState = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED_READ_ONLY.equals(externalStorageState);
+    }
+
+    /**
+     * Checks if Storage is Available
+     *
+     * @return boolean
+     */
+    private static boolean isExternalStorageAvailable() {
+        String externalStorageState = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(externalStorageState);
+    }
+
+    /**
+     * Setup header cell style
+     */
+    private static void setHeaderCellStyle() {
+        headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.AQUA.getIndex());
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+    }
+
+    /**
+     * Setup Header Row
+     */
+    private static void setHeaderRow() {
+        Row row = sheet.createRow(0);
+
+        cell = row.createCell(0);
+        cell.setCellValue("Bill Date");
+        cell.setCellStyle(headerCellStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("Bill No");
+        cell.setCellStyle(headerCellStyle);
+
+        cell = row.createCell(2);
+        cell.setCellValue("Bill Amount");
+        cell.setCellStyle(headerCellStyle);
+    }
+
+    /**
+     * Fills Data into Excel Sheet
+     * <p>
+     * NOTE: Set row index as i+1 since 0th index belongs to header row
+     *
+     * @param dataList - List containing data to be filled into excel
+     */
+    private static void fillDataIntoExcel(ArrayList<SaleReport> dataList) {
+        for (int i = 0; i < dataList.size(); i++) {
+            // Create a New Row for every new entry in list
+            Row rowData = sheet.createRow(i + 1);
+
+            // Create Cells for each row
+            cell = rowData.createCell(0);
+            Date bt = dataList.get(i).getBillDt();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm aa", Locale.getDefault());
+            String d = format.format(bt);
+            cell.setCellValue(d);
+
+            cell = rowData.createCell(1);
+            cell.setCellValue(dataList.get(i).getBillNo());
+
+            cell = rowData.createCell(2);
+            cell.setCellValue(dataList.get(i).getBillAmount());
+        }
+    }
+
+    /**
+     * Store Excel Workbook in external storage
+     *
+     * @param context  - application context
+     * @param fileName - name of workbook which will be stored in device
+     * @return boolean - returns state whether workbook is written into storage or not
+     */
+    private static boolean storeExcelInStorage(Context context, String fileName) {
+        boolean isSuccess;
+        File file = new File(context.getExternalFilesDir(DOWNLOAD_SERVICE), fileName);
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(file);
+            workbook.write(fileOutputStream);
+            Log.e("LOG", "Writing file" + file);
+            isSuccess = true;
+        } catch (IOException e) {
+            Log.e("ERROR", "Error writing Exception: ", e);
+            isSuccess = false;
+        } catch (Exception e) {
+            Log.e("ERROR", "Failed to save file due to Exception: ", e);
+            isSuccess = false;
+        } finally {
+            try {
+                if (null != fileOutputStream) {
+                    fileOutputStream.close();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return isSuccess;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,12 +324,14 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         btnToDatePicker = (ImageButton) findViewById(R.id.btndpToDate);
         btnGetReport = (Button) findViewById(R.id.btngetsalereport);
         btnPrintReport = (ImageButton) findViewById(R.id.btnsalerptprint);
+        btnExportExcel = (ImageButton)findViewById(R.id.btnshareExcel);
         gridLayout = (GridLayout)findViewById(R.id.gridDataSaleRpt);
         txtViewTotalSaleAmt = (TextView)findViewById(R.id.totalSaleAmt);
         btnGetReport.setOnClickListener(this);
         btnPrintReport.setOnClickListener(this);
         btnFrmDatePicker.setOnClickListener(this);
         btnToDatePicker.setOnClickListener(this);
+        btnExportExcel.setOnClickListener(this);
         searchTxtView = (TextView)findViewById(R.id.customerinfosaleRpt);
         searchTxtView.setText("ALL");
         ArrayList<String> wts = new ArrayList<String>();
@@ -238,13 +408,28 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         instance = this;
     }
 
-    private  void GetDefaultDate(){
-        calendar = Calendar.getInstance();
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
-    }
+    private void ExportExcel(){
+        ArrayList<SaleReport> sal = GetSaleReport();
+        String fileName = "SaleReport.xls";
+        if(exportDataIntoWorkbook(getApplicationContext(),fileName,sal)){
+            try{
+                File file = new File(getApplicationContext().getExternalFilesDir(DOWNLOAD_SERVICE), fileName);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Uri uri = FileProvider.getUriForFile(SaleReportActivity.this, BuildConfig.APPLICATION_ID + ".provider",file);
+                intent.setDataAndType(uri,"application/vnd.ms-excel");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);
+            }
+            catch (Exception ex){
+                showCustomDialog("Exception",ex.getMessage());
+            }
 
+        }
+        else{
+            showCustomDialog("Warning","Could not export to Excel.");
+        }
+
+    }
     private ArrayList<SaleReport> GetSaleReport(){
         String frmdt = frmDateTextView.getText().toString();
         String todt = toDateTextView.getText().toString();
@@ -292,6 +477,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         b.setCanceledOnTouchOutside(false);
         b.show();
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -306,6 +492,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 LoadSaleReport();
                 if(progressBar.isShowing())
                     progressBar.cancel();
+                break;
+            case R.id.btnshareExcel:
+                ExportExcel();
                 break;
             case R.id.btnsalerptprint:
                 progressBar.show();

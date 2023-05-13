@@ -84,13 +84,27 @@
                 android:id="@+id/rptsizetxt"
                 android:text="Receipt Size"
                 android:textStyle="bold"></TextView>
-            <CheckBox
-                android:id="@+id/RptSize3inch"
-                android:layout_columnSpan="3"
-                android:checked="true"
-                android:padding="20px"
-                android:text="3 INCH"
-                android:textStyle="bold|italic"></CheckBox>
+            <RadioButton
+                android:id="@+id/radiobtn2Inch"
+                android:checked="false"
+                android:padding = "20px"
+                android:text="2 inch"
+                android:textStyle="bold">
+            </RadioButton>
+            <RadioButton
+                android:id="@+id/radiobtn3Inch"
+                android:checked="false"
+                android:padding = "20px"
+                android:text="3 inch"
+                android:textStyle="bold">
+            </RadioButton>
+            <RadioButton
+                android:id="@+id/radiobtn4Inch"
+                android:checked="false"
+                android:padding = "20px"
+                android:text="4 inch"
+                android:textStyle="bold">
+            </RadioButton>
             <TextView
                 android:padding="20px"
                 android:id="@+id/includeMRPTxt"

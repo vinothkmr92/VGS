@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView estimatedAmt;
     Spinner productDropdown;
     ArrayList<String> productnamelist;
-    Dialog progressBar;
     ConnectionClass connectionClass;
     TableLayout dataGrid;
     ArrayList<OrderProducts> orderProductsArraList;
@@ -57,9 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else{
             totalAmt = 0;
-            progressBar = new Dialog(MainActivity.this);
-            progressBar.setContentView(R.layout.custom_progress_dialog);
-            progressBar.setTitle("Loading");
             connectionClass = new ConnectionClass();
             clearBtn = (Button)findViewById(R.id.clearButton);
             saveBtn = (Button)findViewById(R.id.saveButton);
@@ -71,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             logedinuser.setText("Username: "+CommonUtil.loggedUserName);
             productDropdown = (Spinner)findViewById(R.id.productDropdown);
             dataGrid = (TableLayout)findViewById(R.id.datagrid);
-            progressBar.show();
             productnamelist = new ArrayList<>();
             orderProductsArraList = new ArrayList<OrderProducts>();
             for(int i=0;i<CommonUtil.productsList.size();i++){
@@ -80,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,productnamelist);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             productDropdown.setAdapter(adapter);
-            progressBar.cancel();
             productDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                     // Your code here
@@ -170,12 +165,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //do something with edt.getText().toString();
             }
         });
-        //dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-        // public void onClick(DialogInterface dialog, int whichButton) {
-        //   //pass
-        //}
-        //});
         AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
         b.show();
     }
     @Override
@@ -294,19 +286,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     public class SaveOrderDb extends AsyncTask<String,String,String>
     {
-
+        private final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
         ArrayList<OrderProducts> op = new ArrayList<>();
         int orderNumber = 0;
         double pendingAmt = 0;
         @Override
         protected void onPreExecute() {
-            progressBar.show();
             op = orderProductsArraList;
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setTitle(" ");
+            dialog.setMessage("Saving Order..");
+            dialog.show();
+            super.onPreExecute();
         }
 
         @Override
         protected void onPostExecute(String r) {
-            progressBar.cancel();
+            if(dialog.isShowing()){
+                dialog.dismiss();
+            }
             if(r.startsWith("ERROR")){
                 showCustomDialog("Exception",r);
             }
@@ -319,11 +318,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 productDropdown.setSelection(0);
                 LoadDataGrid();
             }
-
-            // if(isSuccess) {
-            //   Toast.makeText(LoginActivity.this,r,Toast.LENGTH_SHORT).show();
-            //}
-
         }
 
         @Override

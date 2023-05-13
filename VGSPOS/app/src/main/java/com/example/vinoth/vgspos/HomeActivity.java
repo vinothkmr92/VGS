@@ -296,8 +296,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Common.footerMsg = footerMsg;
             bluetothName = sharedpreferences.getString(BLUETOOTNAME,"");
             Common.bluetoothDeviceName = bluetothName;
-            String is3Inch = sharedpreferences.getString(IS3INCH,"YES");
-            Common.is3Inch = is3Inch.equalsIgnoreCase("YES");
+            String RptSize = sharedpreferences.getString(IS3INCH,"3");
+            Common.RptSize = RptSize;
             String isWifi = sharedpreferences.getString(ISWIFI,"YES");
             isWifiPrint = isWifi.equalsIgnoreCase("YES");
             Common.isWifiPrint = isWifiPrint;
@@ -428,10 +428,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             catch (Exception ex){
                 showCustomDialog("Exception",ex.getMessage().toString());
+                CancelBt();
             }
         }
         catch (Exception ex){
             showCustomDialog("Exception",ex.getMessage().toString());
+            CancelBt();
         }
         finally {
             if(progressBar.isShowing()){
@@ -452,10 +454,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 catch (Exception ex){
                     showCustomDialog("Exception",ex.getMessage().toString());
+                    CancelBt();
                 }
         }
         catch (Exception ex){
             showCustomDialog("Exception",ex.getMessage().toString());
+            CancelBt();
         }
     }
     public static HomeActivity getInstance() {
@@ -636,6 +640,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+    public void CancelBt(){
+        QuantityListener.itemsCarts.clear();
+        Common.itemsCarts.clear();
+        this.itemName.setText("");
+        this.Quantity.setText("");
+        tItem.setText("0");
+        tQty.setText("0");
+        estAmt.setText("₹ 000");
+        showCustomDialog("Info","Items Cleared.");
+        itemName.requestFocus();
+    }
     public void OpenAddCustomerDialog(){
         try {
             AddCustomerDialog addCustomer = new AddCustomerDialog();
@@ -716,15 +731,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                startActivity(intent);
                break;
            case  R.id.cancel:
-               QuantityListener.itemsCarts.clear();
-               Common.itemsCarts.clear();
-               this.itemName.setText("");
-               this.Quantity.setText("");
-               tItem.setText("0");
-               tQty.setText("0");
-               estAmt.setText("₹ 000");
-               showCustomDialog("Info","Items Cleared.");
-               itemName.requestFocus();
+               CancelBt();
                break;
            case  R.id.print:
                SortItemsCarts();

@@ -198,7 +198,7 @@ public class PrintBluetooth {
         PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
         PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
         PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
-        if(Common.is3Inch){
+        if(Common.RptSize.equals("3")){
             PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
             String hed =  "BILL NO         BILL_DATE               AMOUNT";
             PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
@@ -219,13 +219,13 @@ public class PrintBluetooth {
             Date dt = format.parse(sr.getBillDate(),new ParsePosition(0));
             SimpleDateFormat formatdt = new SimpleDateFormat("yyyy-MM-dd hh:mm aaa",Locale.getDefault());
             String billdate = formatdt.format(dt);
-            if(!Common.is3Inch){
+            if(!Common.RptSize.equals("3")){
                 billdate = billdate.substring(0,10);
             }
             Double saleAmt = sr.getBillAmount();
             String billAmt = String.format("%.0f",saleAmt);
             totalAmt+=saleAmt;
-            if(Common.is3Inch){
+            if(Common.RptSize.equals("3")){
                 billno = StringUtils.rightPad(billno,7);
                 billdate = StringUtils.leftPad(billdate,18);
                 billAmt = StringUtils.leftPad(billAmt,21);
@@ -244,7 +244,7 @@ public class PrintBluetooth {
         PrintData(ttAmtTxt,new Formatter().bold().get(),Formatter.centerAlign());
         PrintData("  ",new Formatter().get(),Formatter.leftAlign());
         PrintData("  ",new Formatter().get(),Formatter.leftAlign());
-        if(Common.is3Inch){
+        if(Common.RptSize.equals("3")){
             PaperCut();
         }
         Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
@@ -254,7 +254,7 @@ public class PrintBluetooth {
         PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
         PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
         PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
-        if(Common.is3Inch){
+        if(Common.RptSize.equals("3")){
             PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
             String hed =  "ITEM NAME                             QTY SOLD";
             PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
@@ -273,7 +273,7 @@ public class PrintBluetooth {
             Double qty = sr.getQuantity();
             String qtystr = String.format("%.0f",qty);
             int namepadlength=0;
-            if(Common.is3Inch){
+            if(Common.RptSize.equals("3")){
                 namepadlength=38;
             }
             else{
@@ -284,7 +284,7 @@ public class PrintBluetooth {
         }
         PrintData("   ",new Formatter().get(),Formatter.leftAlign());
         PrintData("   ",new Formatter().get(),Formatter.leftAlign());
-        if(Common.is3Inch){
+        if(Common.RptSize.equals("3")){
             PaperCut();
         }
         Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
@@ -304,11 +304,17 @@ public class PrintBluetooth {
             }
             PrintData("BILL NO  :"+Common.billNo,new Formatter().get(),Formatter.leftAlign());
             PrintData("DATE     : " + format.format(date),new Formatter().get(),Formatter.leftAlign());
-            if(Common.is3Inch){
+            if(Common.RptSize.equals("3")){
                 PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
                 String hed =  "ITEM NAME             QTY      PRICE    AMOUNT";
                 PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
                 PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+            }
+            else if(Common.RptSize.equals("4")){
+                PrintData("-------------------------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+                String hed =  "ITEM NAME                            QTY      PRICE    AMOUNT";
+                PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+                PrintData("-------------------------------------------------------------",new Formatter().get(),Formatter.leftAlign());
             }
             else{
                 PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
@@ -325,8 +331,16 @@ public class PrintBluetooth {
                 Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
                 totalAmt+=amt;
                 String amts=String.format("%.0f",amt);
-                if(Common.is3Inch){
+                if(Common.RptSize.equals("3")){
                     name = StringUtils.rightPad(name,20);
+                    qty = StringUtils.leftPad(qty,5);
+                    price = StringUtils.leftPad(price,11);
+                    amts = StringUtils.leftPad(amts,10);
+                    String line = name+qty+price+amts;
+                    PrintData(line,new Formatter().get(),Formatter.leftAlign());
+                }
+                else if(Common.RptSize.equals("4")){
+                    name = StringUtils.rightPad(name,35);
                     qty = StringUtils.leftPad(qty,5);
                     price = StringUtils.leftPad(price,11);
                     amts = StringUtils.leftPad(amts,10);
@@ -348,7 +362,7 @@ public class PrintBluetooth {
             //PrintData(Common.footerMsg,new Formatter().get(),Formatter.centerAlign());
             PrintData(" ",new Formatter().get(),Formatter.leftAlign());
             PrintData("  ",new Formatter().get(),Formatter.leftAlign());
-            if(Common.is3Inch){
+            if(Common.RptSize.equals("3")){
                 PaperCut();
             }
             Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
@@ -380,7 +394,7 @@ public class PrintBluetooth {
             }
             PrintData("BILL NO  :"+Common.billNo,new Formatter().get(),Formatter.leftAlign());
             PrintData("DATE     : " + format.format(date),new Formatter().get(),Formatter.leftAlign());
-            if(Common.is3Inch){
+            if(Common.RptSize.equals("3")){
                 String hed =  "ITEM NAME             QTY      PRICE    AMOUNT";
                 if(Common.includeMRPinReceipt){
                     hed =  "ITEM NAME       QTY    MRP     PRICE    AMOUNT";
@@ -388,6 +402,15 @@ public class PrintBluetooth {
                 PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
                 PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
                 PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+            }
+            else if(Common.RptSize.equals("4")){
+                String hed =  "ITEM NAME                            QTY      PRICE    AMOUNT";
+                if(Common.includeMRPinReceipt){
+                    hed =  "ITEM NAME                      QTY    MRP     PRICE    AMOUNT";
+                }
+                PrintData("-------------------------------------------------------------",new Formatter().get(),Formatter.leftAlign());
+                PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+                PrintData("-------------------------------------------------------------",new Formatter().get(),Formatter.leftAlign());
             }
             else{
                 PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
@@ -410,7 +433,7 @@ public class PrintBluetooth {
                 mrpTotalAmt+=mrpamt;
                 totalAmt+=amt;
                 String amts=String.format("%.0f",amt);
-                if(Common.is3Inch){
+                if(Common.RptSize.equals("3")){
                     String line = "";
                     if(Common.includeMRPinReceipt){
                         name = StringUtils.rightPad(name,14);
@@ -430,6 +453,26 @@ public class PrintBluetooth {
                     }
                     PrintData(line,new Formatter().get(),Formatter.leftAlign());
                 }
+                else if(Common.RptSize.equals("4")){
+                    String line = "";
+                    if(Common.includeMRPinReceipt){
+                        name = StringUtils.rightPad(name,29);
+                        name = name.substring(0,14);
+                        qty = StringUtils.leftPad(qty,5);
+                        mrp = StringUtils.leftPad(mrp,7);
+                        price = StringUtils.leftPad(price,10);
+                        amts = StringUtils.leftPad(amts,10);
+                        line = name+qty+mrp+price+amts;
+                    }
+                    else{
+                        name = StringUtils.rightPad(name,35);
+                        qty = StringUtils.leftPad(qty,5);
+                        price = StringUtils.leftPad(price,11);
+                        amts = StringUtils.leftPad(amts,10);
+                        line = name+qty+price+amts;
+                    }
+                    PrintData(line,new Formatter().get(),Formatter.leftAlign());
+                }
                 else{
                     PrintData(name,new Formatter().get(),Formatter.leftAlign());
                     PrintData("           "+GetFormatedString(qty,4)+GetFormatedString(price,9)+GetFormatedString(amts,8),
@@ -439,7 +482,7 @@ public class PrintBluetooth {
             }
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
-            if(Common.is3Inch && Common.includeMRPinReceipt){
+            if((Common.RptSize.equals("3") || Common.RptSize.equals("4")) && Common.includeMRPinReceipt){
                 discountAmt = mrpTotalAmt-totalAmt;
                 String discountAmtStr = String.format("%.0f",discountAmt);
                 String discountxt = "AMOUNT YOU HAVE SAVED: "+discountAmtStr+"/-";
@@ -452,7 +495,7 @@ public class PrintBluetooth {
             PrintData(Common.footerMsg,new Formatter().get(),Formatter.centerAlign());
             PrintData(" ",new Formatter().get(),Formatter.leftAlign());
             PrintData("  ",new Formatter().get(),Formatter.leftAlign());
-            if(Common.is3Inch){
+            if(Common.RptSize.equals("3")){
                 PaperCut();
             }
             Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();

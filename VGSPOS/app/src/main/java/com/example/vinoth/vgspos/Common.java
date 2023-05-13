@@ -25,7 +25,6 @@ public class Common {
     public static boolean isWifiPrint;
     public static boolean isActivated;
     public static Date expireDate;
-    public static boolean is3Inch;
     public static boolean printKOT;
     public static boolean printingKOT;
     public static String kotprinterIP;
@@ -33,4 +32,5 @@ public class Common {
     public static boolean isAcPrice;
     public static boolean openSettings;
     public static Date billDate;
+    public  static  String RptSize;
 }

@@ -2,6 +2,7 @@ package com.example.mpos_orders;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Set;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
@@ -33,7 +35,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
     public static final String SQLUSERNAME= "SQLUSERNAME";
     public static final String SQLPASSWORD = "SQLPASSWORD";
     public static final String SQLDB = "SQLDB";
-    private Dialog progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,9 +46,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
             password = (EditText)findViewById(R.id.password);
             dbname= (EditText)findViewById(R.id.dbname);
             testConnection = (Button)findViewById(R.id.testButton);
-            progressBar = new Dialog(Settings.this);
-            progressBar.setContentView(R.layout.custom_progress_dialog);
-            progressBar.setTitle("Loading");
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             String hostname = sharedpreferences.getString(SQLSERVER,"");
             String SQLUser = sharedpreferences.getString(SQLUSERNAME,"");
@@ -66,35 +64,24 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
 
     }
     public  void  SaveSettings(){
-        progressBar.show();
         String hostname = host.getText().toString();
         String SQLUser = username.getText().toString();
         String SQLPassword = password.getText().toString();
-        // String defWeight = defaultWeight.getText().toString();
         String Databasename = dbname.getText().toString();
-        // String dbfen = dbname_fen.getText().toString();
         if(hostname.isEmpty() || SQLUser.isEmpty() || Databasename.isEmpty() ){
-            progressBar.cancel();
             showCustomDialog("Warning","Host / Username / Dbname should not be Empty.",false);
-
         }
         else{
-
-            // SharedPreferences.Editor editor = sharedpreferences.edit();
             sharedpreferences.putString(SQLSERVER,hostname);
             sharedpreferences.putString(SQLUSERNAME,SQLUser);
             sharedpreferences.putString(SQLPASSWORD,SQLPassword);
             sharedpreferences.putString(SQLDB,Databasename);
             sharedpreferences.commit();
-            progressBar.cancel();
-            showCustomDialog("Saved","Settings Saved Sucessfully",true);
-
-
+            showCustomDialog("Saved","Settings Saved Successfully",true);
         }
     }
     @Override
     public void onClick(View v) {
-
         String hostname = host.getText().toString();
         String SQLUser = username.getText().toString();
         String SQLPassword = password.getText().toString();
@@ -105,16 +92,22 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
     class CheckDBConnection extends AsyncTask<String,Void,String> {
 
         //  ArrayList hubList = new ArrayList();
-
+        private final ProgressDialog dialog = new ProgressDialog(Settings.this);
         @Override
         public void  onPreExecute(){
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setTitle(" ");
+            dialog.setMessage("Connecting...");
+            dialog.show();
             super.onPreExecute();
-            progressBar.show();
         }
 
         @Override
         public void onPostExecute(String result) {
-            progressBar.cancel();
+            if(dialog.isShowing()){
+                dialog.dismiss();
+            }
             if(!result.startsWith("ERROR")){
                 showCustomDialog("Message",result,false);
                 SaveSettings();
@@ -123,8 +116,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
                 showCustomDialog("Error",result,false);
             }
         }
-
-
         @Override
         protected String doInBackground(String... strings) {
             String status = "";
@@ -134,7 +125,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
 
                 Connection con = connectionClass.CONN(strings[0],strings[1],strings[2],strings[3]);
                 if(null != con) {
-                    status = "DB Connection Succesfull.";
+                    status = "DB Connection Successful.";
                 }
                 else {
                     status = "ERROR: INVALID CONNECTION STRING.";
@@ -196,6 +187,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener{
         //}
         //});
         AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
         b.show();
     }
 }

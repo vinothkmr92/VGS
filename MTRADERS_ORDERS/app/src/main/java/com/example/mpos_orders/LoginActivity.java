@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     ConnectionClass connectionClass;
-    Dialog progressBar;
     Button login;
     EditText mobileNoTx;
     private static LoginActivity mInstance;
@@ -51,9 +51,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         login = (Button)findViewById(R.id.btnLogin);
         login.setOnClickListener(this);
         mobileNoTx = (EditText)findViewById(R.id.mobilenoTxt);
-        progressBar = new Dialog(LoginActivity.this);
-        progressBar.setContentView(R.layout.custom_progress_dialog);
-        progressBar.setTitle("Loading");
         connectionClass = new ConnectionClass();
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         CheckSQLSettings();
@@ -150,6 +147,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
         AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
         b.show();
     }
 
@@ -170,27 +169,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
     public class LoadDropDownData extends AsyncTask<String,String,String>
     {
-
+        private final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
         ArrayList<Product> productlist = new ArrayList<>();
         @Override
         protected void onPreExecute() {
-            progressBar.show();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setTitle(" ");
+            dialog.setMessage("Loading Products");
+            dialog.show();
+            super.onPreExecute();
+
         }
 
         @Override
         protected void onPostExecute(String r) {
-            progressBar.cancel();
+            if(dialog.isShowing()){
+                dialog.dismiss();
+            }
             if(r.startsWith("ERROR")){
                 showCustomDialog("Exception",r);
             }
             else {
                 CommonUtil.productsList = productlist;
             }
-
-            // if(isSuccess) {
-            //   Toast.makeText(LoginActivity.this,r,Toast.LENGTH_SHORT).show();
-            //}
-
         }
 
         @Override
@@ -239,24 +241,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Boolean isSuccess = false;
         double pendingAmt = 0d;
 
-
+        private final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
         String mobileno = mobileNoTx.getText().toString();
 
 
         @Override
         protected void onPreExecute() {
-            progressBar.show();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setTitle(" ");
+            dialog.setMessage("Connecting...");
+            dialog.show();
+            super.onPreExecute();
         }
 
         @Override
         protected void onPostExecute(String r) {
-            progressBar.cancel();
-            Toast.makeText(LoginActivity.this,r,Toast.LENGTH_LONG).show();
+            if(dialog.isShowing()){
+                dialog.dismiss();
+            }
             if(isSuccess){
                 if(pendingAmt>0){
-
                     showCustomDialog("Error","Please Pay your balance amount to proceed. Pending Amount:"+pendingAmt);
-                    //LoadPaymentPage();
                 }
                 else{
                     LoadHome();
