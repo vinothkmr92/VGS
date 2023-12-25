@@ -5,9 +5,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,7 +63,18 @@ public class Activator {
             String res="";
             try
             {
-                String host= context.getApplicationContext().getString(R.string.ActivationAPIHost);
+                String host= context.getApplicationContext().getString(R.string.ActivationAPIHost_Public);
+                boolean isHostReachable = false;
+                boolean reachable = false;
+                try {
+                    reachable = InetAddress.getByName(host).isReachable(1000);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    reachable = false;
+                }
+                if(!isHostReachable){
+                    host = context.getApplicationContext().getString(R.string.ActivationAPIHost);
+                }
                 String imei = params[0];
                 java.net.URL url = new URL("http://"+host+":9092/api/ActivationAPI?imei="+imei);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();

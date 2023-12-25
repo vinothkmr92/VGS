@@ -298,14 +298,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             String password = rs.getString("PASSWORD");
                             member.setPassword(password);
                             double balance = rs.getDouble("Current_Balance");
-                            if(balance ==0){
-                                CommonUtil.loggedUserName = membername;
-                                CommonUtil.member = member;
-                            }
-                            else{
+                            if(balance>0){
                                 pendingAmt = balance;
                                 CommonUtil.paymentMember = member;
                                 CommonUtil.pendingAmt = balance;
+
+                            }
+                            else{
+                                CommonUtil.loggedUserName = membername;
+                                CommonUtil.member = member;
                             }
                             z = "Login Successful";
                             isSuccess=true;

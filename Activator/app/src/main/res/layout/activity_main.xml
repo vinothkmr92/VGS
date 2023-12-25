@@ -29,6 +29,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <CheckBox android:layout_columnSpan="3"
+            android:textColor="@color/purple_200"
+            android:textStyle="bold"
+            android:id="@+id/uselocalip"
+            android:text="Use Local Service"/>
         <TextView
             android:layout_marginRight="10dp"
             android:text="DEVICE ID"

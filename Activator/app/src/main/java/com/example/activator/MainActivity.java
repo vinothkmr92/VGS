@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageButton btnSync;
     ImageButton btnDtPicker;
     DatePickerDialog datePickerDialog;
+    CheckBox isLocalIP;
     private Calendar calendar;
     private int year, month, day;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editTextExpireDt = (EditText) findViewById(R.id.editTextExpireDt);
         btnSync = (ImageButton) findViewById(R.id.btnsync);
         btnDtPicker = (ImageButton)findViewById(R.id.btnDtPicker);
+        isLocalIP = (CheckBox)findViewById(R.id.uselocalip);
         editTextDeviceID.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -187,6 +190,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try
             {
                 String host= MainActivity.this.getApplicationContext().getString(R.string.ActivationAPIHost);
+                if(isLocalIP.isChecked()){
+                    host = MainActivity.this.getApplicationContext().getString(R.string.ActivationAPIHost_Public);
+                }
                 String imei = params[0];
                 java.net.URL url = new URL("http://"+host+"/api/ActivationAPI/GetDeviceDetails?imei="+imei);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -254,6 +260,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try
             {
                 String host= MainActivity.this.getApplicationContext().getString(R.string.ActivationAPIHost);
+                if(isLocalIP.isChecked()){
+                    host = MainActivity.this.getApplicationContext().getString(R.string.ActivationAPIHost_Public);
+                }
                 String imei = params[0];
                 String devicename= params[1];
                 String expiredt = params[2];

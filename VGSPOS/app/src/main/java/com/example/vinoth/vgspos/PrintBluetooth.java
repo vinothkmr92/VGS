@@ -1,5 +1,7 @@
 package com.example.vinoth.vgspos;
 
+import static java.nio.charset.StandardCharsets.US_ASCII;
+
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -15,6 +17,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import org.apache.commons.lang3.StringUtils;
+import org.fintrace.core.drivers.tspl.commands.label.Barcode;
+import org.fintrace.core.drivers.tspl.commands.label.BarcodeAlignment;
+import org.fintrace.core.drivers.tspl.commands.label.BarcodeRotation;
+import org.fintrace.core.drivers.tspl.commands.label.BarcodeType;
+import org.fintrace.core.drivers.tspl.commands.label.ErrorCorrectionLevel;
+import org.fintrace.core.drivers.tspl.commands.label.QRCode;
+import org.fintrace.core.drivers.tspl.commands.label.QREncodeMode;
+import org.fintrace.core.drivers.tspl.commands.label.QRMask;
+import org.fintrace.core.drivers.tspl.commands.label.QRModel;
+import org.fintrace.core.drivers.tspl.commands.label.TSPLLabel;
+import org.fintrace.core.drivers.tspl.commands.label.Text;
+import org.fintrace.core.drivers.tspl.commands.system.Print;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -151,6 +165,42 @@ public class PrintBluetooth {
             mOutputStream = mBluetoothSocket.getOutputStream();
             mOutputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
             mOutputStream.write(command);
+            mOutputStream.flush();
+        } catch (Exception ex) {
+            Log.e("ERR", "Exception during write", ex);
+            HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
+        }
+    }
+    private String GetTSCLCommand(String inputdata){
+        String[] str = new String[]{"SIZE 52 mm, 38 mm","GAP 3 mm, 0 mm","SET RIBBON OFF","DIRECTION 0,0","REFERENCE 0,0","OFFSET 0 mm","SET PEEL OFF","SET CUTTER OFF","SET TEAR ON","CLS"};
+        TSPLLabel barcodelabel = TSPLLabel.builder()
+                .element(Barcode.builder().xCoordinate(400f).yCoordinate(168f).codeType(BarcodeType.CODE_128M).height(46).rotation(BarcodeRotation.DEGREES_180)
+                        .alignment(BarcodeAlignment.LEFT)
+                        .narrow(3).wide(6).content("!10512345678").build()).build();
+        TSPLLabel tsplLabel = TSPLLabel.builder()
+                //.element(Size.builder().labelWidth(52f).labelLength(38f).build())
+                //.element(Gap.builder().labelDistance(0f).labelOffsetDistance(0f).build())
+                //.element(Direction.builder().printPositionAsFeed(Boolean.TRUE).build())
+                //.element(ClearBuffer.builder().build())
+                .element(Text.builder().xCoordinate(346).yCoordinate(114).fontName("3").rotation(BarcodeRotation.DEGREES_180).xMultiplicationFactor(1f)
+                        .yMultiplicationFactor(1f).content("12345678").build())
+                .element(Text.builder().xCoordinate(386).yCoordinate(259).fontName("3").rotation(BarcodeRotation.DEGREES_180).xMultiplicationFactor(1f)
+                        .yMultiplicationFactor(1f).content("PRODUCTS NAME").build())
+                .element(QRCode.builder().xCoordinate(152).yCoordinate(231).errorCorrectionLevel(ErrorCorrectionLevel.L).cellWidth(7).mode(QREncodeMode.A)
+                        .rotation(BarcodeRotation.DEGREES_180).model(QRModel.M2).mask(QRMask.S7).content("12345678").build())
+                .element(Text.builder().xCoordinate(142).yCoordinate(64).fontName("3").rotation(BarcodeRotation.DEGREES_180).xMultiplicationFactor(1f)
+                        .yMultiplicationFactor(1f).content("12345678").build())
+                .element(Print.builder().nbLabels(1).nbCopies(4).build())
+                .build();
+        String header = StringUtils.join(str,"\r\n");
+        header = header+"\r\n"+barcodelabel.getTsplCode()+"CODEPAGE 1252"+"\r\n"+tsplLabel.getTsplCode();
+        return  header;
+    }
+    public  void PrintLabel(String inputdata){
+        try {
+            mOutputStream = mBluetoothSocket.getOutputStream();
+            String txt = GetTSCLCommand(inputdata);
+            mOutputStream.write((txt).getBytes(US_ASCII));
             mOutputStream.flush();
         } catch (Exception ex) {
             Log.e("ERR", "Exception during write", ex);

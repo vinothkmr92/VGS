@@ -5,13 +5,13 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('E:\\AndroidProjects\\VGS\\MPOSORDERS.jks')
+            storeFile file('D:\\AndroidProjects\\VGS\\MPOSORDERS.jks')
             storePassword '1@Vinothkmr'
             keyAlias 'MPOSORDERS'
             keyPassword '1@Vinothkmr'
         }
         release {
-            storeFile file('E:\\AndroidProjects\\VGS\\MPOSORDERS.jks')
+            storeFile file('D:\\AndroidProjects\\VGS\\MPOSORDERS.jks')
             storePassword '1@Vinothkmr'
             keyAlias 'MPOSORDERS'
             keyPassword '1@Vinothkmr'
