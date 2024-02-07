@@ -5,7 +5,7 @@
         android:title="Home"/>
     <item
         android:id="@+id/uploadExcel"
-        android:title="Upload Excel"/>
+        android:title="Import/Export"/>
     <item
         android:id="@+id/settings"
         android:title="Settings"/>

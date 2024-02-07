@@ -1,13 +1,16 @@
 package com.example.vinoth.vgspos;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,10 +18,13 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -28,9 +34,15 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
+import org.apache.commons.math3.analysis.function.Exp;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -38,18 +50,30 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
 public class UploadActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button btnUpload;
+    ImageButton btnUpload;
+
+    ImageButton btnExport;
+    CheckBox deleteCheckbox;
     DatabaseHelper dbHelper;
     public static final int requestcode = 1;
     TextView lbl;
     private Dialog progressBar;
+    private static String EXCEL_SHEET_NAME = "Sheet1";
+    private static Workbook workbook =null;
+    private static Cell cell=null;
+    private static CellStyle headerCellStyle=null;
+    private static Sheet sheet = null;
 
     static {
         System.setProperty(
@@ -71,9 +95,12 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
         lbl = (TextView) findViewById(R.id.lblView);
-        btnUpload = (Button) findViewById(R.id.btnUpload);
+        btnUpload = (ImageButton) findViewById(R.id.btnUpload);
+        btnExport = (ImageButton)findViewById(R.id.btnExportproduct);
+        deleteCheckbox = (CheckBox)findViewById(R.id.clearProducts);
         dbHelper = new DatabaseHelper(this);
         btnUpload.setOnClickListener(this);
+        btnExport.setOnClickListener(this);
         progressBar = new Dialog(UploadActivity.this);
         progressBar.setContentView(R.layout.custom_progress_dialog);
         progressBar.setTitle("Loading...");
@@ -119,6 +146,17 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             });
     @Override
     public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnUpload:
+                UploadExcel();
+                break;
+            case R.id.btnExportproduct:
+                ExportExcel();
+                break;
+        }
+
+    }
+    private void UploadExcel(){
         try {
             progressBar.show();
             Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -133,7 +171,188 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
     }
+    private void ExportExcel(){
+        ArrayList<Item> sal = dbHelper.GetItems();
+        String fileName = "Products.xls";
+        if(exportDataIntoWorkbook(getApplicationContext(),fileName,sal)){
+            try{
+                File file = new File(getApplicationContext().getExternalFilesDir(DOWNLOAD_SERVICE), fileName);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Uri uri = FileProvider.getUriForFile(UploadActivity.this, BuildConfig.APPLICATION_ID + ".provider",file);
+                intent.setDataAndType(uri,"application/vnd.ms-excel");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);
+            }
+            catch (Exception ex){
+                showCustomDialog("Exception",ex.getMessage());
+            }
 
+        }
+        else{
+            showCustomDialog("Warning","Could not export to Excel.");
+        }
+
+    }
+    private static boolean isExternalStorageReadOnly() {
+        String externalStorageState = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED_READ_ONLY.equals(externalStorageState);
+    }
+
+    /**
+     * Checks if Storage is Available
+     *
+     * @return boolean
+     */
+    private static boolean isExternalStorageAvailable() {
+        String externalStorageState = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(externalStorageState);
+    }
+
+    /**
+     * Setup header cell style
+     */
+    private static void setHeaderCellStyle() {
+        headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.AQUA.getIndex());
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+    }
+
+    /**
+     * Setup Header Row
+     */
+    private static void setHeaderRow() {
+        Row row = sheet.createRow(0);
+
+        cell = row.createCell(0);
+        cell.setCellValue("ITEM_NAME");
+        cell.setCellStyle(headerCellStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("ITEM_CODE");
+        cell.setCellStyle(headerCellStyle);
+
+        cell = row.createCell(2);
+        cell.setCellValue("RATE1");
+        cell.setCellStyle(headerCellStyle);
+
+        cell = row.createCell(3);
+        cell.setCellValue("RATE2");
+        cell.setCellStyle(headerCellStyle);
+
+        cell = row.createCell(4);
+        cell.setCellValue("STOCKS");
+        cell.setCellStyle(headerCellStyle);
+    }
+
+    /**
+     * Fills Data into Excel Sheet
+     * <p>
+     * NOTE: Set row index as i+1 since 0th index belongs to header row
+     *
+     * @param dataList - List containing data to be filled into excel
+     */
+    private static void fillDataIntoExcel(ArrayList<Item> dataList) {
+        for (int i = 0; i < dataList.size(); i++) {
+            // Create a New Row for every new entry in list
+            Row rowData = sheet.createRow(i + 1);
+
+            // Create Cells for each row
+            cell = rowData.createCell(0);
+            cell.setCellValue(dataList.get(i).getItem_Name());
+
+            cell = rowData.createCell(1);
+            cell.setCellValue(dataList.get(i).getItem_No());
+
+            cell = rowData.createCell(2);
+            cell.setCellValue(dataList.get(i).getPrice());
+
+            cell = rowData.createCell(3);
+            cell.setCellValue(dataList.get(i).getAcPrice());
+
+            cell = rowData.createCell(4);
+            cell.setCellValue(dataList.get(i).getStocks());
+        }
+    }
+
+    /**
+     * Store Excel Workbook in external storage
+     *
+     * @param context  - application context
+     * @param fileName - name of workbook which will be stored in device
+     * @return boolean - returns state whether workbook is written into storage or not
+     */
+    private static boolean storeExcelInStorage(Context context, String fileName) {
+        boolean isSuccess;
+        File file = new File(context.getExternalFilesDir(DOWNLOAD_SERVICE), fileName);
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(file);
+            workbook.write(fileOutputStream);
+            Log.e("LOG", "Writing file" + file);
+            isSuccess = true;
+        } catch (IOException e) {
+            Log.e("ERROR", "Error writing Exception: ", e);
+            isSuccess = false;
+        } catch (Exception e) {
+            Log.e("ERROR", "Failed to save file due to Exception: ", e);
+            isSuccess = false;
+        } finally {
+            try {
+                if (null != fileOutputStream) {
+                    fileOutputStream.close();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return isSuccess;
+    }
+    public static boolean exportDataIntoWorkbook(Context context, String fileName,
+                                                 ArrayList<Item> dataList) {
+        boolean isWorkbookWrittenIntoStorage;
+
+        // Check if available and not read only
+        if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
+            Log.e("error", "Storage not available or read only");
+            return false;
+        }
+
+        // Creating a New HSSF Workbook (.xls format)
+        workbook = new HSSFWorkbook();
+
+        setHeaderCellStyle();
+
+        // Creating a New Sheet and Setting width for each column
+        sheet = workbook.createSheet(EXCEL_SHEET_NAME);
+        sheet.setColumnWidth(0, (15 * 300));
+        sheet.setColumnWidth(1, (15 * 200));
+        sheet.setColumnWidth(2, (15 * 200));
+        sheet.setColumnWidth(3, (15 * 200));
+        sheet.setColumnWidth(4, (15 * 200));
+
+        setHeaderRow();
+        fillDataIntoExcel(dataList);
+        isWorkbookWrittenIntoStorage = storeExcelInStorage(context, fileName);
+
+        return isWorkbookWrittenIntoStorage;
+    }
+
+    public void showCustomDialog(String title, String Message) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setTitle(title);
+        dialogBuilder.setMessage("\n"+Message);
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
+        b.show();
+    }
     public static String getPath(Context context, Uri uri) {
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
@@ -327,6 +546,9 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                             inStream.close();
                             Sheet sheet = wb.getSheetAt(0);
                             int counter=0;
+                            if(deleteCheckbox.isChecked()){
+                                dbHelper.DeleteAllItem();
+                            }
                             for(Iterator<Row> rit = sheet.rowIterator();rit.hasNext();){
                                 Row row = rit.next();
                                 row.getCell(0,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
@@ -335,12 +557,9 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                 row.getCell(3,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
                                 row.getCell(4,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
                                 String itemname = row.getCell(0,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                                if(itemname.equals("ITEM NAME") || itemname.isEmpty()){
-                                    continue;
-                                }
-                                else{
-                                    String itemnostr = row.getCell(1,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                                    Integer itemno = isNumeric(itemnostr) ? Integer.parseInt(itemnostr):0;
+                                String itemnostr = row.getCell(1,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                                Integer itemno = isNumeric(itemnostr) ? Integer.parseInt(itemnostr):0;
+                                if(itemno>0){
                                     String pricestr = row.getCell(2,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                                     double price = isDouble(pricestr) ? Double.parseDouble(pricestr):0;
                                     String acpricestr = row.getCell(3,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
@@ -354,13 +573,10 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                     item.setAcPrice(acprice);
                                     item.setStocks(stock);
                                     try{
-                                        ArrayList<Item> s = dbHelper.GetItems();
-                                        for(int k=0;k<s.size();k++){
-                                            int ino = s.get(k).getItem_No();
-                                            if(itemno == ino){
-                                                dbHelper.Delete_Item(item.getItem_No());
-                                                break;
-                                            }
+                                        Item check = dbHelper.GetItem(item.getItem_No());
+                                        if(check!=null){
+                                            double st = check.getStocks()+item.getStocks();
+                                            item.setStocks(st);
                                         }
                                         dbHelper.Insert_Item(item);
                                         counter++;
@@ -372,47 +588,6 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                 }
                             }
                             lbl.setText("  "+counter+" - Rows Uploaded");
-                           /* CSVReader reader = new CSVReader(new FileReader(FilePath));
-                            String[] nextLine;
-                            Integer counter=0;
-                            while ((nextLine = reader.readNext()) != null) {
-                                // nextLine[] is an array of values from the line
-                                String itemname = nextLine[0];
-                                if(itemname.equals("ITEM NAME")){
-                                    continue;
-                                }
-                                if(itemname.isEmpty()){
-                                    break;
-                                }
-                                String itemnos = nextLine[1];
-                                String prices = nextLine[2];
-                                if(itemnos.isEmpty()){
-                                    break;
-                                }
-                                if(prices.isEmpty()){
-                                    prices="0";
-                                }
-                                Integer itemno = Integer.parseInt(itemnos);
-                                Double price = Double.parseDouble(prices);
-                                Item item = new Item();
-                                item.setItem_Name(itemname);
-                                item.setItem_No(itemno);
-                                item.setPrice(price);
-                                try{
-                                    ArrayList<Item> s = dbHelper.GetItems();
-                                    Integer index = s.indexOf(item);
-                                    if(index != -1){
-                                        dbHelper.Delete_Item(item.getItem_No());
-                                    }
-                                    dbHelper.Insert_Item(item);
-                                    counter++;
-                                }
-                                catch (Exception ex)
-                                {
-                                    lbl.setText(ex.getMessage());
-                                }
-                                lbl.setText("  "+counter+" - Rows Uploaded");
-                            }*/
                         } catch (IOException e) {
                             lbl.setText(e.getMessage().toString());
                             e.printStackTrace();

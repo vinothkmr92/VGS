@@ -459,7 +459,8 @@ public class PrintWifi {
         @Override
         protected void onPreExecute()
         {
-            dialog.setTitle("Please Wait");
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
             dialog.setMessage("Printing.....");
             dialog.show();
             super.onPreExecute();

@@ -3,6 +3,7 @@ package com.example.vinoth.vgspos;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.ProgressBar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class AppActivation {
     }
     class GetActivationStatus extends AsyncTask<String,Void,String> {
         private final ProgressDialog dialog = new ProgressDialog(context);
-
+        //private final ProgressBar dialog = new ProgressBar(context);
         @Override
         protected void onPostExecute(String res){
             if(!res.isEmpty()){
@@ -66,10 +67,10 @@ public class AppActivation {
         }
         @Override
         protected void onPreExecute() {
+            dialog.setMax(100);
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            dialog.setTitle(" ");
-            dialog.setMessage("Loading.....");
+            dialog.setMessage("Loading");
             dialog.show();
             super.onPreExecute();
         }

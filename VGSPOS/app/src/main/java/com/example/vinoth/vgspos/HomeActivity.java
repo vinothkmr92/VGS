@@ -3,6 +3,7 @@ package com.example.vinoth.vgspos;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -115,7 +116,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_home);
         progressBar = new Dialog(HomeActivity.this);
         progressBar.setContentView(R.layout.custom_progress_dialog);
-        progressBar.setTitle("Loading");
         try {
             dbHelper = new DatabaseHelper(this);
             itemNo = (EditText) findViewById(R.id.itemNo);
@@ -196,18 +196,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             else{
                 showCustomDialog("Msg","Please connect to internet and Try again.",true);
             }
-            /*if(expireDt.compareTo(compare)<0){
-                boolean internetav = Is_InternetWorking();
-                if(internetav){
-                    Common.isActivated = false;
-                    android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-                    AppActivation appActivation = new AppActivation(HomeActivity.this,android_id,this);
-                    appActivation.CheckActivationStatus();
-                }
-                else{
-                    showCustomDialog("Msg","Your application expired.\nPlease connect to internet and Try again.",true);
-                }
-            }*/
             searchTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -415,33 +403,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void PrintViaBlueTooth(){
         try
         {
-            progressBar.show();
             if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
                 showCustomDialog("Warning", "Please add Items");
                 return;
             }
             try{
                 PrintBluetooth printBluetooth = new PrintBluetooth(HomeActivity.this);
-                int copiesprinted = Common.billcopies;
-                while (copiesprinted>0){
-                    printBluetooth.Print();
-                    copiesprinted--;
-                }
-                printBluetooth.CloseBT();
+                printBluetooth.Print();
             }
             catch (Exception ex){
                 showCustomDialog("Exception",ex.getMessage().toString());
                 CancelBt();
             }
+
         }
         catch (Exception ex){
             showCustomDialog("Exception",ex.getMessage().toString());
             CancelBt();
-        }
-        finally {
-            if(progressBar.isShowing()){
-                progressBar.cancel();
-            }
         }
     }
     private void PrintWifi(){
@@ -758,7 +736,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else{
                     PrintViaBlueTooth();
-                    RefreshViews();
                 }
                break;
            case  R.id.enter:
@@ -812,7 +789,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
        }
     }
     public void LoadTotalAmt(){
-        if(Common.itemsCarts.size()>0){
+        if(Common.itemsCarts!=null && Common.itemsCarts.size()>0){
             tItem.setText(String.valueOf(Common.itemsCarts.size()));
             int ttq = 0;
             double amt = 0;

@@ -497,7 +497,6 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 ExportExcel();
                 break;
             case R.id.btnsalerptprint:
-                progressBar.show();
                 try{
                     ArrayList<SaleReport> items = GetSaleReport();
                     if(items.size()>0){
@@ -511,7 +510,6 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                         else{
                             PrintBluetooth printBluetooth = new PrintBluetooth(SaleReportActivity.this);
                             printBluetooth.PrintSaleReport();
-                            printBluetooth.CloseBT();
                         }
                     }
                     else {
@@ -520,11 +518,6 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 }
                 catch (Exception ex){
                     showCustomDialog("Error",ex.getMessage().toString());
-                }
-                finally {
-                    if(progressBar.isShowing()){
-                        progressBar.cancel();
-                    }
                 }
         }
     }

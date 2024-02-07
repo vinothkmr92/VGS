@@ -337,6 +337,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("ITEMS","ITEM_NO="+itemNo,null);
     }
+    public void DeleteAllItem(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("ITEMS",null,null);
+    }
     public void Insert_Item(Item item){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cont = new ContentValues();

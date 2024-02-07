@@ -42,8 +42,14 @@ public class AddItemDialog extends AppCompatDialogFragment {
                     String priceString = editTextItemPrice.getText().toString();
                     double price = Double.parseDouble(priceString);
                     String stockString = editTextItemStock.getText().toString();
+                    if(stockString.isEmpty()){
+                        stockString="0";
+                    }
                     double stock = Double.parseDouble(stockString);
                     String acpriceString = editTextItemAcPrice.getText().toString();
+                    if(acpriceString.isEmpty()){
+                        acpriceString = "0";
+                    }
                     double acPrice = Double.parseDouble(acpriceString);
                     listener.getCustomerInfo(ItemNo,ItemName,price,stock,acPrice);
                 });

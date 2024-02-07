@@ -7,21 +7,42 @@
     android:orientation="vertical"
     tools:context=".UploadActivity">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <GridLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <Button
-            android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:columnCount="3"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btnUpload"
+            android:layout_width="250px"
+            android:layout_height="250px"
+            android:background="@drawable/upload"
+            android:text="Upload Product"></ImageButton>
+        <TextView
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Upload Excel"
-            android:id="@+id/btnUpload"/>
+            android:layout_width="wrap_content"></TextView>
+        <ImageButton
+            android:id="@+id/btnExportproduct"
+            android:layout_width="250px"
+            android:layout_height="250px"
+            android:background="@drawable/download"
+            android:text="Export Product"></ImageButton>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_columnSpan="3"
             android:id="@+id/lblView"
             android:text=""/>
-    </LinearLayout>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/clearProducts"
+            android:text="Delete Existing Products"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold|italic"></CheckBox>
+
+    </GridLayout>
 
 </RelativeLayout>

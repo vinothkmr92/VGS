@@ -3,12 +3,14 @@ package com.example.vinoth.vgspos;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
@@ -54,8 +56,11 @@ public class PrintBluetooth {
     public boolean isReprint;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    public PrintBluetooth(Context ctx) throws Exception {
+    public PrintBluetooth(Context ctx){
         context = ctx;
+    }
+
+    public void GetBluetoothNameAndConnect() throws Exception{
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!checkBluetoothPermission()) {
             ActivityCompat.requestPermissions(HomeActivity.getInstance(), PERMISSIONS_BLUETOOTH
@@ -69,11 +74,9 @@ public class PrintBluetooth {
                 getName = device.getAddress();
                 break;
             }
-
         }
         ConnectBluetooth(getName);
     }
-
     public  void CloseBT(){
         try {
             if (mOutputStream != null)
@@ -106,22 +109,6 @@ public class PrintBluetooth {
             return bluetooth == PackageManager.PERMISSION_GRANTED;
         }
     }
-
-    /*public void ConnectBluetooth(String btName) throws Exception {
-        try {
-            mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(btName);
-            if(checkBluetoothPermission()){
-                mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(SPP_UUID);
-                mBluetoothSocket.connect();
-            }
-            else{
-                HomeActivity.getInstance().showCustomDialog("Error","Failed to access Bluetooth.");
-            }
-        }
-        catch (Exception ex){
-            throw ex;
-        }
-    }*/
     public void ConnectBluetooth(String btName) throws Exception {
         try {
             mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(btName);
@@ -243,9 +230,9 @@ public class PrintBluetooth {
         String res = padLeft(txt,maxLength);
         return res.substring(0,maxLength);
     }
-    public void PrintSaleReport(){
+    public void PrintSaleRpt(){
         String msg = "SALE REPORT\n";
-        PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
+        PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().height().get(),Formatter.centerAlign());
         PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
         PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
         if(Common.RptSize.equals("3")){
@@ -257,7 +244,7 @@ public class PrintBluetooth {
         else{
             PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
             String hed =  "BILL NO   BILL_DATE       AMOUNT";
-            PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+            PrintData(hed,new Formatter().get(),Formatter.leftAlign());
             PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
         }
 
@@ -291,17 +278,16 @@ public class PrintBluetooth {
         PrintData("   ",new Formatter().get(),Formatter.leftAlign());
         PrintData("   ",new Formatter().get(),Formatter.leftAlign());
         String ttAmtTxt = "TOTAL SALE :"+String.format("%.0f",totalAmt)+"/-";
-        PrintData(ttAmtTxt,new Formatter().bold().get(),Formatter.centerAlign());
+        PrintData(ttAmtTxt,new Formatter().height().get(),Formatter.centerAlign());
         PrintData("  ",new Formatter().get(),Formatter.leftAlign());
         PrintData("  ",new Formatter().get(),Formatter.leftAlign());
         if(Common.RptSize.equals("3")){
             PaperCut();
         }
-        Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
     }
-    public void PrintItemWiseReport(){
+    public void PrintItemWiseRpt(){
         String msg = "ITEM WISE REPORT\n";
-        PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
+        PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().height().get(),Formatter.centerAlign());
         PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
         PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
         if(Common.RptSize.equals("3")){
@@ -337,7 +323,6 @@ public class PrintBluetooth {
         if(Common.RptSize.equals("3")){
             PaperCut();
         }
-        Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
     }
     public void PrintKOT(){
         try {
@@ -345,10 +330,10 @@ public class PrintBluetooth {
             Date date = Common.billDate;
             String msg = Common.headerMeg+"\n";
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
-            PrintWithFormat("KOT\n".getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
-            PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
+            PrintWithFormat("KOT\n".getBytes(StandardCharsets.UTF_8),new Formatter().get(),Formatter.centerAlign());
+            PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().height().get(),Formatter.centerAlign());
             String address = Common.addressline+"\n";
-            PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().small().get(),Formatter.centerAlign());
+            PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().get(),Formatter.centerAlign());
             if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
                 PrintData("NAME     :"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
             }
@@ -357,7 +342,7 @@ public class PrintBluetooth {
             if(Common.RptSize.equals("3")){
                 PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
                 String hed =  "ITEM NAME             QTY      PRICE    AMOUNT";
-                PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+                PrintData(hed,new Formatter().get(),Formatter.leftAlign());
                 PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
             }
             else if(Common.RptSize.equals("4")){
@@ -383,6 +368,7 @@ public class PrintBluetooth {
                 String amts=String.format("%.0f",amt);
                 if(Common.RptSize.equals("3")){
                     name = StringUtils.rightPad(name,20);
+                    name = name.substring(0,20);
                     qty = StringUtils.leftPad(qty,5);
                     price = StringUtils.leftPad(price,11);
                     amts = StringUtils.leftPad(amts,10);
@@ -391,6 +377,7 @@ public class PrintBluetooth {
                 }
                 else if(Common.RptSize.equals("4")){
                     name = StringUtils.rightPad(name,35);
+                    name = name.substring(0,35);
                     qty = StringUtils.leftPad(qty,5);
                     price = StringUtils.leftPad(price,11);
                     amts = StringUtils.leftPad(amts,10);
@@ -423,7 +410,8 @@ public class PrintBluetooth {
             HomeActivity.getInstance().showCustomDialog("Error",e.getMessage());
         }
     }
-    public  void Print() {
+    public String PrintBill(){
+        String retVal = "";
         try {
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
             Date date = Common.billDate;
@@ -431,14 +419,14 @@ public class PrintBluetooth {
             if(bitmapIcon!=null){
                 PrintImage(bitmapIcon);
             }
-            String msg = Common.headerMeg+"\n";
+            String msg = Common.headerMeg+"\n\n";
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             if(isReprint){
                 PrintWithFormat("COPY BILL\n\n".getBytes(StandardCharsets.UTF_8),new Formatter().underlined().get(),Formatter.centerAlign());
             }
-            PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().bold().get(),Formatter.centerAlign());
-            String address = Common.addressline+"\n";
-            PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().small().get(),Formatter.centerAlign());
+            PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().height().get(),Formatter.centerAlign());
+            String address = Common.addressline+"\n\n";
+            PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().get(),Formatter.centerAlign());
             if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
                 PrintData("NAME     :"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
             }
@@ -450,7 +438,7 @@ public class PrintBluetooth {
                     hed =  "ITEM NAME       QTY    MRP     PRICE    AMOUNT";
                 }
                 PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
-                PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
+                PrintData(hed,new Formatter().get(),Formatter.leftAlign());
                 PrintData("----------------------------------------------",new Formatter().get(),Formatter.leftAlign());
             }
             else if(Common.RptSize.equals("4")){
@@ -496,6 +484,7 @@ public class PrintBluetooth {
                     }
                     else{
                         name = StringUtils.rightPad(name,20);
+                        name = name.substring(0,20);
                         qty = StringUtils.leftPad(qty,5);
                         price = StringUtils.leftPad(price,11);
                         amts = StringUtils.leftPad(amts,10);
@@ -516,6 +505,7 @@ public class PrintBluetooth {
                     }
                     else{
                         name = StringUtils.rightPad(name,35);
+                        name = name.substring(0,35);
                         qty = StringUtils.leftPad(qty,5);
                         price = StringUtils.leftPad(price,11);
                         amts = StringUtils.leftPad(amts,10);
@@ -540,7 +530,7 @@ public class PrintBluetooth {
                 PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             }
             String ttAmtTxt = "TOTAL AMT:"+String.format("%.0f",totalAmt)+"/-";
-            PrintData(ttAmtTxt,new Formatter().bold().get(),Formatter.centerAlign());
+            PrintData(ttAmtTxt,new Formatter().height().get(),Formatter.centerAlign());
             PrintData("  ",new Formatter().get(),Formatter.leftAlign());
             PrintData(Common.footerMsg,new Formatter().get(),Formatter.centerAlign());
             PrintData(" ",new Formatter().get(),Formatter.leftAlign());
@@ -548,14 +538,179 @@ public class PrintBluetooth {
             if(Common.RptSize.equals("3")){
                 PaperCut();
             }
-            Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
             if(Common.printKOT && !isReprint){
                 PrintKOT();
             }
         } catch (Exception e) {
             //Toast.makeText(MainActivity.this, e.getMessage(), 1).show();
             e.printStackTrace();
-            HomeActivity.getInstance().showCustomDialog("Error",e.getMessage());
+            retVal = e.getMessage();
+        }
+        return retVal;
+    }
+    public  void  PrintItemWiseReport() throws  Exception{
+        try{
+            new BluetoothPrintItemWiseReport().execute("");
+        }
+        catch (Exception ex){
+            throw  ex;
         }
     }
+    public  void  PrintSaleReport() throws  Exception{
+        try{
+            new BluetoothPrintSaleReport().execute("");
+        }
+        catch (Exception ex){
+            throw ex;
+        }
+    }
+    public  void Print() throws Exception {
+        try{
+            new BluetoothPrintBill().execute("");
+        }
+        catch (Exception ex){
+            throw  ex;
+        }
+    }
+    class BluetoothPrintItemWiseReport extends AsyncTask<String, Void, String>
+    {
+        private final ProgressDialog dialog = new ProgressDialog(context);
+        @Override
+        protected void onPreExecute()
+        {
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setMessage("Printing.....");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params)
+        {
+            String ret = "";
+            try{
+                GetBluetoothNameAndConnect();
+                PrintItemWiseRpt();
+            }
+            catch (Exception ex){
+                ret = ex.getMessage();
+            }
+            return ret;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+            if(!result.isEmpty()){
+               ItemReport.getInstance().showCustomDialog("Error",result);
+            }
+            else{
+                Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
+                CloseBT();
+            }
+            super.onPostExecute(result);
+        }
+    }
+    class BluetoothPrintSaleReport extends AsyncTask<String, Void, String>
+    {
+        private final ProgressDialog dialog = new ProgressDialog(context);
+        @Override
+        protected void onPreExecute()
+        {
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setMessage("Printing.....");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params)
+        {
+            String ret = "";
+            try{
+                GetBluetoothNameAndConnect();
+                PrintSaleRpt();
+            }
+            catch (Exception ex){
+                ret = ex.getMessage();
+            }
+            return ret;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+            if(!result.isEmpty()){
+                SaleReportActivity.getInstance().showCustomDialog("Error",result);
+            }
+            else{
+                Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
+                CloseBT();
+            }
+            super.onPostExecute(result);
+        }
+    }
+    class BluetoothPrintBill extends AsyncTask<String, Void, String>
+    {
+        private final ProgressDialog dialog = new ProgressDialog(context);
+        @Override
+        protected void onPreExecute()
+        {
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setMessage("Printing.....");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params)
+        {
+            String ret = "";
+            try{
+                GetBluetoothNameAndConnect();
+            }
+            catch (Exception ex){
+                ret = ex.getMessage();
+            }
+            if(!ret.isEmpty()){
+                return  ret;
+            }
+            int copiesprinted = Common.billcopies;
+            while (copiesprinted>0){
+                ret = PrintBill();
+                if(!ret.isEmpty()){
+                    break;
+                }
+                copiesprinted--;
+            }
+            return ret;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+            if(!result.isEmpty()){
+                HomeActivity.getInstance().showCustomDialog("Error",result);
+            }
+            else{
+                Toast.makeText(context, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
+                CloseBT();
+                HomeActivity.getInstance().RefreshViews();
+            }
+            super.onPostExecute(result);
+        }
+    }
+
 }

@@ -44,7 +44,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     ImageButton btnFrmDatePicker;
     ImageButton btnToDatePicker;
     private Button btnrpt;
-    private Button btnPrint;
+    private ImageButton btnPrint;
     private GridLayout gridView;
     private DynamicViewItemRpt dynamicView;
     private Calendar calendar;
@@ -105,7 +105,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         btnToDatePicker = (ImageButton) findViewById(R.id.btndpToDateItem);
         gridView = (GridLayout) findViewById(R.id.gridDataRpt);
         btnrpt = (Button) findViewById(R.id.btngetreport);
-        btnPrint = (Button)findViewById(R.id.btnrptprint);
+        btnPrint = (ImageButton)findViewById(R.id.btnrptprint);
         btnPrint.setOnClickListener(this);
         btnrpt.setOnClickListener(this);
         btnFrmDatePicker.setOnClickListener(this);
@@ -184,6 +184,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         GetDefaultDate();
         datePickerDialog = new DatePickerDialog(ItemReport.this,myDateListener,year,month,day);
         todatePickerDialog = new DatePickerDialog(ItemReport.this,mytoDateListener,year,month,day);
+        instance = this;
     }
     private  void GetDefaultDate(){
         calendar = Calendar.getInstance();
@@ -258,13 +259,16 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             else{
                 PrintBluetooth printBluetooth = new PrintBluetooth(ItemReport.this);
                 printBluetooth.PrintItemWiseReport();
-                printBluetooth.CloseBT();
             }
 
         } catch (Exception e) {
             showCustomDialog("Print Error",e.getMessage());
             e.printStackTrace();
         }
+    }
+    private static ItemReport instance;
+    public static ItemReport getInstance() {
+        return instance;
     }
     public void LoadReportViews(){
         String frmdt = frmDateTextView.getText().toString();

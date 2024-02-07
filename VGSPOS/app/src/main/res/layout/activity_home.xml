@@ -354,6 +354,7 @@
                 style="@style/Widget.AppCompat.Button"
                 android:layout_columnSpan="2"
                 android:layout_gravity="fill"
+                android:visibility="gone"
                 android:background="@android:color/background_light"
                 android:text="TESTBARCODE"
                 android:textColor="@android:color/background_dark"

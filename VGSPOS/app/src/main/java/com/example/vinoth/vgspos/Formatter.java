@@ -33,7 +33,6 @@ public class Formatter {
         mFormat[2] = ((byte) (0x10 | mFormat[2]));
         return this;
     }
-
     public Formatter width() {
         mFormat[2] = ((byte) (0x20 | mFormat[2]));
         return this;
