@@ -61,6 +61,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return icon;
     }
+    public void DeleteIcon(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("ICONS",null,null);
+    }
     public void InsertIcon(byte[] image){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cntVal = new ContentValues();

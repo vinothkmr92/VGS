@@ -38,6 +38,7 @@
 
         <ImageButton
             android:id="@+id/btnAddMember"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_width="80px"
             android:layout_height="80px"
             android:background="@drawable/ic_baseline_person_add_24"
@@ -60,9 +61,11 @@
             android:id="@+id/scanQR"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@android:color/holo_red_dark"
             android:text="SCAN"
             android:textColor="@android:color/background_light"
+            android:foreground="?android:attr/selectableItemBackground"
             android:textSize="15dp"
             android:textStyle="bold"
             tools:ignore="TouchTargetSizeCheck" />
@@ -201,6 +204,7 @@
             <Button
                 android:layout_height="10px"
                 android:layout_columnSpan="4"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:layout_gravity="fill"
                 android:background="@color/design_default_color_primary"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
@@ -208,6 +212,7 @@
             <Button
                 android:id="@+id/_1"
                 android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="1"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
@@ -216,6 +221,7 @@
             <Button
                 android:id="@+id/_2"
                 android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="2"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="20dp"
@@ -224,6 +230,7 @@
             <Button
                 android:id="@+id/_3"
                 android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="3"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
@@ -232,6 +239,7 @@
             <Button
                 android:id="@+id/_clr"
                 android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="←"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="20dp"
@@ -240,6 +248,7 @@
             <Button
                 android:id="@+id/_4"
                 android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="4"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="20dp"
@@ -248,6 +257,7 @@
             <Button
                 android:id="@+id/_5"
                 android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="5"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
@@ -256,6 +266,7 @@
             <Button
                 android:id="@+id/_6"
                 android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="6"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="20dp"
@@ -264,6 +275,7 @@
             <Button
                 android:id="@+id/_dot"
                 android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="."
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
@@ -274,6 +286,7 @@
                 android:background="@color/design_default_color_primary"
                 android:text="7"
                 android:textColor="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
@@ -282,6 +295,7 @@
                 android:background="@android:color/background_light"
                 android:text="8"
                 android:textColor="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
@@ -290,12 +304,14 @@
                 android:background="@color/design_default_color_primary"
                 android:text="9"
                 android:textColor="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/_0"
                 android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="0"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="20dp"
@@ -304,6 +320,7 @@
             <Button
                 android:id="@+id/menu"
                 android:background="@android:color/holo_orange_light"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="REPORT"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
@@ -313,6 +330,7 @@
             <Button
                 android:id="@+id/cancel"
                 android:background="?attr/colorError"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="CANCEL"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
@@ -323,6 +341,7 @@
                 android:layout_rowSpan="2"
                 android:layout_gravity="fill"
                 android:background="?attr/actionModeSplitBackground"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="PRINT"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
@@ -333,6 +352,7 @@
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_rowSpan="2"
                 android:layout_gravity="fill"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:background="@android:color/holo_red_dark"
                 android:text="ENTER"
                 android:textColor="@android:color/background_light"
@@ -345,6 +365,7 @@
                 android:layout_columnSpan="2"
                 android:layout_gravity="fill"
                 android:background="@color/colorBrown"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="VIEW ITEMS"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
@@ -356,6 +377,7 @@
                 android:layout_gravity="fill"
                 android:visibility="gone"
                 android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="TESTBARCODE"
                 android:textColor="@android:color/background_dark"
                 android:textSize="20dp"

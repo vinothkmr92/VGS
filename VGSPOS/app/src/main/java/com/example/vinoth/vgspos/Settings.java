@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +24,16 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -43,6 +49,20 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     EditText editTextHeaderMsg;
     EditText editTextFooterMsg;
 
+    private final ActivityResultLauncher<Intent> storeageActivitytResultLanucher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+
+                    }
+                    else{
+
+                    }
+                }
+            });
     RadioButton radioButton2Inch;
     RadioButton radioButton3Inch;
     RadioButton radioButton4Inch;
@@ -85,6 +105,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     };
     ArrayList<String> bluethootnamelist;
     private Dialog progressBar;
+    ImageButton btnclerlogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +114,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         dbHelper = new DatabaseHelper(this);
         editTextHeaderMsg = (EditText) findViewById(R.id.headerMsg);
         editTextFooterMsg = (EditText) findViewById(R.id.footerMsg);
+        btnclerlogo = (ImageButton)findViewById(R.id.btnclearlogo);
         radioButtonBluetooth = (RadioButton) findViewById(R.id.radioBtnBluetooth);
         radioButtonWifi = (RadioButton) findViewById(R.id.radioBtnWifi);
         txtViewBluetooth = (TextView) findViewById(R.id.txtViewBlutooth);
@@ -280,15 +302,47 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             editTextPrinterIP.setVisibility(View.INVISIBLE);
         }
         saveBtn.setOnClickListener(this);
+        btnclerlogo.setOnClickListener(this);
         loadPictureBtn.setOnClickListener(this);
         if(!Common.openSettings){
             Intent page = new Intent(this,SecuredAccess.class);
             page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(page);
         }
-
+        if(!checkFilePermission()){
+            requestStoragePermission();
+        }
     }
 
+    public void requestStoragePermission(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+            try {
+                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
+                storeageActivitytResultLanucher.launch(intent);
+            } catch (Exception ex){
+                Intent intent = new Intent();
+                intent.setAction(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                storeageActivitytResultLanucher.launch(intent);
+            }
+        }
+        else{
+            ActivityCompat.requestPermissions(Settings.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}
+                    ,1);
+        }
+    }
+
+    public boolean checkFilePermission(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+            return  Environment.isExternalStorageManager();
+        }
+        else{
+            int write = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
+            return write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED;
+        }
+    }
     private boolean checkPermission(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
             int bluetooth = ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT);
@@ -331,6 +385,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(page);
     }
+
     private void SaveSettings(){
         try{
             String headerMsg = editTextHeaderMsg.getText().toString();
@@ -367,10 +422,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     Common.shopLogo = bitmap;
                 }
                 else{
+                    dbHelper.DeleteIcon();
                     Common.shopLogo = null;
                 }
             }
             else{
+                dbHelper.DeleteIcon();
                 Common.shopLogo = null;
             }
             int billcopies = Integer.parseInt(nocopies);
@@ -394,6 +451,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private void LoadPictureToUpload(){
         Intent i = new Intent(
                 Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        i.putExtra("crop", "true");
         startActivityForResult(i, RESULT_LOAD_IMAGE);
 
     }
@@ -401,15 +459,21 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            try{
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+                imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            }
+            catch (Exception ex){
+                showCustomDialog("Error",ex.getMessage(),false);
+            }
+
         }
     }
     @Override
@@ -420,6 +484,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.buttonLoadPicture:
                 LoadPictureToUpload();
+                break;
+            case R.id.btnclearlogo:
+                imageView.setImageBitmap(null);
+                imageView.setImageDrawable(null);
                 break;
         }
 

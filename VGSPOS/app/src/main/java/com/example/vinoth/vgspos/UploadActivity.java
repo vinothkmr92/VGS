@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -36,7 +34,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
-import org.apache.commons.math3.analysis.function.Exp;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -53,11 +50,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.Locale;
 
 public class UploadActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -108,29 +102,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             requestStoragePermission();
         }
     }
-    public void requestStoragePermission(){
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
-            Intent intent = new Intent();
-            intent.setAction(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-            storeageActivitytResultLanucher.launch(intent);
-        }
-        else{
-            ActivityCompat.requestPermissions(UploadActivity.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}
-                    ,1);
-        }
-    }
-    public boolean checkPermission(){
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
-         return  Environment.isExternalStorageManager();
-        }
-        else{
-            int write = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int read = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
-            return write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED;
-        }
-    }
-    private ActivityResultLauncher<Intent> storeageActivitytResultLanucher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> storeageActivitytResultLanucher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -144,6 +116,35 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                     }
                 }
             });
+    public boolean checkPermission(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+         return  Environment.isExternalStorageManager();
+        }
+        else{
+            int write = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
+            return write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    public void requestStoragePermission(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+            try {
+                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
+                storeageActivitytResultLanucher.launch(intent);
+            } catch (Exception ex){
+                Intent intent = new Intent();
+                intent.setAction(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                storeageActivitytResultLanucher.launch(intent);
+            }
+        }
+        else{
+            ActivityCompat.requestPermissions(UploadActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}
+                    ,1);
+        }
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()){

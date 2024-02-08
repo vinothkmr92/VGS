@@ -34,6 +34,7 @@ import org.fintrace.core.drivers.tspl.commands.system.Print;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -146,16 +147,30 @@ public class PrintBluetooth {
             HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
         }
     }
-    public void PrintImage(Bitmap image){
+    public  byte[] BitMaptoBytesArray(Bitmap bitmap){
+        int size = bitmap.getRowBytes() * bitmap.getHeight();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(size);
+        bitmap.copyPixelsToBuffer(byteBuffer);
+        byte[] byteArray = byteBuffer.array();
+        return  byteArray;
+        /*int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        String format = bitmap.getConfig().name();*/
+    }
+    public void PrintImage(Bitmap image) throws Exception{
         try {
             byte[] command = PrinterUtils.decodeBitmap(image);
-            mOutputStream = mBluetoothSocket.getOutputStream();
-            mOutputStream.write(PrinterCommands.ESC_ALIGN_CENTER);
-            mOutputStream.write(command);
-            mOutputStream.flush();
+            if(command!=null){
+                //PrintWithFormat(command,new Formatter().get(),Formatter.centerAlign());
+                mOutputStream = mBluetoothSocket.getOutputStream();
+                mOutputStream.write(Formatter.centerAlign());
+                mOutputStream.write(new Formatter().get());
+                mOutputStream.write(command);
+                mOutputStream.flush();
+            }
         } catch (Exception ex) {
             Log.e("ERR", "Exception during write", ex);
-            HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
+            throw ex;
         }
     }
     private String GetTSCLCommand(String inputdata){
@@ -206,6 +221,7 @@ public class PrintBluetooth {
             HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
         }
     }
+
     public boolean PrintWithFormat(byte[] buffer, final byte[] pFormat, final byte[] pAlignment) {
         try {
             mOutputStream = mBluetoothSocket.getOutputStream();
@@ -416,17 +432,18 @@ public class PrintBluetooth {
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
             Date date = Common.billDate;
             Bitmap bitmapIcon = Common.shopLogo;
+            PrintData(" ",new Formatter().get(),Formatter.leftAlign());
             if(bitmapIcon!=null){
                 PrintImage(bitmapIcon);
+                PrintData(" ",new Formatter().get(),Formatter.leftAlign());
             }
-            String msg = Common.headerMeg+"\n\n";
-            PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            String msg = Common.headerMeg+"\n";
             if(isReprint){
-                PrintWithFormat("COPY BILL\n\n".getBytes(StandardCharsets.UTF_8),new Formatter().underlined().get(),Formatter.centerAlign());
+                PrintData("COPY BILL\n",new Formatter().underlined().get(),Formatter.centerAlign());
             }
-            PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().height().get(),Formatter.centerAlign());
-            String address = Common.addressline+"\n\n";
-            PrintWithFormat(address.getBytes(StandardCharsets.UTF_8),new Formatter().get(),Formatter.centerAlign());
+            PrintData(msg,new Formatter().height().get(),Formatter.centerAlign());
+            String address = Common.addressline+"\n";
+            PrintData(address,new Formatter().get(),Formatter.centerAlign());
             if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
                 PrintData("NAME     :"+Common.waiter,new Formatter().get(),Formatter.leftAlign());
             }
@@ -542,7 +559,6 @@ public class PrintBluetooth {
                 PrintKOT();
             }
         } catch (Exception e) {
-            //Toast.makeText(MainActivity.this, e.getMessage(), 1).show();
             e.printStackTrace();
             retVal = e.getMessage();
         }

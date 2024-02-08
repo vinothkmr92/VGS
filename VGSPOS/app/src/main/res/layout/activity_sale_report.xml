@@ -33,6 +33,7 @@
             android:layout_height="100px"
             android:id="@+id/btndpFrmDate"
             android:layout_marginLeft="50px"
+            android:foreground="?android:attr/selectableItemBackground"
             android:background="@drawable/ic_baseline_date_range_24"></ImageButton>
         <TextView
             android:layout_width="wrap_content"
@@ -53,6 +54,7 @@
             android:layout_height="100px"
             android:id="@+id/btndpToDate"
             android:layout_marginLeft="50px"
+            android:foreground="?android:attr/selectableItemBackground"
             android:background="@drawable/ic_baseline_date_range_24"></ImageButton>
     </GridLayout>
 

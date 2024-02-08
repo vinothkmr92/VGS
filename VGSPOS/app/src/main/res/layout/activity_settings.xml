@@ -173,10 +173,18 @@
                 android:layout_gravity="center"
                 android:layout_weight="0"
                 android:text="Load Picture"></Button>
-            <Button android:layout_column="2"
+            <ImageButton
+                android:id="@+id/btnclearlogo"
+                android:layout_width="100px"
+                android:layout_height="100px"
+                android:layout_columnSpan="2"
+                android:layout_gravity="left"
+                android:background="@drawable/close">
+            </ImageButton>
+            <Button android:layout_column="1"
                 android:text="Save"
                 android:id="@+id/btnSave"></Button>
         </GridLayout>
     </LinearLayout>
     </ScrollView>
-</LinearLayout>>
+</LinearLayout>
