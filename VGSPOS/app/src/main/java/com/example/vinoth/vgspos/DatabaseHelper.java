@@ -121,6 +121,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return nameList;
     }
+    public void DeleteBill(String billdt,String billno){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("BILLS_ITEM","DATE(BILL_DATE)='"+billdt+"' AND BILL_NO="+billno,null);
+        db.delete("BILLS","DATE(BILL_DATE)='"+billdt+"' AND BILL_NO="+billno,null);
+    }
     public  ArrayList<Bills_Item> GetBills_Item(String billdt,String billno){
         ArrayList<Bills_Item> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();

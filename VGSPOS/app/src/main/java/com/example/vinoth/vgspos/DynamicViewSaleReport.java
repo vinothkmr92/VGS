@@ -12,7 +12,7 @@ import android.widget.TextView;
 public class DynamicViewSaleReport implements View.OnClickListener {
     Context ctx;
     private final int textSize = 15;
-    private final int txtPadding = 15;
+    private final int txtPadding = 10;
     DynamicViewSaleReport(Context context){
         this.ctx = context;
     }
@@ -21,9 +21,9 @@ public class DynamicViewSaleReport implements View.OnClickListener {
         final TextView textView = new TextView(context);
         textView.setLayoutParams(lparams);
         textView.setTextSize(textSize);
-        textView.setPadding(txtPadding,txtPadding,txtPadding,txtPadding);
+        textView.setPadding(5,5,5,5);
         textView.setTextColor(Color.rgb(0,0,0));
-        textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+        textView.setTypeface(textView.getTypeface(), Typeface.NORMAL);
         textView.setText(" "+text+" ");
         textView.setMaxEms(8);
         return textView;
@@ -33,9 +33,9 @@ public class DynamicViewSaleReport implements View.OnClickListener {
         final TextView textView = new TextView(context);
         textView.setLayoutParams(lparams);
         textView.setTextSize(textSize);
-        textView.setPadding(txtPadding,txtPadding,txtPadding,txtPadding);
+        textView.setPadding(txtPadding,txtPadding,0,txtPadding);
         textView.setTextColor(Color.rgb(0,0,0));
-        textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+        textView.setTypeface(textView.getTypeface(), Typeface.NORMAL);
         textView.setText(" "+text+" ");
         textView.setMaxEms(8);
         return textView;
@@ -57,13 +57,38 @@ public class DynamicViewSaleReport implements View.OnClickListener {
         final Button btnView = new Button(context);
         btnView.setBackgroundResource(R.drawable.ic_baseline_print_24);
         btnView.setOnClickListener(this);
-        btnView.setTag(billno);
-        btnView.setLayoutParams(new LinearLayout.LayoutParams(50, 50));
+        String tag = "Print"+"~"+billno;
+        btnView.setTag(tag);
+        btnView.setLayoutParams(new LinearLayout.LayoutParams(70, 70));
         return btnView;
+    }
+    public Button deleteButton(Context context,String billno){
+        final ViewGroup.LayoutParams lparam = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        final Button btnDelete = new Button(context);
+        btnDelete.setBackgroundResource(R.drawable.close);
+        btnDelete.setOnClickListener(this);
+        String tag = "Delete"+"~"+billno;
+        btnDelete.setTag(tag);
+        btnDelete.setLayoutParams(new LinearLayout.LayoutParams(70,70));
+        return  btnDelete;
     }
 
     @Override
     public void onClick(View v) {
-        SaleReportActivity.getInstance().PrintBill((String) v.getTag());
+        String[] bd = ((String)v.getTag()).split("~");
+        if(bd.length>2){
+            String action = bd[0];
+            String billNo = bd[1]+"~"+bd[2];
+            switch (action){
+                case "Print":
+                    SaleReportActivity.getInstance().PrintBill(billNo);
+                    break;
+                case "Delete":
+                    SaleReportActivity.getInstance().DeleteBill(billNo);
+                    break;
+            }
+        }
+
+
     }
 }

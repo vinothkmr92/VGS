@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homemenu"
+        android:title="Home"/>
+    <item
+        android:id="@+id/uploadExcel"
+        android:title="Upload Excel"/>
+    <item
+        android:id="@+id/settings"
+        android:title="Settings"/>
+    <item
+        android:id="@+id/itemMaster"
+        android:title="Add/Update Items"/>
+    <item
+        android:id="@+id/saleReort"
+        android:title="Sale Report"/>
+    <item android:id="@+id/exit"
+        android:title="EXIT"/>
+
+</menu>

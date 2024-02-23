@@ -439,27 +439,34 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void LoadSaleReport(){
-        ArrayList<SaleReport> items = GetSaleReport();
-        int rc = gridLayout.getRowCount();
-        if(rc>1){
-            int count = (rc-1)*4;
-            gridLayout.removeViews(4,count);
+        try{
+            ArrayList<SaleReport> items = GetSaleReport();
+            int rc = gridLayout.getRowCount();
+            if(rc>1){
+                int count = (rc-1)*5;
+                gridLayout.removeViews(5,count);
+            }
+            double totalSaleamt=0;
+            for(int i=0;i<items.size();i++){
+                SaleReport sr = items.get(i);
+                dynamicView = new DynamicViewSaleReport(this);
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm aaa",Locale.getDefault());
+                gridLayout.addView(dynamicView.billNoTextView(this,sr.getBillNo()));
+                gridLayout.addView(dynamicView.billDateTextView(this,format.format(sr.getBillDt())));
+                String saleAmtStr = String.format("%.0f",sr.getBillAmount());
+                gridLayout.addView(dynamicView.billAmountTextView(this,saleAmtStr));
+                String billdetails = sr.getBillNo()+"~"+sr.getBillDate();
+                gridLayout.addView(dynamicView.printButton(this,billdetails));
+                gridLayout.addView(dynamicView.deleteButton(this,billdetails));
+                totalSaleamt+=sr.getBillAmount();
+            }
+            String ttSaleAmtstring = String.format("%.0f",totalSaleamt);
+            txtViewTotalSaleAmt.setText("₹ "+ttSaleAmtstring);
         }
-        double totalSaleamt=0;
-        for(int i=0;i<items.size();i++){
-            SaleReport sr = items.get(i);
-            dynamicView = new DynamicViewSaleReport(this);
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm aaa",Locale.getDefault());
-            gridLayout.addView(dynamicView.billNoTextView(this,sr.getBillNo()));
-            gridLayout.addView(dynamicView.billDateTextView(this,format.format(sr.getBillDt())));
-            String saleAmtStr = String.format("%.0f",sr.getBillAmount());
-            gridLayout.addView(dynamicView.billAmountTextView(this,saleAmtStr));
-            String billdetails = sr.getBillNo()+"~"+sr.getBillDate();
-            gridLayout.addView(dynamicView.printButton(this,billdetails));
-            totalSaleamt+=sr.getBillAmount();
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
         }
-        String ttSaleAmtstring = String.format("%.0f",totalSaleamt);
-        txtViewTotalSaleAmt.setText("₹ "+ttSaleAmtstring);
+
     }
     public void showCustomDialog(String title, String Message) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -519,6 +526,22 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 catch (Exception ex){
                     showCustomDialog("Error",ex.getMessage().toString());
                 }
+        }
+    }
+    public void DeleteBill(String billdetail){
+        try{
+            String[] bd = billdetail.split("~");
+            if(bd.length>1){
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+                SimpleDateFormat formatwithtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
+                Date billds = format.parse(bd[1]);
+                dbHelper.DeleteBill(format.format(billds),bd[0]);
+                showCustomDialog("MSG","Deleted bill sucessfully");
+                LoadSaleReport();
+            }
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
         }
     }
     public void PrintBill(String billdetail){

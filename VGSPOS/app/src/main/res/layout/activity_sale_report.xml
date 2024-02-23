@@ -128,21 +128,25 @@
                 android:id="@+id/gridDataSaleRpt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="4"
+                android:columnCount="5"
                 tools:ignore="MissingConstraints">
 
                 <TextView
-                    android:padding="50px"
+                    android:padding="5px"
                     android:text="Bill No"
                     android:textStyle="bold"></TextView>
                 <TextView
-                    android:padding="50px"
+                    android:padding="100px"
                     android:text="Bill Date"
                     android:textStyle="bold"></TextView>
 
                 <TextView
-                    android:padding="50px"
+                    android:padding="30px"
                     android:text="Amount"
+                    android:textStyle="bold"></TextView>
+                <TextView
+                    android:padding="50px"
+                    android:text=" "
                     android:textStyle="bold"></TextView>
                 <TextView
                     android:padding="50px"

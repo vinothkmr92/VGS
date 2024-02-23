@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light"
+    tools:context=".Settings">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="10dp"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:padding="20px"
+                android:text="Header Message"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:padding="20px"
+                android:layout_width="match_parent"
+                android:id="@+id/headerMsg"
+                android:layout_columnSpan="3"></EditText>
+            <TextView
+                android:padding="20px"
+                android:text="Address"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/addressMsg"
+                android:layout_width="match_parent"
+                android:layout_columnSpan="3"
+                android:padding="20px"></EditText>
+            <TextView
+                android:padding="20px"
+                android:text="Footer Message"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:padding="20px"
+                android:layout_width="match_parent"
+                android:id="@+id/footerMsg"
+                android:layout_columnSpan="3"></EditText>
+            <TextView
+                android:padding="20px"
+                android:text="Printer Type"
+                android:textStyle="bold"></TextView>
+            <RadioButton
+                android:padding = "20px"
+                android:text="Wifi"
+                android:id="@+id/radioBtnWifi"
+                android:checked="true"
+                android:textStyle="bold">
+            </RadioButton>
+            <RadioButton
+                android:padding = "20px"
+                android:text="Bluetooth"
+                android:id="@+id/radioBtnBluetooth"
+                android:layout_columnSpan="2"
+                android:textStyle="bold">
+            </RadioButton>
+            <TextView
+                android:padding="20px"
+                android:text="Bluetooth Device"
+                android:textStyle="bold"
+                android:id="@+id/txtViewBlutooth"
+                ></TextView>
+            <Spinner
+                android:spinnerMode="dialog"
+                android:layout_height="wrap_content"
+                android:focusableInTouchMode="true"
+                android:layout_columnSpan="3"
+                android:id="@+id/bltDevice"></Spinner>
+            <TextView
+                android:padding="20px"
+                android:id="@+id/rptsizetxt"
+                android:text="Receipt Size"
+                android:textStyle="bold"></TextView>
+            <RadioButton
+                android:id="@+id/radiobtn2Inch"
+                android:checked="false"
+                android:padding = "20px"
+                android:text="2 inch"
+                android:textStyle="bold">
+            </RadioButton>
+            <RadioButton
+                android:id="@+id/radiobtn3Inch"
+                android:checked="false"
+                android:padding = "20px"
+                android:text="3 inch"
+                android:textStyle="bold">
+            </RadioButton>
+            <RadioButton
+                android:id="@+id/radiobtn4Inch"
+                android:checked="false"
+                android:padding = "20px"
+                android:text="4 inch"
+                android:textStyle="bold">
+            </RadioButton>
+            <TextView
+                android:padding="20px"
+                android:id="@+id/includeMRPTxt"
+                android:text="Include MRP"
+                android:textStyle="bold"></TextView>
+            <CheckBox
+                android:id="@+id/includeMRP"
+                android:layout_columnSpan="3"
+                android:padding="20px"
+                android:text="Include MRP in Receipt"
+                android:textStyle="bold|italic"></CheckBox>
+            <TextView
+                android:padding="20px"
+                android:text="Receipt Printer"
+                android:id="@+id/txtViewIPAddress"
+                android:textStyle="bold"></TextView>
+            <EditText
+                android:padding="20px"
+                android:layout_width="match_parent"
+                android:id="@+id/printerIP"
+                android:layout_columnSpan="3"></EditText>
+            <TextView
+                android:padding="20px"
+                android:id="@+id/kotoption"
+                android:text="KOT Selection"
+                android:textStyle="bold"></TextView>
+            <CheckBox
+                android:id="@+id/enableKOT"
+                android:layout_columnSpan="3"
+                android:checked="false"
+                android:padding="20px"
+                android:text="Print KOT"
+                android:textStyle="bold|italic"></CheckBox>
+            <TextView
+                android:padding="20px"
+                android:text="KOT Printer"
+                android:id="@+id/txtViewIPAddressKOT"
+                android:textStyle="bold"></TextView>
+            <EditText
+                android:padding="20px"
+                android:layout_width="match_parent"
+                android:id="@+id/KOTprinterIP"
+                android:layout_columnSpan="3"></EditText>
+            <TextView
+                android:padding="20px"
+                android:text="No of Bill Copies"
+                android:textStyle="bold"></TextView>
+            <EditText
+                android:padding="20px"
+                android:layout_width="wrap_content"
+                android:inputType="number"
+                android:id="@+id/billcopies"
+                android:layout_columnSpan="3"></EditText>
+            <ImageView
+                android:id="@+id/imgView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"></ImageView>
+            <Button
+                android:id="@+id/buttonLoadPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center"
+                android:layout_weight="0"
+                android:text="Load Picture"></Button>
+            <Button android:layout_column="2"
+                android:text="Save"
+                android:id="@+id/btnSave"></Button>
+        </GridLayout>
+    </LinearLayout>
+    </ScrollView>
+</LinearLayout>>
