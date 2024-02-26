@@ -33,4 +33,7 @@ public class Common {
     public static boolean openSettings;
     public static Date billDate;
     public  static  String RptSize;
+    public final static String SettingsPassCode = "6565";
+    public  static boolean isAuthenticated;
+    public  static String userPasscode="6565";
 }

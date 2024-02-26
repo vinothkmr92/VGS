@@ -27,10 +27,11 @@
                 android:textStyle="bold"></TextView>
 
             <EditText
-                android:padding="20px"
-                android:layout_width="match_parent"
                 android:id="@+id/headerMsg"
-                android:layout_columnSpan="3"></EditText>
+                android:layout_width="264dp"
+                android:layout_height="62dp"
+                android:layout_columnSpan="3"
+                android:padding="20px"></EditText>
             <TextView
                 android:padding="20px"
                 android:text="Address"
@@ -38,7 +39,8 @@
 
             <EditText
                 android:id="@+id/addressMsg"
-                android:layout_width="match_parent"
+                android:layout_width="254dp"
+                android:layout_height="70dp"
                 android:layout_columnSpan="3"
                 android:padding="20px"></EditText>
             <TextView
@@ -47,10 +49,11 @@
                 android:textStyle="bold"></TextView>
 
             <EditText
-                android:padding="20px"
-                android:layout_width="match_parent"
                 android:id="@+id/footerMsg"
-                android:layout_columnSpan="3"></EditText>
+                android:layout_width="256dp"
+                android:layout_height="68dp"
+                android:layout_columnSpan="3"
+                android:padding="20px"></EditText>
             <TextView
                 android:padding="20px"
                 android:text="Printer Type"
@@ -160,6 +163,19 @@
                 android:inputType="number"
                 android:id="@+id/billcopies"
                 android:layout_columnSpan="3"></EditText>
+            <TextView
+                android:padding="20px"
+                android:text="Passcode"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/userpasscode"
+                android:layout_width="184dp"
+                android:layout_columnSpan="3"
+                android:inputType="number"
+                android:maxLength="4"
+                android:padding="20px"
+                android:password="true"></EditText>
             <ImageView
                 android:id="@+id/imgView"
                 android:layout_width="100dp"

@@ -27,8 +27,12 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Executor;
 
 public class SaleReportActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -81,6 +86,11 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     ImageButton btnExportExcel;
     private static SaleReportActivity instance;
 
+    public static String billNoToDelete;
+    private static String billDateToDelete;
+    private Executor executor;
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
     public static SaleReportActivity getInstance() {
         return instance;
     }
@@ -406,6 +416,44 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         datePickerDialog = new DatePickerDialog(SaleReportActivity.this,myDateListener,year,month,day);
         todatePickerDialog = new DatePickerDialog(SaleReportActivity.this,mytoDateListener,year,month,day);
         instance = this;
+        executor = ContextCompat.getMainExecutor(this);
+        biometricPrompt = new BiometricPrompt(SaleReportActivity.this,
+                executor, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode,
+                                              @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+                Toast.makeText(getApplicationContext(),
+                                "Authentication error: " + errString, Toast.LENGTH_SHORT)
+                        .show();
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(
+                    @NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                Toast.makeText(getApplicationContext(),
+                        "Authentication succeeded!", Toast.LENGTH_SHORT).show();
+                if(!billDateToDelete.isEmpty() && !billNoToDelete.isEmpty()){
+                    DeleteBill();
+                }
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+                Toast.makeText(getApplicationContext(), "Authentication failed",
+                                Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+
+        promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Biometric Authentication MPOS")
+                .setSubtitle("Please Authenticate to Delete Bill")
+                .setNegativeButtonText("Use account password")
+                .build();
+
     }
 
     private void ExportExcel(){
@@ -528,20 +576,44 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 }
         }
     }
+    public  void DeleteBill(){
+        try{
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+            SimpleDateFormat formatwithtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
+            Date billds = format.parse(billDateToDelete);
+            dbHelper.DeleteBill(format.format(billds),billNoToDelete);
+            showCustomDialog("MSG","Deleted bill successfully");
+            LoadSaleReport();
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
+        }
+    }
     public void DeleteBill(String billdetail){
         try{
             String[] bd = billdetail.split("~");
             if(bd.length>1){
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
-                SimpleDateFormat formatwithtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
-                Date billds = format.parse(bd[1]);
-                dbHelper.DeleteBill(format.format(billds),bd[0]);
-                showCustomDialog("MSG","Deleted bill sucessfully");
-                LoadSaleReport();
+                billDateToDelete = bd[1];
+                billNoToDelete = bd[0];
+                PasscodeActivity.srpInstance= this;
+                PasscodeActivity.isUserPasscode = true;
+                Intent intendt = new Intent(this,PasscodeActivity.class);
+                startActivityForResult(intendt,123);
             }
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 123:
+                if (Common.isAuthenticated) {
+                    DeleteBill();
+                }
+                break;
         }
     }
     public void PrintBill(String billdetail){

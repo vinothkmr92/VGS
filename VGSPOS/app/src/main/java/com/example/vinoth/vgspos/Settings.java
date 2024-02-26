@@ -48,6 +48,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private static int RESULT_LOAD_IMAGE = 1;
     EditText editTextHeaderMsg;
     EditText editTextFooterMsg;
+    EditText txtViewuserpasscode;
 
     private final ActivityResultLauncher<Intent> storeageActivitytResultLanucher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -135,6 +136,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         checkBoxIncludeMRP = (CheckBox)findViewById(R.id.includeMRP);
         loadPictureBtn = (Button)findViewById(R.id.buttonLoadPicture);
         imageView = (ImageView)findViewById(R.id.imgView);
+        txtViewuserpasscode = (EditText) findViewById(R.id.userpasscode);
+        txtViewuserpasscode.setText(Common.userPasscode);
         byte[] ic = dbHelper.GetReceiptIcon();
         if(ic!=null){
             Bitmap bitmap = BitmapFactory.decodeByteArray(ic,0,ic.length);
@@ -305,8 +308,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         btnclerlogo.setOnClickListener(this);
         loadPictureBtn.setOnClickListener(this);
         if(!Common.openSettings){
-            Intent page = new Intent(this,SecuredAccess.class);
-            page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PasscodeActivity.isUserPasscode = false;
+            Intent page = new Intent(this,PasscodeActivity.class);
+            //page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(page);
         }
         if(!checkFilePermission()){
@@ -442,6 +446,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             Common.RptSize = rptSize;
             Common.printKOT = enablekot.isChecked();
             Common.kotprinterIP = kotprinterip;
+            Common.userPasscode = txtViewuserpasscode.getText().toString();
             showCustomDialog("Saved","Successfully Saved Data",true);
         }
         catch (Exception ex){

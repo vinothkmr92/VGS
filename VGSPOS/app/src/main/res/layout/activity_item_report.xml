@@ -89,12 +89,35 @@
             android:text="Print"
             android:background="@drawable/ic_baseline_print_24"
             android:id="@+id/btnrptprint"></ImageButton>
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/btnshareExcel"
+            android:layout_width="150px"
+            android:layout_height="150px"
+            android:background="@drawable/baseline_share_24">
+        </ImageButton>
 
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:paddingTop="150dp"
+        tools:ignore="MissingConstraints">
+        <TextView
+            android:id="@+id/ttAmtPrdReport"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="₹ 000"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="50dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
         android:paddingTop="40dp"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -102,25 +125,43 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:contentDescription="@string/app_name"
+
             tools:ignore="MissingConstraints">
 
             <GridLayout
                 android:id="@+id/gridDataRpt"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:columnCount="2"
+                android:columnCount="4"
                 tools:ignore="MissingConstraints">
 
                 <TextView
-                    android:layout_width="266dp"
-                    android:padding="50px"
-                    android:text="Item Name"
+                    android:layout_width="wrap_content"
+                    android:padding="10px"
+                    android:text="ID"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"></TextView>
+
+
+                <TextView
+                    android:text="ITEM NAME                               "
+                    android:textColor="@android:color/black"
                     android:textStyle="bold"></TextView>
 
                 <TextView
-                    android:padding="50px"
+                    android:padding="10px"
                     android:text="QTY"
+                    android:textColor="@android:color/black"
                     android:textStyle="bold"></TextView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:padding="10px"
+                    android:text="AMT"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"></TextView>
+
             </GridLayout>
         </ScrollView>
     </LinearLayout>
