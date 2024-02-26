@@ -279,29 +279,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<ItemsRpt> GetReports(String frmDt,String toDt,String waiter,boolean isStockRpt){
        ArrayList<ItemsRpt> report = new ArrayList<>();
+        ArrayList<Item> items = GetItems();
        if(isStockRpt){
-           ArrayList<Item> items = GetItems();
            for (Item item:
                 items) {
                ItemsRpt rpt = new ItemsRpt();
+               rpt.setItemID(String.valueOf(item.getItem_No()));
                rpt.setItemName(item.getItem_Name());
                rpt.setQuantity(item.getStocks());
+               rpt.setAmount(item.getPrice()*item.getStocks());
                report.add(rpt);
            }
        }
        else{
            SQLiteDatabase db = this.getWritableDatabase();
-           String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE DATE(BILL_DATE)>='"+frmDt+"' AND DATE(BILL_DATE)<='"+toDt+"' GROUP BY ITEM_NAME";
+           String query = "SELECT ITEM_NAME,SUM(QUANTITY),SUM(QUANTITY*PRICE) AS AMT FROM BILLS_ITEM WHERE DATE(BILL_DATE)>='"+frmDt+"' AND DATE(BILL_DATE)<='"+toDt+"' GROUP BY ITEM_NAME";
            if(!waiter.equals("ALL")){
                query = query+" AND WAITER='"+waiter+"' GROUP BY ITEM_NAME";
            }
            Cursor cur = db.rawQuery(query,null);
+
            if(cur.getCount()>0){
                while (cur.moveToNext()){
                    ItemsRpt r = new ItemsRpt();
                    String name = cur.getString(0);
+                   Item item = null;
+                   for (Item i:
+                        items) {
+                       if(i.getItem_Name().equals(name)){
+                           r.setItemID(String.valueOf(i.getItem_No()));
+                           break;
+                       }
+                   }
                    r.setItemName(name);
                    r.setQuantity(cur.getDouble(1));
+                   r.setAmount(cur.getDouble(2));
                    report.add(r);
                }
            }   

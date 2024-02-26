@@ -3,7 +3,6 @@ package com.example.vinoth.vgspos;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -629,7 +628,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         tItem.setText("0");
         tQty.setText("0");
         estAmt.setText("₹ 000");
-        showCustomDialog("Info","Items Cleared.");
+        //showCustomDialog("Info","Items Cleared.");
         itemName.requestFocus();
     }
     public void OpenAddCustomerDialog(){
