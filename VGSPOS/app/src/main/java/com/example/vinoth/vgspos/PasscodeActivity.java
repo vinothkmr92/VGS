@@ -37,10 +37,70 @@ public class PasscodeActivity extends AppCompatActivity {
         editTextPasscode_4 = (EditText)findViewById(R.id.passcode_4);
         String localPasscode = isUserPasscode?Common.userPasscode:Common.SettingsPassCode;
         ValidatePasscode(editTextPasscode_4);
-        HandleEditText(editTextPasscode_1,editTextPasscode_2,null);
-        HandleEditText(editTextPasscode_2,editTextPasscode_3,editTextPasscode_1);
-        HandleEditText(editTextPasscode_3,editTextPasscode_4,editTextPasscode_2);
-        HandleEditText(editTextPasscode_4,null,editTextPasscode_3);
+        editTextPasscode_1.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                boolean valid = (keyCode==KeyEvent.KEYCODE_0 || keyCode==KeyEvent.KEYCODE_1
+                        || keyCode==KeyEvent.KEYCODE_2|| keyCode==KeyEvent.KEYCODE_3
+                        || keyCode==KeyEvent.KEYCODE_4|| keyCode==KeyEvent.KEYCODE_5
+                        || keyCode==KeyEvent.KEYCODE_6|| keyCode==KeyEvent.KEYCODE_7
+                        || keyCode==KeyEvent.KEYCODE_8|| keyCode==KeyEvent.KEYCODE_9);
+                if(valid){
+                    editTextPasscode_2.requestFocus();
+                }
+                else if(keyCode==67) {
+                    editTextPasscode_1.selectAll();
+                    editTextPasscode_1.requestFocus();
+                }
+                return false;
+            }
+        });
+        editTextPasscode_2.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                boolean valid = (keyCode==KeyEvent.KEYCODE_0 || keyCode==KeyEvent.KEYCODE_1
+                        || keyCode==KeyEvent.KEYCODE_2|| keyCode==KeyEvent.KEYCODE_3
+                        || keyCode==KeyEvent.KEYCODE_4|| keyCode==KeyEvent.KEYCODE_5
+                        || keyCode==KeyEvent.KEYCODE_6|| keyCode==KeyEvent.KEYCODE_7
+                        || keyCode==KeyEvent.KEYCODE_8|| keyCode==KeyEvent.KEYCODE_9);
+                if(valid){
+                    editTextPasscode_3.requestFocus();
+                }
+                else if(keyCode==67) {
+                    editTextPasscode_1.selectAll();
+                    editTextPasscode_1.requestFocus();
+                }
+                return false;
+            }
+        });
+        editTextPasscode_3.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                boolean valid = (keyCode==KeyEvent.KEYCODE_0 || keyCode==KeyEvent.KEYCODE_1
+                        || keyCode==KeyEvent.KEYCODE_2|| keyCode==KeyEvent.KEYCODE_3
+                        || keyCode==KeyEvent.KEYCODE_4|| keyCode==KeyEvent.KEYCODE_5
+                        || keyCode==KeyEvent.KEYCODE_6|| keyCode==KeyEvent.KEYCODE_7
+                        || keyCode==KeyEvent.KEYCODE_8|| keyCode==KeyEvent.KEYCODE_9);
+                if(valid){
+                    editTextPasscode_4.requestFocus();
+                }
+                else if(keyCode==67) {
+                    editTextPasscode_2.selectAll();
+                    editTextPasscode_2.requestFocus();
+                }
+                return false;
+            }
+        });
+        editTextPasscode_4.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode==67) {
+                    editTextPasscode_3.selectAll();
+                    editTextPasscode_3.requestFocus();
+                }
+                return false;
+            }
+        });
         editTextPasscode_1.requestFocus();
         showKeyboard();
     }
@@ -53,34 +113,7 @@ public class PasscodeActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
-    private void showSoftKeyboard(View view) {
-        if (view.requestFocus()) {
-            InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            // here is one more tricky issue
-            // imm.showSoftInputMethod doesn't work well
-            // and imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0) doesn't work well for all cases too
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        }
-    }
-    private void HandleEditText(EditText editText,EditText next,EditText prev){
-        editText.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                boolean valid = (keyCode==KeyEvent.KEYCODE_0 || keyCode==KeyEvent.KEYCODE_1
-                        || keyCode==KeyEvent.KEYCODE_2|| keyCode==KeyEvent.KEYCODE_3
-                        || keyCode==KeyEvent.KEYCODE_4|| keyCode==KeyEvent.KEYCODE_5
-                        || keyCode==KeyEvent.KEYCODE_6|| keyCode==KeyEvent.KEYCODE_7
-                        || keyCode==KeyEvent.KEYCODE_8|| keyCode==KeyEvent.KEYCODE_9);
-                if(valid && next!=null){
-                    next.requestFocus();
-                }
-                else if(keyCode==67 && prev!=null) {
-                    prev.requestFocus();
-                }
-                return false;
-            }
-        });
-    }
+
     private void   ValidatePasscode(EditText search){
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

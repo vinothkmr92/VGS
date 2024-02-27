@@ -50,6 +50,8 @@
             android:password="true"
             android:textAlignment="center"
             android:textSize="45dp"
+            android:imeOptions="actionNext"
+            android:nextFocusRight="@id/passcode_2"
             android:textStyle="bold"></EditText>
 
         <EditText
@@ -64,6 +66,8 @@
             android:password="true"
             android:textAlignment="center"
             android:textSize="45dp"
+            android:imeOptions="actionNext"
+            android:nextFocusRight="@id/passcode_3"
             android:textStyle="bold"></EditText>
 
         <EditText
@@ -77,6 +81,8 @@
             android:padding="40px"
             android:password="true"
             android:textAlignment="center"
+            android:imeOptions="actionNext"
+            android:nextFocusRight="@id/passcode_4"
             android:textSize="45dp"
             android:textStyle="bold"></EditText>
 
