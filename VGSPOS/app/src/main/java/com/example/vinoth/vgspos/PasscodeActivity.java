@@ -22,15 +22,20 @@ public class PasscodeActivity extends AppCompatActivity {
 
     public static boolean isUserPasscode;
     public static SaleReportActivity srpInstance;
+<<<<<<< HEAD
     EditText editTextPasscode_1;
     EditText editTextPasscode_2;
     EditText editTextPasscode_3;
     EditText editTextPasscode_4;
+=======
+    EditText editTextPasscode;
+>>>>>>> origin/master
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passcode);
+<<<<<<< HEAD
         editTextPasscode_1 = (EditText)findViewById(R.id.passcode_1);
         editTextPasscode_2 = (EditText)findViewById(R.id.passcode_2);
         editTextPasscode_3 = (EditText)findViewById(R.id.passcode_3);
@@ -52,6 +57,13 @@ public class PasscodeActivity extends AppCompatActivity {
     public void closeKeyboard(){
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+=======
+        editTextPasscode = (EditText)findViewById(R.id.passcode);
+        String localPasscode = isUserPasscode?Common.userPasscode:Common.SettingsPassCode;
+        ValidatePasscode(editTextPasscode);
+        editTextPasscode.requestFocus();
+        showSoftKeyboard(editTextPasscode);
+>>>>>>> origin/master
     }
     private void showSoftKeyboard(View view) {
         if (view.requestFocus()) {
@@ -62,6 +74,7 @@ public class PasscodeActivity extends AppCompatActivity {
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
     }
+<<<<<<< HEAD
     private void HandleEditText(EditText editText,EditText next,EditText prev){
         editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -81,16 +94,22 @@ public class PasscodeActivity extends AppCompatActivity {
             }
         });
     }
+=======
+>>>>>>> origin/master
     private void   ValidatePasscode(EditText search){
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == EditorInfo.IME_ACTION_DONE){
+<<<<<<< HEAD
                     String firstDigit = editTextPasscode_1.getText().toString();
                     String secondDigit = editTextPasscode_2.getText().toString();
                     String thirdDigit = editTextPasscode_3.getText().toString();
                     String fourthDigit = editTextPasscode_4.getText().toString();
                     String enteredval = firstDigit+secondDigit+thirdDigit+fourthDigit;
+=======
+                    String enteredval = editTextPasscode.getText().toString();
+>>>>>>> origin/master
                     String valuetoCompare = isUserPasscode?Common.userPasscode:Common.SettingsPassCode;
                     Common.isAuthenticated = isUserPasscode?enteredval.equals(valuetoCompare):false;
                     Common.openSettings = !isUserPasscode?enteredval.equals(valuetoCompare):false;

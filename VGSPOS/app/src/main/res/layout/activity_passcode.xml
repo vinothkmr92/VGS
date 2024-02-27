@@ -15,12 +15,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints">
+<<<<<<< HEAD
 
+=======
+    <!-- Passcode view , which is imported
+         from the dependency which have been added in
+         gradle file-->
+>>>>>>> origin/master
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="serif"
+<<<<<<< HEAD
             android:text="Enter 4 Digit Passcode"
             android:textAlignment="center"
             android:textAllCaps="false"
@@ -83,17 +90,37 @@
         <EditText
             android:id="@+id/passcode_4"
             android:layout_width="70dp"
+=======
+            android:text="Enter 5 Digit Passcode"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="25dp"
+            android:textStyle="bold|italic"
+            android:typeface="serif"></TextView>
+        <EditText
+            android:id="@+id/passcode"
+            android:layout_width="wrap_content"
+>>>>>>> origin/master
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:focusedByDefault="true"
             android:inputType="number"
+<<<<<<< HEAD
             android:maxLength="1"
             android:padding="40px"
+=======
+            android:maxLength="4"
+>>>>>>> origin/master
             android:password="true"
             android:textAlignment="center"
             android:textSize="45dp"
             android:textStyle="bold"></EditText>
     </LinearLayout>
+<<<<<<< HEAD
     </LinearLayout>
+=======
+>>>>>>> origin/master
 
 </androidx.constraintlayout.widget.ConstraintLayout>
