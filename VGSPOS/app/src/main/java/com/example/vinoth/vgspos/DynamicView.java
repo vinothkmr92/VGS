@@ -23,7 +23,7 @@ public class DynamicView implements View.OnClickListener {
         btnView.setBackgroundResource(R.drawable.close);
         btnView.setOnClickListener(this);
         btnView.setTag(index);
-        btnView.setLayoutParams(new LinearLayout.LayoutParams(50, 50));
+        btnView.setLayoutParams(new LinearLayout.LayoutParams(100, 100));
         return btnView;
     }
     public TextView snoTextView(Context context, String text){

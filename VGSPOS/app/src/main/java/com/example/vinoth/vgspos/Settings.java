@@ -316,6 +316,22 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         if(!checkFilePermission()){
             requestStoragePermission();
         }
+        txtViewuserpasscode.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+            public void onFocusChange(View v, boolean hasFocus){
+                String txt = editTextaddressline.getText().toString();
+                if(hasFocus && !txt.isEmpty()){
+                    ((EditText)v).selectAll();
+                }
+            }
+        });
+        editTextbillcopies.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+            public void onFocusChange(View v, boolean hasFocus){
+                String txt = editTextbillcopies.getText().toString();
+                if(hasFocus && !txt.isEmpty()){
+                    ((EditText)v).selectAll();
+                }
+            }
+        });
     }
 
     public void requestStoragePermission(){

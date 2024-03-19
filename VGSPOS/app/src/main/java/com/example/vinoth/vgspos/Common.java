@@ -16,6 +16,7 @@ public class Common {
     public static String waiter;
     public static boolean includeMRPinReceipt;
     public static int billNo;
+    public static double discount;
     public static String saleReportFrmDate;
     public static String saleReportToDate;
     public static boolean isItemWiseRptBill;

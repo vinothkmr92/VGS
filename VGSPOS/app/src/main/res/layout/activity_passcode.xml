@@ -39,61 +39,14 @@
         tools:ignore="MissingConstraints">
 
         <EditText
-            android:id="@+id/passcode_1"
-            android:layout_width="70dp"
+            android:id="@+id/passcode"
+            android:layout_width="241dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:focusedByDefault="true"
+            android:imeOptions="actionDone"
             android:inputType="number"
-            android:maxLength="1"
-            android:padding="40px"
-            android:password="true"
-            android:textAlignment="center"
-            android:textSize="45dp"
-            android:imeOptions="actionNext"
-            android:nextFocusRight="@id/passcode_2"
-            android:textStyle="bold"></EditText>
-
-        <EditText
-            android:id="@+id/passcode_2"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:focusedByDefault="true"
-            android:inputType="number"
-            android:maxLength="1"
-            android:padding="40px"
-            android:password="true"
-            android:textAlignment="center"
-            android:textSize="45dp"
-            android:imeOptions="actionNext"
-            android:nextFocusRight="@id/passcode_3"
-            android:textStyle="bold"></EditText>
-
-        <EditText
-            android:id="@+id/passcode_3"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:focusedByDefault="true"
-            android:inputType="number"
-            android:maxLength="1"
-            android:padding="40px"
-            android:password="true"
-            android:textAlignment="center"
-            android:imeOptions="actionNext"
-            android:nextFocusRight="@id/passcode_4"
-            android:textSize="45dp"
-            android:textStyle="bold"></EditText>
-
-        <EditText
-            android:id="@+id/passcode_4"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:focusedByDefault="true"
-            android:inputType="number"
-            android:maxLength="1"
+            android:maxLength="4"
             android:padding="40px"
             android:password="true"
             android:textAlignment="center"

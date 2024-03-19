@@ -39,6 +39,7 @@ import androidx.core.content.ContextCompat;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -78,7 +79,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnEnter;
     private ImageButton btnAddCustomer;
 
-
+    private EditText discountperEditText;
+    private EditText discountAmtEditText;
     public static HomeActivity instance;
     public  EditText priceTxt;
     private static String[] PERMISSIONS_BLUETOOTH = {
@@ -121,6 +123,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             itemName = (EditText) findViewById(R.id.itemName);
             Quantity = (EditText) findViewById(R.id.qty);
             tQty = (TextView) findViewById(R.id.ttQty);
+            discountAmtEditText = (EditText)findViewById(R.id.discountamt);
+            discountperEditText = (EditText)findViewById(R.id.discountpercent);
             tItem = (TextView) findViewById(R.id.ttItem);
             estAmt = (TextView)findViewById(R.id.estimateAmt);
             priceTxt = (EditText)findViewById(R.id.itemPrice);
@@ -195,6 +199,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             else{
                 showCustomDialog("Msg","Please connect to internet and Try again.",true);
             }
+
+            discountAmtEditText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+                public void onFocusChange(View v, boolean hasFocus){
+                    String txt = discountAmtEditText.getText().toString();
+                    if(hasFocus && !txt.isEmpty()){
+                        ((EditText)v).selectAll();
+                    }
+                }
+            });
+            discountperEditText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+                public void onFocusChange(View v, boolean hasFocus){
+                    String txt = discountperEditText.getText().toString();
+                    if(hasFocus && !txt.isEmpty()){
+                        ((EditText)v).selectAll();
+                    }
+                }
+            });
             searchTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -298,8 +319,40 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             instance = this;
+            itemNo.requestFocus();
         } catch (Exception ex) {
             showCustomDialog("Error", ex.getMessage());
+        }
+    }
+    private double GetBillAmt(){
+        double totalAmt = 0;
+        for(int i=0;i<Common.itemsCarts.size();i++){
+            ItemsCart itemsCart = Common.itemsCarts.get(i);
+            double amt = itemsCart.getQty()*itemsCart.getPrice();
+            totalAmt+=amt;
+        }
+        return totalAmt;
+    }
+    private void CalculateDiscountPer(){
+        double billAmt = GetBillAmt();
+        if(billAmt>0){
+            double discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
+            double discountper = (discountAmt/billAmt)*100;
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            double finalBillValue = billAmt-discountAmt;
+            discountperEditText.setText(String.format("%.2f",discountper));
+            estAmt.setText("₹ "+String.format("%.0f",finalBillValue));
+        }
+    }
+    private void CalculateDiscountAmt(){
+        double billAmt = GetBillAmt();
+        if(billAmt>0){
+            double discountper = Double.valueOf(discountperEditText.getText().toString());
+            double discountAmt = billAmt*(discountper/100);
+            discountAmt = Math.round(discountAmt);
+            double finalBillValue = billAmt-discountAmt;
+            discountAmtEditText.setText(String.format("%.0f",discountAmt));
+            estAmt.setText("₹ "+String.format("%.0f",finalBillValue));
         }
     }
     private void OpenItemSearchDialog(){
@@ -550,10 +603,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 int index = GetItematIndex(items,item.getItem_No());
                 if(index>-1){
                     ItemsCart existingitem = items.get(index);
-                    int qty = item.getQty();
-                    qty+=existingitem.getQty();
-                    item.setQty(qty);
-                    items.remove(index);
+                    if(existingitem.getPrice() == item.getPrice()){
+                        int qty = item.getQty();
+                        qty+=existingitem.getQty();
+                        item.setQty(qty);
+                        items.remove(index);
+                    }
                 }
             items.add(item);
         }
@@ -628,8 +683,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         tItem.setText("0");
         tQty.setText("0");
         estAmt.setText("₹ 000");
+        discountperEditText.setText("");
+        discountAmtEditText.setText("");
         //showCustomDialog("Info","Items Cleared.");
-        itemName.requestFocus();
+        itemNo.requestFocus();
     }
     public void OpenAddCustomerDialog(){
         try {
@@ -684,6 +741,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                           priceTxt.setText(sr);
                       }
                   }
+                  else if(discountAmtEditText.isFocused()){
+                      String sr = discountAmtEditText.getText().toString();
+                      if(sr.length()>0){
+                          sr = sr.substring(0,sr.length()-1);
+                          discountAmtEditText.setText(sr);
+                      }
+                  }
+                  else if(discountperEditText.isFocused()){
+                      String sr = discountperEditText.getText().toString();
+                      if(sr.length()>0){
+                          sr = sr.substring(0,sr.length()-1);
+                          discountperEditText.setText(sr);
+                      }
+                  }
                   break;
            case R.id.viewitems:
                SortItemsCarts();
@@ -696,12 +767,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     showCustomDialog("Warning","Please add items into KOT");
                 }
                 QuantityListener.itemsCarts = Common.itemsCarts;
-                double totalAmt = 0;
-                for(int i=0;i<Common.itemsCarts.size();i++){
-                    ItemsCart itemsCart = Common.itemsCarts.get(i);
-                    double amt = itemsCart.getQty()*itemsCart.getPrice();
-                    totalAmt+=amt;
+                double totalAmt = GetBillAmt();
+                double discountAmt = 0;
+                if(!discountAmtEditText.getText().toString().isEmpty()){
+                    discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
                 }
+                totalAmt = totalAmt-discountAmt;
                 String ttamtStr = "₹ "+String.format("%.0f",totalAmt);
                 estAmt.setText(ttamtStr);
                break;
@@ -715,6 +786,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                    String sr = Quantity.getText().toString();
                    sr +=".";
                    Quantity.setText(sr);
+               }
+               else if(discountperEditText.isFocused()){
+                   String sr = discountperEditText.getText().toString();
+                   sr+=".";
+                   discountperEditText.setText(sr);
                }
                break;
            case R.id.menu:
@@ -741,6 +817,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                if(priceTxt.isFocused()){
                    Quantity.requestFocus();
                }
+               else if(discountperEditText.isFocused()){
+                   CalculateDiscountAmt();
+               }
+               else if(discountAmtEditText.isFocused()){
+                   CalculateDiscountPer();
+               }
                else{
                    LoadProductNameandPrice();
                }
@@ -763,10 +845,35 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                        sr+=addstr;
                        itemNo.setText(sr);
                    }
+                   else if(discountperEditText.isFocused()){
+                       int startSelection = discountperEditText.getSelectionStart();
+                       int endSelection = discountperEditText.getSelectionEnd();
+                       String selectedText = discountperEditText.getText().toString().substring(startSelection,endSelection);
+                       if(!selectedText.isEmpty()){
+                           discountperEditText.setText(addstr);
+                       }
+                       else {
+                           String sr = discountperEditText.getText().toString();
+                           sr+=addstr;
+                           discountperEditText.setText(sr);
+                       }
+                   }
+                   else if(discountAmtEditText.isFocused()){
+                       int startSelection = discountAmtEditText.getSelectionStart();
+                       int endSelection = discountAmtEditText.getSelectionEnd();
+                       String selectedText = discountAmtEditText.getText().toString().substring(startSelection,endSelection);
+                       if(!selectedText.isEmpty()){
+                           discountAmtEditText.setText(addstr);
+                       }
+                       else {
+                           String sr = discountAmtEditText.getText().toString();
+                           sr+=addstr;
+                           discountAmtEditText.setText(sr);
+                       }
+                   }
                    else if(Quantity.isFocused()){
                        int startSelection=Quantity.getSelectionStart();
                        int endSelection=Quantity.getSelectionEnd();
-
                        String selectedText = Quantity.getText().toString().substring(startSelection, endSelection);
                        if(!selectedText.isEmpty()){
                            Quantity.setText(addstr);
@@ -784,7 +891,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                        priceTxt.setText(sr);
                    }
                    break;
-
        }
     }
     public void LoadTotalAmt(){
@@ -824,12 +930,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             itemsCarts = new ArrayList<ItemsCart>();
         }
         if(itemsCarts.size()>0){
-            Integer index = itemsCarts.indexOf(itc);
-            if(index != -1){
-                ItemsCart temp = itemsCarts.get(index);
-                Integer newQty = itc.getQty()+temp.getQty();
-                itemsCarts.remove(temp);
-                itc.setQty(newQty);
+            for(int i=0;i<itemsCarts.size();i++){
+                ItemsCart ic = itemsCarts.get(i);
+                if(ic.getItem_No() == itc.getItem_No() && ic.getPrice() == itc.getPrice()){
+                    Integer newQty = itc.getQty()+ic.getQty();
+                    itemsCarts.remove(ic);
+                    itc.setQty(newQty);
+                }
             }
         }
         itemsCarts.add(itc);
@@ -844,6 +951,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date date = new Date();
         String waiter  = searchTxtView.getText().toString();
+        double discountAmt = 0;
+        if(!discountAmtEditText.getText().toString().isEmpty()){
+            discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
+        }
         double saleAmt = 0;
         for(int i=0;i<QuantityListener.itemsCarts.size();i++){
             Bills_Item bi = new Bills_Item();
@@ -866,14 +977,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         bills.setBill_Date(format.format(date));
         bills.setSale_Amt(saleAmt);
         bills.setUser(waiter);
+        bills.setDiscount(discountAmt);
         dbHelper.Insert_Bills(bills);
         int nextBillNo = dbHelper.GetNextBillNo();
         billnoTxtView.setText(String.valueOf(nextBillNo));
+        Common.discount = discountAmt;
         return newbillno;
     }
     public void RefreshViews(){
         this.itemName.setText("");
         this.Quantity.setText("");
+        this.discountAmtEditText.setText("");
+        this.discountperEditText.setText("");
         if(Common.itemsCarts!=null){
             Common.itemsCarts.clear();
         }

@@ -201,12 +201,13 @@ public class PrintWifi {
         posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME             QTY      PRICE    AMOUNT\n");
         posPtr.printNormal("----------------------------------------------\n");
         double totalAmt = 0d;
+        double billAmt = 0d;
         for(int k=0;k<Common.itemsCarts.size();k++){
             String name = Common.itemsCarts.get(k).getItem_Name();
             String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
             String price = String.format("%.0f",Common.itemsCarts.get(k).getPrice());
             Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
-            totalAmt+=amt;
+            billAmt+=amt;
             String amts=String.format("%.0f",amt);
             name = StringUtils.rightPad(name,20);
             qty = StringUtils.leftPad(qty,5);
@@ -215,8 +216,14 @@ public class PrintWifi {
             String line = name+qty+price+amts+"\n";
             posPtr.printNormal(line);
         }
+        if(Common.discount>0){
+            posPtr.printNormal(ESC+"|rATOTAL   : "+String.format("%.0f",billAmt)+"\n");
+            posPtr.printNormal(ESC+"|rADISCOUNT: "+String.format("%.0f",Common.discount)+"\n");
+            posPtr.lineFeed(1);
+        }
+        totalAmt = billAmt-Common.discount;
         String totalamt = String.format("%.0f",totalAmt);
-        String txttotal = "TOTAL: "+totalamt+"/-";
+        String txttotal = "NET TOTAL: "+totalamt+"/-";
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
         posPtr.lineFeed(1);

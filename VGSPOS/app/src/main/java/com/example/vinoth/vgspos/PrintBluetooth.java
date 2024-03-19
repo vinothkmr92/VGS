@@ -473,7 +473,7 @@ public class PrintBluetooth {
                 PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
                 PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
             }
-
+            double billAmt=0;
             double totalAmt=0;
             double mrpTotalAmt = 0d;
             double discountAmt = 0d;
@@ -486,7 +486,7 @@ public class PrintBluetooth {
                 double mrpd = Common.itemsCarts.get(k).getMRP();
                 double mrpamt = mrpd*Common.itemsCarts.get(k).getQty();
                 mrpTotalAmt+=mrpamt;
-                totalAmt+=amt;
+                billAmt+=amt;
                 String amts=String.format("%.0f",amt);
                 if(Common.RptSize.equals("3")){
                     String line = "";
@@ -538,15 +538,24 @@ public class PrintBluetooth {
 
             }
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
-            PrintData("   ",new Formatter().get(),Formatter.leftAlign());
-            if((Common.RptSize.equals("3") || Common.RptSize.equals("4")) && Common.includeMRPinReceipt){
+            totalAmt = billAmt-Common.discount;
+            if(Common.discount>0){
+                PrintData("TOTAL:"+String.format("%.0f",billAmt),new Formatter().get(),Formatter.rightAlign());
+                PrintData("DISCOUNT(-):"+String.format("%.0f",Common.discount),new Formatter().get(),Formatter.rightAlign());
+                PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            }
+            else {
+                PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            }
+            if((Common.RptSize.equals("3") || Common.RptSize.equals("4")) && Common.includeMRPinReceipt &&
+                    Common.discount==0){
                 discountAmt = mrpTotalAmt-totalAmt;
                 String discountAmtStr = String.format("%.0f",discountAmt);
                 String discountxt = "AMOUNT YOU HAVE SAVED: "+discountAmtStr+"/-";
                 PrintData(discountxt,new Formatter().get(),Formatter.rightAlign());
                 PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             }
-            String ttAmtTxt = "TOTAL AMT:"+String.format("%.0f",totalAmt)+"/-";
+            String ttAmtTxt = "NET AMOUNT:"+String.format("%.0f",totalAmt)+"/-";
             PrintData(ttAmtTxt,new Formatter().height().get(),Formatter.centerAlign());
             PrintData("  ",new Formatter().get(),Formatter.leftAlign());
             PrintData(Common.footerMsg,new Formatter().get(),Formatter.centerAlign());

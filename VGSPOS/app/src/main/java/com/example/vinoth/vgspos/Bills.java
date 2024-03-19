@@ -1,14 +1,26 @@
 package com.example.vinoth.vgspos;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class Bills {
     private int Bill_No;
     private String Bill_Date;
     private double Sale_Amt;
     private String user;
+
+    private double Final_Amt;
+    private double Discount;
+
+    public double getFinal_Amt() {
+        Final_Amt = Sale_Amt-Discount;
+        return Final_Amt;
+    }
+
+    public double getDiscount() {
+        return Discount;
+    }
+
+    public void setDiscount(double discount) {
+        Discount = discount;
+    }
 
     public int getBill_No() {
         return Bill_No;
@@ -43,4 +55,5 @@ public class Bills {
     public void setUser(String user) {
         this.user = user;
     }
+
 }

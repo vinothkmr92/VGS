@@ -6,16 +6,16 @@
     android:background="@android:color/background_light"
     tools:context=".Settings">
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:fillViewport="true">
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <GridLayout
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:columnCount="4"
             android:padding="10dp"
@@ -24,39 +24,47 @@
             <TextView
                 android:padding="20px"
                 android:text="Header Message"
+                android:layout_columnSpan="4"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
 
             <EditText
                 android:id="@+id/headerMsg"
-                android:layout_width="264dp"
-                android:layout_height="62dp"
-                android:layout_columnSpan="3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="4"
                 android:padding="20px"></EditText>
             <TextView
                 android:padding="20px"
+                android:layout_columnSpan="4"
                 android:text="Address"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
 
             <EditText
                 android:id="@+id/addressMsg"
-                android:layout_width="254dp"
-                android:layout_height="70dp"
-                android:layout_columnSpan="3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="4"
+                android:inputType="textMultiLine"
                 android:padding="20px"></EditText>
             <TextView
                 android:padding="20px"
                 android:text="Footer Message"
+                android:layout_columnSpan="4"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
 
             <EditText
                 android:id="@+id/footerMsg"
-                android:layout_width="256dp"
-                android:layout_height="68dp"
-                android:layout_columnSpan="3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="4"
                 android:padding="20px"></EditText>
             <TextView
                 android:padding="20px"
                 android:text="Printer Type"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
             <RadioButton
                 android:padding = "20px"
@@ -75,19 +83,23 @@
             <TextView
                 android:padding="20px"
                 android:text="Bluetooth Device"
+                android:layout_columnSpan="4"
                 android:textStyle="bold"
+                android:textColor="@android:color/black"
                 android:id="@+id/txtViewBlutooth"
                 ></TextView>
             <Spinner
                 android:spinnerMode="dialog"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
-                android:layout_columnSpan="3"
+                android:layout_columnSpan="4"
                 android:id="@+id/bltDevice"></Spinner>
             <TextView
                 android:padding="20px"
                 android:id="@+id/rptsizetxt"
                 android:text="Receipt Size"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
             <RadioButton
                 android:id="@+id/radiobtn2Inch"
@@ -114,6 +126,7 @@
                 android:padding="20px"
                 android:id="@+id/includeMRPTxt"
                 android:text="Include MRP"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
             <CheckBox
                 android:id="@+id/includeMRP"
@@ -124,16 +137,19 @@
             <TextView
                 android:padding="20px"
                 android:text="Receipt Printer"
+                android:layout_columnSpan="4"
+                android:textColor="@android:color/black"
                 android:id="@+id/txtViewIPAddress"
                 android:textStyle="bold"></TextView>
             <EditText
                 android:padding="20px"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:id="@+id/printerIP"
-                android:layout_columnSpan="3"></EditText>
+                android:layout_columnSpan="4"></EditText>
             <TextView
                 android:padding="20px"
                 android:id="@+id/kotoption"
+                android:textColor="@android:color/black"
                 android:text="KOT Selection"
                 android:textStyle="bold"></TextView>
             <CheckBox
@@ -146,16 +162,19 @@
             <TextView
                 android:padding="20px"
                 android:text="KOT Printer"
+                android:layout_columnSpan="4"
                 android:id="@+id/txtViewIPAddressKOT"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
             <EditText
                 android:padding="20px"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:id="@+id/KOTprinterIP"
-                android:layout_columnSpan="3"></EditText>
+                android:layout_columnSpan="4"></EditText>
             <TextView
                 android:padding="20px"
                 android:text="No of Bill Copies"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
             <EditText
                 android:padding="20px"
@@ -166,6 +185,7 @@
             <TextView
                 android:padding="20px"
                 android:text="Passcode"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
 
             <EditText
@@ -193,13 +213,20 @@
                 android:id="@+id/btnclearlogo"
                 android:layout_width="100px"
                 android:layout_height="100px"
-                android:layout_columnSpan="2"
+                android:layout_columnSpan="4"
                 android:layout_gravity="left"
                 android:background="@drawable/close">
             </ImageButton>
-            <Button android:layout_column="1"
-                android:text="Save"
-                android:id="@+id/btnSave"></Button>
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="85dp"
+                android:layout_height="54dp"
+                android:layout_columnSpan="4"
+                android:layout_gravity="center"
+                android:width="100px"
+                android:height="100px"
+                android:background="@drawable/save"></Button>
         </GridLayout>
     </LinearLayout>
     </ScrollView>

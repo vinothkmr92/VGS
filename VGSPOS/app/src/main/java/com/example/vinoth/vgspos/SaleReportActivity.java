@@ -122,6 +122,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     public void onBackPressed(){
         Common.billDate = new Date();
         Common.billNo = 0;
+        Common.discount = 0;
         Common.itemsCarts = null;
         Common.waiter = "";
         super.onBackPressed();
@@ -626,6 +627,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 SimpleDateFormat formatwithtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
                 Date billds = format.parse(bd[1]);
                 Date billdt = formatwithtime.parse(bd[1]);
+                Common.discount = dbHelper.GetDiscountOnBill(format.format(billds),bd[0]);
                 ArrayList<Bills_Item> bills = dbHelper.GetBills_Item(format.format(billds),bd[0]);
                 ArrayList<ItemsCart> itemsCarts = new ArrayList<>();
                 for (Bills_Item bi:

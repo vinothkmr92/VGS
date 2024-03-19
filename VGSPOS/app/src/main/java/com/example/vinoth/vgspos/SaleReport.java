@@ -6,6 +6,24 @@ public class SaleReport {
     private String BillDate;
     private String BillNo;
     private Double BillAmount;
+    private Double Discount;
+    private Double SaleAmount;
+
+    public Double getDiscount() {
+        return Discount;
+    }
+
+    public void setDiscount(Double discount) {
+        Discount = discount;
+    }
+
+    public Double getSaleAmount() {
+        return SaleAmount;
+    }
+
+    public void setSaleAmount(Double saleAmount) {
+        SaleAmount = saleAmount;
+    }
 
     private Date billDt;
 

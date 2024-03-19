@@ -22,86 +22,16 @@ public class PasscodeActivity extends AppCompatActivity {
 
     public static boolean isUserPasscode;
     public static SaleReportActivity srpInstance;
-    EditText editTextPasscode_1;
-    EditText editTextPasscode_2;
-    EditText editTextPasscode_3;
-    EditText editTextPasscode_4;
+    EditText editTextPasscode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passcode);
-        editTextPasscode_1 = (EditText)findViewById(R.id.passcode_1);
-        editTextPasscode_2 = (EditText)findViewById(R.id.passcode_2);
-        editTextPasscode_3 = (EditText)findViewById(R.id.passcode_3);
-        editTextPasscode_4 = (EditText)findViewById(R.id.passcode_4);
+        editTextPasscode = (EditText)findViewById(R.id.passcode);
         String localPasscode = isUserPasscode?Common.userPasscode:Common.SettingsPassCode;
-        ValidatePasscode(editTextPasscode_4);
-        editTextPasscode_1.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                boolean valid = (keyCode==KeyEvent.KEYCODE_0 || keyCode==KeyEvent.KEYCODE_1
-                        || keyCode==KeyEvent.KEYCODE_2|| keyCode==KeyEvent.KEYCODE_3
-                        || keyCode==KeyEvent.KEYCODE_4|| keyCode==KeyEvent.KEYCODE_5
-                        || keyCode==KeyEvent.KEYCODE_6|| keyCode==KeyEvent.KEYCODE_7
-                        || keyCode==KeyEvent.KEYCODE_8|| keyCode==KeyEvent.KEYCODE_9);
-                if(valid){
-                    editTextPasscode_2.requestFocus();
-                }
-                else if(keyCode==67) {
-                    editTextPasscode_1.selectAll();
-                    editTextPasscode_1.requestFocus();
-                }
-                return false;
-            }
-        });
-        editTextPasscode_2.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                boolean valid = (keyCode==KeyEvent.KEYCODE_0 || keyCode==KeyEvent.KEYCODE_1
-                        || keyCode==KeyEvent.KEYCODE_2|| keyCode==KeyEvent.KEYCODE_3
-                        || keyCode==KeyEvent.KEYCODE_4|| keyCode==KeyEvent.KEYCODE_5
-                        || keyCode==KeyEvent.KEYCODE_6|| keyCode==KeyEvent.KEYCODE_7
-                        || keyCode==KeyEvent.KEYCODE_8|| keyCode==KeyEvent.KEYCODE_9);
-                if(valid){
-                    editTextPasscode_3.requestFocus();
-                }
-                else if(keyCode==67) {
-                    editTextPasscode_1.selectAll();
-                    editTextPasscode_1.requestFocus();
-                }
-                return false;
-            }
-        });
-        editTextPasscode_3.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                boolean valid = (keyCode==KeyEvent.KEYCODE_0 || keyCode==KeyEvent.KEYCODE_1
-                        || keyCode==KeyEvent.KEYCODE_2|| keyCode==KeyEvent.KEYCODE_3
-                        || keyCode==KeyEvent.KEYCODE_4|| keyCode==KeyEvent.KEYCODE_5
-                        || keyCode==KeyEvent.KEYCODE_6|| keyCode==KeyEvent.KEYCODE_7
-                        || keyCode==KeyEvent.KEYCODE_8|| keyCode==KeyEvent.KEYCODE_9);
-                if(valid){
-                    editTextPasscode_4.requestFocus();
-                }
-                else if(keyCode==67) {
-                    editTextPasscode_2.selectAll();
-                    editTextPasscode_2.requestFocus();
-                }
-                return false;
-            }
-        });
-        editTextPasscode_4.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if(keyCode==67) {
-                    editTextPasscode_3.selectAll();
-                    editTextPasscode_3.requestFocus();
-                }
-                return false;
-            }
-        });
-        editTextPasscode_1.requestFocus();
+        ValidatePasscode(editTextPasscode);
+        editTextPasscode.requestFocus();
         showKeyboard();
     }
     public void showKeyboard(){
@@ -119,18 +49,13 @@ public class PasscodeActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == EditorInfo.IME_ACTION_DONE){
-                    String firstDigit = editTextPasscode_1.getText().toString();
-                    String secondDigit = editTextPasscode_2.getText().toString();
-                    String thirdDigit = editTextPasscode_3.getText().toString();
-                    String fourthDigit = editTextPasscode_4.getText().toString();
-                    String enteredval = firstDigit+secondDigit+thirdDigit+fourthDigit;
+                    String enteredvalue = editTextPasscode.getText().toString();
                     String valuetoCompare = isUserPasscode?Common.userPasscode:Common.SettingsPassCode;
-                    Common.isAuthenticated = isUserPasscode?enteredval.equals(valuetoCompare):false;
-                    Common.openSettings = !isUserPasscode?enteredval.equals(valuetoCompare):false;
+                    Common.isAuthenticated = isUserPasscode?enteredvalue.equals(valuetoCompare):false;
+                    Common.openSettings = !isUserPasscode?enteredvalue.equals(valuetoCompare):false;
                     if(Common.isAuthenticated || Common.openSettings){
                         if(isUserPasscode){
                             Intent resultIntent = new Intent();
-                            //resultIntent.putExtra(...);  // put data that you want returned to activity A
                             setResult(Activity.RESULT_OK, resultIntent);
                             finish();
                         }

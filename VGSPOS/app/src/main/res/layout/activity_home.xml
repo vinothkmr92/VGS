@@ -6,22 +6,21 @@
     android:background="@android:color/background_light"
     tools:context=".HomeActivity">
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:orientation="vertical">
     <GridLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:columnCount="4"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/billnoTxt"
             android:text="1"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:padding="15dp"
             android:textColor="@color/colorRed"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textSize="30dp"
@@ -34,25 +33,25 @@
             android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
             android:gravity="center_vertical"
             android:hint="Select Customer"
-            android:padding="12dp" />
-
+            android:padding="10dp" />
         <ImageButton
             android:id="@+id/btnAddMember"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:layout_width="80px"
-            android:layout_height="80px"
+            android:layout_width="150px"
+            android:layout_height="150px"
             android:background="@drawable/ic_baseline_person_add_24"
-            android:contentDescription="@string/app_name"
-            android:paddingLeft="20dp"
+            android:foreground="?android:attr/selectableItemBackground"
             tools:ignore="TouchTargetSizeCheck"></ImageButton>
+
         <CheckBox
             android:id="@+id/isAC"
             android:text="AC"
+            android:padding="15dp"
             android:textStyle="bold|italic"></CheckBox>
+
     </GridLayout>
     <GridLayout
         android:layout_width="fill_parent"
-        android:layout_height="70px"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:columnCount="1"
         android:orientation="horizontal">
@@ -63,9 +62,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_red_dark"
+            android:foreground="?android:attr/selectableItemBackground"
             android:text="SCAN"
             android:textColor="@android:color/background_light"
-            android:foreground="?android:attr/selectableItemBackground"
             android:textSize="15dp"
             android:textStyle="bold"
             tools:ignore="TouchTargetSizeCheck" />
@@ -175,24 +174,63 @@
                 android:textStyle="bold" />
 
         </GridLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:orientation="horizontal"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="₹ 000"
-            android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/holo_green_dark"
-            android:id="@+id/estimateAmt"
-            android:textSize="80dp"
-            android:textStyle="bold" />
-    </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DISCOUNT  (%)"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textStyle="italic|bold"></TextView>
+
+                <EditText
+                    android:id="@+id/discountpercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:editable="false"
+                    android:focusable="true"
+                    android:minWidth="100px"
+                    android:textColor="@android:color/black"></EditText>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="(₹)"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textStyle="italic|bold"></TextView>
+
+                <EditText
+                    android:id="@+id/discountamt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:editable="false"
+                    android:focusable="true"
+                    android:minWidth="100px"
+                    android:textColor="@android:color/black"></EditText>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="344dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/estimateAmt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="₹ 000"
+                    android:textAppearance="@style/TextAppearance.AppCompat"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:textSize="40dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
         <GridLayout
             android:layout_width="wrap_content"
