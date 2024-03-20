@@ -5,10 +5,10 @@
         android:title="Home"/>
     <item
         android:id="@+id/uploadExcel"
-        android:title="Import/Export"/>
+        android:title="Import/Export Items"/>
     <item
         android:id="@+id/settings"
-        android:title="Settings"/>
+        android:title="App Settings"/>
     <item
         android:id="@+id/itemMaster"
         android:title="Add/Update Items"/>
@@ -16,6 +16,6 @@
         android:id="@+id/saleReort"
         android:title="Sale Report"/>
     <item android:id="@+id/exit"
-        android:title="EXIT"/>
+        android:title="Exit"/>
 
 </menu>

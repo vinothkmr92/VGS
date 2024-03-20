@@ -83,7 +83,7 @@
 
         <EditText
             android:id="@+id/itemNo"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:editable="false"
             android:layout_columnSpan="2"
             android:focusable="true"
@@ -145,9 +145,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:columnCount="6"
+            android:layout_gravity="center"
             android:orientation="horizontal">
             <TextView
-                android:text="    TOTAL QTY:  "
+                android:text="TOTAL QTY:  "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
                 android:textStyle="bold" />
@@ -178,6 +179,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
@@ -217,7 +219,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="344dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
@@ -380,7 +382,7 @@
                 android:layout_gravity="fill"
                 android:background="?attr/actionModeSplitBackground"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:text="PRINT"
+                android:text="SAVE"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
                 android:textStyle="bold" />

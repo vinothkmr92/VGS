@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -111,6 +112,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     Dialog itemSearchdialog;
     ArrayList<String> waiters;
     String android_id;
+    AlertDialog.Builder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -319,9 +321,47 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             instance = this;
+            builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("Print Bill");
+            builder.setMessage("Do you want to print bill ?");
+
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                   dialog.dismiss();
+                    SaveAndPrintBill(true);
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    SaveAndPrintBill(false);
+                }
+            });
+            builder.setCancelable(true);
             itemNo.requestFocus();
         } catch (Exception ex) {
             showCustomDialog("Error", ex.getMessage());
+        }
+    }
+    private void  SaveAndPrintBill(boolean print){
+        int billno = SaveDetails();
+        Common.billNo = billno;
+        Common.billDate = new Date();
+        Common.waiter  = searchTxtView.getText().toString();
+        if(print){
+            if(isWifiPrint){
+                PrintWifi();
+            }
+            else{
+                PrintViaBlueTooth();
+            }
+        }
+        else {
+            RefreshViews();
         }
     }
     private double GetBillAmt(){
@@ -362,7 +402,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         itemSearchdialog.setContentView(R.layout.dialog_items_search);
 
         // set custom height and width
-        itemSearchdialog.getWindow().setLayout(800,800);
+        itemSearchdialog.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
 
         // set transparent background
         itemSearchdialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -757,24 +797,29 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                   }
                   break;
            case R.id.viewitems:
-               SortItemsCarts();
-               QuantityListener.itemsCarts = Common.itemsCarts;
-                if(QuantityListener.itemsCarts.size()>0){
-                    Intent intent = new Intent(this, ViewItemActivity.class);
-                    startActivity(intent);
-                }
-                else {
-                    showCustomDialog("Warning","Please add items into KOT");
-                }
-                QuantityListener.itemsCarts = Common.itemsCarts;
-                double totalAmt = GetBillAmt();
-                double discountAmt = 0;
-                if(!discountAmtEditText.getText().toString().isEmpty()){
-                    discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
-                }
-                totalAmt = totalAmt-discountAmt;
-                String ttamtStr = "₹ "+String.format("%.0f",totalAmt);
-                estAmt.setText(ttamtStr);
+               try{
+                   SortItemsCarts();
+                   QuantityListener.itemsCarts = Common.itemsCarts;
+                   if(QuantityListener.itemsCarts.size()>0){
+                       Intent intent = new Intent(this, ViewItemActivity.class);
+                       startActivity(intent);
+                   }
+                   else {
+                       showCustomDialog("Warning","Please add items into KOT");
+                   }
+                   QuantityListener.itemsCarts = Common.itemsCarts;
+                   double totalAmt = GetBillAmt();
+                   double discountAmt = 0;
+                   if(!discountAmtEditText.getText().toString().isEmpty()){
+                       discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
+                   }
+                   totalAmt = totalAmt-discountAmt;
+                   String ttamtStr = "₹ "+String.format("%.0f",totalAmt);
+                   estAmt.setText(ttamtStr);
+               }
+               catch (Exception ex){
+                   //Toast.makeText(this.)
+               }
                break;
            case R.id._dot:
                if(itemNo.isFocused()){
@@ -802,16 +847,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                break;
            case  R.id.print:
                SortItemsCarts();
-               int billno = SaveDetails();
-               Common.billNo = billno;
-               Common.billDate = new Date();
-               Common.waiter  = searchTxtView.getText().toString();
-                if(isWifiPrint){
-                    PrintWifi();
-                }
-                else{
-                    PrintViaBlueTooth();
-                }
+               AlertDialog alert = builder.create();
+               alert.show();
                break;
            case  R.id.enter:
                if(priceTxt.isFocused()){
