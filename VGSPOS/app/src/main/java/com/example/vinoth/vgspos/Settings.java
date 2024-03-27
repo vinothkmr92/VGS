@@ -400,6 +400,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         b.setCancelable(false);
         b.show();
     }
+    @Override
+    public void onBackPressed() {
+        GoHome();
+    }
     public  void  GoHome(){
         Intent page = new Intent(this,HomeActivity.class);
         page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

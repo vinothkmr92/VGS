@@ -558,34 +558,31 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                 row.getCell(3,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
                                 row.getCell(4,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
                                 String itemname = row.getCell(0,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                                String itemnostr = row.getCell(1,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                                Integer itemno = isNumeric(itemnostr) ? Integer.parseInt(itemnostr):0;
-                                if(itemno>0){
-                                    String pricestr = row.getCell(2,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                                    double price = isDouble(pricestr) ? Double.parseDouble(pricestr):0;
-                                    String acpricestr = row.getCell(3,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                                    double acprice = isDouble(acpricestr) ? Double.parseDouble(acpricestr):0;
-                                    String stockstr = row.getCell(4,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
-                                    double stock = isDouble(stockstr) ? Double.parseDouble(stockstr):0;
-                                    Item item = new Item();
-                                    item.setItem_No(itemno);
-                                    item.setItem_Name(itemname);
-                                    item.setPrice(price);
-                                    item.setAcPrice(acprice);
-                                    item.setStocks(stock);
-                                    try{
-                                        Item check = dbHelper.GetItem(item.getItem_No());
-                                        if(check!=null){
-                                            double st = check.getStocks()+item.getStocks();
-                                            item.setStocks(st);
-                                        }
-                                        dbHelper.Insert_Item(item);
-                                        counter++;
+                                String itemno = row.getCell(1,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                                String pricestr = row.getCell(2,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                                double price = isDouble(pricestr) ? Double.parseDouble(pricestr):0;
+                                String acpricestr = row.getCell(3,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                                double acprice = isDouble(acpricestr) ? Double.parseDouble(acpricestr):0;
+                                String stockstr = row.getCell(4,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                                double stock = isDouble(stockstr) ? Double.parseDouble(stockstr):0;
+                                Item item = new Item();
+                                item.setItem_No(itemno);
+                                item.setItem_Name(itemname);
+                                item.setPrice(price);
+                                item.setAcPrice(acprice);
+                                item.setStocks(stock);
+                                try{
+                                    Item check = dbHelper.GetItem(item.getItem_No());
+                                    if(check!=null){
+                                        double st = check.getStocks()+item.getStocks();
+                                        item.setStocks(st);
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        lbl.setText(ex.getMessage());
-                                    }
+                                    dbHelper.Insert_Item(item);
+                                    counter++;
+                                }
+                                catch (Exception ex)
+                                {
+                                    lbl.setText(ex.getMessage());
                                 }
                             }
                             lbl.setText("  "+counter+" - Rows Uploaded");

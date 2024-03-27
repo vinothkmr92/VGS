@@ -85,7 +85,7 @@ public class PasscodeActivity extends AppCompatActivity {
         dialogBuilder.setMessage("\n"+Message);
         dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                GoHome();
+               // GoHome();
             }
         });
         AlertDialog b = dialogBuilder.create();
@@ -100,7 +100,7 @@ public class PasscodeActivity extends AppCompatActivity {
         Common.itemsCarts = null;
         Common.waiter = "";
         isUserPasscode = false;
-        GoHome();
+        //GoHome();
     }
     public  void  GoHome(){
         Intent page = new Intent(this,HomeActivity.class);

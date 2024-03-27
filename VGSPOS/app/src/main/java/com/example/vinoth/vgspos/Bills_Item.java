@@ -10,7 +10,7 @@ public class Bills_Item {
     private String Item_Name;
     private double Qty;
     private String Waiter;
-    private int Item_No;
+    private String Item_No;
     private double Price;
 
     public void setBill_Date(Date bill_Date) {
@@ -25,11 +25,11 @@ public class Bills_Item {
         Price = price;
     }
 
-    public int getItem_No() {
+    public String getItem_No() {
         return Item_No;
     }
 
-    public void setItem_No(int item_No) {
+    public void setItem_No(String item_No) {
         Item_No = item_No;
     }
 

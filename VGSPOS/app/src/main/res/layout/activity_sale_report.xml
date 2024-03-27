@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".SaleReportActivity">
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
     tools:context=".SaleReportActivity">
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/gridViewSaleRpt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
         android:columnCount="3"
         tools:ignore="MissingConstraints">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
             android:text="From Date"/>
         <TextView
             android:id="@+id/salerptFrmDate"
@@ -25,9 +26,10 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginLeft="50px"
+            android:textColor="@android:color/black"
             android:text="Date"
             android:textAlignment="center"
-            android:textStyle="bold" />
+             />
         <ImageButton
             android:layout_width="100px"
             android:layout_height="100px"
@@ -38,7 +40,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:gravity="center_horizontal"
+            android:textStyle="bold"
             android:text="To Date"/>
         <TextView
             android:id="@+id/salerptToDate"
@@ -46,9 +50,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginLeft="50px"
-            android:text="Date"
             android:textAlignment="center"
-            android:textStyle="bold" />
+            android:text="Date"
+            android:textColor="@android:color/black"/>
         <ImageButton
             android:layout_width="100px"
             android:layout_height="100px"
@@ -59,15 +63,16 @@
     </GridLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="80dp"
-        android:paddingTop="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/customerinfosaleRpt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:background="@android:drawable/editbox_background"
             android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
             android:gravity="center_vertical"
@@ -76,13 +81,15 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GetReport"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="Get Report"
             android:id="@+id/btngetsalereport">
         </Button>
         <ImageButton
             android:layout_width="150px"
             android:layout_height="150px"
             android:text="Print"
+            android:foreground="?android:attr/selectableItemBackground"
             android:background="@drawable/ic_baseline_print_24"
             android:id="@+id/btnsalerptprint">
         </ImageButton>
@@ -90,6 +97,7 @@
             android:id="@+id/btnshareExcel"
             android:layout_width="150px"
             android:layout_height="150px"
+            android:foreground="?android:attr/selectableItemBackground"
             android:background="@drawable/baseline_share_24"
             android:text="Print">
         </ImageButton>
@@ -97,63 +105,39 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:paddingTop="150dp"
-        android:gravity="center"
+        android:layout_marginTop="150dp"
+        android:orientation="vertical"
         tools:ignore="MissingConstraints">
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="₹ 000"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/holo_green_dark"
             android:id="@+id/totalSaleAmt"
-            android:textSize="50dp"
+            android:textAlignment="center"
+            android:textSize="30dp"
             android:textStyle="bold" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:paddingTop="40dp"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ScrollView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/app_name"
-            tools:ignore="MissingConstraints">
-
-            <GridLayout
-                android:id="@+id/gridDataSaleRpt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="5"
-                tools:ignore="MissingConstraints">
-
-                <TextView
-                    android:padding="5px"
-                    android:text="Bill No"
-                    android:textStyle="bold"></TextView>
-                <TextView
-                    android:padding="100px"
-                    android:text="Bill Date"
-                    android:textStyle="bold"></TextView>
-
-                <TextView
-                    android:padding="30px"
-                    android:text="Amount"
-                    android:textStyle="bold"></TextView>
-                <TextView
-                    android:padding="50px"
-                    android:text=" "
-                    android:textStyle="bold"></TextView>
-                <TextView
-                    android:padding="50px"
-                    android:text=" "
-                    android:textStyle="bold"></TextView>
-            </GridLayout>
-        </ScrollView>
+            android:background="@color/colorAccent"
+            android:text="SALE REPORTS"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
+            ></TextView>
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="240dp">
+        <LinearLayout
+            android:id="@+id/saleprtContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -248,7 +248,9 @@ public class PrintBluetooth {
     }
     public void PrintSaleRpt(){
         String msg = "SALE REPORT\n";
-        PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().height().get(),Formatter.centerAlign());
+        PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+        //PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().height().get(),Formatter.centerAlign());
+        PrintData(msg,new Formatter().height().get(),Formatter.centerAlign());
         PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
         PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
         if(Common.RptSize.equals("3")){

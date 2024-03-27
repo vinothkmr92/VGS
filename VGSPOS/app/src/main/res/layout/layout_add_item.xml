@@ -6,34 +6,35 @@
 
     <EditText
         android:id="@+id/ItemNoadd"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="Item No"
         android:editable="false"
         android:inputType="number"></EditText>
     <EditText
         android:id="@+id/ItemNameadd"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:textAllCaps="true"
         android:layout_below="@id/ItemNoadd"
         android:hint="Item Name"></EditText>
     <EditText
         android:id="@+id/ItemPriceadd"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ItemNameadd"
         android:hint="Price"
         android:inputType="number"></EditText>
     <EditText
         android:id="@+id/ItemStockadd"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ItemPriceadd"
         android:hint="Stock"
         android:inputType="number"></EditText>
     <EditText
         android:id="@+id/ItemAcpriceadd"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ItemStockadd"
         android:hint="Special Price"

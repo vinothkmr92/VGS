@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 12);
+        super(context, DATABASE_NAME, null, 13);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE ICONS (IMAGE BLOB)");
       db.execSQL("CREATE TABLE USERS (USER_ID INTEGER PRIMARY KEY,USER_NAME TEXT,MOBILE_NUMBER TEXT,PASSWORD TEXT)");
       db.execSQL("CREATE TABLE TAX (TAX_ID INTEGER PRIMARY KEY,TAX_VALUE NUMERIC)");
-      db.execSQL("CREATE TABLE ITEMS (ITEM_NO INTEGER PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC,STOCK NUMERIC)");
+      db.execSQL("CREATE TABLE ITEMS (ITEM_NO TEXT PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,DISCOUNT NUMERIC,PRIMARY KEY (BILL_NO,BILL_DATE))");
       db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT,PRICE DOUBLE)");
@@ -96,11 +96,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public  Item GetItem(String itemname){
         Item itm =null;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM ITEMS WHERE ITEM_NAME='"+itemname+"'",null);
+        Cursor cur = db.rawQuery("SELECT * FROM ITEMS WHERE ITEM_NO='"+itemname+"' OR ITEM_NAME='"+itemname+"'",null);
         if(cur.getCount()>0){
             while (cur.moveToNext()){
                 itm = new Item();
-                itm.setItem_No(cur.getInt(0));
+                itm.setItem_No(cur.getString(0));
                 itm.setItem_Name(cur.getString(1));
                 itm.setPrice(cur.getDouble(2));
                 itm.setAcPrice(cur.getDouble(3));
@@ -228,46 +228,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         id++;
         return  id;
     }
-
-    public int GetNextItemNO(){
-        int id = 0;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT MAX(ITEM_NO) FROM ITEMS",null);
-        if(cur.getCount()>0){
-            while (cur.moveToNext()){
-                id = cur.getInt(0);
-            }
-        }
-        id++;
-        return  id;
-    }
-
-    public  String padRight(String s, int n) {
-        return String.format("%-" + n + "s", s);
-    }
-    public  String GetformattedItemName(String name){
-        String res = padRight(name,25);
-        return res.substring(0,25);
-    }
-    public ArrayList<ItemsRpt> GetAllItemsReports(String waiter){
-        ArrayList<ItemsRpt> report = new ArrayList<>();
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM GROUP BY ITEM_NAME";
-        if(!waiter.equals("ALL")){
-            query = "SELECT ITEM_NAME,SUM(QUANTITY) FROM BILLS_ITEM WHERE WAITER='"+waiter+"' GROUP BY ITEM_NAME";
-        }
-        Cursor cur = db.rawQuery(query,null);
-        if(cur.getCount()>0){
-            while (cur.moveToNext()){
-                ItemsRpt r = new ItemsRpt();
-                String name = cur.getString(0);
-                r.setItemName(name);
-                r.setQuantity(cur.getDouble(1));
-                report.add(r);
-            }
-        }
-        return  report;
-    }
     public  ArrayList<SaleReport> GetSalesReport(String frmDate,String toDate,String waiter){
         ArrayList<SaleReport> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
@@ -348,7 +308,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
          if(cur.getCount()>0){
             while (cur.moveToNext()){
                 Item itm = new Item();
-                itm.setItem_No(cur.getInt(0));
+                itm.setItem_No(cur.getString(0));
                 itm.setItem_Name(cur.getString(1));
                 itm.setPrice(cur.getDouble(2));
                 itm.setAcPrice(cur.getDouble(3));
@@ -357,27 +317,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
          }
         return ItemList;
-    }
-
-    public Item GetItem(Integer itemNo){
-        Item item=null;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT ITEM_NAME,PRICE,AC_PRICE,STOCK FROM ITEMS WHERE ITEM_NO="+itemNo,null);
-        if(cur.getCount()>0){
-            if(cur.moveToNext()){
-                item = new Item();
-                item.setItem_Name( cur.getString(0));
-                item.setItem_No(itemNo);
-                item.setPrice(cur.getDouble(1));
-                item.setAcPrice(cur.getDouble(2));
-                item.setStocks(cur.getDouble(3));
-            }
-        }
-        return item;
-    }
-    public  void  Delete_Item(Integer itemNo){
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("ITEMS","ITEM_NO="+itemNo,null);
     }
     public void DeleteAllItem(){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -393,26 +332,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cont.put("STOCK",item.getStocks());
         Item it = GetItem(item.getItem_No());
         if(it!=null){
-            db.update("ITEMS",cont,"ITEM_NO = ?",new String[]{String.valueOf(item.getItem_No())});
+            db.update("ITEMS",cont,"ITEM_NO = '?'",new String[]{String.valueOf(item.getItem_No())});
         }
         else {
             db.insert("ITEMS",null,cont);
         }
 
-    }
-    public void Insert_Tax(Tax t){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cnt = new ContentValues();
-        cnt.put("TAX_ID",t.getTax_Id());
-        cnt.put("TAX_VALUE",t.getTax_Value());
-        db.insert("TAX",null,cnt);
-    }
-    public void Insert_Stock(Stock stock){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cont = new ContentValues();
-        cont.put("ITEM_NO",stock.getItem_No());
-        cont.put("STOCK",stock.getQty());
-        db.insert("STOCKS",null,cont);
     }
 
     public void  Insert_Bill_Items(Bills_Item billsItem){
@@ -434,13 +359,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.println(Log.ASSERT,"","Failed to insert bill items...ITEM_NAME: "+billsItem.getItem_Name());
         }
     }
-    public void UpdateStock(int itemno,double qty){
+    public void UpdateStock(String itemno,double qty){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("UPDATE ITEMS SET STOCK=STOCK-"+qty+" WHERE ITEM_NO="+itemno);
+        db.execSQL("UPDATE ITEMS SET STOCK=STOCK-"+qty+" WHERE ITEM_NO='"+itemno+"'");
     }
-    public void AddStock(int itemno,double qty){
+    public void AddStock(String itemno,double qty){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("UPDATE ITEMS SET STOCK=STOCK+"+qty+" WHERE ITEM_NO="+itemno);
+        db.execSQL("UPDATE ITEMS SET STOCK=STOCK+"+qty+" WHERE ITEM_NO='"+itemno+"'");
     }
     public void Insert_Bills(Bills bills){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -457,34 +382,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else {
             Log.println(Log.ASSERT,"","Failed to insert bill no: "+bills.getBill_No());
         }
-    }
-    public ArrayList<Stock> GetStocks(){
-        ArrayList<Stock> stocks = new ArrayList<Stock>();
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM STOCKS",null);
-        if(cur.getCount()>0){
-            while (cur.moveToNext()){
-                Stock s = new Stock();
-                s.setItem_No(cur.getInt(0));
-                s.setQty(cur.getDouble(1));
-                stocks.add(s);
-            }
-        }
-        return stocks;
-    }
-    public Users GetUser(String userId){
-        Users usr = null;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM USERS WHERE USER_ID="+userId, null);
-        if(cur.getCount()>0){
-            while (cur.moveToNext()){
-                usr = new Users();
-                usr.setUser_Id(cur.getInt(0));
-                usr.setUser_Name(cur.getString(1));
-                usr.setMobile_Number(cur.getString(2));
-                usr.setPassword(cur.getString(3));
-            }
-        }
-        return  usr;
     }
 }

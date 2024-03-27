@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.icu.text.NumberFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,6 +27,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,6 +97,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     public static SaleReportActivity getInstance() {
         return instance;
     }
+    LinearLayout saleRptContainer;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -336,7 +340,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         btnGetReport = (Button) findViewById(R.id.btngetsalereport);
         btnPrintReport = (ImageButton) findViewById(R.id.btnsalerptprint);
         btnExportExcel = (ImageButton)findViewById(R.id.btnshareExcel);
-        gridLayout = (GridLayout)findViewById(R.id.gridDataSaleRpt);
+        saleRptContainer = (LinearLayout) findViewById(R.id.saleprtContainer);
         txtViewTotalSaleAmt = (TextView)findViewById(R.id.totalSaleAmt);
         btnGetReport.setOnClickListener(this);
         btnPrintReport.setOnClickListener(this);
@@ -365,7 +369,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 dialog.setContentView(R.layout.dialog_searchable_spinner);
 
                 // set custom height and width
-                dialog.getWindow().setLayout(500,500);
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT);
 
                 // set transparent background
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -479,6 +483,40 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         }
 
     }
+    private void addCard(SaleReport sr){
+        View view = getLayoutInflater().inflate(R.layout.cart,null);
+        TextView billno = view.findViewById(R.id.salecart_billno);
+        TextView billDate = view.findViewById(R.id.salecart_billdate);
+        TextView billAmt = view.findViewById(R.id.salecart_saleAmt);
+        ImageButton printbtn = view.findViewById(R.id.salecart_print);
+        ImageButton deletebtn = view.findViewById(R.id.salecart_delete);
+        billno.setText(sr.getBillNo());
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
+        billDate.setText(format.format(sr.getBillDt()));
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        String moneyString = formatter.format(sr.getBillAmount()).replace(symbol,symbol+" ");
+        billAmt.setText(moneyString);
+        String btnTag =  sr.getBillNo()+"~"+sr.getBillDate();
+        printbtn.setTag(btnTag);
+        deletebtn.setTag(btnTag);
+        printbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String billNo = (String)v.getTag();
+                PrintBill(billNo);
+            }
+        });
+        deletebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String billNo = (String)v.getTag();
+                DeleteBill(billNo);
+            }
+        });
+        saleRptContainer.addView(view);
+    }
     private ArrayList<SaleReport> GetSaleReport(){
         String frmdt = frmDateTextView.getText().toString();
         String todt = toDateTextView.getText().toString();
@@ -489,28 +527,19 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
 
     private void LoadSaleReport(){
         try{
+            saleRptContainer.removeAllViews();
             ArrayList<SaleReport> items = GetSaleReport();
-            int rc = gridLayout.getRowCount();
-            if(rc>1){
-                int count = (rc-1)*5;
-                gridLayout.removeViews(5,count);
-            }
             double totalSaleamt=0;
             for(int i=0;i<items.size();i++){
                 SaleReport sr = items.get(i);
-                dynamicView = new DynamicViewSaleReport(this);
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm aaa",Locale.getDefault());
-                gridLayout.addView(dynamicView.billNoTextView(this,sr.getBillNo()));
-                gridLayout.addView(dynamicView.billDateTextView(this,format.format(sr.getBillDt())));
-                String saleAmtStr = String.format("%.0f",sr.getBillAmount());
-                gridLayout.addView(dynamicView.billAmountTextView(this,saleAmtStr));
-                String billdetails = sr.getBillNo()+"~"+sr.getBillDate();
-                gridLayout.addView(dynamicView.printButton(this,billdetails));
-                gridLayout.addView(dynamicView.deleteButton(this,billdetails));
+                addCard(sr);
                 totalSaleamt+=sr.getBillAmount();
             }
-            String ttSaleAmtstring = String.format("%.0f",totalSaleamt);
-            txtViewTotalSaleAmt.setText("₹ "+ttSaleAmtstring);
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+            formatter.setMaximumFractionDigits(0);
+            String symbol = formatter.getCurrency().getSymbol();
+            String ttSaleAmtstring = formatter.format(totalSaleamt).replace(symbol,symbol+" ");
+            txtViewTotalSaleAmt.setText(ttSaleAmtstring);
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -580,10 +609,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     public  void DeleteBill(){
         try{
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
-            SimpleDateFormat formatwithtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
             Date billds = format.parse(billDateToDelete);
             dbHelper.DeleteBill(format.format(billds),billNoToDelete);
-            showCustomDialog("MSG","Deleted bill successfully");
+            Toast.makeText(getApplicationContext(),"Bill no: "+billNoToDelete+" has been deleted.",Toast.LENGTH_LONG);
             LoadSaleReport();
         }
         catch (Exception ex){

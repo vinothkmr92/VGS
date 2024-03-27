@@ -1,8 +1,6 @@
 package com.example.vinoth.vgspos;
+
 import android.app.Activity;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +8,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,8 @@ public  class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewH
 
     @Override
     public long getItemId(int position) {
-        return this.callListResponses == null ? 0 : this.callListResponses.get(position).getItem_No();
+        long sr = Long.parseLong(this.callListResponses.get(position).getItem_No());
+        return this.callListResponses == null ? 0 : sr;
     }
     //Animating single element
     private void setAnimation(View viewToAnimate, int position)
@@ -81,10 +82,6 @@ public  class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewH
             img_deleteitem=(ImageView) itemView.findViewById(R.id.img_deleteitem);
             itemname=(TextView) itemView.findViewById(R.id.tv_name);
             tv_quantity=(TextView) itemView.findViewById(R.id.tv_qty);
-
         }
     }
-
-
-
 }

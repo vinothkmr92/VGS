@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.icu.text.NumberFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -18,11 +19,14 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -113,6 +117,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<String> waiters;
     String android_id;
     AlertDialog.Builder builder;
+    private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
+    private static final int CAMERA_REQUEST_CODE = 10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,7 +207,39 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             else{
                 showCustomDialog("Msg","Please connect to internet and Try again.",true);
             }
-
+            itemName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                        priceTxt.requestFocus();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            priceTxt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    String txt = priceTxt.getText().toString();
+                    if(hasFocus){
+                        closeKeyboard();
+                        if(hasFocus && !txt.isEmpty()){
+                            ((EditText)v).selectAll();
+                        }
+                    }
+                }
+            });
+            itemName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus){
+                        showKeyboard();
+                    }
+                    else {
+                        closeKeyboard();
+                    }
+                }
+            });
             discountAmtEditText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
                 public void onFocusChange(View v, boolean hasFocus){
                     String txt = discountAmtEditText.getText().toString();
@@ -228,7 +266,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     dialog.setContentView(R.layout.dialog_searchable_spinner);
 
                     // set custom height and width
-                    dialog.getWindow().setLayout(800,800);
+                    dialog.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT);
 
                     // set transparent background
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -347,6 +385,28 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             showCustomDialog("Error", ex.getMessage());
         }
     }
+    private boolean hasCameraPermission() {
+        return ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED;
+    }
+    public void showKeyboard(){
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    public void closeKeyboard(){
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+    }
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                CAMERA_PERMISSION,
+                CAMERA_REQUEST_CODE
+        );
+    }
     private void  SaveAndPrintBill(boolean print){
         int billno = SaveDetails();
         Common.billNo = billno;
@@ -381,7 +441,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
             double finalBillValue = billAmt-discountAmt;
             discountperEditText.setText(String.format("%.2f",discountper));
-            estAmt.setText("₹ "+String.format("%.0f",finalBillValue));
+            estAmt.setText(GetCurrency(finalBillValue));
         }
     }
     private void CalculateDiscountAmt(){
@@ -392,7 +452,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             discountAmt = Math.round(discountAmt);
             double finalBillValue = billAmt-discountAmt;
             discountAmtEditText.setText(String.format("%.0f",discountAmt));
-            estAmt.setText("₹ "+String.format("%.0f",finalBillValue));
+            estAmt.setText(GetCurrency(finalBillValue));
         }
     }
     private void OpenItemSearchDialog(){
@@ -402,7 +462,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         itemSearchdialog.setContentView(R.layout.dialog_items_search);
 
         // set custom height and width
-        itemSearchdialog.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+        itemSearchdialog.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT);
 
         // set transparent background
         itemSearchdialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -625,7 +685,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         b.setCanceledOnTouchOutside(false);
         b.show();
     }
-    private int GetItematIndex(ArrayList<ItemsCart> items,int itemno){
+    private int GetItematIndex(ArrayList<ItemsCart> items,String itemno){
         int index=-1;
         for(int i=0;i<items.size();i++){
             ItemsCart itemsCart = items.get(i);
@@ -654,38 +714,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         Common.itemsCarts = items;
     }
-    public boolean isNumeric(String val){
-        try {
-            Integer it = Integer.parseInt(val);
-            return true;
-        } catch (NumberFormatException e) {
-            System.out.println("Input String cannot be parsed to Integer.");
-            return false;
-        }
-    }
     public void LoadProductNameandPrice(){
         if(itemNo.isFocused()){
             String itemnostr = itemNo.getText().toString();
             if(!itemnostr.isEmpty()){
-                if(isNumeric(itemnostr)){
-                    Integer ino = Integer.parseInt(itemnostr);
-                    Item item = dbHelper.GetItem(ino);
-                    if(item!=null){
-                        itemName.setText(item.getItem_Name());
-                        String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
-                        priceTxt.setText(price);
-                        Quantity.setText("1");
-                        Quantity.selectAll();
-                        Quantity.requestFocus();
-                    }
-                    else{
-                        showCustomDialog("Msg","Invalid Item Number.");
-                    }
+                Item item = dbHelper.GetItem(itemnostr);
+                if(item!=null){
+                    itemName.setText(item.getItem_Name());
+                    String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
+                    priceTxt.setText(price);
+                    Quantity.setText("1");
+                    Quantity.selectAll();
+                    Quantity.requestFocus();
                 }
                 else{
-                    showCustomDialog("Msg","Item No should not be a String.");
+                    itemName.requestFocus();
+                    Toast.makeText(getApplicationContext(),"Invalid Item Number.",Toast.LENGTH_LONG);
                 }
-
             }
             else{
                 if(itemSearchdialog !=null){
@@ -722,7 +767,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         this.Quantity.setText("");
         tItem.setText("0");
         tQty.setText("0");
-        estAmt.setText("₹ 000");
+        estAmt.setText(GetCurrency(0d));
         discountperEditText.setText("");
         discountAmtEditText.setText("");
         //showCustomDialog("Info","Items Cleared.");
@@ -814,8 +859,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                        discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
                    }
                    totalAmt = totalAmt-discountAmt;
-                   String ttamtStr = "₹ "+String.format("%.0f",totalAmt);
-                   estAmt.setText(ttamtStr);
+                   estAmt.setText(GetCurrency(totalAmt));
                }
                catch (Exception ex){
                    //Toast.makeText(this.)
@@ -854,6 +898,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                if(priceTxt.isFocused()){
                    Quantity.requestFocus();
                }
+               else  if(itemName.isFocused()){
+                   priceTxt.requestFocus();
+               }
                else if(discountperEditText.isFocused()){
                    CalculateDiscountAmt();
                }
@@ -865,14 +912,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                }
                break;
            case R.id.scanQR:
-               IntentIntegrator intentIntegrator = new IntentIntegrator(HomeActivity.this);
-               intentIntegrator.setDesiredBarcodeFormats(intentIntegrator.ALL_CODE_TYPES);
-               intentIntegrator.setBeepEnabled(true);
-               intentIntegrator.setOrientationLocked(false);
-               intentIntegrator.setCameraId(0);
-               intentIntegrator.setPrompt("SCAN ITEM NO");
-               intentIntegrator.setBarcodeImageEnabled(false);
-               intentIntegrator.initiateScan();
+               try{
+                   if(!hasCameraPermission()){
+                       requestPermission();
+                   }
+                   else {
+                       IntentIntegrator intentIntegrator = new IntentIntegrator(HomeActivity.this);
+                       intentIntegrator.setDesiredBarcodeFormats(intentIntegrator.ALL_CODE_TYPES);
+                       intentIntegrator.setBeepEnabled(true);
+                       intentIntegrator.setOrientationLocked(false);
+                       intentIntegrator.setCameraId(0);
+                       intentIntegrator.setPrompt("Scan Barcode/QR Code");
+                       //intentIntegrator.setBarcodeImageEnabled(false);
+                       intentIntegrator.initiateScan();
+                   }
+
+               }
+               catch (Exception ex){
+                   showCustomDialog("Error",ex.getMessage());
+               }
                break;
            default:
                  String addstr = getResources().getResourceEntryName(v.getId());
@@ -930,6 +988,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                    break;
        }
     }
+    private String GetCurrency(double amt){
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        String moneyString = formatter.format(amt).replace(symbol,symbol+" ");
+        return  moneyString;
+    }
     public void LoadTotalAmt(){
         if(Common.itemsCarts!=null && Common.itemsCarts.size()>0){
             tItem.setText(String.valueOf(Common.itemsCarts.size()));
@@ -942,27 +1007,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 amt+=pr;
             }
             tQty.setText(String.valueOf(ttq));
-            String amtstr = String.format("%.0f", amt);
-            estAmt.setText("₹ "+amtstr);
+            estAmt.setText(GetCurrency(amt));
         }
     }
     public  void  UpdateCarts(){
         QuantityListener.itemsCarts = Common.itemsCarts;
         ArrayList<ItemsCart> itemsCarts = QuantityListener.itemsCarts;
         ItemsCart itc = new ItemsCart();
-        itc.setItem_No(Integer.valueOf(itemNo.getText().toString()));
+        itc.setItem_No(itemNo.getText().toString());
         itc.setItem_Name(itemName.getText().toString());
         itc.setQty(Integer.valueOf(Quantity.getText().toString()));
         itc.setPrice(Double.valueOf(priceTxt.getText().toString()));
-
-        if(isNumeric(itemNo.getText().toString())){
-            Integer ino = Integer.parseInt(itemNo.getText().toString());
-            Item item = dbHelper.GetItem(ino);
-            if(item!=null){
-                itc.setMRP(item.getAcPrice());
-            }
+        Item item = dbHelper.GetItem(itemNo.getText().toString());
+        if(item!=null){
+            itc.setMRP(item.getAcPrice());
         }
-
         if(itemsCarts == null){
             itemsCarts = new ArrayList<ItemsCart>();
         }
@@ -1034,13 +1093,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         tItem.setText("0");
         tQty.setText("0");
-        estAmt.setText("₹ 000");
+        estAmt.setText(GetCurrency(0d));
         int newbillno = dbHelper.GetNextBillNo();
         billnoTxtView.setText(String.valueOf(newbillno));
         searchTxtView.setText("NONE");
         isAcPrice.setChecked(false);
         progressBar.hide();
-        itemName.requestFocus();
+        itemNo.requestFocus();
     }
 
     @Override
@@ -1050,14 +1109,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if(Result != null){
             if(Result.getContents() == null){
                 Log.d("MainActivity" , "cancelled scan");
-                Toast.makeText(this, "cancelled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, "cancelled", Toast.LENGTH_SHORT).show();
             }
             else {
                 Log.d("MainActivity" , "Scanned");
                 itemNo.requestFocus();
                 itemNo.setText(Result.getContents());
                 LoadProductNameandPrice();
-                Toast.makeText(this,"Scanned -> " + Result.getContents(), Toast.LENGTH_SHORT).show();
             }
         }
         else {

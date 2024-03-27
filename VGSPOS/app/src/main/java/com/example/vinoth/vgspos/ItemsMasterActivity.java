@@ -95,38 +95,27 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
             showCustomDialog("Error",ex.getMessage().toString());
         }
     }
-    private boolean isNumeric(String val){
-        try{
-            Integer integer = Integer.parseInt(val);
-            return true;
-        }
-        catch (Exception ex){
-            return false;
-        }
-    }
+
     private void ResetTxtValues(){
         String itemno = editTextItemNo.getText().toString();
-        if(isNumeric(itemno)) {
-            int iNo = Integer.parseInt(itemno);
-            Item item = dbHelper.GetItem(iNo);
-            if (item != null) {
-                txtViewItemNo.setText(String.valueOf(item.getItem_No()));
-                txtViewItemName.setText(item.getItem_Name());
-                txtViewItemPrice.setText(String.format("%.0f", item.getPrice()));
-                txtViewItemPrice.setText(String.format("%.0f",item.getPrice()));
-                txtviewItemStock.setText(String.format("%.0f",item.getStocks()));
-                txtviewItemAcPrice.setText(String.format("%.0f",item.getAcPrice()));
-                gridLayout.setVisibility(View.VISIBLE);
-                btnUpdateItem.setEnabled(true);
-            } else {
-                txtViewItemPrice.setText("");
-                txtViewItemName.setText("");
-                txtViewItemNo.setText("");
-                txtviewItemStock.setText("");
-                txtviewItemAcPrice.setText("");
-                gridLayout.setVisibility(View.INVISIBLE);
-                btnUpdateItem.setEnabled(false);
-            }
+        Item item = dbHelper.GetItem(itemno);
+        if (item != null) {
+            txtViewItemNo.setText(String.valueOf(item.getItem_No()));
+            txtViewItemName.setText(item.getItem_Name());
+            txtViewItemPrice.setText(String.format("%.0f", item.getPrice()));
+            txtViewItemPrice.setText(String.format("%.0f",item.getPrice()));
+            txtviewItemStock.setText(String.format("%.0f",item.getStocks()));
+            txtviewItemAcPrice.setText(String.format("%.0f",item.getAcPrice()));
+            gridLayout.setVisibility(View.VISIBLE);
+            btnUpdateItem.setEnabled(true);
+        } else {
+            txtViewItemPrice.setText("");
+            txtViewItemName.setText("");
+            txtViewItemNo.setText("");
+            txtviewItemStock.setText("");
+            txtviewItemAcPrice.setText("");
+            gridLayout.setVisibility(View.INVISIBLE);
+            btnUpdateItem.setEnabled(false);
         }
     }
     private void SearchItems(){
@@ -135,23 +124,20 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
             if(itemno.isEmpty()){
                 OpenItemSearchDialog();
             }
-            if(isNumeric(itemno)){
-                int iNo = Integer.parseInt(itemno);
-                Item item = dbHelper.GetItem(iNo);
-                if(item!=null){
-                    txtViewItemNo.setText(String.valueOf(item.getItem_No()));
-                    txtViewItemName.setText(item.getItem_Name());
-                    txtViewItemPrice.setText(String.format("%.0f",item.getPrice()));
-                    txtviewItemStock.setText(String.format("%.0f",item.getStocks()));
-                    txtviewItemAcPrice.setText(String.format("%.0f",item.getAcPrice()));
-                    gridLayout.setVisibility(View.VISIBLE);
-                    btnUpdateItem.setEnabled(true);
-                }
-                else{
-                    OpenAddItemDialog();
-                    btnUpdateItem.setEnabled(false);
-                    gridLayout.setVisibility(View.INVISIBLE);
-                }
+            Item item = dbHelper.GetItem(itemno);
+            if(item!=null){
+                txtViewItemNo.setText(String.valueOf(item.getItem_No()));
+                txtViewItemName.setText(item.getItem_Name());
+                txtViewItemPrice.setText(String.format("%.0f",item.getPrice()));
+                txtviewItemStock.setText(String.format("%.0f",item.getStocks()));
+                txtviewItemAcPrice.setText(String.format("%.0f",item.getAcPrice()));
+                gridLayout.setVisibility(View.VISIBLE);
+                btnUpdateItem.setEnabled(true);
+            }
+            else{
+                OpenAddItemDialog();
+                btnUpdateItem.setEnabled(false);
+                gridLayout.setVisibility(View.INVISIBLE);
             }
         }
         catch (Exception ex){
@@ -258,15 +244,13 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
     public void getCustomerInfo(String ItemNo, String ItemName, Double Price,Double Stock,Double AcPrice) {
         try{
             Item item = new Item();
-            if(isNumeric(ItemNo)){
-                item.setItem_No(Integer.parseInt(ItemNo));
-                item.setItem_Name(ItemName);
-                item.setPrice(Price);
-                item.setStocks(Stock);
-                item.setAcPrice(AcPrice);
-                dbHelper.Insert_Item(item);
-                showCustomDialog("Msg","Successfully saved item details");
-            }
+            item.setItem_No(ItemNo);
+            item.setItem_Name(ItemName);
+            item.setPrice(Price);
+            item.setStocks(Stock);
+            item.setAcPrice(AcPrice);
+            dbHelper.Insert_Item(item);
+            showCustomDialog("Msg","Successfully saved item details");
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
