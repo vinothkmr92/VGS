@@ -611,7 +611,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
             Date billds = format.parse(billDateToDelete);
             dbHelper.DeleteBill(format.format(billds),billNoToDelete);
-            Toast.makeText(getApplicationContext(),"Bill no: "+billNoToDelete+" has been deleted.",Toast.LENGTH_LONG);
+            Toast.makeText(getApplicationContext(),"Bill no: "+billNoToDelete+" has been deleted.",Toast.LENGTH_LONG).show();
             LoadSaleReport();
         }
         catch (Exception ex){

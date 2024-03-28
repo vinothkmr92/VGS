@@ -479,9 +479,12 @@ public class PrintBluetooth {
             double totalAmt=0;
             double mrpTotalAmt = 0d;
             double discountAmt = 0d;
+            int totalQty=0;
             for(int k=0;k<Common.itemsCarts.size();k++){
                 String name = Common.itemsCarts.get(k).getItem_Name();
-                String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
+                int qt = Common.itemsCarts.get(k).getQty();
+                totalQty+=qt;
+                String qty = String.valueOf(qt);
                 String price = String.format("%.0f",Common.itemsCarts.get(k).getPrice());
                 Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
                 String mrp = String.format("%.0f",Common.itemsCarts.get(k).getMRP());
@@ -540,6 +543,8 @@ public class PrintBluetooth {
 
             }
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
+            PrintData("TOTAL ITEMS   : "+Common.itemsCarts.size(),new Formatter().get(),Formatter.leftAlign());
+            PrintData("TOTAL QUANTITY: "+totalQty,new Formatter().get(),Formatter.leftAlign());
             totalAmt = billAmt-Common.discount;
             if(Common.discount>0){
                 PrintData("TOTAL:"+String.format("%.0f",billAmt),new Formatter().get(),Formatter.rightAlign());

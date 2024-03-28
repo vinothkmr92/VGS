@@ -332,7 +332,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cont.put("STOCK",item.getStocks());
         Item it = GetItem(item.getItem_No());
         if(it!=null){
-            db.update("ITEMS",cont,"ITEM_NO = '?'",new String[]{String.valueOf(item.getItem_No())});
+            db.update("ITEMS",cont,"ITEM_NO = ?",new String[]{String.valueOf(item.getItem_No())});
         }
         else {
             db.insert("ITEMS",null,cont);

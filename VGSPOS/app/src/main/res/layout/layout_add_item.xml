@@ -15,6 +15,7 @@
         android:id="@+id/ItemNameadd"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:inputType="textCapCharacters"
         android:textAllCaps="true"
         android:layout_below="@id/ItemNoadd"
         android:hint="Item Name"></EditText>

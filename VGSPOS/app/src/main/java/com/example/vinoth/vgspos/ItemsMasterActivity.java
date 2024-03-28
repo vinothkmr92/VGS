@@ -1,26 +1,38 @@
 package com.example.vinoth.vgspos;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 
@@ -37,6 +49,9 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
     GridLayout gridLayout;
     private  ProgressDialog dialog;
     Dialog itemSearchdialog;
+    private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
+    private static final int CAMERA_REQUEST_CODE = 10;
+    Button btnScan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +65,12 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
         txtviewItemStock = (TextView)findViewById(R.id.txtViewItemStock);
         btnUpdateItem = (ImageButton) findViewById(R.id.btnupdateitems);
         txtviewItemAcPrice = (TextView)findViewById(R.id.txtViewItemAcPrice);
+        btnScan = (Button)findViewById(R.id.scanQR);
         gridLayout = (GridLayout)findViewById(R.id.itemViewGrid);
         gridLayout.setVisibility(View.INVISIBLE);
         btnUpdateItem.setEnabled(false);
         btnUpdateItem.setOnClickListener(this);
+        btnScan.setOnClickListener(this);
         editTextItemNo.setOnKeyListener((v, keyCode, event) -> {
             // If the event is a key-down event on the "enter" button
             if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
@@ -231,8 +248,61 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
         }
     }
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        IntentResult Result = IntentIntegrator.parseActivityResult(requestCode , resultCode ,data);
+        if(Result != null){
+            if(Result.getContents() == null){
+                Log.d("ItemsMasterActivity" , "Cancelled scan");
+                Toast.makeText(ItemsMasterActivity.this, "cancelled", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                editTextItemNo.setText(Result.getContents());
+                editTextItemNo.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            }
+        }
+        else {
+            super.onActivityResult(requestCode , resultCode , data);
+        }
+    }
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                CAMERA_PERMISSION,
+                CAMERA_REQUEST_CODE
+        );
+    }
+
+    private boolean hasCameraPermission() {
+        return ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED;
+    }
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.scanQR:
+                try{
+                    if(!hasCameraPermission()){
+                        requestPermission();
+                    }
+                    else {
+                        IntentIntegrator intentIntegrator = new IntentIntegrator(ItemsMasterActivity.this);
+                        intentIntegrator.setDesiredBarcodeFormats(intentIntegrator.ALL_CODE_TYPES);
+                        intentIntegrator.setBeepEnabled(true);
+                        intentIntegrator.setOrientationLocked(false);
+                        intentIntegrator.setCameraId(0);
+                        intentIntegrator.setPrompt("Scan Barcode/QR Code");
+                        //intentIntegrator.setBarcodeImageEnabled(false);
+                        intentIntegrator.initiateScan();
+                    }
+
+                }
+                catch (Exception ex){
+                    showCustomDialog("Error",ex.getMessage());
+                }
+                break;
             case R.id.btnupdateitems:
                 dialog.show();
                 UpdateItems();
@@ -250,7 +320,8 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
             item.setStocks(Stock);
             item.setAcPrice(AcPrice);
             dbHelper.Insert_Item(item);
-            showCustomDialog("Msg","Successfully saved item details");
+            Toast.makeText(ItemsMasterActivity.this,"Successfully saved Item Details",Toast.LENGTH_LONG).show();
+            //showCustomDialog("Msg","Successfully saved item details");
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());

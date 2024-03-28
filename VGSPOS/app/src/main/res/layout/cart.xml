@@ -11,7 +11,7 @@
             android:id="@+id/salerpt_Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="2.5dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="5dp"
             >
@@ -19,42 +19,45 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="fill"
-    android:background="@android:color/holo_blue_bright"
+    android:background="@color/colorPrimary"
     android:columnCount="3"
     android:orientation="horizontal"
     >
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="monospace"
         android:text="Bill No:"
         android:textColor="@android:color/black"
-        android:textSize="20dp"
-        >
-    </TextView>
+        android:textSize="20dp"></TextView>
+
     <TextView
         android:id="@+id/salecart_billno"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center"
         android:layout_marginLeft="10dp"
+        android:fontFamily="monospace"
         android:text="1"
         android:textColor="@android:color/black"
         android:textSize="20dp"
-        android:textStyle="bold"
-        ></TextView>
+        android:textStyle="bold"></TextView>
     <ImageButton android:id="@+id/salecart_print"
         android:layout_width="150px"
         android:layout_height="150px"
-        android:layout_gravity="right"
+        android:layout_gravity="center"
         android:background="@drawable/ic_baseline_print_24"
         android:foreground="?android:attr/selectableItemBackground"></ImageButton>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
+        android:fontFamily="monospace"
         android:text="Bill Date:"
         android:textColor="@android:color/black"
         android:textSize="20dp"></TextView>
@@ -63,20 +66,21 @@
         android:id="@+id/salecart_billdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="monospace"
         android:text="26-03-2024"
         android:textColor="@android:color/black"
         android:textSize="20dp"
-        android:textStyle="bold"
-        ></TextView>
+        android:textStyle="bold"></TextView>
     <ImageButton
         android:id="@+id/salecart_delete"
         android:layout_width="120px"
         android:layout_height="120px"
-        android:layout_gravity="right"
+        android:layout_gravity="center"
         android:background="@drawable/del"
         android:foreground="?android:attr/selectableItemBackground"></ImageButton>
+
     <TextView
         android:id="@+id/salecart_saleAmt"
         android:layout_width="fill_parent"
@@ -85,12 +89,12 @@
         android:layout_gravity="fill"
         android:layout_marginTop="10dp"
         android:background="@android:color/holo_purple"
+        android:fontFamily="monospace"
         android:gravity="center"
         android:text="₹ 123456"
         android:textColor="@android:color/white"
         android:textSize="30dp"
-        android:textStyle="bold|italic"
-        ></TextView>
+        android:textStyle="bold|italic"></TextView>
 </GridLayout>
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
