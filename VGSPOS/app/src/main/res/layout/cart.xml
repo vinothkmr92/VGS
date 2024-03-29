@@ -11,7 +11,7 @@
             android:id="@+id/salerpt_Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="2.5dp"
+            android:layout_margin="10dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="5dp"
             >
@@ -32,7 +32,7 @@
         android:fontFamily="monospace"
         android:text="Bill No:"
         android:textColor="@android:color/black"
-        android:textSize="20dp"></TextView>
+        android:textSize="15dp"></TextView>
 
     <TextView
         android:id="@+id/salecart_billno"
@@ -43,12 +43,12 @@
         android:fontFamily="monospace"
         android:text="1"
         android:textColor="@android:color/black"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:textStyle="bold"></TextView>
     <ImageButton android:id="@+id/salecart_print"
-        android:layout_width="150px"
-        android:layout_height="150px"
-        android:layout_gravity="center"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:layout_gravity="right"
         android:background="@drawable/ic_baseline_print_24"
         android:foreground="?android:attr/selectableItemBackground"></ImageButton>
 
@@ -60,7 +60,7 @@
         android:fontFamily="monospace"
         android:text="Bill Date:"
         android:textColor="@android:color/black"
-        android:textSize="20dp"></TextView>
+        android:textSize="15dp"></TextView>
 
     <TextView
         android:id="@+id/salecart_billdate"
@@ -71,13 +71,13 @@
         android:fontFamily="monospace"
         android:text="26-03-2024"
         android:textColor="@android:color/black"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:textStyle="bold"></TextView>
     <ImageButton
         android:id="@+id/salecart_delete"
-        android:layout_width="120px"
-        android:layout_height="120px"
-        android:layout_gravity="center"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:layout_gravity="right"
         android:background="@drawable/del"
         android:foreground="?android:attr/selectableItemBackground"></ImageButton>
 
@@ -93,7 +93,7 @@
         android:gravity="center"
         android:text="₹ 123456"
         android:textColor="@android:color/white"
-        android:textSize="30dp"
+        android:textSize="20dp"
         android:textStyle="bold|italic"></TextView>
 </GridLayout>
         </androidx.cardview.widget.CardView>
