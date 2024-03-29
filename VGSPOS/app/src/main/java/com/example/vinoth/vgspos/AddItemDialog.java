@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -73,10 +74,20 @@ public class AddItemDialog extends AppCompatDialogFragment {
         if(!ItemAcPrice.isEmpty()){
             editTextItemAcPrice.setText(ItemAcPrice);
         }
+        String itemname = editTextItemName.getText().toString();
+        if(!itemname.isEmpty()){
+            editTextItemName.selectAll();
+        }
+        editTextItemName.requestFocus();
+        showKeyboard();
         Dialog dialog = builder.create();
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         return dialog;
+    }
+    public void showKeyboard(){
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
     @Override
     public void onAttach(@NonNull Context context) {

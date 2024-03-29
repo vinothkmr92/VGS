@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -254,11 +253,11 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
         if(Result != null){
             if(Result.getContents() == null){
                 Log.d("ItemsMasterActivity" , "Cancelled scan");
-                Toast.makeText(ItemsMasterActivity.this, "cancelled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "cancelled", Toast.LENGTH_SHORT).show();
             }
             else {
                 editTextItemNo.setText(Result.getContents());
-                editTextItemNo.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                SearchItems();
             }
         }
         else {
