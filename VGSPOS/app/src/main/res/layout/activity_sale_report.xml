@@ -108,16 +108,20 @@
         android:layout_marginTop="150dp"
         android:orientation="vertical"
         tools:ignore="MissingConstraints">
+
         <TextView
+            android:id="@+id/totalSaleAmt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/zxing_status_text"
+            android:fontFamily="monospace"
             android:text="₹ 000"
-            android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/holo_green_dark"
-            android:id="@+id/totalSaleAmt"
             android:textAlignment="center"
-            android:textSize="30dp"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/design_default_color_primary"
+            android:textSize="48sp"
+            android:textStyle="bold|italic"
+            android:typeface="monospace" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -126,13 +127,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         radioButton3Inch = (RadioButton)findViewById(R.id.radiobtn3Inch);
         radioButton4Inch = (RadioButton)findViewById(R.id.radiobtn4Inch);
         spinnerbluetothDevice = (Spinner) findViewById(R.id.bltDevice);
-        txtviewkotselection = (TextView)findViewById(R.id.kotoption);
         txtviewkotprinter = (TextView)findViewById(R.id.txtViewIPAddressKOT);
         editTextkotprinterip = (EditText) findViewById(R.id.KOTprinterIP);
         enablekot = (CheckBox) findViewById(R.id.enableKOT);
         editTextbillcopies = (EditText)findViewById(R.id.billcopies);
         editTextaddressline = (EditText)findViewById(R.id.addressMsg);
-        txtviewIncludeMRP = (TextView)findViewById(R.id.includeMRPTxt);
         checkBoxIncludeMRP = (CheckBox)findViewById(R.id.includeMRP);
         loadPictureBtn = (Button)findViewById(R.id.buttonLoadPicture);
         imageView = (ImageView)findViewById(R.id.imgView);
@@ -255,14 +254,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                      txtViewPrinterIP.setVisibility(View.INVISIBLE);
                      editTextPrinterIP.setVisibility(View.INVISIBLE);
                      txtviewkotprinter.setVisibility(View.INVISIBLE);
-                     txtviewkotselection.setVisibility(View.INVISIBLE);
                      editTextkotprinterip.setVisibility(View.INVISIBLE);
                  }
                  else{
                      txtViewPrinterIP.setVisibility(View.VISIBLE);
                      editTextPrinterIP.setVisibility(View.VISIBLE);
                      txtviewkotprinter.setVisibility(View.VISIBLE);
-                     txtviewkotselection.setVisibility(View.VISIBLE);
                      editTextkotprinterip.setVisibility(View.VISIBLE);
                  }
             }
@@ -467,7 +464,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             Common.printKOT = enablekot.isChecked();
             Common.kotprinterIP = kotprinterip;
             Common.userPasscode = txtViewuserpasscode.getText().toString();
-            showCustomDialog("Saved","Successfully Saved Data",true);
+            Toast.makeText(getApplicationContext(),"Settings Details Updated.!",Toast.LENGTH_SHORT).show();
+            GoHome();
         }
         catch (Exception ex){
             showCustomDialog("Exception",ex.getMessage().toString(),false);

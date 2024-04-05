@@ -91,13 +91,14 @@
             <Spinner
                 android:spinnerMode="dialog"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:focusableInTouchMode="true"
                 android:layout_columnSpan="4"
                 android:id="@+id/bltDevice"></Spinner>
             <TextView
                 android:padding="20px"
                 android:id="@+id/rptsizetxt"
+                android:layout_columnSpan="4"
                 android:text="Receipt Size"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"></TextView>
@@ -120,14 +121,9 @@
                 android:checked="false"
                 android:padding = "20px"
                 android:text="4 inch"
+                android:layout_columnSpan="2"
                 android:textStyle="bold">
             </RadioButton>
-            <TextView
-                android:padding="20px"
-                android:id="@+id/includeMRPTxt"
-                android:text="Include MRP"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"></TextView>
             <CheckBox
                 android:id="@+id/includeMRP"
                 android:layout_columnSpan="3"
@@ -146,12 +142,6 @@
                 android:layout_width="fill_parent"
                 android:id="@+id/printerIP"
                 android:layout_columnSpan="4"></EditText>
-            <TextView
-                android:padding="20px"
-                android:id="@+id/kotoption"
-                android:textColor="@android:color/black"
-                android:text="KOT Selection"
-                android:textStyle="bold"></TextView>
             <CheckBox
                 android:id="@+id/enableKOT"
                 android:layout_columnSpan="3"
@@ -208,7 +198,7 @@
                 android:layout_columnSpan="3"
                 android:layout_gravity="center"
                 android:layout_weight="0"
-                android:text="Load Picture"></Button>
+                android:text="Pick Logo"></Button>
             <ImageButton
                 android:id="@+id/btnclearlogo"
                 android:layout_width="100px"
@@ -220,12 +210,11 @@
 
             <Button
                 android:id="@+id/btnSave"
-                android:layout_width="85dp"
-                android:layout_height="54dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="80dp"
                 android:layout_columnSpan="4"
                 android:layout_gravity="center"
-                android:width="100px"
-                android:height="100px"
                 android:background="@drawable/save"></Button>
         </GridLayout>
     </LinearLayout>
