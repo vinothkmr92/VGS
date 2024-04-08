@@ -4,11 +4,11 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -38,20 +39,17 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class UploadActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -161,7 +159,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         try {
             progressBar.show();
             Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-            fileintent.setType("application/*");
+            fileintent.setType("*/*");
             startActivityForResult(fileintent, requestcode);
         } catch (Exception ex) {
             lbl.setText(ex.getMessage());
@@ -512,6 +510,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             return false;
         }
     }
+    /*
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null)
             return;
@@ -591,6 +590,90 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                             e.printStackTrace();
                         }
 
+                    }
+                } catch (Exception ex) {
+                    lbl.setText(ex.getMessage().toString());
+                    ex.printStackTrace();
+                    //lbl.setText(ex.getMessage().toString());
+                }
+        }
+        super.onActivityResult(requestCode,resultCode,data);
+    }*/
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null)
+            return;
+        switch (requestCode) {
+            case requestcode:
+                String filepath = getPath(this,data.getData());
+                Log.e("File path", filepath);
+
+                if (filepath.contains("/root_path"))
+                    filepath = filepath.replace("/root_path", "");
+
+                Log.e("New File path", filepath);
+                try {
+                    if (resultCode == RESULT_OK) {
+
+                        try {
+                            int counter = 0;
+                            String innerException = "";
+                            FileReader file = new FileReader(filepath);
+                            BufferedReader buffer = new BufferedReader(file);
+                            ContentValues contentValues = new ContentValues();
+                            String line = "";
+
+                            while ((line = buffer.readLine()) != null) {
+
+                                Log.e("line", line);
+                                String[] str = line.split(",", 5);  // defining 3 columns with null or blank field //values acceptance
+
+                                //Id, Company,Name,Price
+
+                                String itemName = str[0].toString();
+                                String itemCode = str[1].toString();
+                                String rate1 = str[2].toString();
+                                String rate2 = str[3].toString();
+                                String stocks = str[4].toString();
+                                double price = isDouble(rate1) ? Double.parseDouble(rate1):0;
+                                double acprice = isDouble(rate2) ? Double.parseDouble(rate2):0;
+                                double stock = isDouble(stocks) ? Double.parseDouble(stocks):0;
+                                Item item = new Item();
+                                item.setItem_No(itemCode);
+                                item.setItem_Name(itemName);
+                                item.setPrice(price);
+                                item.setAcPrice(acprice);
+                                item.setStocks(stock);
+                                try{
+                                    Item check = dbHelper.GetItem(item.getItem_No());
+                                    if(check!=null){
+                                        double st = check.getStocks()+item.getStocks();
+                                        item.setStocks(st);
+                                    }
+                                    dbHelper.Insert_Item(item);
+                                    counter++;
+                                }
+                                catch (Exception ex)
+                                {
+                                    innerException = ex.getMessage();
+                                    break;
+                                }
+                                Log.e("Import", "Successfully Updated Database.");
+                            }
+                            if(innerException.isEmpty()){
+                                lbl.setText("  "+counter+" - Rows Uploaded");
+                            }
+                            else {
+                                lbl.setText("  "+counter+" - Rows Uploaded " + innerException);
+                            }
+                        } catch (IOException e) {
+                            lbl.setText(e.getMessage().toString());
+                            e.printStackTrace();
+                        }
+
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "CSV file alone allowed.", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception ex) {
                     lbl.setText(ex.getMessage().toString());

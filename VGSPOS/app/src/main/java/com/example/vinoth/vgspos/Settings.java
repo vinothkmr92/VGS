@@ -78,7 +78,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     EditText editTextbillcopies;
     EditText editTextkotprinterip;
     DatabaseHelper dbHelper;
-    TextView txtviewIncludeMRP;
     CheckBox enablekot;
     public static final String ADDRESSLINE = "ADDRESSLINE";
     public static final String IS3INCH = "IS3INCH";
@@ -183,7 +182,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         radioButton3Inch.setVisibility(View.INVISIBLE);
         radioButton4Inch.setVisibility(View.INVISIBLE);
         saveBtn = (Button) findViewById(R.id.btnSave);
-
         radioButton2Inch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -198,13 +196,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    txtviewIncludeMRP.setVisibility(View.VISIBLE);
                     checkBoxIncludeMRP.setVisibility(View.VISIBLE);
                     radioButton4Inch.setChecked(false);
                     radioButton2Inch.setChecked(false);
                 }
                 else{
-                    txtviewIncludeMRP.setVisibility(View.INVISIBLE);
                     checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
                 }
             }
@@ -213,13 +209,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    txtviewIncludeMRP.setVisibility(View.VISIBLE);
                     checkBoxIncludeMRP.setVisibility(View.VISIBLE);
                     radioButton2Inch.setChecked(false);
                     radioButton3Inch.setChecked(false);
                 }
                 else{
-                    txtviewIncludeMRP.setVisibility(View.INVISIBLE);
                     checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
                 }
             }
