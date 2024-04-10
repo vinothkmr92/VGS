@@ -7,79 +7,72 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:layout_width="409dp"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="VG SOLUTIONS APK ACTIVATION"
+        android:fontFamily="monospace"
+        android:text="MPOS ACTIVATOR"
         android:textAlignment="center"
-        android:textSize="40dp"
-        android:textStyle="bold|italic"
         android:textColor="@color/purple_700"
+        android:textSize="30dp"
+        android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="1dp"></TextView>
 
     <GridLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:columnCount="3"
+        android:layout_gravity="fill"
+        android:columnCount="1"
         android:orientation="horizontal"
+        android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <CheckBox android:layout_columnSpan="3"
-            android:textColor="@color/purple_200"
-            android:textStyle="bold"
-            android:id="@+id/uselocalip"
-            android:text="Use Local Service"/>
         <TextView
-            android:layout_marginRight="10dp"
             android:text="DEVICE ID"
-            android:textColor="@android:color/black"
-            android:textStyle="bold|italic" />
+            android:fontFamily="monospace"
+            android:textColor="@color/purple_700"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editTextDeviceID"
-            android:layout_width="211dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_columnSpan="2"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:hint="Enter Device ID"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:singleLine="true"></EditText>
 
         <TextView
-            android:layout_marginRight="10dp"
             android:text="CUSTOMER NAME"
-            android:textColor="@android:color/black"
-            android:textStyle="bold|italic" />
+            android:fontFamily="monospace"
+            android:textColor="@color/purple_700"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editTextDeviceName"
-            android:layout_width="210dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_columnSpan="2"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:hint="Enter Customer Name"
             android:imeOptions="actionNext"
             android:inputType="textCapCharacters"
             android:singleLine="true"></EditText>
 
         <TextView
-            android:layout_marginRight="10dp"
             android:text="EXPIRE DATE"
-            android:textColor="@android:color/black"
-            android:textStyle="bold|italic" />
+            android:fontFamily="monospace"
+            android:textColor="@color/purple_700"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editTextExpireDt"
-            android:layout_width="210dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_columnSpan="1"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:imeOptions="actionDone"
             android:singleLine="true"
             android:editable="false"
@@ -87,16 +80,15 @@
 
         <ImageButton
             android:id="@+id/btnDtPicker"
-            android:layout_width="40dp"
-            android:layout_height="39dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/ic_baseline_date_range_24"></ImageButton>
 
         <ImageButton
             android:id="@+id/btnsync"
             android:layout_width="200px"
             android:layout_height="200px"
-            android:layout_columnSpan="3"
-            android:layout_gravity="center"
+            android:layout_gravity="right"
             android:background="@drawable/ic_baseline_cloud_sync_24"></ImageButton>
     </GridLayout>
 

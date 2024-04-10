@@ -658,8 +658,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 public void onClick(DialogInterface dialog, int which) {
                     Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
                     whatsappIntent.setType("text/plain");
-                    whatsappIntent.setPackage("com.whatsapp");
-                    whatsappIntent.putExtra(Intent.EXTRA_TEXT, android_id);
+                    String shareBody =android_id;
+                    String shareSub = "Share Device ID";
+                    whatsappIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSub);
+                    whatsappIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                     try {
                         startActivity(whatsappIntent);
                     } catch (android.content.ActivityNotFoundException ex) {

@@ -4,11 +4,11 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -39,17 +39,20 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class UploadActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -353,78 +356,104 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         b.show();
     }
     public static String getPath(Context context, Uri uri) {
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+        try {
 
-        // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-            // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
+            /*File filen = new File(uri.getPath());//create path from uri
+            final String[] splitn = filen.getPath().split(":");//split the path.
+            return  splitn[1];//assign it to a string(your choice).*/
+            final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
-                if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+            // DocumentProvider
+            if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+                // ExternalStorageProvider
+                if (isExternalStorageDocument(uri)) {
+                    final String docId = DocumentsContract.getDocumentId(uri);
+                    final String[] split = docId.split(":");
+                    final String type = split[0];
+
+                    if ("primary".equalsIgnoreCase(type)) {
+                        return Environment.getExternalStorageDirectory() + "/" + split[1];
+                    }
+                    // TODO handle non-primary volumes
                 }
-                // TODO handle non-primary volumes
+                // DownloadsProvider
+                else if (isDownloadsDocument(uri)) {
+                    String fileName = getFilePath(context, uri);
+                    if (fileName != null) {
+                        return Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/Download/" + fileName;
+                    }
+
+                    String id = DocumentsContract.getDocumentId(uri);
+                    if (id.startsWith("raw:")) {
+                        id = id.replaceFirst("raw:", "");
+                        File file = new File(id);
+                        if (file.exists())
+                            return id;
+                    }
+
+                    final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                    return getDataColumn(context, contentUri, null, null);
+                }
+                // MediaProvider
+                else if (isMediaDocument(uri)) {
+                    final String docId = DocumentsContract.getDocumentId(uri);
+                    final String[] split = docId.split(":");
+                    final String type = split[0];
+                    Uri contentUri = null;
+                    if ("image".equals(type)) {
+                        contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                    } else if ("video".equals(type)) {
+                        contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                    } else if ("audio".equals(type)) {
+                        contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                    }
+                    else if("document".equals(type)){
+                        String fileName = getFilePath(context, uri);
+                        if (fileName != null) {
+                            String rootpath = Environment.getExternalStorageDirectory().getAbsolutePath().toString();
+                            return rootpath + "/Documents/" + fileName;
+                        }
+
+                        String id = DocumentsContract.getDocumentId(uri);
+                        if (id.startsWith("raw:")) {
+                            id = id.replaceFirst("raw:", "");
+                            File file = new File(id);
+                            if (file.exists())
+                                return id;
+                        }
+
+                        final Uri contentUris = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                        return getDataColumn(context, contentUris, null, null);
+                    }
+                    final String selection = "_id=?";
+                    final String[] selectionArgs = new String[]{split[1]};
+                    return getDataColumn(context, contentUri, selection, selectionArgs);
+                } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+                    // Return the remote address
+                    if (isGooglePhotosUri(uri))
+                        return uri.getLastPathSegment();
+                    return uri.getPath();
+                }
             }
-            // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
-                String fileName = getFilePath(context, uri);
-                if (fileName != null) {
-                    return Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/Download/" + fileName;
-                }
-
-                String id = DocumentsContract.getDocumentId(uri);
-                if (id.startsWith("raw:")) {
-                    id = id.replaceFirst("raw:", "");
-                    File file = new File(id);
-                    if (file.exists())
-                        return id;
-                }
-
-                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                return getDataColumn(context, contentUri, null, null);
-            }
-            // MediaProvider
-            else
-            if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                }
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {split[1]};
-                return getDataColumn(context, contentUri, selection, selectionArgs);
-            }
+            // MediaStore (and general)
             else if ("content".equalsIgnoreCase(uri.getScheme())) {
                 // Return the remote address
                 if (isGooglePhotosUri(uri))
                     return uri.getLastPathSegment();
+                return getDataColumn(context, uri, null, null);
+            }
+
+            // File
+            else if ("file".equalsIgnoreCase(uri.getScheme())) {
                 return uri.getPath();
             }
-        }
-        // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            // Return the remote address
-            if (isGooglePhotosUri(uri))
-                return uri.getLastPathSegment();
-            return getDataColumn(context, uri, null, null);
-        }
 
-        // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
+            return null;
         }
-
-        return null;
+        catch (Exception ex){
+            Toast.makeText(context.getApplicationContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+            return  null;
+        }
     }
 
     public static String getFilePath(Context context, Uri uri) {
@@ -510,7 +539,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             return false;
         }
     }
-    /*
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null)
             return;
@@ -549,7 +578,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                             if(deleteCheckbox.isChecked()){
                                 dbHelper.DeleteAllItem();
                             }
-                            for(Iterator<Row> rit = sheet.rowIterator();rit.hasNext();){
+                            for(Iterator<Row> rit = sheet.rowIterator(); rit.hasNext();){
                                 Row row = rit.next();
                                 row.getCell(0,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
                                 row.getCell(1,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellType(CellType.STRING);
@@ -565,6 +594,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                 String stockstr = row.getCell(4,Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                                 double stock = isDouble(stockstr) ? Double.parseDouble(stockstr):0;
                                 Item item = new Item();
+                                itemno = itemno.replace(".0","");
                                 item.setItem_No(itemno);
                                 item.setItem_Name(itemname);
                                 item.setPrice(price);
@@ -598,9 +628,9 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 }
         }
         super.onActivityResult(requestCode,resultCode,data);
-    }*/
+    }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    /*protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null)
             return;
         switch (requestCode) {
@@ -682,7 +712,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 }
         }
         super.onActivityResult(requestCode,resultCode,data);
-    }
+    }*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

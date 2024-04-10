@@ -46,7 +46,7 @@
         android:background="@drawable/border"
         android:columnCount="3"
         android:orientation="vertical"
-        android:padding="50dp"
+        android:padding="20dp"
         android:useDefaultMargins="true"
         tools:ignore="MissingConstraints">
         <TextView
@@ -57,8 +57,8 @@
         <TextView
             android:id="@+id/txtViewItemID"
             android:layout_columnSpan="2"
-            android:layout_gravity="center"
-            android:textColor="@android:color/holo_purple"
+            android:layout_gravity="left"
+            android:textColor="@android:color/white"
             android:textSize="30dp"
             android:textStyle="bold" />
 
@@ -71,8 +71,8 @@
         <TextView
             android:id="@+id/txtViewItemName"
             android:layout_columnSpan="2"
-            android:layout_gravity="center"
-            android:textColor="@android:color/holo_purple"
+            android:layout_gravity="left"
+            android:textColor="@android:color/white"
             android:textSize="30dp"
             android:textStyle="bold" />
 
@@ -84,8 +84,8 @@
         <TextView
             android:id="@+id/txtViewItemPrice"
             android:layout_columnSpan="2"
-            android:layout_gravity="center"
-            android:textColor="@android:color/holo_purple"
+            android:layout_gravity="left"
+            android:textColor="@android:color/white"
             android:textSize="30dp"
             android:textStyle="bold" />
         <TextView
@@ -96,8 +96,8 @@
         <TextView
             android:id="@+id/txtViewItemStock"
             android:layout_columnSpan="2"
-            android:layout_gravity="center"
-            android:textColor="@android:color/holo_purple"
+            android:layout_gravity="left"
+            android:textColor="@android:color/white"
             android:textSize="30dp"
             android:textStyle="bold" />
         <TextView
@@ -108,17 +108,17 @@
         <TextView
             android:id="@+id/txtViewItemAcPrice"
             android:layout_columnSpan="2"
-            android:layout_gravity="center"
-            android:textColor="@android:color/holo_purple"
+            android:layout_gravity="left"
+            android:textColor="@android:color/white"
             android:textSize="30dp"
             android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/btnupdateitems"
-            android:layout_width="200px"
-            android:layout_height="200px"
+            android:layout_width="150px"
+            android:layout_height="150px"
             android:layout_columnSpan="3"
-            android:layout_gravity="right"
+            android:layout_gravity="center"
             android:background="@drawable/ic_baseline_edit_24"></ImageButton>
     </GridLayout>
     </LinearLayout>
