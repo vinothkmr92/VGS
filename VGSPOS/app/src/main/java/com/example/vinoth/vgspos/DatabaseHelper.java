@@ -233,8 +233,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT,DISCOUNT FROM BILLS WHERE DATE(BILL_DATE)>='"+frmDate+"' AND DATE(BILL_DATE)<='"+toDate+"'";
         if(!waiter.equals("ALL")){
-            query = query+" AND USER_ID='"+waiter+"'";
+            query = query+" AND WAITER='"+waiter+"'";
         }
+
         Cursor cur = db.rawQuery(query,null);
         if(cur.getCount()>0){
             while (cur.moveToNext()){
@@ -274,9 +275,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
        }
        else{
            SQLiteDatabase db = this.getWritableDatabase();
-           String query = "SELECT ITEM_NAME,SUM(QUANTITY),SUM(QUANTITY*PRICE) AS AMT FROM BILLS_ITEM WHERE DATE(BILL_DATE)>='"+frmDt+"' AND DATE(BILL_DATE)<='"+toDt+"' GROUP BY ITEM_NAME";
+           String query = "SELECT ITEM_NAME,SUM(QUANTITY),SUM(QUANTITY*PRICE) AS AMT FROM " +
+                   "BILLS_ITEM WHERE DATE(BILL_DATE)>='"+frmDt+"' AND DATE(BILL_DATE)<='"+toDt+"'";
            if(!waiter.equals("ALL")){
                query = query+" AND WAITER='"+waiter+"' GROUP BY ITEM_NAME";
+           }
+           else {
+               query = query+" GROUP BY ITEM_NAME";
            }
            Cursor cur = db.rawQuery(query,null);
 
