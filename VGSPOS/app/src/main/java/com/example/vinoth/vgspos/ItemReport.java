@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.icu.text.NumberFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,8 +29,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -70,10 +71,9 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     TextView toDateTextView;
     ImageButton btnFrmDatePicker;
     ImageButton btnToDatePicker;
+    LinearLayout itemRptContainer;
     private Button btnrpt;
     private ImageButton btnPrint;
-    private GridLayout gridView;
-    private DynamicViewItemRpt dynamicView;
     private Calendar calendar;
     private int year, month, day;
     DatePickerDialog datePickerDialog;
@@ -378,7 +378,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         btnFrmDatePicker = (ImageButton) findViewById(R.id.btndpFrmDateItem);
         btnToDatePicker = (ImageButton) findViewById(R.id.btndpToDateItem);
         btnShare = (ImageButton)findViewById(R.id.btnshareExcel);
-        gridView = (GridLayout) findViewById(R.id.gridDataRpt);
+        itemRptContainer = (LinearLayout)findViewById(R.id.itemsrptContainer);
         btnrpt = (Button) findViewById(R.id.btngetreport);
         btnPrint = (ImageButton)findViewById(R.id.btnrptprint);
         btnPrint.setOnClickListener(this);
@@ -496,32 +496,52 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         }
     }
 
+    private void addCard(ItemsRpt items){
+        View view = getLayoutInflater().inflate(R.layout.cart_item,null);
+        TextView prname = view.findViewById(R.id.itemcard_name);
+        TextView amt = view.findViewById(R.id.itemcard_amt);
+        TextView qty = view.findViewById(R.id.itemcard_qty);
+        if(stockReport.isChecked()){
+            amt.setVisibility(View.INVISIBLE);
+        }
+        else{
+            amt.setVisibility(View.VISIBLE);
+        }
+        prname.setText(items.getItemName());
+        String qtyStr = String.format("%.0f",items.getQuantity());
+        qtyStr = "QTY: "+qtyStr;
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        String amtStr = formatter.format(items.getAmount()).replace(symbol,symbol+" ");
+        amt.setText(amtStr);
+        qty.setText(qtyStr);
+        itemRptContainer.addView(view);
+    }
     public void LoadReportViews(){
         try{
+            itemRptContainer.removeAllViews();
             String frmdt = frmDateTextView.getText().toString();
             String todt = toDateTextView.getText().toString();
             String waiter  = searchTxtView.getText().toString();
-
-            ArrayList<ItemsRpt> itemsRpts = dbHelper.GetReports(frmdt,todt,waiter,stockReport.isChecked());
-            int rc = gridView.getRowCount();
-            if(rc>1){
-                int count = (rc-1)*4;
-                gridView.removeViews(4,count);
+            if(stockReport.isChecked()){
+                txtViewTotalAmt.setVisibility(View.INVISIBLE);
             }
+            else{
+                txtViewTotalAmt.setVisibility(View.VISIBLE);
+            }
+            ArrayList<ItemsRpt> itemsRpts = dbHelper.GetReports(frmdt,todt,waiter,stockReport.isChecked());
             double totalAmt = 0;
             for(int i=0;i<itemsRpts.size();i++){
                 ItemsRpt item = itemsRpts.get(i);
-                dynamicView = new DynamicViewItemRpt(this);
-                gridView.addView(dynamicView.itemIDTextView(this,item.getItemID()));
-                gridView.addView(dynamicView.itemNameTextView(this,item.getItemName()));
-                String qtyStr = String.format("%.0f",item.getQuantity());
-                gridView.addView(dynamicView.qtyTextView(this,qtyStr));
-                String amtStr = String.format("%.0f",item.getAmount());
-                gridView.addView(dynamicView.amtTextView(this,amtStr));
+                addCard(item);
                 totalAmt+=item.getAmount();
             }
-            String ttSaleAmtstring = String.format("%.0f",totalAmt);
-            txtViewTotalAmt.setText("₹ "+ttSaleAmtstring);
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+            formatter.setMaximumFractionDigits(0);
+            String symbol = formatter.getCurrency().getSymbol();
+            String ttSaleAmtstring = formatter.format(totalAmt).replace(symbol,symbol+" ");
+            txtViewTotalAmt.setText(ttSaleAmtstring);
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
