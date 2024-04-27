@@ -194,19 +194,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.DATE, 5);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
-            String expiredtstr = sharedpreferences.getString(EXPIRE_DT,simpleDateFormat.format(cal.getTime()));
+            String expiredtstr = sharedpreferences.getString(EXPIRE_DT,simpleDateFormat.format(dt));
             Date expireDt = simpleDateFormat.parse(expiredtstr);
             Date compare = new Date(dt.getYear(),dt.getMonth(),dt.getDate());
-            boolean internetav = Is_InternetWorking();
-            if(internetav){
-                Common.isActivated = false;
-                android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-                AppActivation appActivation = new AppActivation(HomeActivity.this,android_id,this);
-                appActivation.CheckActivationStatus();
+            Common.isActivated = expireDt.compareTo(compare)>=0;
+            Common.expireDate = expireDt;
+            if(!Common.isActivated){
+                boolean internetav = Is_InternetWorking();
+                if(internetav){
+                    Common.isActivated = false;
+                    android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+                    AppActivation appActivation = new AppActivation(HomeActivity.this,android_id,this);
+                    appActivation.CheckActivationStatus();
+                }
+                else{
+                    showCustomDialog("Msg","Please connect to internet and Try again.",true);
+                }
             }
-            else{
-                showCustomDialog("Msg","Please connect to internet and Try again.",true);
-            }
+
             itemName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -317,7 +322,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             });
             if (QuantityListener.itemsCarts != null) {
                 tItem.setText(String.valueOf(QuantityListener.itemsCarts.size()));
-                int ttq = 0;
+                double ttq = 0;
                 for (int i = 0; i < QuantityListener.itemsCarts.size(); i++) {
                     ItemsCart ic = QuantityListener.itemsCarts.get(i);
                     ttq = ttq + ic.getQty();
@@ -440,7 +445,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             double discountper = (discountAmt/billAmt)*100;
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
             double finalBillValue = billAmt-discountAmt;
-            discountperEditText.setText(String.format("%.2f",discountper));
+            discountperEditText.setText(decimalFormat.format(discountper));
             estAmt.setText(GetCurrency(finalBillValue));
         }
     }
@@ -451,7 +456,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             double discountAmt = billAmt*(discountper/100);
             discountAmt = Math.round(discountAmt);
             double finalBillValue = billAmt-discountAmt;
-            discountAmtEditText.setText(String.format("%.0f",discountAmt));
+            DecimalFormat formater = new DecimalFormat("#.###");
+            discountAmtEditText.setText(formater.format(discountAmt));
             estAmt.setText(GetCurrency(finalBillValue));
         }
     }
@@ -510,7 +516,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 if(item!=null){
                     itemNo.setText(String.valueOf(item.getItem_No()));
                     itemName.setText(item.getItem_Name());
-                    String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
+                    DecimalFormat formater = new DecimalFormat("#.###");
+                    String price = formater.format((isAcPrice.isChecked()?item.getAcPrice():item.getPrice()));
+                    //String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
                     priceTxt.setText(price);
                     Quantity.setText("1");
                     Quantity.selectAll();
@@ -706,7 +714,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 if(index>-1){
                     ItemsCart existingitem = items.get(index);
                     if(existingitem.getPrice() == item.getPrice()){
-                        int qty = item.getQty();
+                        double qty = item.getQty();
                         qty+=existingitem.getQty();
                         item.setQty(qty);
                         items.remove(index);
@@ -723,7 +731,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 Item item = dbHelper.GetItem(itemnostr);
                 if(item!=null){
                     itemName.setText(item.getItem_Name());
-                    String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
+                    DecimalFormat formater = new DecimalFormat("#.###");
+                    String price = formater.format(isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
+                    //String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
                     priceTxt.setText(price);
                     Quantity.setText("1");
                     Quantity.selectAll();
@@ -1000,7 +1010,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void LoadTotalAmt(){
         if(Common.itemsCarts!=null && Common.itemsCarts.size()>0){
             tItem.setText(String.valueOf(Common.itemsCarts.size()));
-            int ttq = 0;
+            double ttq = 0;
             double amt = 0;
             for(int i=0;i<Common.itemsCarts.size();i++){
                 ItemsCart ic = Common.itemsCarts.get(i);
@@ -1008,7 +1018,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 double pr = ic.getPrice()*ic.getQty();
                 amt+=pr;
             }
-            tQty.setText(String.valueOf(ttq));
+            DecimalFormat formater = new DecimalFormat("#.###");
+            tQty.setText(formater.format(ttq));
             estAmt.setText(GetCurrency(amt));
         }
     }
@@ -1018,7 +1029,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ItemsCart itc = new ItemsCart();
         itc.setItem_No(itemNo.getText().toString());
         itc.setItem_Name(itemName.getText().toString());
-        itc.setQty(Integer.valueOf(Quantity.getText().toString()));
+        itc.setQty(Double.valueOf(Quantity.getText().toString()));
         itc.setPrice(Double.valueOf(priceTxt.getText().toString()));
         Item item = dbHelper.GetItem(itemNo.getText().toString());
         if(item!=null){
@@ -1031,7 +1042,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             for(int i=0;i<itemsCarts.size();i++){
                 ItemsCart ic = itemsCarts.get(i);
                 if(ic.getItem_No() == itc.getItem_No() && ic.getPrice() == itc.getPrice()){
-                    Integer newQty = itc.getQty()+ic.getQty();
+                    Double newQty = itc.getQty()+ic.getQty();
                     itemsCarts.remove(ic);
                     itc.setQty(newQty);
                 }

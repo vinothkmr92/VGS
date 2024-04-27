@@ -12,7 +12,7 @@ public class QuantityListener implements View.OnClickListener {
         if(isAdd){
             ItemsCart temp = itemsCarts.get(itemsCarts.indexOf(call));
             itemsCarts.remove(call);
-            Integer existingQty = call.getQty();
+            Double existingQty = call.getQty();
             if(isAdd){
                 existingQty++;
             }

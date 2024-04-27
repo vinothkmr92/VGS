@@ -22,13 +22,14 @@
             android:id="@+id/billnoTxt"
             android:text="1"
             android:padding="15dp"
+            android:layout_gravity="center"
             android:textColor="@color/colorRed"
-            android:textAppearance="@style/TextAppearance.AppCompat"
             android:textSize="30dp"
+            android:typeface="monospace"
             android:textStyle="bold" />
         <TextView
             android:id="@+id/customerInfoTxtView"
-            android:layout_width="400px"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:drawable/editbox_background"
             android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
@@ -40,6 +41,8 @@
             android:id="@+id/btnAddMember"
             android:layout_width="150px"
             android:layout_height="150px"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20px"
             android:background="@drawable/ic_baseline_person_add_24"
             android:foreground="?android:attr/selectableItemBackground"
             tools:ignore="TouchTargetSizeCheck"></ImageButton>
@@ -47,8 +50,9 @@
         <CheckBox
             android:id="@+id/isAC"
             android:text="AC"
+            android:layout_gravity="right"
             android:padding="15dp"
-            android:textStyle="bold|italic"></CheckBox>
+            android:textStyle="bold"></CheckBox>
 
     </GridLayout>
     <GridLayout
@@ -220,12 +224,12 @@
                     android:id="@+id/estimateAmt"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/holo_purple"
+                    android:background="@color/homeBanner"
                     android:text="₹ 0"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat"
+                    android:textSize="40dp"
                     android:textColor="@android:color/white"
-                    android:textSize="60dp"
+                    android:typeface="monospace"
                     android:textStyle="bold" />
             </LinearLayout>
 

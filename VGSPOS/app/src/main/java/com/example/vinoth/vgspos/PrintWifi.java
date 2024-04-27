@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -136,11 +137,12 @@ public class PrintWifi {
         double totalAmt = 0d;
         double mrpTotalAmt = 0d;
         double discountAmt = 0d;
+        DecimalFormat formater = new DecimalFormat("#.###");
         for(int k=0;k<Common.itemsCarts.size();k++){
             String name = Common.itemsCarts.get(k).getItem_Name();
-            String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
-            String price = String.format("%.0f",Common.itemsCarts.get(k).getPrice());
-            String mrp = String.format("%.0f",Common.itemsCarts.get(k).getMRP());
+            String qty = formater.format(Common.itemsCarts.get(k).getQty());
+            String price = formater.format(Common.itemsCarts.get(k).getPrice());
+            String mrp = formater.format(Common.itemsCarts.get(k).getMRP());
             double mrpd = Common.itemsCarts.get(k).getMRP();
             Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
             totalAmt+=amt;
@@ -159,7 +161,7 @@ public class PrintWifi {
         String totalamt = String.format("%.0f",totalAmt);
         String mrptotalStr = String.format("%.0f",mrpTotalAmt);
         discountAmt = mrpTotalAmt-totalAmt;
-        String discountAmtStr = String.format("%.0f",discountAmt);
+        String discountAmtStr = formater.format(discountAmt);
         String txttotal = "TOTAL: "+totalamt+"/-";
         String mrptxt = "MRP TOTAL: "+mrptotalStr+"/-";
         String discountTxt = "DISCOUNT AMT: "+discountAmtStr+"/-";
@@ -188,6 +190,7 @@ public class PrintWifi {
         if(onlyBill){
             posPtr.printNormal(ESC+"|cA"+ESC+"|2CCOPY BILL\r\n");
         }
+        DecimalFormat formater = new DecimalFormat("#.###");
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
         posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
@@ -204,8 +207,8 @@ public class PrintWifi {
         double billAmt = 0d;
         for(int k=0;k<Common.itemsCarts.size();k++){
             String name = Common.itemsCarts.get(k).getItem_Name();
-            String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
-            String price = String.format("%.0f",Common.itemsCarts.get(k).getPrice());
+            String qty = formater.format(Common.itemsCarts.get(k).getQty());
+            String price = formater.format(Common.itemsCarts.get(k).getPrice());
             Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
             billAmt+=amt;
             String amts=String.format("%.0f",amt);
@@ -218,7 +221,7 @@ public class PrintWifi {
         }
         if(Common.discount>0){
             posPtr.printNormal(ESC+"|rATOTAL   : "+String.format("%.0f",billAmt)+"\n");
-            posPtr.printNormal(ESC+"|rADISCOUNT: "+String.format("%.0f",Common.discount)+"\n");
+            posPtr.printNormal(ESC+"|rADISCOUNT: "+formater.format(Common.discount)+"\n");
             posPtr.lineFeed(1);
         }
         totalAmt = billAmt-Common.discount;
@@ -250,6 +253,7 @@ public class PrintWifi {
 
         try
         {
+            DecimalFormat formater = new DecimalFormat("#.###");
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
             Date date = new Date();
             String dateStr = format.format(date);
@@ -267,7 +271,7 @@ public class PrintWifi {
             posPtr.printNormal("----------------------------------------------\n");
             for(int k=0;k<Common.itemsCarts.size();k++){
                 String name = Common.itemsCarts.get(k).getItem_Name();
-                String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
+                String qty = formater.format(Common.itemsCarts.get(k).getQty());
                 name = StringUtils.rightPad(name,42);
                 qty = StringUtils.leftPad(qty,5);
                 String line = name+qty+"\n";
@@ -303,6 +307,7 @@ public class PrintWifi {
         }
         try
         {
+            DecimalFormat formater = new DecimalFormat("#.###");
             posPtr.printNormal(ESC+"|cA"+ESC+"|2CITEM WISE REPORT\r\n");
             posPtr.printNormal("\n");
             posPtr.printNormal(ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
@@ -314,7 +319,7 @@ public class PrintWifi {
                 ItemsRpt itemsRpt = Common.itemsRpts.get(k);
                 String itemname = itemsRpt.getItemName();
                 Double qty = itemsRpt.getQuantity();
-                String qtystr=String.format("%.0f",qty);
+                String qtystr=formater.format(qty);
                 itemname = StringUtils.rightPad(itemname,38);
                 qtystr = StringUtils.leftPad(qtystr,8);
                 String line = itemname+qtystr+"\n";

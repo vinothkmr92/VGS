@@ -10,8 +10,15 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,10 +39,13 @@ import org.fintrace.core.drivers.tspl.commands.label.TSPLLabel;
 import org.fintrace.core.drivers.tspl.commands.label.Text;
 import org.fintrace.core.drivers.tspl.commands.system.Print;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -157,6 +167,7 @@ public class PrintBluetooth {
         int height = bitmap.getHeight();
         String format = bitmap.getConfig().name();*/
     }
+
     public void PrintImage(Bitmap image) throws Exception{
         try {
             byte[] command = PrinterUtils.decodeBitmap(image);
@@ -221,7 +232,116 @@ public class PrintBluetooth {
             HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
         }
     }
+    public void PrintDataTamil(String txt,final byte[] pFormat, final byte[] pAlignment) {
+        try {
+            mOutputStream = mBluetoothSocket.getOutputStream();
+            mOutputStream.write(pAlignment);
+            mOutputStream.write(pFormat);
+            mOutputStream.write((txt+"\n").getBytes("US-ASCII"));
+            mOutputStream.flush();
+        } catch (Exception ex) {
+            Log.e("ERR", "Exception during write", ex);
+            HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
+        }
+    }
+    public byte[] GetBytes(String str)
+    {
+        char[] chars = str.toCharArray();
+        byte[] bytes = new byte[chars.length * 2];
+        for (int i = 0; i < chars.length; i++)
+        {
+            bytes[i * 2] = (byte) (chars[i] >> 8);
+            bytes[i * 2 + 1] = (byte) chars[i];
+        }
 
+        return bytes;
+    }
+    public void printImageReciept() throws Exception{
+        String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        String pathName = dir+"/print.jpg";
+        int width = 0;
+        int level =50;
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inJustDecodeBounds = false;
+        opts.inSampleSize = 1;
+        opts.inPreferredConfig = Bitmap.Config.RGB_565;
+        Bitmap bitmap = BitmapFactory.decodeFile(pathName, opts);
+        try {
+            // sleep(1000);
+            if (bitmap == null) {
+                return;
+            }
+            int MAX_WIDTH = 500;
+            if (width == -1) {
+                width = MAX_WIDTH;
+            } else if ((width == 0) || (width < 0)) {
+                width = bitmap.getWidth();
+            }
+            if (width > MAX_WIDTH) {
+                width = MAX_WIDTH;
+            }
+            byte[] printerData = null;
+
+            printerData = PrinterUtils.decodeBitmap(bitmap);
+
+            //Toast.makeText(getApplicationContext(), "Invoice Sent to Printer. Please wait...", Toast.LENGTH_LONG).show();
+            mOutputStream = mBluetoothSocket.getOutputStream();
+            mOutputStream.write(printerData);
+            mOutputStream.flush();
+
+        } catch (Exception ioe) {
+
+            throw ioe;
+
+        }
+    }
+    void createImageFromString(final String text) throws IOException{
+        String fontPath = "Bamini.ttf"; /* You can use any font or       use default */
+        Typeface tf = Typeface.createFromAsset(HomeActivity.getInstance().getAssets(), fontPath);
+        int height=0;
+        String [] rows = text.split("\n\r");
+        height=32*rows.length;/* Specify Length of Image File */
+        FileOutputStream fop = null;
+        File file;
+        /* Specify the path where you want to save the image */
+        String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        file = new File(dir+"/print.jpg");
+        final Paint textPaint = new Paint() {
+            {
+                setColor(Color.WHITE);
+                setTextAlign(Paint.Align.LEFT);
+                setTextSize(25f);
+                setAntiAlias(true);
+            }
+        };
+        /* Optional to set Rect */
+        final Rect bounds = new Rect();
+        textPaint.getTextBounds(text, 0, text.length(), bounds);
+
+        final Bitmap bmp = Bitmap.createBitmap(800, height, Bitmap.Config.ARGB_8888); //use ARGB_8888 for better quality
+        final Canvas canvas = new Canvas(bmp);
+        textPaint.setStyle(Paint.Style.FILL); //fill the background with blue color
+        canvas.drawRect(0, 0, 800, height, textPaint);
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTypeface(tf);
+        float y=28;
+        /* Custom your layout here */
+        for(int i =0;i<rows.length;i++){
+            if(i==(rows.length-8)){
+                textPaint.setTypeface(Typeface.DEFAULT_BOLD);
+                textPaint.setTextSize(28f);
+            }else{
+                textPaint.setTypeface(tf);
+                textPaint.setTextSize(20f);
+            }
+            canvas.drawText(rows[i], 5, y, textPaint);
+            y=y+28;
+        }
+        FileOutputStream stream = new FileOutputStream(file); //create your FileOutputStream here
+        bmp.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+        bmp.recycle();
+        stream.close();
+    }
     public boolean PrintWithFormat(byte[] buffer, final byte[] pFormat, final byte[] pAlignment) {
         try {
             mOutputStream = mBluetoothSocket.getOutputStream();
@@ -305,6 +425,7 @@ public class PrintBluetooth {
     }
     public void PrintItemWiseRpt(){
         String msg = "ITEM WISE REPORT\n";
+        DecimalFormat formater = new DecimalFormat("#.###");
         PrintWithFormat(msg.getBytes(StandardCharsets.UTF_8),new Formatter().height().get(),Formatter.centerAlign());
         PrintData("FROM DATE :"+Common.saleReportFrmDate,new Formatter().get(),Formatter.leftAlign());
         PrintData("TO DATE   :"+Common.saleReportToDate,new Formatter().get(),Formatter.leftAlign());
@@ -324,8 +445,12 @@ public class PrintBluetooth {
         for(int k=0;k<Common.itemsRpts.size();k++){
             ItemsRpt sr = Common.itemsRpts.get(k);
             String name = sr.getItemName();
+            String[] englishname = name.split("/");
+            if(englishname.length>0){
+                name = englishname[0];
+            }
             Double qty = sr.getQuantity();
-            String qtystr = String.format("%.0f",qty);
+            String qtystr = formater.format(qty);
             int namepadlength=0;
             if(Common.RptSize.equals("3")){
                 namepadlength=38;
@@ -375,12 +500,16 @@ public class PrintBluetooth {
                 PrintData(hed,new Formatter().bold().get(),Formatter.leftAlign());
                 PrintData("--------------------------------",new Formatter().get(),Formatter.leftAlign());
             }
-
+            DecimalFormat formater = new DecimalFormat("#.###");
             double totalAmt=0;
             for(int k=0;k<Common.itemsCarts.size();k++){
                 String name = Common.itemsCarts.get(k).getItem_Name();
-                String qty = String.valueOf(Common.itemsCarts.get(k).getQty());
-                String price = String.format("%.0f",Common.itemsCarts.get(k).getPrice());
+                String[] englishname = name.split("/");
+                if(englishname.length>0){
+                    name = englishname[0];
+                }
+                String qty = formater.format(Common.itemsCarts.get(k).getQty());
+                String price = formater.format(Common.itemsCarts.get(k).getPrice());
                 Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
                 totalAmt+=amt;
                 String amts=String.format("%.0f",amt);
@@ -479,15 +608,21 @@ public class PrintBluetooth {
             double totalAmt=0;
             double mrpTotalAmt = 0d;
             double discountAmt = 0d;
-            int totalQty=0;
+            double totalQty=0;
+            DecimalFormat formater = new DecimalFormat("#.###");
             for(int k=0;k<Common.itemsCarts.size();k++){
                 String name = Common.itemsCarts.get(k).getItem_Name();
-                int qt = Common.itemsCarts.get(k).getQty();
+                String[] englishname = name.split("/");
+                if(englishname.length>0){
+                    name = englishname[0];
+                }
+                //name = TamilUtil.convertToTamil(TamilUtil.TSCII, name);
+                double qt = Common.itemsCarts.get(k).getQty();
                 totalQty+=qt;
-                String qty = String.valueOf(qt);
-                String price = String.format("%.0f",Common.itemsCarts.get(k).getPrice());
+                String qty = formater.format(qt);
+                String price = formater.format(Common.itemsCarts.get(k).getPrice());
                 Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
-                String mrp = String.format("%.0f",Common.itemsCarts.get(k).getMRP());
+                String mrp = formater.format(Common.itemsCarts.get(k).getMRP());
                 double mrpd = Common.itemsCarts.get(k).getMRP();
                 double mrpamt = mrpd*Common.itemsCarts.get(k).getQty();
                 mrpTotalAmt+=mrpamt;
@@ -512,7 +647,9 @@ public class PrintBluetooth {
                         amts = StringUtils.leftPad(amts,10);
                         line = name+qty+price+amts;
                     }
-                    PrintData(line,new Formatter().get(),Formatter.leftAlign());
+                    createImageFromString(line);
+                    printImageReciept();
+                    //PrintData(line,new Formatter().get(),Formatter.leftAlign());
                 }
                 else if(Common.RptSize.equals("4")){
                     String line = "";
@@ -544,11 +681,11 @@ public class PrintBluetooth {
             }
             PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             PrintData("TOTAL ITEMS   : "+Common.itemsCarts.size(),new Formatter().get(),Formatter.leftAlign());
-            PrintData("TOTAL QUANTITY: "+totalQty,new Formatter().get(),Formatter.leftAlign());
+            PrintData("TOTAL QUANTITY: "+formater.format(totalQty),new Formatter().get(),Formatter.leftAlign());
             totalAmt = billAmt-Common.discount;
             if(Common.discount>0){
                 PrintData("TOTAL:"+String.format("%.0f",billAmt),new Formatter().get(),Formatter.rightAlign());
-                PrintData("DISCOUNT(-):"+String.format("%.0f",Common.discount),new Formatter().get(),Formatter.rightAlign());
+                PrintData("DISCOUNT(-):"+formater.format(Common.discount),new Formatter().get(),Formatter.rightAlign());
                 PrintData("   ",new Formatter().get(),Formatter.leftAlign());
             }
             else {
@@ -557,7 +694,7 @@ public class PrintBluetooth {
             if((Common.RptSize.equals("3") || Common.RptSize.equals("4")) && Common.includeMRPinReceipt &&
                     Common.discount==0){
                 discountAmt = mrpTotalAmt-totalAmt;
-                String discountAmtStr = String.format("%.0f",discountAmt);
+                String discountAmtStr = formater.format(discountAmt);
                 String discountxt = "AMOUNT YOU HAVE SAVED: "+discountAmtStr+"/-";
                 PrintData(discountxt,new Formatter().get(),Formatter.rightAlign());
                 PrintData("   ",new Formatter().get(),Formatter.leftAlign());

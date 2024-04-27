@@ -3,7 +3,7 @@ package com.example.vinoth.vgspos;
 public class ItemsCart {
     private String Item_No;
     private String Item_Name;
-    private int Qty;
+    private double Qty;
     private double Price;
     private double MRP;
 
@@ -39,11 +39,11 @@ public class ItemsCart {
         Item_Name = item_Name;
     }
 
-    public int getQty() {
+    public double getQty() {
         return Qty;
     }
 
-    public void setQty(int qty) {
+    public void setQty(double qty) {
         Qty = qty;
     }
     public String getJsonObject(){

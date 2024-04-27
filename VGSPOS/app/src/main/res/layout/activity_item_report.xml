@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     tools:context=".ItemReport">
+
     <GridLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -123,19 +124,19 @@
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="50dp"
+            android:textSize="35dp"
             android:textStyle="bold" />
     </LinearLayout>
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="250dp"
-        android:focusable="false">
+        android:id="@+id/itemsrptScrollView"
+        android:layout_marginTop="210dp">
         <LinearLayout
             android:id="@+id/itemsrptContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
         </LinearLayout>
-    </ScrollView>
+     </ScrollView>
 </RelativeLayout>

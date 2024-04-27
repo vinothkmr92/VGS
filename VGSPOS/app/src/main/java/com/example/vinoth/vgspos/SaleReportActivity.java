@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -62,9 +61,6 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
 
     TextView frmDateTextView;
     TextView toDateTextView;
-    ImageButton btnFrmDatePicker;
-    ImageButton btnToDatePicker;
-    Button btnGetReport;
     ImageButton btnPrintReport;
 
     private static Sheet sheet = null;
@@ -120,6 +116,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     StringBuilder sb = new StringBuilder().append(arg1).append("-")
                             .append(monthstr).append("-").append(dt);
                     toDateTextView.setText(sb.toString());
+                    LoadSaleReport();
                 }
             };
     @Override
@@ -178,6 +175,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     StringBuilder sb = new StringBuilder().append(arg1).append("-")
                             .append(monthstr).append("-").append(dt);
                     frmDateTextView.setText(sb.toString());
+                    LoadSaleReport();
                 }
             };
 
@@ -335,17 +333,13 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         progressBar.setTitle("Loading...");
         frmDateTextView = (TextView) findViewById(R.id.salerptFrmDate);
         toDateTextView = (TextView) findViewById(R.id.salerptToDate);
-        btnFrmDatePicker = (ImageButton) findViewById(R.id.btndpFrmDate);
-        btnToDatePicker = (ImageButton) findViewById(R.id.btndpToDate);
-        btnGetReport = (Button) findViewById(R.id.btngetsalereport);
         btnPrintReport = (ImageButton) findViewById(R.id.btnsalerptprint);
         btnExportExcel = (ImageButton)findViewById(R.id.btnshareExcel);
         saleRptContainer = (LinearLayout) findViewById(R.id.saleprtContainer);
         txtViewTotalSaleAmt = (TextView)findViewById(R.id.totalSaleAmt);
-        btnGetReport.setOnClickListener(this);
+        frmDateTextView.setOnClickListener(this);
+        toDateTextView.setOnClickListener(this);
         btnPrintReport.setOnClickListener(this);
-        btnFrmDatePicker.setOnClickListener(this);
-        btnToDatePicker.setOnClickListener(this);
         btnExportExcel.setOnClickListener(this);
         searchTxtView = (TextView)findViewById(R.id.customerinfosaleRpt);
         searchTxtView.setText("ALL");
@@ -359,6 +353,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         Date date = new Date();
         frmDateTextView.setText(format.format(date));
         toDateTextView.setText(format.format(date));
+        LoadSaleReport();
         searchTxtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -412,6 +407,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
 
                         // Dismiss dialog
                         dialog.dismiss();
+                        LoadSaleReport();
 
                     }
                 });
@@ -566,17 +562,11 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btndpFrmDate:
+            case R.id.salerptFrmDate:
                 datePickerDialog.show();
                 break;
-            case R.id.btndpToDate:
+            case R.id.salerptToDate:
                 todatePickerDialog.show();
-                break;
-            case R.id.btngetsalereport:
-                progressBar.show();
-                LoadSaleReport();
-                if(progressBar.isShowing())
-                    progressBar.cancel();
                 break;
             case R.id.btnshareExcel:
                 ExportExcel();
@@ -664,7 +654,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     ic.setItem_No(bi.getItem_No());
                     ic.setItem_Name(bi.getItem_Name());
                     ic.setPrice(bi.getPrice());
-                    ic.setQty((int) bi.getQty());
+                    ic.setQty(bi.getQty());
                     Item it = dbHelper.GetItem(bi.getItem_No());
                     if(it!=null){
                         ic.setMRP(it.getAcPrice());

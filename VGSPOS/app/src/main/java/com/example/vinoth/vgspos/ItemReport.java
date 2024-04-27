@@ -32,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -56,6 +57,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -72,6 +74,8 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     ImageButton btnFrmDatePicker;
     ImageButton btnToDatePicker;
     LinearLayout itemRptContainer;
+
+    ScrollView itemsrptScrollview;
     private Button btnrpt;
     private ImageButton btnPrint;
     private Calendar calendar;
@@ -379,6 +383,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         btnToDatePicker = (ImageButton) findViewById(R.id.btndpToDateItem);
         btnShare = (ImageButton)findViewById(R.id.btnshareExcel);
         itemRptContainer = (LinearLayout)findViewById(R.id.itemsrptContainer);
+        itemsrptScrollview = (ScrollView)findViewById(R.id.itemsrptScrollView);
         btnrpt = (Button) findViewById(R.id.btngetreport);
         btnPrint = (ImageButton)findViewById(R.id.btnrptprint);
         btnPrint.setOnClickListener(this);
@@ -395,6 +400,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         for(int i=0;i<customers.size();i++){
             wts.add(customers.get(i).getCustomerName());
         }
+
         searchTxtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -508,7 +514,9 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             amt.setVisibility(View.VISIBLE);
         }
         prname.setText(items.getItemName());
-        String qtyStr = String.format("%.0f",items.getQuantity());
+        DecimalFormat formater = new DecimalFormat("#.###");
+        //String qtyStr = String.format("%.3f",items.getQuantity());
+        String qtyStr = formater.format(items.getQuantity());
         qtyStr = "QTY: "+qtyStr;
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
@@ -542,6 +550,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             String symbol = formatter.getCurrency().getSymbol();
             String ttSaleAmtstring = formatter.format(totalAmt).replace(symbol,symbol+" ");
             txtViewTotalAmt.setText(ttSaleAmtstring);
+            itemsrptScrollview.fullScroll(ScrollView.FOCUS_UP);
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());

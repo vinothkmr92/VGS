@@ -41,6 +41,7 @@
         android:roundIcon="@drawable/vgposicon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:logo="@drawable/vgposicon"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".PasscodeActivity"
