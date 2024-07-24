@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light"
+    android:background="@color/DarkKhaki"
     tools:context=".Settings">
     <ScrollView
         android:layout_width="fill_parent"
@@ -95,6 +95,7 @@
                 android:layout_height="50dp"
                 android:focusableInTouchMode="true"
                 android:layout_columnSpan="4"
+
                 android:id="@+id/bltDevice"></Spinner>
             <TextView
                 android:padding="20px"
@@ -187,6 +188,20 @@
                 android:maxLength="4"
                 android:padding="20px"
                 android:password="true"></EditText>
+            <TextView
+                android:padding="20px"
+                android:text="Device ID"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/deviceid"
+                android:layout_width="184dp"
+                android:layout_columnSpan="3"
+                android:editable="false"
+                android:inputType="none"
+                android:padding="20px"
+                android:textIsSelectable="true"></EditText>
             <ImageView
                 android:id="@+id/imgView"
                 android:layout_width="100dp"

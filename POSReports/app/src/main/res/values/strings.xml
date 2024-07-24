@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">POSRPT</string>
-    <string name="ActivationAPIHost">www.vgsandroidapi.somee.com</string>
-    <string name="ActivationAPIHost_Public">60.243.50.58:9092</string>
-</resources>

@@ -107,7 +107,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     ArrayList<String> bluethootnamelist;
     private Dialog progressBar;
     ImageButton btnclerlogo;
-
+    EditText deviceidView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +134,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         checkBoxIncludeMRP = (CheckBox)findViewById(R.id.includeMRP);
         loadPictureBtn = (Button)findViewById(R.id.buttonLoadPicture);
         imageView = (ImageView)findViewById(R.id.imgView);
+        deviceidView = (EditText)findViewById(R.id.deviceid);
+        String android_id = android.provider.Settings.Secure.getString(Settings.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        deviceidView.setText(android_id);
         txtViewuserpasscode = (EditText) findViewById(R.id.userpasscode);
         txtViewuserpasscode.setText(Common.userPasscode);
         byte[] ic = dbHelper.GetReceiptIcon();
@@ -277,6 +280,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
         ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,bluethootnamelist);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         spinnerbluetothDevice.setAdapter(adapter);
         spinnerbluetothDevice.setSelection(selectedindex);
         if(isWifi.equalsIgnoreCase("YES")){

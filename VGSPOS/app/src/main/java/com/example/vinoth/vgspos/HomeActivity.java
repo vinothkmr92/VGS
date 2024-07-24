@@ -47,7 +47,6 @@ import com.google.zxing.integration.android.IntentResult;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -191,14 +190,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 waiters.add(customers.get(i).getCustomerName());
             }
             Date dt = new Date();
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, 5);
+            Date yesterday = getYesterday();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
-            String expiredtstr = sharedpreferences.getString(EXPIRE_DT,simpleDateFormat.format(dt));
+            String expiredtstr = sharedpreferences.getString(EXPIRE_DT,simpleDateFormat.format(yesterday));
             Date expireDt = simpleDateFormat.parse(expiredtstr);
             Date compare = new Date(dt.getYear(),dt.getMonth(),dt.getDate());
             Common.isActivated = expireDt.compareTo(compare)>=0;
             Common.expireDate = expireDt;
+            //android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
             if(!Common.isActivated){
                 boolean internetav = Is_InternetWorking();
                 if(internetav){
@@ -400,7 +399,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
-
+    private Date getYesterday(){
+        return new Date(System.currentTimeMillis()-24*60*60*1000);
+    }
     public void closeKeyboard(){
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -902,6 +903,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                CancelBt();
                break;
            case  R.id.print:
+               if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
+                   showCustomDialog("Warning", "Please add Items");
+                   return;
+               }
                SortItemsCarts();
                AlertDialog alert = builder.create();
                alert.show();

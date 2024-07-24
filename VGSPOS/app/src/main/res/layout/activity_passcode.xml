@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:background="@color/DarkKhaki"
     tools:context=".PasscodeActivity">
 
     <LinearLayout
@@ -25,7 +26,7 @@
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@android:color/system_accent1_400"
+            android:textColor="@color/BlanchedAlmond"
             android:textSize="20sp"
             android:textStyle="bold"
             android:typeface="serif"></TextView>
