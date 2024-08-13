@@ -3,7 +3,14 @@ package com.example.vinoth.vgspos;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.Log;
 
 import com.sewoo.jpos.command.ESCPOS;
@@ -14,7 +21,6 @@ import com.sewoo.request.android.RequestHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,8 +36,10 @@ public class PrintWifi {
     public boolean onlyBill;
     // 0x1B
     private final char ESC = ESCPOS.ESC;
+    private final char ESC2 = ESCPOS.SP;
     public  PrintWifi(Context cntx,boolean prtSale) {
         posPtr=new ESCPOSPrinter();
+
         wifiPort = WiFiPort.getInstance();
         context = cntx;
         printSale = prtSale;
@@ -108,7 +116,7 @@ public class PrintWifi {
         }
         return 0;
     }
-    private void PrintBillWithMRP() throws UnsupportedEncodingException {
+    private void PrintBillWithMRP() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(Common.billDate);
         Bitmap bitmapIcon = Common.shopLogo;
@@ -149,15 +157,19 @@ public class PrintWifi {
             double mrpamt = mrpd*Common.itemsCarts.get(k).getQty();
             mrpTotalAmt+=mrpamt;
             String amts=String.format("%.0f",amt);
-            name = StringUtils.rightPad(name,14);
-            name = name.substring(0,14);
-            qty = StringUtils.leftPad(qty,5);
+            qty = StringUtils.leftPad(qty,19);
             mrp = StringUtils.leftPad(mrp,7);
             price = StringUtils.leftPad(price,10);
             amts = StringUtils.leftPad(amts,10);
-            String line = name+qty+mrp+price+amts+"\n";
+            String line = qty+mrp+price+amts+"\n";
+            Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
+            if(xb!=null){
+                posPtr.printBitmap(xb,0);
+            }
             posPtr.printNormal(line);
+            posPtr.lineFeed(1);
         }
+        posPtr.printNormal("----------------------------------------------\n");
         String totalamt = String.format("%.0f",totalAmt);
         String mrptotalStr = String.format("%.0f",mrpTotalAmt);
         discountAmt = mrpTotalAmt-totalAmt;
@@ -176,7 +188,30 @@ public class PrintWifi {
         posPtr.lineFeed(5);
         posPtr.cutPaper();
     }
-    private void PrintBill() throws UnsupportedEncodingException {
+
+    Bitmap getMultiLangTextAsImage(String text, float textSize, Typeface typeface)  {
+        TextPaint mPaint = new TextPaint();
+        mPaint.setColor(Color.BLACK);
+        if (typeface != null) mPaint.setTypeface(typeface);
+        mPaint.setTextSize(textSize);
+        Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
+        StaticLayout mStaticLayout = new StaticLayout(text, mPaint, 500, alignment, 0, 0, true);
+
+        int width = mStaticLayout.getWidth();
+        int height = mStaticLayout.getHeight();
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+
+        canvas.drawColor(Color.WHITE);
+
+        mStaticLayout.draw(canvas);
+
+        return bitmap;
+    }
+    private void PrintBill() throws IOException {
+        //posPtr.setCodepage(2);
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(Common.billDate);
         Bitmap bitmapIcon = Common.shopLogo;
@@ -205,6 +240,7 @@ public class PrintWifi {
         posPtr.printNormal("----------------------------------------------\n");
         double totalAmt = 0d;
         double billAmt = 0d;
+        posPtr.setAlignment(0);
         for(int k=0;k<Common.itemsCarts.size();k++){
             String name = Common.itemsCarts.get(k).getItem_Name();
             String qty = formater.format(Common.itemsCarts.get(k).getQty());
@@ -212,20 +248,41 @@ public class PrintWifi {
             Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
             billAmt+=amt;
             String amts=String.format("%.0f",amt);
-            name = StringUtils.rightPad(name,20);
-            qty = StringUtils.leftPad(qty,5);
+            qty = StringUtils.leftPad(qty,25);
             price = StringUtils.leftPad(price,11);
             amts = StringUtils.leftPad(amts,10);
-            String line = name+qty+price+amts+"\n";
+            String line = qty+price+amts;
+            //posPtr.printNormal(line);
+            Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
+
+            if(xb!=null){
+                posPtr.printBitmap(xb,0);
+                //posPtr.lineFeed(1);
+            }
             posPtr.printNormal(line);
+            posPtr.lineFeed(1);
         }
+        posPtr.printNormal("----------------------------------------------\n");
         if(Common.discount>0){
-            posPtr.printNormal(ESC+"|rATOTAL   : "+String.format("%.0f",billAmt)+"\n");
-            posPtr.printNormal(ESC+"|rADISCOUNT: "+formater.format(Common.discount)+"\n");
+            String tt = String.format("%.0f",billAmt);
+            tt = StringUtils.leftPad(tt,6);
+            String discount = "(-)"+formater.format(Common.discount);
+            discount = StringUtils.leftPad(discount,6);
+            String ttstring = "TOTAL:";
+            ttstring = StringUtils.leftPad(ttstring,40);
+            String discstring = "DISCOUNT:";
+            discstring = StringUtils.leftPad(discstring,40);
+            posPtr.printNormal(ttstring+tt+"\n");
+            posPtr.printNormal(discstring+discount+"\n");
             posPtr.lineFeed(1);
         }
         totalAmt = billAmt-Common.discount;
-        String totalamt = String.format("%.0f",totalAmt);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        String totalamt = formatter.format(totalAmt).replace(symbol,"");
+
+        //String totalamt = String.format("%.0f",totalAmt);
         String txttotal = "NET TOTAL: "+totalamt+"/-";
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
@@ -272,10 +329,14 @@ public class PrintWifi {
             for(int k=0;k<Common.itemsCarts.size();k++){
                 String name = Common.itemsCarts.get(k).getItem_Name();
                 String qty = formater.format(Common.itemsCarts.get(k).getQty());
-                name = StringUtils.rightPad(name,42);
-                qty = StringUtils.leftPad(qty,5);
-                String line = name+qty+"\n";
+                qty = StringUtils.leftPad(qty,47);
+                String line = qty+"\n";
+                Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
+                if(xb!=null){
+                    posPtr.printBitmap(xb,0);
+                }
                 posPtr.printNormal(line);
+                posPtr.lineFeed(1);
             }
             posPtr.lineFeed(5);
             posPtr.cutPaper();
@@ -320,10 +381,14 @@ public class PrintWifi {
                 String itemname = itemsRpt.getItemName();
                 Double qty = itemsRpt.getQuantity();
                 String qtystr=formater.format(qty);
-                itemname = StringUtils.rightPad(itemname,38);
-                qtystr = StringUtils.leftPad(qtystr,8);
-                String line = itemname+qtystr+"\n";
+                qtystr = StringUtils.leftPad(qtystr,46);
+                String line = qtystr+"\n";
+                Bitmap xb = getMultiLangTextAsImage(itemname, 24, Typeface.DEFAULT);
+                if(xb!=null){
+                    posPtr.printBitmap(xb,0);
+                }
                 posPtr.printNormal(line);
+                posPtr.lineFeed(1);
             }
             posPtr.lineFeed(5);
             posPtr.cutPaper();

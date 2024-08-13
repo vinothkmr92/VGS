@@ -4,6 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="VGS.VGSPOS.app">
         <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2024-08-13T06:22:55.506112900Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=RZCW122R4LN" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
     </selectionStates>
   </component>
