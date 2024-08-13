@@ -419,12 +419,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         Common.billDate = new Date();
         Common.waiter  = searchTxtView.getText().toString();
         if(print){
-            if(isWifiPrint){
-                PrintWifi();
-            }
-            else{
-                PrintViaBlueTooth();
-            }
+            Print();
         }
         else {
             RefreshViews();
@@ -561,29 +556,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         return connected;
     }
-    private void PrintViaBlueTooth(){
-        try
-        {
-            if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
-                showCustomDialog("Warning", "Please add Items");
-                return;
-            }
-            try{
-                PrintBluetooth printBluetooth = new PrintBluetooth(HomeActivity.this);
-                printBluetooth.Print();
-            }
-            catch (Exception ex){
-                showCustomDialog("Exception",ex.getMessage().toString());
-                CancelBt();
-            }
 
-        }
-        catch (Exception ex){
-            showCustomDialog("Exception",ex.getMessage().toString());
-            CancelBt();
-        }
-    }
-    private void PrintWifi(){
+    private void Print(){
         try
         {
             if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
@@ -591,8 +565,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
                 try{
-                    PrintWifi printWifi = new PrintWifi(HomeActivity.this,true);
-                    printWifi.Print();
+                    PrinterUtil printerUtil = new PrinterUtil(HomeActivity.this,true,isWifiPrint);
+                    printerUtil.Print();
                 }
                 catch (Exception ex){
                     showCustomDialog("Exception",ex.getMessage().toString());
@@ -799,9 +773,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
        switch (v.getId()){
            case R.id.lblPrint:
                try{
-                   PrintBluetooth printBluetooth = new PrintBluetooth(HomeActivity.this);
-                   printBluetooth.PrintLabel("V");
-                   printBluetooth.CloseBT();
+                   //
                }
                catch (Exception ex){
                    showCustomDialog("Exception",ex.getMessage().toString());

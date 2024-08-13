@@ -16,8 +16,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -94,12 +92,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         return instance;
     }
     LinearLayout saleRptContainer;
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu, menu);//Menu Resource, Menu
-        return true;
-    }
+
 
     private DatePickerDialog.OnDateSetListener mytoDateListener = new
             DatePickerDialog.OnDateSetListener() {
@@ -127,37 +120,6 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         Common.itemsCarts = null;
         Common.waiter = "";
         super.onBackPressed();
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.exit:
-                finish();
-                System.exit(0);
-                return true;
-            case R.id.uploadExcel:
-                Intent dcpage = new Intent(this,UploadActivity.class);
-                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(dcpage);
-                return  true;
-            case R.id.settings:
-                Intent settingsPage = new Intent(this,Settings.class);
-                settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(settingsPage);
-                return  true;
-            case R.id.homemenu:
-                Common.billDate = new Date();
-                Common.billNo = 0;
-                Common.itemsCarts = null;
-                Common.waiter = "";
-                Intent page = new Intent(this,HomeActivity.class);
-                page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(page);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
     private DatePickerDialog.OnDateSetListener myDateListener = new
             DatePickerDialog.OnDateSetListener() {
@@ -578,14 +540,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                         Common.saleReports = items;
                         Common.saleReportFrmDate = frmDateTextView.getText().toString();
                         Common.saleReportToDate = toDateTextView.getText().toString();
-                        if(Common.isWifiPrint){
-                            PrintWifi printWifi = new PrintWifi(SaleReportActivity.this,false);
-                            printWifi.Print();
-                        }
-                        else{
-                            PrintBluetooth printBluetooth = new PrintBluetooth(SaleReportActivity.this);
-                            printBluetooth.PrintSaleReport();
-                        }
+                        PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this,false,Common.isWifiPrint);
+                        printerUtil.Print();
                     }
                     else {
                         showCustomDialog("Info","No record found.");
@@ -668,17 +624,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 Common.billNo = billno;
                 Common.itemsCarts = itemsCarts;
                 Common.waiter = user;
-                if(Common.isWifiPrint){
-                    PrintWifi printWifi = new PrintWifi(SaleReportActivity.this,true);
-                    printWifi.onlyBill = true;
-                    printWifi.Print();
-                }
-                else{
-                    PrintBluetooth printBluetooth = new PrintBluetooth(SaleReportActivity.this);
-                    printBluetooth.isReprint = true;
-                    printBluetooth.Print();
-                    printBluetooth.CloseBT();
-                }
+                PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this,true,Common.isWifiPrint);
+                printerUtil.onlyBill = true;
+                printerUtil.Print();
             }
         }
         catch (Exception ex){

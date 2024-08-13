@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme.AppCompat.NoActionBar"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
@@ -19,10 +20,9 @@
         <TextView android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_columnSpan="2"
-            android:background="@color/colorAccent"
-            android:text="SALE REPORTS"
+            android:text="SALES REPORTS"
             android:textAlignment="center"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorAccent"
             android:textSize="20dp"
             android:textStyle="bold"/>
         <TextView
@@ -30,7 +30,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:textColor="@android:color/black"
+            android:textColor="@color/DarkViolet"
+            android:textSize="25dp"
             android:text="Date"
             android:drawableRight="@drawable/ic_baseline_date_range_24"
             />
@@ -40,8 +41,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:text="Date"
+            android:textColor="@color/DarkViolet"
             android:drawableRight="@drawable/ic_baseline_date_range_24"
-            android:textColor="@android:color/black"/>
+            android:textSize="25dp"/>
     </GridLayout>
 
     <GridLayout
@@ -81,7 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20px"
+        android:gravity="center"
         tools:ignore="MissingConstraints">
         <TextView
             android:id="@+id/totalSaleAmt"

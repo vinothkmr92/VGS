@@ -19,14 +19,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -71,12 +69,9 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     TextView frmDateTextView;
     private static String EXCEL_SHEET_NAME = "Sheet1";
     TextView toDateTextView;
-    ImageButton btnFrmDatePicker;
-    ImageButton btnToDatePicker;
     LinearLayout itemRptContainer;
 
     ScrollView itemsrptScrollview;
-    private Button btnrpt;
     private ImageButton btnPrint;
     private Calendar calendar;
     private int year, month, day;
@@ -120,6 +115,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
                     StringBuilder sb = new StringBuilder().append(arg1).append("-")
                             .append(monthstr).append("-").append(dt);
                     toDateTextView.setText(sb.toString());
+                    LoadReportViews();
                 }
             };
     private DatePickerDialog.OnDateSetListener myDateListener = new
@@ -138,6 +134,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
                     StringBuilder sb = new StringBuilder().append(arg1).append("-")
                             .append(monthstr).append("-").append(dt);
                     frmDateTextView.setText(sb.toString());
+                    LoadReportViews();
                 }
             };
     ImageButton btnShare;
@@ -197,40 +194,9 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         day = calendar.get(Calendar.DAY_OF_MONTH);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu, menu);//Menu Resource, Menu
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.exit:
-                finish();
-                System.exit(0);
-                return true;
-            case R.id.uploadExcel:
-                Intent dcpage = new Intent(this,UploadActivity.class);
-                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(dcpage);
-                return  true;
-            case R.id.settings:
-                Intent settingsPage = new Intent(this,Settings.class);
-                settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(settingsPage);
-                return  true;
-            case R.id.homemenu:
-                Intent page = new Intent(this,HomeActivity.class);
-                page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(page);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+
+
     public void showCustomDialog(String title, String Message) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -256,14 +222,8 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             Common.saleReportFrmDate = frmdt;
             Common.saleReportToDate = todt;
             Common.isItemWiseRptBill = true;
-            if(Common.isWifiPrint){
-                PrintWifi printWifi = new PrintWifi(ItemReport.this,false);
-                printWifi.Print();
-            }
-            else{
-                PrintBluetooth printBluetooth = new PrintBluetooth(ItemReport.this);
-                printBluetooth.PrintItemWiseReport();
-            }
+            PrinterUtil printerUtil = new PrinterUtil(ItemReport.this,false,Common.isWifiPrint);
+            printerUtil.Print();
 
         } catch (Exception e) {
             showCustomDialog("Print Error",e.getMessage());
@@ -379,20 +339,22 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         frmDateTextView = (TextView) findViewById(R.id.itemrptFrmDate);
         toDateTextView = (TextView) findViewById(R.id.itemrptToDate);
         txtViewTotalAmt = (TextView)findViewById(R.id.ttAmtPrdReport);
-        btnFrmDatePicker = (ImageButton) findViewById(R.id.btndpFrmDateItem);
-        btnToDatePicker = (ImageButton) findViewById(R.id.btndpToDateItem);
         btnShare = (ImageButton)findViewById(R.id.btnshareExcel);
         itemRptContainer = (LinearLayout)findViewById(R.id.itemsrptContainer);
         itemsrptScrollview = (ScrollView)findViewById(R.id.itemsrptScrollView);
-        btnrpt = (Button) findViewById(R.id.btngetreport);
         btnPrint = (ImageButton)findViewById(R.id.btnrptprint);
         btnPrint.setOnClickListener(this);
-        btnrpt.setOnClickListener(this);
-        btnFrmDatePicker.setOnClickListener(this);
-        btnToDatePicker.setOnClickListener(this);
+        frmDateTextView.setOnClickListener(this);
+        toDateTextView.setOnClickListener(this);
         btnShare.setOnClickListener(this);
         searchTxtView = (TextView)findViewById(R.id.customerinfoitemwise);
         stockReport = (CheckBox)findViewById(R.id.stocksRpt);
+        stockReport.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                LoadReportViews();
+            }
+        });
         searchTxtView.setText("ALL");
         ArrayList<String> wts = new ArrayList<String>();
         wts.add("ALL");
@@ -454,7 +416,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
 
                         // Dismiss dialog
                         dialog.dismiss();
-
+                        LoadReportViews();
                     }
                 });
             }
@@ -463,6 +425,7 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         Date date = new Date();
         frmDateTextView.setText(format.format(date));
         toDateTextView.setText(format.format(date));
+        LoadReportViews();
         GetDefaultDate();
         datePickerDialog = new DatePickerDialog(ItemReport.this,myDateListener,year,month,day);
         todatePickerDialog = new DatePickerDialog(ItemReport.this,mytoDateListener,year,month,day);
@@ -472,6 +435,15 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         }
     }
 
+    @Override
+    public void onBackPressed(){
+        Common.billDate = new Date();
+        Common.billNo = 0;
+        Common.discount = 0;
+        Common.itemsCarts = null;
+        Common.waiter = "";
+        super.onBackPressed();
+    }
     public void requestStoragePermission(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
             try {
@@ -584,14 +556,11 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btndpFrmDateItem:
+            case R.id.itemrptFrmDate:
                 datePickerDialog.show();
                 break;
-            case R.id.btndpToDateItem:
+            case R.id.itemrptToDate:
                 todatePickerDialog.show();
-                break;
-            case R.id.btngetreport:
-                LoadReportViews();
                 break;
             case R.id.btnshareExcel:
                 ExportExcel();

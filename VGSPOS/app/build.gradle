@@ -40,5 +40,5 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.fintrace.core.drivers:tspl2-driver:0.0.12'
     implementation "androidx.biometric:biometric:1.1.0"
-    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.3.0'
+
 }
