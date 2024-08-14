@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:alpha="0.5"
-    android:background="#88000000">
+    android:background="@color/PapayaWhip">
     <ProgressBar
         android:id="@+id/pbCustomDialog"
         android:layout_width="300dp"

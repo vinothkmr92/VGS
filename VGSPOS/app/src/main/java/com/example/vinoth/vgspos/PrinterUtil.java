@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.text.Layout;
@@ -248,9 +247,16 @@ public class PrinterUtil {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(Common.billDate);
         Bitmap bitmapIcon = Common.shopLogo;
+
         if(bitmapIcon!=null){
             try {
-                posPtr.printBitmap(bitmapIcon,1,400);
+                if(Common.RptSize.equals("2")){
+                    posPtr.printBitmap(bitmapIcon,1,400);
+                }
+                else {
+                    posPtr.printBitmap(bitmapIcon,1,500);
+                }
+                posPtr.lineFeed(2);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -344,12 +350,7 @@ public class PrinterUtil {
             posPtr.lineFeed(1);
         }
         totalAmt = billAmt-Common.discount;
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
-        formatter.setMaximumFractionDigits(0);
-        String symbol = formatter.getCurrency().getSymbol();
-        String totalamt = formatter.format(totalAmt).replace(symbol,"");
-
-        //String totalamt = String.format("%.0f",totalAmt);
+        String totalamt = String.format("%.0f",totalAmt);
         String txttotal = "NET TOTAL: "+totalamt+"/-";
         posPtr.lineFeed(1);
         if(Common.RptSize.equals("2")){
@@ -643,7 +644,8 @@ public class PrinterUtil {
         @Override
         protected void onPreExecute()
         {
-            dialog.setTitle("Please Wait");
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
             dialog.setMessage("Printing.....");
             dialog.show();
             super.onPreExecute();
@@ -705,7 +707,8 @@ public class PrinterUtil {
         @Override
         protected void onPreExecute()
         {
-            dialog.setTitle("Please Wait");
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
             dialog.setMessage("Printing.....");
             dialog.show();
             super.onPreExecute();

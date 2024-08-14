@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.NumberFormat;
 import android.net.ConnectivityManager;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -587,6 +590,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);//Menu Resource, Menu
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
         return true;
     }
 
@@ -633,7 +640,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
         dialogBuilder.setView(dialogView);
-        dialogBuilder.setTitle(title);
+        TextView titleview = new TextView(this);
+        titleview.setText(title);
+        titleview.setBackgroundColor(Color.WHITE);
+        titleview.setPadding(10, 10, 10, 10);
+        titleview.setGravity(Gravity.CENTER);
+        titleview.setTextColor(Color.BLACK);
+        titleview.setTypeface(titleview.getTypeface(), Typeface.BOLD_ITALIC);
+        titleview.setTextSize(20);
+        dialogBuilder.setCustomTitle(titleview);
         dialogBuilder.setMessage("\n"+Message);
         if(closeapp.length>1 && closeapp[1]){
             dialogBuilder.setNeutralButton("Share Device ID", new DialogInterface.OnClickListener() {

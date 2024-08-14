@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
+    android:background="@color/PapayaWhip"
     android:weightSum="100"
     tools:context=".MainActivity">
     <ScrollView

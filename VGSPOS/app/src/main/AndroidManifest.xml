@@ -49,13 +49,6 @@
             android:exported="false"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name=".SecuredAccess"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".ItemsMasterActivity"
             android:exported="false">
             <meta-data
@@ -74,9 +67,7 @@
             android:exported="false" />
         <activity android:name=".ViewItemActivity" />
         <activity android:name=".ItemReport" />
-        <activity
-            android:name=".CartActivity"
-            android:parentActivityName=".HomeActivity" />
+
         <activity android:name=".UploadActivity" />
         <activity
             android:name=".HomeActivity"
@@ -87,7 +78,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/PapayaWhip"
     tools:context=".ItemsMasterActivity">
     <GridLayout
         android:layout_width="fill_parent"
@@ -46,7 +47,7 @@
         android:background="@drawable/border"
         android:columnCount="3"
         android:orientation="vertical"
-        android:padding="20dp"
+        android:padding="10dp"
         android:useDefaultMargins="true"
         tools:ignore="MissingConstraints">
         <TextView
@@ -58,10 +59,9 @@
             android:id="@+id/txtViewItemID"
             android:layout_columnSpan="2"
             android:layout_gravity="left"
-            android:textColor="@android:color/white"
-            android:textSize="30dp"
+            android:textColor="@color/DarkViolet"
+            android:textSize="20dp"
             android:textStyle="bold" />
-
 
         <TextView
             android:text="ITEM NAME"
@@ -72,8 +72,8 @@
             android:id="@+id/txtViewItemName"
             android:layout_columnSpan="2"
             android:layout_gravity="left"
-            android:textColor="@android:color/white"
-            android:textSize="30dp"
+            android:textColor="@color/DarkViolet"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
         <TextView
@@ -85,8 +85,8 @@
             android:id="@+id/txtViewItemPrice"
             android:layout_columnSpan="2"
             android:layout_gravity="left"
-            android:textColor="@android:color/white"
-            android:textSize="30dp"
+            android:textColor="@color/DarkViolet"
+            android:textSize="20dp"
             android:textStyle="bold" />
         <TextView
             android:text="STOCK"
@@ -97,8 +97,8 @@
             android:id="@+id/txtViewItemStock"
             android:layout_columnSpan="2"
             android:layout_gravity="left"
-            android:textColor="@android:color/white"
-            android:textSize="30dp"
+            android:textColor="@color/DarkViolet"
+            android:textSize="20dp"
             android:textStyle="bold" />
         <TextView
             android:text="SPECIAL PRICE"
@@ -109,8 +109,8 @@
             android:id="@+id/txtViewItemAcPrice"
             android:layout_columnSpan="2"
             android:layout_gravity="left"
-            android:textColor="@android:color/white"
-            android:textSize="30dp"
+            android:textColor="@color/DarkViolet"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
         <ImageButton

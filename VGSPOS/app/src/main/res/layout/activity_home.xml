@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light"
+    android:background="@color/PapayaWhip"
     tools:context=".HomeActivity">
     <ScrollView
         android:layout_width="fill_parent"
@@ -61,21 +61,25 @@
         android:layout_marginLeft="10dp"
         android:columnCount="3"
         android:orientation="horizontal">
+
         <TextView
+            android:fontFamily="sans-serif"
             android:text="ITEM NO"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@android:color/background_dark"
-            android:textStyle="bold"
-            />
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/itemNo"
-            android:editable="false"
             android:layout_marginLeft="20dp"
+            android:editable="false"
             android:focusable="true"
             android:minWidth="500px"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
+            android:textColor="@color/DarkViolet"
+            android:textSize="16sp"
+            android:textStyle="bold"
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
         <Button
             android:id="@+id/scanQR"
@@ -84,56 +88,65 @@
             android:background="@drawable/barcode"
             android:foreground="?android:attr/selectableItemBackground"
             tools:ignore="TouchTargetSizeCheck" />
+
         <TextView
+            android:fontFamily="sans-serif"
             android:text="ITEM NAME"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
-            android:textStyle="bold"
-            />
+            android:textColor="@android:color/background_dark" />
 
         <EditText
             android:id="@+id/itemName"
             android:layout_columnSpan="2"
             android:layout_marginLeft="20dp"
             android:imeOptions="actionNext"
-            android:minWidth="700px"
             android:inputType="textCapCharacters"
+            android:minWidth="700px"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"/>
+            android:textColor="@color/DarkViolet"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
         <TextView
+            android:fontFamily="sans-serif"
             android:text="PRICE"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
-            android:textStyle="bold"
-            />
+            android:textColor="@android:color/background_dark" />
 
         <EditText
             android:id="@+id/itemPrice"
             android:layout_columnSpan="2"
-            android:editable="false"
             android:layout_marginLeft="20dp"
+            android:editable="false"
             android:focusable="true"
             android:minWidth="700px"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
-
+            android:textColor="@color/DarkViolet"
+            android:textSize="16sp"
+            android:textStyle="bold"
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
         <TextView
+            android:fontFamily="sans-serif"
             android:text="QUANTITY"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
-            android:textStyle="bold" />
+            android:textColor="@android:color/background_dark" />
 
         <EditText
             android:id="@+id/qty"
             android:layout_columnSpan="2"
+            android:layout_marginLeft="20dp"
             android:editable="false"
             android:focusable="true"
-            android:layout_marginLeft="20dp"
             android:minWidth="700px"
             android:textAppearance="@style/TextAppearance.AppCompat"
-            android:textColor="@android:color/background_dark"
+            android:textColor="@color/DarkViolet"
+            android:textSize="16sp"
+            android:textStyle="bold"
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
     </GridLayout>
 
@@ -176,7 +189,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <TextView

@@ -5,7 +5,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/background_light"
+    android:background="@color/PapayaWhip"
     android:orientation="vertical"
 
     android:padding="16dp"
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@android:drawable/editbox_background"
+        android:background="@color/PapayaWhip"
         android:hint="Search..."
         android:padding="12dp"
         android:singleLine="true"
