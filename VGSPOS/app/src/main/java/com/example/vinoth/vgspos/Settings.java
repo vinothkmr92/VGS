@@ -185,16 +185,51 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         radioButton3Inch.setVisibility(View.INVISIBLE);
         radioButton4Inch.setVisibility(View.INVISIBLE);
         saveBtn = (Button) findViewById(R.id.btnSave);
-        radioButton2Inch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        radioButton2Inch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                   radioButton3Inch.setChecked(false);
-                   radioButton4Inch.setChecked(false);
+            public void onClick(View v) {
+                if(radioButton2Inch.isChecked()){
+                    radioButton3Inch.setChecked(false);
+                    radioButton4Inch.setChecked(false);
+                    checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
                 }
             }
         });
-        radioButton3Inch.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
+        radioButton3Inch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(radioButton3Inch.isChecked()){
+                    checkBoxIncludeMRP.setVisibility(View.VISIBLE);
+                    radioButton4Inch.setChecked(false);
+                    radioButton2Inch.setChecked(false);
+                }
+                else{
+                    checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        radioButton4Inch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(radioButton4Inch.isChecked()){
+                    checkBoxIncludeMRP.setVisibility(View.VISIBLE);
+                    radioButton2Inch.setChecked(false);
+                    radioButton3Inch.setChecked(false);
+                }
+                else{
+                    checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+       /* radioButton2Inch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+
+                }
+            }
+        });*/
+        /*radioButton3Inch.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -207,8 +242,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
                 }
             }
-        });
-        radioButton4Inch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        });*/
+        /*radioButton4Inch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
@@ -220,7 +255,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
                 }
             }
-        });
+        });*/
         radioButtonWifi.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
