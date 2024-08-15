@@ -47,7 +47,8 @@ public class PrinterUtil {
     public boolean onlyBill;
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.BLUETOOTH
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_SCAN
     };
     private BluetoothPort bluetoothPort;
     private boolean isWifi;
@@ -604,10 +605,12 @@ public class PrinterUtil {
     private boolean checkBluetoothPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             int bluetooth = ContextCompat.checkSelfPermission(context, android.Manifest.permission.BLUETOOTH_CONNECT);
-            return bluetooth == PackageManager.PERMISSION_GRANTED;
+            int scan = ContextCompat.checkSelfPermission(context,Manifest.permission.BLUETOOTH_SCAN);
+            return bluetooth == PackageManager.PERMISSION_GRANTED && scan == PackageManager.PERMISSION_GRANTED;
         } else {
             int bluetooth = ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH);
-            return bluetooth == PackageManager.PERMISSION_GRANTED;
+            int scan = ContextCompat.checkSelfPermission(context,Manifest.permission.BLUETOOTH_SCAN);
+            return bluetooth == PackageManager.PERMISSION_GRANTED && scan == PackageManager.PERMISSION_GRANTED;
         }
     }
     public BluetoothDevice GetBluetoothDevice() throws Exception {
@@ -625,17 +628,7 @@ public class PrinterUtil {
                 break;
             }
         }
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(HomeActivity.getInstance(), PERMISSIONS_BLUETOOTH
-                    , 1);
-        }
+
         return  mydevice;
     }
     class ConnectPrinterKOT extends AsyncTask<String, Void, Integer>
@@ -847,7 +840,7 @@ public class PrinterUtil {
         }
     }
 
-    class ConnectToBluetoothPrinter extends AsyncTask<BluetoothDevice, Void, Integer>
+    class ConnectToBluetoothPrinter extends AsyncTask<BluetoothDevice, Void, String>
     {
         private final ProgressDialog dialog = new ProgressDialog(context);
         BluetoothDevice btdevice = null;
@@ -862,30 +855,36 @@ public class PrinterUtil {
         }
 
         @Override
-        protected Integer doInBackground(BluetoothDevice... params)
+        protected String doInBackground(BluetoothDevice... params)
         {
-            Integer retVal = null;
+            String retVal = null;
             try
             {
                 // ip
                 btdevice = params[0];
+                if(bluetoothPort.isConnected()){
+                    bluetoothPort.disconnect();
+                }
 
                 bluetoothPort.connect(btdevice);
-                retVal = new Integer(0);
+
+                retVal="CONNECTED";
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 Log.e("Bluetooth-connection:",e.getMessage(),e);
+                retVal = "ERROR:"+e.getMessage();
+
                 //Toast.makeText(HomeActivity.getInstance().getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_LONG);
-                retVal = new Integer(-1);
+
             }
             return retVal;
         }
 
         @Override
-        protected void onPostExecute(Integer result)
+        protected void onPostExecute(String result)
         {
-            if(result.intValue() == 0)
+            if(result.equals("CONNECTED"))
             {
                 RequestHandler rh = new RequestHandler();
                 hThread = new Thread(rh);
@@ -927,7 +926,7 @@ public class PrinterUtil {
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                HomeActivity.getInstance().showCustomDialog("Error","Printer Connection Failed.");
+                HomeActivity.getInstance().showCustomDialog("Error",result);
             }
             super.onPostExecute(result);
         }

@@ -31,8 +31,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,20 +49,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     EditText editTextFooterMsg;
     EditText txtViewuserpasscode;
 
-    private final ActivityResultLauncher<Intent> storeageActivitytResultLanucher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-
-                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
-
-                    }
-                    else{
-
-                    }
-                }
-            });
+    private static String[] PERMISSIONS_BLUETOOTH = {
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_SCAN
+    };
     RadioButton radioButton2Inch;
     RadioButton radioButton3Inch;
     RadioButton radioButton4Inch;
@@ -100,10 +89,17 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     public static final String ISWIFI = "ISWIFI";
     Set<BluetoothDevice> pairedDevices = null;
     private BluetoothAdapter mBluetoothAdapter = null;
-    private static String[] PERMISSIONS_BLUETOOTH = {
-            Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.BLUETOOTH
-    };
+    private final ActivityResultLauncher<Intent> storeageActivitytResultLanucher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+
+                }
+                else{
+
+                }
+            });
     ArrayList<String> bluethootnamelist;
     private Dialog progressBar;
     ImageButton btnclerlogo;
@@ -221,41 +217,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 }
             }
         });
-       /* radioButton2Inch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
 
-                }
-            }
-        });*/
-        /*radioButton3Inch.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    checkBoxIncludeMRP.setVisibility(View.VISIBLE);
-                    radioButton4Inch.setChecked(false);
-                    radioButton2Inch.setChecked(false);
-                }
-                else{
-                    checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
-                }
-            }
-        });*/
-        /*radioButton4Inch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    checkBoxIncludeMRP.setVisibility(View.VISIBLE);
-                    radioButton2Inch.setChecked(false);
-                    radioButton3Inch.setChecked(false);
-                }
-                else{
-                    checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
-                }
-            }
-        });*/
         radioButtonWifi.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -393,14 +355,17 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             return write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED;
         }
     }
+
     private boolean checkPermission(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
             int bluetooth = ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT);
-            return  bluetooth==PackageManager.PERMISSION_GRANTED;
+            int scan = ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.BLUETOOTH_SCAN);
+            return bluetooth == PackageManager.PERMISSION_GRANTED && scan == PackageManager.PERMISSION_GRANTED;
         }
         else{
             int bluetooth = ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH);
-            return  bluetooth==PackageManager.PERMISSION_GRANTED;
+            int scan = ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.BLUETOOTH_SCAN);
+            return bluetooth == PackageManager.PERMISSION_GRANTED && scan == PackageManager.PERMISSION_GRANTED;
         }
     }
     public void showCustomDialog(String title, String Message, final boolean wait) {
@@ -420,11 +385,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 }
             }
         });
-        //dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-        // public void onClick(DialogInterface dialog, int whichButton) {
-        //   //pass
-        //}
-        //});
         AlertDialog b = dialogBuilder.create();
         b.setCanceledOnTouchOutside(false);
         b.setCancelable(false);

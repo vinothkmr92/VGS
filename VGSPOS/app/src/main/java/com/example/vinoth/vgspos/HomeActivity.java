@@ -91,7 +91,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static HomeActivity instance;
     public  EditText priceTxt;
     private static String[] PERMISSIONS_BLUETOOTH = {
-            Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH
+            Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH,Manifest.permission.BLUETOOTH_SCAN
     };
     private MySharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
@@ -559,7 +559,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         return connected;
     }
-
+    private boolean checkBluetoothPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            int bluetooth = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.BLUETOOTH_CONNECT);
+            int scan = ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.BLUETOOTH_SCAN);
+            return bluetooth == PackageManager.PERMISSION_GRANTED && scan == PackageManager.PERMISSION_GRANTED;
+        } else {
+            int bluetooth = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.BLUETOOTH);
+            int scan = ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.BLUETOOTH_SCAN);
+            return bluetooth == PackageManager.PERMISSION_GRANTED && scan == PackageManager.PERMISSION_GRANTED;
+        }
+    }
     private void Print(){
         try
         {
@@ -568,6 +578,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
                 try{
+                    if(!isWifiPrint){
+                        if (!checkBluetoothPermission()) {
+                            ActivityCompat.requestPermissions(HomeActivity.getInstance(), PERMISSIONS_BLUETOOTH
+                                    , 1);
+                        }
+                    }
                     PrinterUtil printerUtil = new PrinterUtil(HomeActivity.this,true,isWifiPrint);
                     printerUtil.Print();
                 }
