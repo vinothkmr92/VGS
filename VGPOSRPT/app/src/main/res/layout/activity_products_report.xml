@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/PapayaWhip"
     tools:context=".ProductsReport">
     <GridLayout
         android:layout_width="fill_parent"
@@ -21,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:hint="Branch"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
             <AutoCompleteTextView android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/branches"
@@ -33,33 +34,27 @@
             android:id="@+id/itemrptFrmDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50px"
-            android:fontFamily="@font/orienta"
-            android:gravity="center"
+            android:layout_columnSpan="2"
+            android:layout_gravity="left"
+            android:drawableRight="@drawable/baseline_date_range_24"
             android:text="Date"
-            android:textAlignment="center"
-            android:textColor="@android:color/black" />
-        <ImageButton
-            android:layout_width="80px"
-            android:layout_height="80px"
-            android:id="@+id/btndpFrmDateItem"
-            android:textColor="@android:color/black"
-            android:background="@drawable/baseline_date_range_24"></ImageButton>
-
+            android:textColor="@color/DarkViolet"
+            android:background="@drawable/editdate"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            />
         <TextView
             android:id="@+id/itemrptToDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|right"
-            android:fontFamily="@font/orienta"
+            android:layout_columnSpan="2"
+            android:layout_gravity="right"
             android:text="Date"
-            android:textColor="@android:color/black" />
-        <ImageButton
-            android:layout_width="80px"
-            android:layout_height="80px"
-            android:id="@+id/btndpToDateItem"
-            android:background="@drawable/baseline_date_range_24"></ImageButton>
-
+            android:background="@drawable/editdate"
+            android:drawableRight="@drawable/baseline_date_range_24"
+            android:textColor="@color/DarkViolet"
+            android:textSize="20dp"
+            android:textStyle="bold"/>
     </GridLayout>
     <LinearLayout
         android:layout_width="fill_parent"

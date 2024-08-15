@@ -8,12 +8,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -90,6 +93,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Intent intent = new Intent(getApplicationContext(), ProductsReport.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_item_wise_report, menu);//Menu Resource, Menu
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.exitmenu:
+                finish();
+                System.exit(0);
+                return true;
+            case R.id.action_settings:
+                Intent dcpage = new Intent(this,SettingsActivity.class);
+                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(dcpage);
+                return  true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
     public void showCustomDialog(String title,String Message) {
         MaterialAlertDialogBuilder dialog =  new MaterialAlertDialogBuilder(LoginActivity.this,

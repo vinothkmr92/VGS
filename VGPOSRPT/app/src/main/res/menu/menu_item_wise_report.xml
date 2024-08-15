@@ -4,7 +4,11 @@
     tools:context="com.example.vgposrpt.ItemWiseReportActivity">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:icon="@drawable/baseline_settings_24"/>
+    <item
+        android:id="@+id/exitmenu"
+        android:title="Exit"
+        android:icon="@drawable/baseline_exit_to_app_24"
+        ></item>
 </menu>

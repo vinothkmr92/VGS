@@ -1,6 +1,7 @@
 package com.example.vgposrpt;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +19,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -30,8 +33,6 @@ public class ProductsReport extends AppCompatActivity implements View.OnClickLis
 
     TextView frmDateTextView;
     TextView toDateTextView;
-    ImageButton btnFrmDatePicker;
-    ImageButton btnToDatePicker;
     LinearLayout itemRptContainer;
     ScrollView itemsrptScrollview;
     private Calendar calendar;
@@ -43,41 +44,64 @@ public class ProductsReport extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_products_report);
-        frmDateTextView = (TextView) findViewById(R.id.itemrptFrmDate);
-        toDateTextView = (TextView) findViewById(R.id.itemrptToDate);
-        txtViewTotalAmt = (TextView)findViewById(R.id.ttAmtPrdReport);
-        btnFrmDatePicker = (ImageButton) findViewById(R.id.btndpFrmDateItem);
-        btnToDatePicker = (ImageButton) findViewById(R.id.btndpToDateItem);
-        itemRptContainer = (LinearLayout)findViewById(R.id.itemsrptContainer);
-        itemsrptScrollview = (ScrollView)findViewById(R.id.itemsrptScrollView);
-        btnFrmDatePicker.setOnClickListener(this);
-        btnToDatePicker.setOnClickListener(this);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        Date date = new Date();
-        frmDateTextView.setText(format.format(date));
-        toDateTextView.setText(format.format(date));
-        GetDefaultDate();
-        datePickerDialog = new DatePickerDialog(ProductsReport.this,myDateListener,year,month,day);
-        todatePickerDialog = new DatePickerDialog(ProductsReport.this,mytoDateListener,year,month,day);
-        ArrayAdapter<Branch> adapter = new ArrayAdapter<Branch>(this,R.layout.drop_down_item,CommonUtil.branchList);
-        AutoCompleteTextView autoCompleteTextView = findViewById(R.id.branches);
-        autoCompleteTextView.setAdapter(adapter);
-        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO
+        try{
+            super.onCreate(savedInstanceState);
+            EdgeToEdge.enable(this);
+            setContentView(R.layout.activity_products_report);
+            frmDateTextView = (TextView) findViewById(R.id.itemrptFrmDate);
+            toDateTextView = (TextView) findViewById(R.id.itemrptToDate);
+            txtViewTotalAmt = (TextView)findViewById(R.id.ttAmtPrdReport);
+            itemRptContainer = (LinearLayout)findViewById(R.id.itemsrptContainer);
+            itemsrptScrollview = (ScrollView)findViewById(R.id.itemsrptScrollView);
+            frmDateTextView.setOnClickListener(this);
+            toDateTextView.setOnClickListener(this);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date date = new Date();
+            frmDateTextView.setText(format.format(date));
+            toDateTextView.setText(format.format(date));
+            GetDefaultDate();
+            datePickerDialog = new DatePickerDialog(ProductsReport.this,myDateListener,year,month,day);
+            todatePickerDialog = new DatePickerDialog(ProductsReport.this,mytoDateListener,year,month,day);
+            ArrayAdapter<Branch> adapter = new ArrayAdapter<Branch>(this,R.layout.drop_down_item,CommonUtil.branchList);
+            AutoCompleteTextView autoCompleteTextView = findViewById(R.id.branches);
+            autoCompleteTextView.setAdapter(adapter);
+            autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //TODO
+                }
+            });
+            autoCompleteTextView.setText("ALL");
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                return insets;
+            });
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage(),false);
+        }
+
+
+    }
+    public void showCustomDialog(String title,String Message,Boolean close) {
+        MaterialAlertDialogBuilder dialog =  new MaterialAlertDialogBuilder(ProductsReport.this,
+                com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
+        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
+
+        dialog.setTitle(title);
+        dialog.setMessage("\n"+Message);
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //do something with edt.getText().toString();
+                if(close){
+                    finish();
+                    System.exit(0);
+                }
             }
         });
-        autoCompleteTextView.setText("ALL");
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
+        dialog.setCancelable(false);
+        dialog.show();
     }
     private  void GetDefaultDate(){
         calendar = Calendar.getInstance();
@@ -125,10 +149,10 @@ public class ProductsReport extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btndpFrmDateItem:
+            case R.id.itemrptFrmDate:
                 datePickerDialog.show();
                 break;
-            case R.id.btndpToDateItem:
+            case R.id.itemrptToDate:
                 todatePickerDialog.show();
                 break;
         }
