@@ -28,6 +28,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -58,7 +59,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
            connectionClass = new ConnectionClass();
            sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
            CheckSQLSettings();
-           new LoadBranches().execute("");
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -89,8 +89,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             showCustomDialog("Warning","Could not connect to Server");
         }
     }
-    private void LoadHome(){
-        Intent intent = new Intent(getApplicationContext(), ProductsReport.class);
+    private void LoadHome() {
+        Intent intent = new Intent(getApplicationContext(), SalesReportActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -140,7 +140,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        new DoLogin().execute("");
+        try{
+           String val = new DoLogin().execute("").get();
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
+        }
     }
 
     public class DoLogin extends AsyncTask<String,String,String>
@@ -155,6 +160,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         protected void onPreExecute() {
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
+            dialog.setIcon(R.mipmap.salesreport);
             dialog.setMessage("Connecting to Server..");
             dialog.show();
             super.onPreExecute();
@@ -167,7 +173,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             Toast.makeText(LoginActivity.this,r,Toast.LENGTH_LONG).show();
             if(isSuccess){
-                LoadHome();
+                new LoadBranches().execute("");
             }
             else {
                 showCustomDialog("Error",r);
@@ -240,6 +246,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if(dialog.isShowing()){
                 dialog.hide();
             }
+            LoadHome();
         }
 
         @Override

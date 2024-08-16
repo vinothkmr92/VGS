@@ -10,4 +10,5 @@ public class CommonUtil {
     public static String USERNAME = "";
     public static String loggedinUser = "";
     public static ArrayList<Branch> branchList=new ArrayList<Branch>();
+    public static Double totalRevenueAmt;
 }
