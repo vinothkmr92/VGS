@@ -57,7 +57,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     DatabaseHelper dbHelper;
     private Dialog progressBar;
-
     private Button lblPrint;
     private EditText itemNo;
     private EditText itemName;
@@ -107,6 +106,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String BILLCOPIES = "BILLCOPIES";
     public static final String ADDRESSLINE = "ADDRESSLINE";
     public static final String INCLUDEMRP = "INCLUDEMRP";
+    public static final String MULTILANG = "MULTILANG";
     String headerMsg ;
     String footerMsg ;
     String printerip ;
@@ -344,6 +344,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             String billcopies = sharedpreferences.getString(BILLCOPIES,"1");
             String addressline = sharedpreferences.getString(ADDRESSLINE,"");
             String includeMRP = sharedpreferences.getString(INCLUDEMRP,"NO");
+            String isMultilang = sharedpreferences.getString(MULTILANG,"NO");
+            Common.MultiLang = isMultilang.equalsIgnoreCase("YES");
             Common.printKOT = printkot.equalsIgnoreCase("YES");
             Common.includeMRPinReceipt = includeMRP.equalsIgnoreCase("YES");
             Common.kotprinterIP = kotprinterip;
@@ -367,10 +369,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             instance = this;
             builder = new AlertDialog.Builder(this);
-
             builder.setTitle("Print Bill");
             builder.setMessage("Do you want to print bill ?");
-
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int which) {

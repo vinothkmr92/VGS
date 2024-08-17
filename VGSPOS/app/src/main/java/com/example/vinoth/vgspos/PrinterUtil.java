@@ -222,33 +222,31 @@ public class PrinterUtil {
     }
 
     Bitmap getMultiLangTextAsImage(String text, float textSize, Typeface typeface)  {
-        TextPaint mPaint = new TextPaint();
-        mPaint.setColor(Color.BLACK);
-        if (typeface != null) mPaint.setTypeface(typeface);
-        mPaint.setTextSize(textSize);
-        Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
-        int widthm = Common.RptSize.equals("2") ? 400:500;
-        StaticLayout mStaticLayout = new StaticLayout(text, mPaint, widthm, alignment, 0, 0, true);
+        try{
+            TextPaint mPaint = new TextPaint();
+            mPaint.setColor(Color.BLACK);
+            if (typeface != null) mPaint.setTypeface(typeface);
+            mPaint.setTextSize(textSize);
+            Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
+            int widthm = Common.RptSize.equals("2") ? 400:500;
+            StaticLayout mStaticLayout = new StaticLayout(text, mPaint, widthm, alignment, 0, 0, true);
+            int width = mStaticLayout.getWidth();
+            int height = mStaticLayout.getHeight();
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.drawColor(Color.WHITE);
+            mStaticLayout.draw(canvas);
+            return bitmap;
+        }
+        catch (Exception ex){
+            return  null;
+        }
 
-        int width = mStaticLayout.getWidth();
-        int height = mStaticLayout.getHeight();
-
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        Canvas canvas = new Canvas(bitmap);
-
-        canvas.drawColor(Color.WHITE);
-
-        mStaticLayout.draw(canvas);
-
-        return bitmap;
     }
     private void PrintBill() throws IOException {
-        //posPtr.setCodepage(2);
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(Common.billDate);
         Bitmap bitmapIcon = Common.shopLogo;
-
         if(bitmapIcon!=null){
             try {
                 if(Common.RptSize.equals("2")){
@@ -315,12 +313,17 @@ public class PrinterUtil {
                 amts = StringUtils.leftPad(amts,10);
                 line = qty+price+amts+"\n";
             }
-
-            //posPtr.printNormal(line);
-            Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
-
-            if(xb!=null){
-                posPtr.printBitmap(xb,0);
+            if(Common.MultiLang){
+                Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
+                if(xb!=null){
+                    posPtr.printBitmap(xb,0);
+                }
+                else {
+                    posPtr.printNormal(name+"\n");
+                }
+            }
+            else {
+                posPtr.printNormal(name+"\n");
             }
             posPtr.printNormal(line);
         }
@@ -415,9 +418,17 @@ public class PrinterUtil {
                     qty = StringUtils.leftPad(qty,46);
                 }
                 String line = qty+"\n";
-                Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
-                if(xb!=null){
-                    posPtr.printBitmap(xb,0);
+                if(Common.MultiLang){
+                    Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
+                    if(xb!=null){
+                        posPtr.printBitmap(xb,0);
+                    }
+                    else {
+                        posPtr.printNormal(name+"\n");
+                    }
+                }
+                else {
+                    posPtr.printNormal(name+"\n");
                 }
                 posPtr.printNormal(line);
             }
@@ -444,9 +455,6 @@ public class PrinterUtil {
         {
             posPtr.setAsync(true);
             rtn = posPtr.printerSts();
-            // Do not check the paper near empty.
-            // if( (rtn != 0) && (rtn != ESCPOSConst.STS_PAPERNEAREMPTY)) return rtn;
-            // check the paper near empty.
             if( rtn != 0 )  return rtn;
         }
         catch(IOException e)
@@ -484,9 +492,17 @@ public class PrinterUtil {
                     qtystr = StringUtils.leftPad(qtystr,46);
                 }
                 String line = qtystr+"\n";
-                Bitmap xb = getMultiLangTextAsImage(itemname, 24, Typeface.DEFAULT);
-                if(xb!=null){
-                    posPtr.printBitmap(xb,0);
+                if(Common.MultiLang){
+                    Bitmap xb = getMultiLangTextAsImage(itemname, 24, Typeface.DEFAULT);
+                    if(xb!=null){
+                        posPtr.printBitmap(xb,0);
+                    }
+                    else {
+                        posPtr.printNormal(itemname+"\n");
+                    }
+                }
+                else {
+                    posPtr.printNormal(itemname+"\n");
                 }
                 posPtr.printNormal(line);
             }
@@ -631,7 +647,7 @@ public class PrinterUtil {
 
         return  mydevice;
     }
-    class ConnectPrinterKOT extends AsyncTask<String, Void, Integer>
+    class ConnectPrinterKOT extends AsyncTask<String, Void, String>
     {
         private final ProgressDialog dialog = new ProgressDialog(context);
         @Override
@@ -645,28 +661,27 @@ public class PrinterUtil {
         }
 
         @Override
-        protected Integer doInBackground(String... params)
+        protected String doInBackground(String... params)
         {
-            Integer retVal = null;
+            String retVal = null;
             try
             {
                 // ip
                 wifiPort.connect(params[0]);
-                retVal = new Integer(0);
+                retVal="CONNECTED";
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 Log.e("Wifi-connection:",e.getMessage(),e);
-                //Toast.makeText(HomeActivity.getInstance().getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_LONG);
-                retVal = new Integer(-1);
+                retVal = "ERROR:"+e.getMessage();
             }
             return retVal;
         }
 
         @Override
-        protected void onPostExecute(Integer result)
+        protected void onPostExecute(String result)
         {
-            if(result.intValue() == 0)
+            if(result.equals("CONNECTED"))
             {
                 RequestHandler rh = new RequestHandler();
                 hThread = new Thread(rh);
@@ -689,12 +704,12 @@ public class PrinterUtil {
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                HomeActivity.getInstance().showCustomDialog("Error","Printer Connection Failed.");
+                HomeActivity.getInstance().showCustomDialog("Failed to Connect Printer",result);
             }
             super.onPostExecute(result);
         }
     }
-    class ConnectToBluetoothPrinterKOT extends AsyncTask<BluetoothDevice, Void, Integer>
+    class ConnectToBluetoothPrinterKOT extends AsyncTask<BluetoothDevice, Void, String>
     {
         private final ProgressDialog dialog = new ProgressDialog(context);
         @Override
@@ -708,28 +723,27 @@ public class PrinterUtil {
         }
 
         @Override
-        protected Integer doInBackground(BluetoothDevice... params)
+        protected String doInBackground(BluetoothDevice... params)
         {
-            Integer retVal = null;
+            String retVal = null;
             try
             {
                 // ip
                 bluetoothPort.connect(params[0]);
-                retVal = new Integer(0);
+                retVal="CONNECTED";
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 Log.e("Bluetooth-connection:",e.getMessage(),e);
-                //Toast.makeText(HomeActivity.getInstance().getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_LONG);
-                retVal = new Integer(-1);
+                retVal = "ERROR:"+e.getMessage();
             }
             return retVal;
         }
 
         @Override
-        protected void onPostExecute(Integer result)
+        protected void onPostExecute(String result)
         {
-            if(result.intValue() == 0)
+            if(result.equals("CONNECTED"))
             {
                 RequestHandler rh = new RequestHandler();
                 hThread = new Thread(rh);
@@ -752,12 +766,12 @@ public class PrinterUtil {
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                HomeActivity.getInstance().showCustomDialog("Error","Printer Connection Failed.");
+                HomeActivity.getInstance().showCustomDialog("Failed to Connect Printer",result);
             }
             super.onPostExecute(result);
         }
     }
-    class ConnectPrinter extends AsyncTask<String, Void, Integer>
+    class ConnectPrinter extends AsyncTask<String, Void, String>
     {
         private final ProgressDialog dialog = new ProgressDialog(context);
         @Override
@@ -771,28 +785,27 @@ public class PrinterUtil {
         }
 
         @Override
-        protected Integer doInBackground(String... params)
+        protected String doInBackground(String... params)
         {
-            Integer retVal = null;
+            String retVal = null;
             try
             {
                 // ip
                 wifiPort.connect(params[0]);
-                retVal = new Integer(0);
+                retVal="CONNECTED";
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 Log.e("Wifi-connection:",e.getMessage(),e);
-                //Toast.makeText(HomeActivity.getInstance().getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_LONG);
-                retVal = new Integer(-1);
+                retVal = "ERROR:"+e.getMessage();
             }
             return retVal;
         }
 
         @Override
-        protected void onPostExecute(Integer result)
+        protected void onPostExecute(String result)
         {
-            if(result.intValue() == 0)
+            if(result.equals("CONNECTED"))
             {
                 RequestHandler rh = new RequestHandler();
                 hThread = new Thread(rh);
@@ -834,12 +847,11 @@ public class PrinterUtil {
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                HomeActivity.getInstance().showCustomDialog("Error","Printer Connection Failed.");
+                HomeActivity.getInstance().showCustomDialog("Failed to Connect Printer",result);
             }
             super.onPostExecute(result);
         }
     }
-
     class ConnectToBluetoothPrinter extends AsyncTask<BluetoothDevice, Void, String>
     {
         private final ProgressDialog dialog = new ProgressDialog(context);
@@ -860,23 +872,17 @@ public class PrinterUtil {
             String retVal = null;
             try
             {
-                // ip
                 btdevice = params[0];
                 if(bluetoothPort.isConnected()){
                     bluetoothPort.disconnect();
                 }
-
                 bluetoothPort.connect(btdevice);
-
                 retVal="CONNECTED";
             }
             catch (Exception e)
             {
                 Log.e("Bluetooth-connection:",e.getMessage(),e);
                 retVal = "ERROR:"+e.getMessage();
-
-                //Toast.makeText(HomeActivity.getInstance().getApplicationContext(),e.getMessage().toString(),Toast.LENGTH_LONG);
-
             }
             return retVal;
         }
@@ -926,7 +932,7 @@ public class PrinterUtil {
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                HomeActivity.getInstance().showCustomDialog("Error",result);
+                HomeActivity.getInstance().showCustomDialog("Failed to Connect Printer",result);
             }
             super.onPostExecute(result);
         }

@@ -37,4 +37,5 @@ public class Common {
     public final static String SettingsPassCode = "6565";
     public  static boolean isAuthenticated;
     public  static String userPasscode="6565";
+    public static boolean MultiLang;
 }

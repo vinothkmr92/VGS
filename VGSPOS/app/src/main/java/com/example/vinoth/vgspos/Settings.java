@@ -84,6 +84,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     public static final String PRINTKOT = "PRINTKOT";
     public static final String KOTPRINTERIP = "KOTPRINTERIP";
     public static final String BILLCOPIES = "BILLCOPIES";
+    public static final String MULTILANG = "MULTILANG";
     ImageView imageView;
     EditText editTextaddressline;
     public static final String ISWIFI = "ISWIFI";
@@ -104,6 +105,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private Dialog progressBar;
     ImageButton btnclerlogo;
     EditText deviceidView;
+    CheckBox multilang;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +133,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         loadPictureBtn = (Button)findViewById(R.id.buttonLoadPicture);
         imageView = (ImageView)findViewById(R.id.imgView);
         deviceidView = (EditText)findViewById(R.id.deviceid);
+        multilang = findViewById(R.id.checkBoxMultiLanguage);
         String android_id = android.provider.Settings.Secure.getString(Settings.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
         deviceidView.setText(android_id);
         txtViewuserpasscode = (EditText) findViewById(R.id.userpasscode);
@@ -152,7 +155,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         String billcopies = sharedpreferences.getString(BILLCOPIES,"1");
         String addressline = sharedpreferences.getString(ADDRESSLINE,"");
         String includeMRP = sharedpreferences.getString(INCLUDEMRP,"NO");
+        String isMultiLang = sharedpreferences.getString(MULTILANG,"NO");
         enablekot.setChecked(printkot.equalsIgnoreCase("YES"));
+        multilang.setChecked(isMultiLang.equalsIgnoreCase("YES"));
         editTextkotprinterip.setText(kotprinterip);
         switch (rptsize){
             case  "2":
@@ -268,7 +273,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         int selectedindex=0;
         int i=0;
         for (BluetoothDevice device : pairedDevices) {
-            // Add the name and address to an array adapter to show in a ListView
             bluethootnamelist.add(device.getName());
             if(device.getName().equals(bluetothName)){
                 selectedindex=i;
@@ -277,7 +281,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
         ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,bluethootnamelist);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         spinnerbluetothDevice.setAdapter(adapter);
         spinnerbluetothDevice.setSelection(selectedindex);
         if(isWifi.equalsIgnoreCase("YES")){
@@ -302,7 +305,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         if(!Common.openSettings){
             PasscodeActivity.isUserPasscode = false;
             Intent page = new Intent(this,PasscodeActivity.class);
-            //page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(page);
         }
         if(!checkFilePermission()){
@@ -413,6 +415,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             String kotprinterip = editTextkotprinterip.getText().toString();
             String nocopies = editTextbillcopies.getText().toString();
             String addressline = editTextaddressline.getText().toString();
+            String isMultilang = multilang.isChecked()?"YES":"NO";
+            sharedpreferences.putString(MULTILANG,isMultilang);
             sharedpreferences.putString(HEADERMSG,headerMsg);
             sharedpreferences.putString(FOOTERMSG,footerMsg);
             sharedpreferences.putString(PRINTERIP,printer);
