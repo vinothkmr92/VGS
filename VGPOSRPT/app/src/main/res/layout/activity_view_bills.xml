@@ -31,7 +31,7 @@
         android:orientation="horizontal"
         android:id="@+id/viewbillsgrid"
         android:layout_below="@id/homebaner"
-        android:padding="20dp"
+        android:padding="10dp"
         android:columnCount="4"
         tools:ignore="MissingConstraints">
         <com.google.android.material.textfield.TextInputLayout

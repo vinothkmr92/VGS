@@ -21,6 +21,9 @@
         android:theme="@style/Theme.VGPOSRPT"
         tools:targetApi="31">
         <activity
+            android:name=".ViewProductsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProductsReportActivity"
             android:exported="false" />
         <activity

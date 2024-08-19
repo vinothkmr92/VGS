@@ -1,9 +1,9 @@
 package com.example.vgposrpt;
 
 public class ProductsSummary {
-    public Double SoldQty;
-    public String ProductName;
-
+    private Double SoldQty;
+    private String ProductName;
+    private Double SoldAmount;
     public Double getSoldQty() {
         return SoldQty;
     }
@@ -18,5 +18,13 @@ public class ProductsSummary {
 
     public void setProductName(String productName) {
         ProductName = productName;
+    }
+
+    public Double getSoldAmount() {
+        return SoldAmount;
+    }
+
+    public void setSoldAmount(Double soldAmount) {
+        SoldAmount = soldAmount;
     }
 }

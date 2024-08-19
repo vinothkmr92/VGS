@@ -12,7 +12,6 @@
             android:id="@+id/itemsrpt_Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:layout_margin="10dp"
             app:cardCornerRadius="15dp"
             app:cardElevation="5dp"
@@ -24,20 +23,19 @@
                 android:columnCount="2"
                 android:background="@color/LightSalmon"
                 android:orientation="horizontal"
-                android:padding="20dp"
+                android:padding="15dp"
                 >
-
                 <TextView
                     android:id="@+id/itemcard_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_columnSpan="2"
-                    android:layout_gravity="left"
+                    android:layout_gravity="center"
                     android:fontFamily="@font/orienta"
                     android:text="Produt Name"
                     android:textAllCaps="true"
                     android:textColor="@color/Black"
-                    android:textSize="10dp"
+                    android:textSize="20dp"
                     android:textStyle="bold"></TextView>
 
                 <TextView
@@ -47,8 +45,8 @@
                     android:layout_gravity="left"
                     android:fontFamily="@font/orienta"
                     android:text="399"
-                    android:textColor="@color/Black"
-                    android:textSize="8dp"
+                    android:textColor="@color/DarkViolet"
+                    android:textSize="20dp"
                     android:textStyle="bold"></TextView>
 
                 <TextView
@@ -58,8 +56,8 @@
                     android:layout_gravity="right"
                     android:fontFamily="@font/orienta"
                     android:text="3999"
-                    android:textColor="@color/Black"
-                    android:textSize="10dp"
+                    android:textColor="@color/DarkMagenta"
+                    android:textSize="30dp"
                     android:textStyle="bold"></TextView>
 
             </GridLayout>

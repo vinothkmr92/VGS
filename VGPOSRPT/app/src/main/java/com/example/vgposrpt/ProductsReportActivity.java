@@ -27,6 +27,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -60,6 +61,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
     private SeekBar seekBarX, seekBarY;
     private TextView tvX, tvY;
     TextView home;
+    MaterialButton btnViewProducts;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +76,9 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
             chart = findViewById(R.id.chart1);
             prodChart = findViewById(R.id.chart2);
             home = findViewById(R.id.homepr);
+            btnViewProducts = findViewById(R.id.btnViewProducts);
             home.setOnClickListener(this);
+            btnViewProducts.setOnClickListener(this);
             frmDateTextView.setOnClickListener(this);
             toDateTextView.setOnClickListener(this);
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
@@ -148,9 +152,18 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 todatePickerDialog.show();
                 break;
             case R.id.homepr:
+                CommonUtil.selectedBarnch = GetSelectedBranch();
+                CommonUtil.frmDate = frmDateTextView.getText().toString();
+                CommonUtil.toDate = toDateTextView.getText().toString();
                 Intent intent = new Intent(getApplicationContext(), SalesReportActivity.class);
                 startActivity(intent);
-                finish();
+            case R.id.btnViewProducts:
+                CommonUtil.selectedBarnch = GetSelectedBranch();
+                CommonUtil.frmDate = frmDateTextView.getText().toString();
+                CommonUtil.toDate = toDateTextView.getText().toString();
+                Intent intent2 = new Intent(getApplicationContext(), ViewProductsActivity.class);
+                startActivity(intent2);
+
         }
     }
     private  void GetDefaultDate(){
@@ -339,6 +352,12 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 showCustomDialog("Error",error,false);
             }
             else {
+                if(r.size()>0){
+                    chart.setVisibility(View.VISIBLE);
+                }
+                else {
+                    chart.setVisibility(View.INVISIBLE);
+                }
                 setupPieChart(r);
             }
             if(dialog.isShowing()){
@@ -409,6 +428,14 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 showCustomDialog("Error",error,false);
             }
             else {
+                if(r.size()>0){
+                    btnViewProducts.setVisibility(View.VISIBLE);
+                    prodChart.setVisibility(View.VISIBLE);
+                }
+                else {
+                    btnViewProducts.setVisibility(View.INVISIBLE);
+                    prodChart.setVisibility(View.INVISIBLE);
+                }
                 setupPieChartProd(r);
             }
             if(dialog.isShowing()){
