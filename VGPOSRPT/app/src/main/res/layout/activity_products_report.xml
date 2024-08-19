@@ -18,7 +18,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:gravity="right"
+            android:gravity="center"
             android:orientation="horizontal"
             android:id="@+id/homebaner_1">
             <com.google.android.material.button.MaterialButton
@@ -26,20 +26,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/orienta"
-                android:layout_gravity="left"
+                android:layout_gravity="center"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:text="View Products"
                 android:visibility="invisible"></com.google.android.material.button.MaterialButton>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="Home"
-                android:id="@+id/homepr"
-                android:drawableLeft="@drawable/baseline_home_24"
-                android:textStyle="bold"
-                android:textColor="@color/Crimson"
-                android:foreground="?android:attr/selectableItemBackground"
-                ></TextView>
+
         </LinearLayout>
     <GridLayout
         android:layout_width="fill_parent"

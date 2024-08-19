@@ -60,7 +60,6 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
     PieChart prodChart;
     private SeekBar seekBarX, seekBarY;
     private TextView tvX, tvY;
-    TextView home;
     MaterialButton btnViewProducts;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     @Override
@@ -75,9 +74,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
             txtBranch = findViewById(R.id.productsbr);
             chart = findViewById(R.id.chart1);
             prodChart = findViewById(R.id.chart2);
-            home = findViewById(R.id.homepr);
             btnViewProducts = findViewById(R.id.btnViewProducts);
-            home.setOnClickListener(this);
             btnViewProducts.setOnClickListener(this);
             frmDateTextView.setOnClickListener(this);
             toDateTextView.setOnClickListener(this);
@@ -143,6 +140,12 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
     }
 
     @Override
+    public void onBackPressed(){
+        finish();
+        super.onBackPressed();
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.productsrptFrmDate:
@@ -151,12 +154,6 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
             case R.id.productsrptToDate:
                 todatePickerDialog.show();
                 break;
-            case R.id.homepr:
-                CommonUtil.selectedBarnch = GetSelectedBranch();
-                CommonUtil.frmDate = frmDateTextView.getText().toString();
-                CommonUtil.toDate = toDateTextView.getText().toString();
-                Intent intent = new Intent(getApplicationContext(), SalesReportActivity.class);
-                startActivity(intent);
             case R.id.btnViewProducts:
                 CommonUtil.selectedBarnch = GetSelectedBranch();
                 CommonUtil.frmDate = frmDateTextView.getText().toString();

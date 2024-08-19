@@ -10,19 +10,18 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
+        android:gravity="center"
         android:id="@+id/homebaner_2">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="center"
             android:padding="5dp"
-            android:text="Home"
-            android:id="@+id/homeprview"
-            android:drawableLeft="@drawable/baseline_home_24"
+            android:textSize="50dp"
+            android:text=""
             android:textStyle="bold"
+            android:id="@+id/prductsTotal"
             android:textColor="@color/Crimson"
-            android:foreground="?android:attr/selectableItemBackground"
             ></TextView>
     </LinearLayout>
     <ScrollView

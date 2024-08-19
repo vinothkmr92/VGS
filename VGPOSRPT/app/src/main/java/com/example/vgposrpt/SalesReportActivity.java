@@ -152,8 +152,8 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                 CommonUtil.selectedBarnch = GetSelectedBranch();
                 CommonUtil.frmDate = frmDateTextView.getText().toString();
                 CommonUtil.toDate = toDateTextView.getText().toString();
-                Intent dcpage = new Intent(this,ProductsReportActivity.class);
-                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Intent dcpage = new Intent(getApplicationContext(),ProductsReportActivity.class);
+                dcpage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(dcpage);
                 return  true;
             default:

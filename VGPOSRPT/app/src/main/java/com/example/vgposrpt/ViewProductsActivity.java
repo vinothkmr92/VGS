@@ -33,7 +33,7 @@ public class ViewProductsActivity extends AppCompatActivity {
     ConnectionClass connectionClass;
     LinearLayout productsRptContainer;
     ScrollView productrptScrollview;
-
+    TextView totalAmt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +42,7 @@ public class ViewProductsActivity extends AppCompatActivity {
         connectionClass = new ConnectionClass();
         productsRptContainer = findViewById(R.id.viewProductsContainer);
         productrptScrollview = findViewById(R.id.productsScrollView);
+        totalAmt = findViewById(R.id.prductsTotal);
         new GetSoldProducts().execute("");
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -71,7 +72,6 @@ public class ViewProductsActivity extends AppCompatActivity {
         TextView prname = view.findViewById(R.id.itemcard_name);
         TextView billAmt = view.findViewById(R.id.itemcard_amt);
         DecimalFormat formater = new DecimalFormat("#.###");
-        //String qtyStr = String.format("%.3f",items.getQuantity());
         String qtyStr = formater.format(sr.getSoldQty());
         qtyStr = "QTY: "+qtyStr;
         qty.setText(qtyStr);
@@ -123,6 +123,14 @@ public class ViewProductsActivity extends AppCompatActivity {
                 showCustomDialog("Error",error,false);
             }
             else {
+                Double total=0d;
+                if(r.size()>0){
+                   total =  r.stream().mapToDouble(c->c.getSoldAmount()).sum();
+                }
+                NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+                formatter.setMaximumFractionDigits(0);
+                String symbol = formatter.getCurrency().getSymbol();
+                totalAmt.setText(formatter.format(total).replace(symbol,symbol+" "));
                 LoadProductsViews(r);
             }
             if(dialog.isShowing()){
