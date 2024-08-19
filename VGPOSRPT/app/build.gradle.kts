@@ -43,5 +43,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }

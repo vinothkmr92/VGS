@@ -91,8 +91,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
     private void LoadHome() {
         Intent intent = new Intent(getApplicationContext(), SalesReportActivity.class);
+        /*intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);*/
         startActivity(intent);
+        finish();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,7 +144,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         try{
-           String val = new DoLogin().execute("").get();
+            String userid = editTextUserName.getText().toString();
+            String password = editTextPassword.getText().toString();
+            if(userid.isEmpty()){
+                showCustomDialog("Warning","Please enter valid username.");
+            }
+            else if(password.isEmpty()){
+                showCustomDialog("Warning","Please enter password.");
+            }
+            else {
+                String val = new DoLogin().execute("").get();
+            }
+
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());

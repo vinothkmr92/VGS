@@ -24,4 +24,12 @@ public class Branch {
     public String toString() {
         return Branch_Name;
     }
+
+    public Branch(int bCode,String bName){
+        Branch_Name = bName;
+        Branch_Code = bCode;
+    }
+    public Branch(){
+
+    }
 }

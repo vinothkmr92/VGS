@@ -22,14 +22,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
+            android:id="@+id/salesbr"
             android:hint="Branch"
             android:padding="10dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-            <AutoCompleteTextView android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+
+            <AutoCompleteTextView
                 android:id="@+id/salesbranches"
-                android:inputType="none">
-            </AutoCompleteTextView>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"
+                android:inputType="none"></AutoCompleteTextView>
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -38,29 +41,31 @@
             android:layout_height="wrap_content"
             android:layout_columnSpan="2"
             android:layout_gravity="left"
+            android:background="@drawable/editdate"
             android:drawableRight="@drawable/baseline_date_range_24"
+            android:fontFamily="@font/orienta"
             android:text="Date"
             android:textColor="@color/white"
-            android:background="@drawable/editdate"
-            android:textSize="20dp"
-            />
+            android:textSize="20dp" />
+
         <TextView
             android:id="@+id/salesrptToDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnSpan="2"
             android:layout_gravity="right"
-            android:text="Date"
             android:background="@drawable/editdate"
             android:drawableRight="@drawable/baseline_date_range_24"
+            android:fontFamily="@font/orienta"
+            android:text="Date"
             android:textColor="@color/white"
-            android:textSize="20dp"/>
+            android:textSize="20dp" />
     </GridLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
         app:cardCornerRadius="15dp"
         app:cardElevation="5dp"
         android:layout_below="@id/salesrptsgrid"
@@ -73,26 +78,28 @@
             android:columnCount="1"
             android:orientation="horizontal"
             >
+
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:textColor="@color/BlueViolet"
                 android:drawableRight="@mipmap/ttrevenue"
-                android:text="Total Revenue">
-            </com.google.android.material.textview.MaterialTextView>
+                android:text="Total Revenue"
+                android:textColor="@color/BlueViolet"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:fontFamily="@font/orienta"></com.google.android.material.textview.MaterialTextView>
+
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/totalRevenueAmt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textStyle="bold"
+                android:text="0"
                 android:textColor="@color/Chocolate"
                 android:textSize="40dp"
-                android:id="@+id/totalRevenueAmt"
-                android:text="0">
-            </com.google.android.material.textview.MaterialTextView>
+                android:textStyle="bold"
+                app:fontFamily="@font/orienta"></com.google.android.material.textview.MaterialTextView>
         </GridLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -118,26 +125,28 @@
             android:padding="10dp"
             android:orientation="horizontal"
             >
+
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textStyle="bold"
+                android:drawableRight="@mipmap/cashicon"
+                android:text="Cash Amt"
                 android:textColor="@color/Green"
                 android:textSize="20dp"
-                android:drawableRight="@mipmap/cashicon"
-                android:text="Cash Amt">
-            </com.google.android.material.textview.MaterialTextView>
+                android:textStyle="bold"
+                app:fontFamily="@font/orienta"></com.google.android.material.textview.MaterialTextView>
+
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/cashAmt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textStyle="bold"
+                android:text="0"
                 android:textColor="@color/Green"
                 android:textSize="25dp"
-                android:id="@+id/cashAmt"
-                android:text="0">
-            </com.google.android.material.textview.MaterialTextView>
+                android:textStyle="bold"
+                app:fontFamily="@font/orienta"></com.google.android.material.textview.MaterialTextView>
         </GridLayout>
     </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
@@ -156,26 +165,28 @@
                 android:padding="10dp"
                 android:orientation="horizontal"
                 >
+
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textStyle="bold"
+                    android:drawableRight="@mipmap/cardicon"
+                    android:text="Card Amt"
                     android:textColor="@color/Crimson"
                     android:textSize="20dp"
-                    android:drawableRight="@mipmap/cardicon"
-                    android:text="Card Amt">
-                </com.google.android.material.textview.MaterialTextView>
+                    android:textStyle="bold"
+                    app:fontFamily="@font/orienta"></com.google.android.material.textview.MaterialTextView>
+
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/cardAmt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textStyle="bold"
+                    android:text="0"
                     android:textColor="@color/Crimson"
                     android:textSize="25dp"
-                    android:id="@+id/cardAmt"
-                    android:text="0">
-                </com.google.android.material.textview.MaterialTextView>
+                    android:textStyle="bold"
+                    app:fontFamily="@font/orienta"></com.google.android.material.textview.MaterialTextView>
             </GridLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -202,26 +213,28 @@
                 android:padding="10dp"
                 android:orientation="horizontal"
                 >
+
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textStyle="bold"
+                    android:drawableRight="@mipmap/upiicon"
+                    android:text="UPI Amt"
                     android:textColor="@color/DarkMagenta"
                     android:textSize="20dp"
-                    android:drawableRight="@mipmap/upiicon"
-                    android:text="UPI Amt">
-                </com.google.android.material.textview.MaterialTextView>
+                    android:textStyle="bold"
+                    app:fontFamily="@font/orienta"></com.google.android.material.textview.MaterialTextView>
+
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/upiAmt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textStyle="bold"
+                    android:text="0"
                     android:textColor="@color/DarkMagenta"
                     android:textSize="25dp"
-                    android:id="@+id/upiAmt"
-                    android:text="0">
-                </com.google.android.material.textview.MaterialTextView>
+                    android:textStyle="bold"
+                    app:fontFamily="@font/orienta"></com.google.android.material.textview.MaterialTextView>
             </GridLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
@@ -232,22 +245,25 @@
         android:gravity="center"
         android:orientation="vertical"
         android:layout_below="@id/splitlayout">
+
         <TextView
+            android:id="@+id/billscount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/orienta"
+            android:text="Total Bills:"
             android:textColor="@color/Black"
             android:textStyle="bold"
-            android:visibility="invisible"
-            android:id="@+id/billscount"
-            android:text="Total Bills:">
+            android:visibility="invisible">
 
         </TextView>
+
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewBills"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnViewBills"
-            android:visibility="invisible"
-            android:text="View Bills">
-        </com.google.android.material.button.MaterialButton>
+            android:fontFamily="@font/orienta"
+            android:text="View Bills"
+            android:visibility="invisible"></com.google.android.material.button.MaterialButton>
     </LinearLayout>
 </RelativeLayout>

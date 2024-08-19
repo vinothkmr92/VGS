@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,12 +22,15 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -57,8 +63,9 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
     TextView txtViewTotalBills;
     MaterialButton btnViewBills;
     AutoCompleteTextView autoCompleteTextView;
+    TextInputLayout txtBranch;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
+    private Boolean doubleBackToExitPressedOnce = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
@@ -74,6 +81,7 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
             txtViewCashAmt = findViewById(R.id.cashAmt);
             txtViewCardAmt = findViewById(R.id.cardAmt);
             txtViewUpiAmt = findViewById(R.id.upiAmt);
+            txtBranch = findViewById(R.id.salesbr);
             frmDateTextView.setOnClickListener(this);
             toDateTextView.setOnClickListener(this);
             btnViewBills.setOnClickListener(this);
@@ -81,9 +89,23 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
             Date date = new Date();
             frmDateTextView.setText(format.format(date));
             toDateTextView.setText(format.format(date));
+            if(!CommonUtil.frmDate.isEmpty()){
+                frmDateTextView.setText(CommonUtil.frmDate);
+            }
+            if(!CommonUtil.toDate.isEmpty()){
+                toDateTextView.setText(CommonUtil.toDate);
+            }
             GetDefaultDate();
             datePickerDialog = new DatePickerDialog(SalesReportActivity.this,myDateListener,year,month,day);
             todatePickerDialog = new DatePickerDialog(SalesReportActivity.this,mytoDateListener,year,month,day);
+            Branch defaultBranch = CommonUtil.branchList.get(0);
+            if(CommonUtil.selectedBarnch!=null){
+                defaultBranch = CommonUtil.selectedBarnch;
+            }
+            else if(CommonUtil.branchList.size()<=2){
+                defaultBranch = CommonUtil.branchList.get(1);
+            }
+            txtBranch.getEditText().setText(defaultBranch.getBranch_Name());
             autoCompleteTextView = findViewById(R.id.salesbranches);
             ArrayAdapter<Branch> adapter = new ArrayAdapter<Branch>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item,CommonUtil.branchList);
             autoCompleteTextView.setAdapter(adapter);
@@ -94,9 +116,7 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                     new GetSales().execute("");
                 }
             });
-            if(CommonUtil.branchList.size()<=2){
-                autoCompleteTextView.setText(CommonUtil.branchList.get(1).getBranch_Name());
-            }
+
             new GetSales().execute("");
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -108,6 +128,56 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
             showCustomDialog("Error",ex.getMessage(),false);
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.homemenu, menu);//Menu Resource, Menu
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.exitmenu:
+                finish();
+                System.exit(0);
+                return true;
+            case R.id.action_productrpt:
+                CommonUtil.selectedBarnch = GetSelectedBranch();
+                CommonUtil.frmDate = frmDateTextView.getText().toString();
+                CommonUtil.toDate = toDateTextView.getText().toString();
+                Intent dcpage = new Intent(this,ProductsReportActivity.class);
+                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(dcpage);
+                return  true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+        this.doubleBackToExitPressedOnce = true;
+        Snackbar.make(this.getWindow().getDecorView().findViewById(android.R.id.content), "Please click BACK again to exit", Snackbar.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
+    }
+
     public void showCustomDialog(String title,String Message,Boolean close) {
         MaterialAlertDialogBuilder dialog =  new MaterialAlertDialogBuilder(SalesReportActivity.this,
                 com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
@@ -196,6 +266,14 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
         }
         return  branchcode;
     }
+    public Branch GetSelectedBranch(){
+        Branch brselected = null;
+        List<Branch> sel =CommonUtil.branchList.stream().filter(u->u.getBranch_Name().equals(autoCompleteTextView.getText().toString())).collect(Collectors.toList());
+        if(sel.size()>0){
+            brselected = sel.get(0);
+        }
+        return  brselected;
+    }
 
 
     @Override
@@ -208,8 +286,10 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                 todatePickerDialog.show();
                 break;
             case R.id.btnViewBills:
+                CommonUtil.selectedBarnch = GetSelectedBranch();
+                CommonUtil.frmDate = frmDateTextView.getText().toString();
+                CommonUtil.toDate = toDateTextView.getText().toString();
                 Intent intent = new Intent(getApplicationContext(), ViewBillsActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 break;
         }
@@ -245,28 +325,31 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                 showCustomDialog("Error",error,false);
             }
             else {
-
+                Double billamts = 0d;
+                Double cashamts = 0d;
+                Double cardamts = 0d;
+                Double upiamts = 0d;
                 if(r.size()>0){
                     btnViewBills.setVisibility(View.VISIBLE);
                     txtViewTotalBills.setVisibility(View.VISIBLE);
                     txtViewTotalBills.setText("Total Bills: "+String.valueOf(r.size()));
-                    Double billamts = r.stream().mapToDouble(c->c.Bill_Amount).sum();
-                    Double cashamts = r.stream().mapToDouble(c->c.Cash_Amount).sum();
-                    Double cardamts = r.stream().mapToDouble(c->c.Card_Amount).sum();
-                    Double upiamts = r.stream().mapToDouble(c->c.Upi_Amount).sum();
-                    CommonUtil.totalRevenueAmt = billamts;
-                    NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
-                    formatter.setMaximumFractionDigits(0);
-                    String symbol = formatter.getCurrency().getSymbol();
-                    txtViewTotalAmt.setText(formatter.format(billamts).replace(symbol,symbol+" "));
-                    txtViewCashAmt.setText(formatter.format(cashamts).replace(symbol,symbol+" "));
-                    txtViewCardAmt.setText(formatter.format(cardamts).replace(symbol,symbol+" "));
-                    txtViewUpiAmt.setText(formatter.format(upiamts).replace(symbol,symbol+" "));
+                    billamts = r.stream().mapToDouble(c->c.Bill_Amount).sum();
+                    cashamts = r.stream().mapToDouble(c->c.Cash_Amount).sum();
+                    cardamts = r.stream().mapToDouble(c->c.Card_Amount).sum();
+                    upiamts = r.stream().mapToDouble(c->c.Upi_Amount).sum();
                 }
                 else {
                     btnViewBills.setVisibility(View.INVISIBLE);
                     txtViewTotalBills.setVisibility(View.INVISIBLE);
                 }
+                CommonUtil.totalRevenueAmt = billamts;
+                NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+                formatter.setMaximumFractionDigits(0);
+                String symbol = formatter.getCurrency().getSymbol();
+                txtViewTotalAmt.setText(formatter.format(billamts).replace(symbol,symbol+" "));
+                txtViewCashAmt.setText(formatter.format(cashamts).replace(symbol,symbol+" "));
+                txtViewCardAmt.setText(formatter.format(cardamts).replace(symbol,symbol+" "));
+                txtViewUpiAmt.setText(formatter.format(upiamts).replace(symbol,symbol+" "));
             }
             if(dialog.isShowing()){
                 dialog.hide();

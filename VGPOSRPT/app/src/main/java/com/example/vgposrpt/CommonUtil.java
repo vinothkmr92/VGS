@@ -11,4 +11,8 @@ public class CommonUtil {
     public static String loggedinUser = "";
     public static ArrayList<Branch> branchList=new ArrayList<Branch>();
     public static Double totalRevenueAmt;
+    public static Branch selectedBarnch = new Branch(0,"ALL");
+    public static String frmDate = "";
+    public static String toDate="";
+
 }

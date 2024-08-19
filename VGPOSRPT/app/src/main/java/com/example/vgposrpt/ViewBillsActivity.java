@@ -3,6 +3,7 @@ package com.example.vgposrpt;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,9 +42,11 @@ import java.util.stream.Collectors;
 public class ViewBillsActivity extends AppCompatActivity implements View.OnClickListener {
 
     AutoCompleteTextView autoCompleteTextView;
+    TextInputLayout txtBranch;
     ConnectionClass connectionClass;
     TextView frmDateTextView;
     TextView toDateTextView;
+    TextView home;
     LinearLayout salesRptContainer;
     ScrollView salesrptScrollview;
     private Calendar calendar;
@@ -61,15 +65,32 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
             toDateTextView = findViewById(R.id.viewBillsToDate);
             salesRptContainer = findViewById(R.id.viewBillsContainer);
             salesrptScrollview = findViewById(R.id.billsScrollView);
+            txtBranch = findViewById(R.id.br);
+            home = findViewById(R.id.home);
             frmDateTextView.setOnClickListener(this);
             toDateTextView.setOnClickListener(this);
+            home.setOnClickListener(this);
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
             Date date = new Date();
             frmDateTextView.setText(format.format(date));
             toDateTextView.setText(format.format(date));
+            if(!CommonUtil.frmDate.isEmpty()){
+                frmDateTextView.setText(CommonUtil.frmDate);
+            }
+            if(!CommonUtil.toDate.isEmpty()){
+                toDateTextView.setText(CommonUtil.toDate);
+            }
             GetDefaultDate();
             datePickerDialog = new DatePickerDialog(ViewBillsActivity.this,myDateListener,year,month,day);
             todatePickerDialog = new DatePickerDialog(ViewBillsActivity.this,mytoDateListener,year,month,day);
+            Branch defaultBranch = CommonUtil.branchList.get(0);
+            if(CommonUtil.selectedBarnch!=null){
+                defaultBranch = CommonUtil.selectedBarnch;
+            }
+            else if(CommonUtil.branchList.size()<=2){
+                defaultBranch = CommonUtil.branchList.get(1);
+            }
+            txtBranch.getEditText().setText(defaultBranch.getBranch_Name());
             autoCompleteTextView = findViewById(R.id.viewBillsbranches);
             ArrayAdapter<Branch> adapter = new ArrayAdapter<Branch>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item,CommonUtil.branchList);
             autoCompleteTextView.setAdapter(adapter);
@@ -80,9 +101,6 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
                     new GetSales().execute("");
                 }
             });
-            if(CommonUtil.branchList.size()<=2){
-                autoCompleteTextView.setText(CommonUtil.branchList.get(1).getBranch_Name());
-            }
             new GetSales().execute("");
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -94,6 +112,7 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
             showCustomDialog("Error",ex.getMessage(),true);
         }
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -103,6 +122,10 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
             case R.id.viewBillsToDate:
                 todatePickerDialog.show();
                 break;
+            case R.id.home:
+                Intent intent = new Intent(getApplicationContext(), SalesReportActivity.class);
+                startActivity(intent);
+                finish();
         }
     }
     public void showCustomDialog(String title,String Message,Boolean close) {

@@ -21,11 +21,15 @@
         android:theme="@style/Theme.VGPOSRPT"
         tools:targetApi="31">
         <activity
-            android:name=".ViewBillsActivity"
+            android:name=".ProductsReportActivity"
             android:exported="false" />
         <activity
+            android:name=".ViewBillsActivity"
+            android:exported="true" />
+        <activity
             android:name=".SalesReportActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:noHistory="true" />
         <activity
             android:name=".SettingsActivity"
             android:exported="false" />
@@ -38,12 +42,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ProductsReport"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
 
         <meta-data
             android:name="preloaded_fonts"

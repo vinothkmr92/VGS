@@ -6,14 +6,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/PapayaWhip"
-    tools:context=".ProductsReport">
+    tools:context=".ProductsReportActivity">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:id="@+id/homebaner_1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:padding="5dp"
+                android:text="Home"
+                android:id="@+id/homepr"
+                android:drawableLeft="@drawable/baseline_home_24"
+                android:textStyle="bold"
+                android:textColor="@color/Crimson"
+                android:foreground="?android:attr/selectableItemBackground"
+                ></TextView>
+        </LinearLayout>
     <GridLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/itemrptsgrid"
+        android:id="@+id/productsrptsgrid"
         android:padding="20dp"
         android:columnCount="4"
+        android:layout_below="@id/homebaner_1"
         tools:ignore="MissingConstraints">
 
         <com.google.android.material.textfield.TextInputLayout
@@ -21,72 +47,61 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
+            android:id="@+id/productsbr"
             android:hint="Branch"
+            android:padding="10dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-            <AutoCompleteTextView android:layout_width="match_parent"
+
+            <AutoCompleteTextView
+                android:id="@+id/prductsbranches"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/branches"
-                android:inputType="none">
-            </AutoCompleteTextView>
-    </com.google.android.material.textfield.TextInputLayout>
+                android:fontFamily="@font/orienta"
+                android:inputType="none"></AutoCompleteTextView>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/itemrptFrmDate"
+            android:id="@+id/productsrptFrmDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnSpan="2"
             android:layout_gravity="left"
-            android:drawableRight="@drawable/baseline_date_range_24"
-            android:text="Date"
-            android:textColor="@color/DarkViolet"
             android:background="@drawable/editdate"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            />
+            android:drawableRight="@drawable/baseline_date_range_24"
+            android:fontFamily="@font/orienta"
+            android:text="Date"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
         <TextView
-            android:id="@+id/itemrptToDate"
+            android:id="@+id/productsrptToDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnSpan="2"
             android:layout_gravity="right"
-            android:text="Date"
             android:background="@drawable/editdate"
             android:drawableRight="@drawable/baseline_date_range_24"
-            android:textColor="@color/DarkViolet"
-            android:textSize="20dp"
-            android:textStyle="bold"/>
-    </GridLayout>
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:id="@+id/talayout"
-        android:padding="10px"
-        android:layout_below="@id/itemrptsgrid">
-
-        <TextView
-            android:id="@+id/ttAmtPrdReport"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
             android:fontFamily="@font/orienta"
-            android:text="₹ 0"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:textColor="@color/Blue"
-            android:textSize="30dp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:text="Date"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+    </GridLayout>
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/talayout"
-        android:id="@+id/itemsrptScrollView">
-        <LinearLayout
-            android:id="@+id/itemsrptContainer"
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/chart1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-        </LinearLayout>
-     </ScrollView>
+            android:layout_height="400dp"
+            android:layout_gravity="center"
+            android:layout_below="@id/productsrptsgrid"
+            />
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/chart2"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_gravity="center"
+            android:layout_below="@id/chart1"
+            />
+    </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

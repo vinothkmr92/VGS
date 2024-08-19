@@ -5,26 +5,31 @@
     android:padding="20dp">
 
     <EditText
+        android:id="@+id/customerName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/orienta"
         android:hint="Customer Name"
         android:inputType="textCapCharacters"
-        android:textAllCaps="true"
-        android:id="@+id/customerName"></EditText>
+        android:textAllCaps="true"></EditText>
+
     <EditText
+        android:id="@+id/customerMobileNo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/customerName"
+        android:fontFamily="@font/orienta"
         android:hint="Mobile Number"
         android:inputType="phone"
-        android:maxLength="10"
-        android:id="@+id/customerMobileNo"
-        android:layout_below="@id/customerName"></EditText>
+        android:maxLength="10"></EditText>
+
     <EditText
+        android:id="@+id/customerAddress"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/customerMobileNo"
+        android:fontFamily="@font/orienta"
         android:hint="Address"
-        android:inputType="textMultiLine"
-        android:id="@+id/customerAddress"
-        android:layout_below="@id/customerMobileNo"></EditText>
+        android:inputType="textMultiLine"></EditText>
 
 </RelativeLayout>

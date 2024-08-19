@@ -27,16 +27,18 @@
             android:textSize="30dp"
             android:typeface="monospace"
             android:textStyle="bold" />
+
         <TextView
             android:id="@+id/customerInfoTxtView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:background="@android:drawable/editbox_background"
             android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
-            android:layout_gravity="center"
-            android:textColor="@android:color/black"
+            android:fontFamily="@font/orienta"
             android:hint="Select Customer"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:textColor="@android:color/black" />
         <ImageButton
             android:id="@+id/btnAddMember"
             android:layout_width="150px"
@@ -48,9 +50,10 @@
 
         <CheckBox
             android:id="@+id/isAC"
-            android:text="AC"
             android:layout_gravity="right"
+            android:fontFamily="@font/orienta"
             android:padding="15dp"
+            android:text="AC"
             android:textStyle="bold"></CheckBox>
 
     </GridLayout>
@@ -63,7 +66,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/orienta"
             android:text="ITEM NO"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
@@ -90,7 +93,7 @@
             tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/orienta"
             android:text="ITEM NAME"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
@@ -100,6 +103,7 @@
             android:id="@+id/itemName"
             android:layout_columnSpan="2"
             android:layout_marginLeft="20dp"
+            android:fontFamily="@font/orienta"
             android:imeOptions="actionNext"
             android:inputType="textCapCharacters"
             android:minWidth="700px"
@@ -122,6 +126,7 @@
             android:layout_marginLeft="20dp"
             android:editable="false"
             android:focusable="true"
+            android:fontFamily="@font/orienta"
             android:minWidth="700px"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/DarkViolet"
@@ -142,6 +147,7 @@
             android:layout_marginLeft="20dp"
             android:editable="false"
             android:focusable="true"
+            android:fontFamily="@font/orienta"
             android:minWidth="700px"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/DarkViolet"
@@ -150,13 +156,15 @@
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
     </GridLayout>
 
-        <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:columnCount="6"
             android:layout_gravity="center"
             android:orientation="horizontal">
+
             <TextView
+                android:fontFamily="@font/orienta"
                 android:text="TOTAL QTY:  "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
@@ -164,12 +172,15 @@
 
             <TextView
                 android:id="@+id/ttQty"
+                android:layout_columnSpan="2"
+                android:fontFamily="@font/orienta"
                 android:text="000     "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
-                android:layout_columnSpan="2"
                 android:textStyle="bold" />
+
             <TextView
+                android:fontFamily="@font/orienta"
                 android:text="     TOTAL ITEMS:  "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
@@ -177,10 +188,11 @@
 
             <TextView
                 android:id="@+id/ttItem"
+                android:layout_columnSpan="2"
+                android:fontFamily="@font/orienta"
                 android:text="000   "
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@android:color/background_dark"
-                android:layout_columnSpan="2"
                 android:textStyle="bold" />
 
         </GridLayout>
@@ -195,6 +207,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/orienta"
                     android:text="DISCOUNT  (%)"
                     android:textColor="@android:color/holo_red_dark"
                     android:textStyle="italic|bold"></TextView>
@@ -206,6 +219,7 @@
                     android:layout_marginLeft="10dp"
                     android:editable="false"
                     android:focusable="true"
+                    android:fontFamily="@font/orienta"
                     android:minWidth="150px"
                     android:textColor="@android:color/black"></EditText>
 
@@ -213,6 +227,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
+                    android:fontFamily="@font/orienta"
                     android:text="(₹)"
                     android:textColor="@android:color/holo_red_dark"
                     android:textStyle="italic|bold"></TextView>
@@ -224,6 +239,7 @@
                     android:layout_marginLeft="10dp"
                     android:editable="false"
                     android:focusable="true"
+                    android:fontFamily="@font/orienta"
                     android:minWidth="200px"
                     android:textColor="@android:color/black"></EditText>
             </LinearLayout>
@@ -238,11 +254,10 @@
                     android:id="@+id/estimateAmt"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/homeBanner"
+                    android:textColor="@color/DarkMagenta"
                     android:text="₹ 0"
                     android:textAlignment="center"
                     android:textSize="40dp"
-                    android:textColor="@android:color/white"
                     android:typeface="monospace"
                     android:textStyle="bold" />
             </LinearLayout>
