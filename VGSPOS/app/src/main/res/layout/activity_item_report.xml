@@ -40,7 +40,7 @@
             android:fontFamily="@font/orienta"
             android:text="Date"
             android:textColor="@color/DarkViolet"
-            android:textSize="20dp"
+            android:textSize="25dp"
             android:textStyle="bold" />
 
         <TextView
@@ -53,7 +53,7 @@
             android:fontFamily="@font/orienta"
             android:text="Date"
             android:textColor="@color/DarkViolet"
-            android:textSize="20dp"
+            android:textSize="25dp"
             android:textStyle="bold" />
     </GridLayout>
 

@@ -26,7 +26,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     EditText host;
     EditText dbname;
     Button testConnection;
-    ConnectionClass connectionClass;
     private MySharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String SQLSERVER = "SQLSERVER";
@@ -52,7 +51,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             String Databasename = sharedpreferences.getString(SQLDB,dbnamestr);
             host.setText(hostname);
             dbname.setText(Databasename);
-            connectionClass = new ConnectionClass();
             testConnection.setOnClickListener(this);
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -154,13 +152,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             Connection conn = null;
             Statement st = null;
             try {
-
-                Connection con = connectionClass.CONN(strings[0],strings[1],strings[2],strings[3]);
+                ConnectionClass connectionClass = new ConnectionClass(strings[0],strings[1],strings[2],strings[3]);
+                Connection con = connectionClass.CONN();
                 if(null != con) {
                     status = "DB Connection Successful.";
                 }
                 else {
-                    status = "ERROR: INVALID CONNECTION STRING.";
+                    status = "Database Connection Failed.";
                 }
 
             }  catch (Exception e) {

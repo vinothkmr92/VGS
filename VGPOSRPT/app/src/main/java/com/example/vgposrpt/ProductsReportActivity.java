@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 
 public class ProductsReportActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ConnectionClass connectionClass;
     TextView frmDateTextView;
     TextView toDateTextView;
     private Calendar calendar;
@@ -68,7 +67,6 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
             super.onCreate(savedInstanceState);
             EdgeToEdge.enable(this);
             setContentView(R.layout.activity_products_report);
-            connectionClass = new ConnectionClass();
             frmDateTextView = findViewById(R.id.productsrptFrmDate);
             toDateTextView = findViewById(R.id.productsrptToDate);
             txtBranch = findViewById(R.id.productsbr);
@@ -366,9 +364,10 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
         protected ArrayList<CategorySummary> doInBackground(String... params) {
             ArrayList<CategorySummary> cates = new ArrayList<>();
             try {
-                Connection con = connectionClass.CONN(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                ConnectionClass connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                Connection con = connectionClass.CONN();
                 if (con == null) {
-                    error = "Error in connection with SQL server";
+                    error = "Database Connection Failed.";
                 } else {
                     String query = String.format("SELECT TOP 5 ROUND(SUM(BP.QUANTITY*BP.PRICE),0) AS PRICE,BP.CATEGORY FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  S.Bill_Date BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){
@@ -444,9 +443,10 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
         protected ArrayList<ProductsSummary> doInBackground(String... params) {
             ArrayList<ProductsSummary> prod = new ArrayList<>();
             try {
-                Connection con = connectionClass.CONN(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                ConnectionClass connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                Connection con = connectionClass.CONN();
                 if (con == null) {
-                    error = "Error in connection with SQL server";
+                    error = "Database Connection Failed.";
                 } else {
                     String query = String.format("SELECT TOP 5 BP.PRODUCT_NAME,SUM(BP.QUANTITY) AS QA FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  S.Bill_Date BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){

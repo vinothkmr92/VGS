@@ -32,7 +32,6 @@ import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ConnectionClass connectionClass;
     private MySharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String SQLSERVER = "SQLSERVER";
@@ -56,7 +55,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
            editTextPassword = (EditText) findViewById(R.id.password);
            buttonLogin = (MaterialButton) findViewById(R.id.loginbtn);
            buttonLogin.setOnClickListener(this);
-           connectionClass = new ConnectionClass();
            sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
            CheckSQLSettings();
         }
@@ -174,7 +172,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         protected void onPreExecute() {
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            dialog.setIcon(R.mipmap.salesreport);
             dialog.setMessage("Connecting to Server..");
             dialog.show();
             super.onPreExecute();
@@ -201,9 +198,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             else
             {
                 try {
-                    Connection con = connectionClass.CONN(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                    ConnectionClass connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                    Connection con = connectionClass.CONN();
                     if (con == null) {
-                        z = "Error in connection with SQL server";
+                        z = "Database Connection Failed";
                     } else {
                         String query = "SELECT * FROM USERS WHERE USER_NAME='"+userid+"' AND PASSWORD='"+password+"'";
                         Statement stmt = con.createStatement();
@@ -214,7 +212,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             roleid = rs.getInt("ROLE_ID");
                             if(roleid>1){
                                 CommonUtil.loggedinUser = userid;
-                                z = "Login Successfull";
+                                z = "Login Successful";
                                 isSuccess=true;
                             }
                             else {
@@ -266,7 +264,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         protected String doInBackground(String... params) {
             try {
-                Connection con = connectionClass.CONN(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                ConnectionClass connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                Connection con = connectionClass.CONN();
                 if (con == null) {
                     z = "Error in connection with SQL server";
                 } else {

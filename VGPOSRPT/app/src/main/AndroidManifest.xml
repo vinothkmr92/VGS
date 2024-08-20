@@ -28,11 +28,10 @@
             android:exported="false" />
         <activity
             android:name=".ViewBillsActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".SalesReportActivity"
-            android:exported="true"
-            android:noHistory="true" />
+            android:exported="false" />
         <activity
             android:name=".SettingsActivity"
             android:exported="false" />
@@ -41,7 +40,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

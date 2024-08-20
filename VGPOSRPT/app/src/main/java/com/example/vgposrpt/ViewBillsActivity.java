@@ -43,10 +43,8 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
 
     AutoCompleteTextView autoCompleteTextView;
     TextInputLayout txtBranch;
-    ConnectionClass connectionClass;
     TextView frmDateTextView;
     TextView toDateTextView;
-    TextView home;
     LinearLayout salesRptContainer;
     ScrollView salesrptScrollview;
     private Calendar calendar;
@@ -60,16 +58,13 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
             super.onCreate(savedInstanceState);
             EdgeToEdge.enable(this);
             setContentView(R.layout.activity_view_bills);
-            connectionClass = new ConnectionClass();
             frmDateTextView = findViewById(R.id.viewBillsFrmDate);
             toDateTextView = findViewById(R.id.viewBillsToDate);
             salesRptContainer = findViewById(R.id.viewBillsContainer);
             salesrptScrollview = findViewById(R.id.billsScrollView);
             txtBranch = findViewById(R.id.br);
-            home = findViewById(R.id.home);
             frmDateTextView.setOnClickListener(this);
             toDateTextView.setOnClickListener(this);
-            home.setOnClickListener(this);
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
             Date date = new Date();
             frmDateTextView.setText(format.format(date));
@@ -122,10 +117,6 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
             case R.id.viewBillsToDate:
                 todatePickerDialog.show();
                 break;
-            case R.id.home:
-                Intent intent = new Intent(getApplicationContext(), SalesReportActivity.class);
-                startActivity(intent);
-                finish();
         }
     }
     public void showCustomDialog(String title,String Message,Boolean close) {
@@ -280,9 +271,10 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
         protected ArrayList<Sale> doInBackground(String... params) {
             ArrayList<Sale> sales = new ArrayList<>();
             try {
-                Connection con = connectionClass.CONN(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                ConnectionClass connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                Connection con = connectionClass.CONN();
                 if (con == null) {
-                    error = "Error in connection with SQL server";
+                    error = "Database Connection Failed.";
                 } else {
                     String query = String.format("SELECT Bill_No,cast((BILL_DATE + ' ' + TIME) as datetime) as Bill_Date, BILL_AMMOUNT-(BILL_AMMOUNT*(DISCOUNT/100)) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE BILL_DATE BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){

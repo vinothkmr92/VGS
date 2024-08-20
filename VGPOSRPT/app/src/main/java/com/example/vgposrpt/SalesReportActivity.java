@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 
 public class SalesReportActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ConnectionClass connectionClass;
     TextView frmDateTextView;
     TextView toDateTextView;
     private Calendar calendar;
@@ -72,7 +71,6 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
             super.onCreate(savedInstanceState);
             EdgeToEdge.enable(this);
             setContentView(R.layout.activity_sales_report);
-            connectionClass = new ConnectionClass();
             frmDateTextView = (TextView) findViewById(R.id.salesrptFrmDate);
             toDateTextView = (TextView) findViewById(R.id.salesrptToDate);
             txtViewTotalAmt = (TextView)findViewById(R.id.totalRevenueAmt);
@@ -360,9 +358,10 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
         protected ArrayList<Sale> doInBackground(String... params) {
             ArrayList<Sale> sales = new ArrayList<>();
             try {
-                Connection con = connectionClass.CONN(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                ConnectionClass connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                Connection con = connectionClass.CONN();
                 if (con == null) {
-                    error = "Error in connection with SQL server";
+                    error = "Database Connection Failed";
                 } else {
                     String query = String.format("SELECT Bill_No,cast((BILL_DATE + ' ' + TIME) as datetime) as Bill_Date, BILL_AMMOUNT-(BILL_AMMOUNT*(DISCOUNT/100)) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE BILL_DATE BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){

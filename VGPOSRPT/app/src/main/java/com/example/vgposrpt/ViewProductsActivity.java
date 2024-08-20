@@ -30,7 +30,6 @@ import java.util.Locale;
 
 public class ViewProductsActivity extends AppCompatActivity {
 
-    ConnectionClass connectionClass;
     LinearLayout productsRptContainer;
     ScrollView productrptScrollview;
     TextView totalAmt;
@@ -39,7 +38,6 @@ public class ViewProductsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_view_products);
-        connectionClass = new ConnectionClass();
         productsRptContainer = findViewById(R.id.viewProductsContainer);
         productrptScrollview = findViewById(R.id.productsScrollView);
         totalAmt = findViewById(R.id.prductsTotal);
@@ -142,9 +140,10 @@ public class ViewProductsActivity extends AppCompatActivity {
         protected ArrayList<ProductsSummary> doInBackground(String... params) {
             ArrayList<ProductsSummary> products = new ArrayList<>();
             try {
-                Connection con = connectionClass.CONN(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                ConnectionClass connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+                Connection con = connectionClass.CONN();
                 if (con == null) {
-                    error = "Error in connection with SQL server";
+                    error = "Database Connection Failed.";
                 } else {
                     String query = String.format("SELECT ROUND(SUM(BP.QUANTITY*BP.PRICE),0) AS PRICE,BP.PRODUCT_NAME,SUM(BP.QUANTITY) AS QA FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  S.Bill_Date BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){

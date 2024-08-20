@@ -7,29 +7,11 @@
     android:background="@color/PapayaWhip"
     android:layout_height="match_parent"
     tools:context=".ViewBillsActivity">
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:id="@+id/homebaner">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="Home"
-            android:id="@+id/home"
-            android:drawableLeft="@drawable/baseline_home_24"
-            android:textStyle="bold"
-            android:textColor="@color/Crimson"
-            android:foreground="?android:attr/selectableItemBackground"
-            ></TextView>
-    </LinearLayout>
     <GridLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/viewbillsgrid"
-        android:layout_below="@id/homebaner"
         android:padding="10dp"
         android:columnCount="4"
         tools:ignore="MissingConstraints">
