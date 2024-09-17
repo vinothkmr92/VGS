@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">GatePass</string>
+    <string name="Load_Bmp_btn">Set load bitmap</string>
+    <string name="Print_Bmp_btn">Print bitmap</string>
+    <string name="SelectBmpFile">BMP File</string>
+    <string name="ClearPath_btn">Clear Path</string>
+    <string name="Bmp_path_et">Show the path of bmp file</string>
+    <string name="Download_bmp_prompt">Download the bitmap successfully, please restart the printer!</string>
+    <string name="no_read_write_permission">Failed to open serial port: no serial port read / write permission!</string>
+    <string name="unknown_error">Failed to open serial port: unknown error!</string>
+    <string name="parameter_error">Failed to open serial port: parameter error!</string>
+    <string name="text_print">欢迎光临(简体中文)\n歡迎光臨(繁体中文)\nWelcome(英文)\n어서 오세요.(韩文)\nいらっしゃいませ(日文)\nWillkommen in der(德文)\nSouhaits de bienvenue(法文)\nยินดีต้อนรับสู่(泰文)\nДобро пожаловать(俄文)\nBenvenuti a(意大利语)\nvítejte v(捷克文)\nBEM - vindo Ao(葡萄牙文)\nបោះពុម្ពសំបុត្រតូចមួយដើម្បីរុំ(高棉语)\nພິມຕົsmallວນ້ອຍເພື່ອຫໍ່(老挝语)\n</string>
+
+    <string name="burn_in">Burn-in testing</string>
+    <string name="cancel">Cancel</string>
+    <string name="start">Start</string>
+    <string name="pause">Pause</string>
+    <string name="conti">Continue</string>
+    <string name="sum">sum：</string>
+    <string name="interval_time">Interval Time: </string>
+    <string name="number_of_prints">Number Of Prints: </string>
+    <string name="ms">ms</string>
+    <string name="times">times</string>
+
+    <string name="anti_white">AntiWhite</string>
+
+    <string name="setting_fonts">Set Font</string>
+    <string name="select_fonts">Select Font Library</string>
+    <string name="print">Print</string>
+    <string name="link_appstore">Jump to app store</string>
+    <string name="ActivationAPIHost" translatable="false">www.vgsandroidapi.somee.com</string>
+    <string name="ActivationAPIHost_Public" translatable="false">60.243.50.58:9092</string>
+    <string name="somehost" translatable="false">www.vgsandroidapi.somee.com</string>
+    <string name="vgshost" translatable="false">60.243.50.58</string>
+</resources>

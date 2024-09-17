@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="data">
+        <item>USB</item>
+        <item>Serial</item>
+        <item>Bluetooth</item>
+        <item>SPI</item>
+    </string-array>
+</resources>

@@ -91,7 +91,7 @@
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/chart1"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="600dp"
             android:layout_gravity="center"
             android:visibility="invisible"
             android:layout_below="@id/productsrptsgrid"
@@ -99,7 +99,7 @@
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/chart2"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="600dp"
             android:layout_gravity="center"
             android:visibility="invisible"
             android:layout_below="@id/chart1"

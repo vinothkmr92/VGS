@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/ivImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="50dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Spinner
+                android:id="@+id/spin_one"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="27dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp" />
+            <Button
+                android:id="@+id/changePrint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="20dp"
+                android:text="Switch printers:imin"
+                android:textAllCaps="false"
+                />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/js_print"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="180dp"
+            android:layout_marginTop="10dp"
+            android:text="JSprint"
+            android:textAllCaps="false"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="20dp"
+            android:visibility="gone" />
+
+        <com.imin.printer.MyListView
+            android:id="@+id/lv_paired_devices"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:choiceMode="singleChoice"
+            android:layout_marginLeft="20dp"
+            android:divider="@android:drawable/divider_horizontal_bright"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lv_paired_devices"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="10dp">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/edit_bar_width"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/edit_qr_size"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="26dp"
+                android:layout_marginTop="26dp"
+                android:hint="barcode width(2-6)"
+                android:inputType="number"
+                android:lines="1"
+                android:textSize="10dp" />
+
+            <EditText
+                android:id="@+id/edit_bar_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/edit_qr_size"
+                android:layout_marginLeft="13dp"
+                android:layout_marginTop="26dp"
+                android:layout_toRightOf="@+id/edit_bar_width"
+                android:hint="barcode height(0-255)"
+                android:inputType="number"
+                android:lines="1"
+                android:textSize="10dp" />
+
+            <TextView
+                android:id="@+id/cutters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:hint="走纸距离"
+                android:lines="1"
+                android:visibility="gone"
+                android:textColor="@color/colorPrimary"
+                android:textSize="13dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edit_bar_position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/edit_qr_size"
+                android:layout_marginLeft="26dp"
+                android:layout_toRightOf="@+id/edit_bar_height"
+                android:hint="barcode text pos(0-3)"
+                android:inputType="number"
+                android:lines="1"
+                android:textSize="10dp" />
+
+            <EditText
+                android:id="@+id/edit_qr_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="26dp"
+                android:hint="QR size(1-13)"
+                android:inputType="number"
+                android:lines="1"
+                android:textSize="10dp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/edit_qr_error_lev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="26dp"
+                android:layout_toRightOf="@+id/edit_qr_size"
+                android:hint="QR error Lev(48-51)"
+                android:inputType="number"
+                android:lines="1"
+                android:textSize="10dp" />
+
+            <EditText
+                android:id="@+id/edit_qr_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="13dp"
+                android:layout_toRightOf="@+id/edit_qr_error_lev"
+                android:hint="set left margin(0-576)"
+                android:inputType="number"
+                android:lines="1"
+                android:textSize="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/edit_tqr1_error_lev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="26dp"
+                android:layout_toRightOf="@+id/edit_qr_size"
+                android:hint="D_QR1 error Lev(0-3)"
+                android:inputType="number"
+                android:text="0"
+                android:lines="1"
+                android:textSize="10dp" />
+
+            <EditText
+                android:id="@+id/edit_tqr1_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="13dp"
+                android:layout_toRightOf="@+id/edit_qr_error_lev"
+                android:hint="D_QR1_set left margin(0-256)"
+                android:inputType="number"
+                android:text="0"
+                android:lines="1"
+                android:textSize="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/edit_tqr2_error_lev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="26dp"
+                android:layout_toRightOf="@+id/edit_qr_size"
+                android:hint="D_QR2 error Lev(0-3)"
+                android:text="0"
+                android:inputType="number"
+                android:lines="1"
+                android:textSize="10dp" />
+
+            <EditText
+                android:id="@+id/edit_tqr2_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="13dp"
+                android:layout_toRightOf="@+id/edit_qr_error_lev"
+                android:hint="D_QR2_set left margin(0-576)"
+                android:inputType="number"
+                android:text="200"
+                android:lines="1"
+                android:textSize="10dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/edit_tqr1_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="26dp"
+                android:layout_toRightOf="@+id/edit_qr_size"
+                android:hint="D_QR1 version Lev(1-40)"
+                android:inputType="number"
+                android:text="1"
+                android:lines="1"
+                android:textSize="10dp" />
+
+            <EditText
+                android:id="@+id/edit_tqr2_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="13dp"
+                android:layout_toRightOf="@+id/edit_qr_error_lev"
+                android:hint="D_QR2 version Lev(1-40)"
+                android:inputType="number"
+                android:text="1"
+                android:lines="1"
+                android:textSize="10dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/edit_tqr_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="26dp"
+                android:layout_toRightOf="@+id/edit_qr_size"
+                android:hint="D_QR size(1-8)"
+                android:inputType="number"
+                android:text="1"
+                android:lines="1"
+                android:textSize="10dp" />
+            <EditText
+                android:id="@+id/edit_tqr_str1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="26dp"
+                android:maxWidth="100dp"
+                android:text="123456a,/0!@#$%*()/`~^%"
+                android:layout_toRightOf="@+id/edit_qr_size"
+                android:hint="D_QR text 1"
+                android:singleLine="true"
+                android:lines="1"
+                android:textSize="10dp" />
+            <EditText
+                android:id="@+id/edit_tqr_str2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="26dp"
+                android:maxWidth="100dp"
+                android:singleLine="true"
+                android:text="123456a,/0!@#$%*()/`~^%"
+                android:layout_toRightOf="@+id/edit_qr_size"
+                android:hint="D_QR text 2"
+                android:lines="1"
+                android:textSize="10dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</androidx.core.widget.NestedScrollView>

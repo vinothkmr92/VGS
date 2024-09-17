@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/linear_nvbmp_path"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/SelectBmpFile"
+            style="@style/TextStyle03"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="0.8"
+            android:layout_marginRight="10dp"
+            android:textAllCaps="false"
+            android:background="@drawable/cornerbtn_style"
+            android:text="@string/SelectBmpFile"/>
+
+        <EditText
+            android:id="@+id/Nvbmp_path_et"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.8"
+            android:background="@drawable/editsharp"
+            android:editable="false"
+            android:ems="15"
+            android:hint="@string/Bmp_path_et"
+            android:textSize="12sp">
+
+            <requestFocus android:layout_width="wrap_content"/>
+        </EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_nvbmp_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_below="@+id/linear_nvbmp_path">
+
+        <Button
+            android:id="@+id/Load_nvbmp_btn"
+            style="@style/TextStyle03"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/cornerbtn_style"
+            android:textAllCaps="false"
+            android:text="@string/Load_Bmp_btn" />
+
+        <Button
+            android:id="@+id/Print_nvbmp_btn"
+            style="@style/TextStyle03"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="3dp"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+            android:background="@drawable/cornerbtn_style"
+            android:text="@string/Print_Bmp_btn"/>
+
+        <Button
+            android:id="@+id/Clear_Path_Btn"
+            style="@style/TextStyle03"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+            android:background="@drawable/cornerbtn_style"
+            android:text="@string/ClearPath_btn"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

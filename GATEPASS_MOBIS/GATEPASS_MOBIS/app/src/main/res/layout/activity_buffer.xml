@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".BufferActivity">
+    <TextView
+        android:id="@+id/result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorRed"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="5dp"
+        android:textSize="15sp"/>
+    <Button
+        android:id="@+id/enter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Print enter"
+        android:textAllCaps="false"
+        android:background="@color/colorRed"
+        android:textSize="15sp"/>
+    <Button
+        android:id="@+id/print_ticket_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Print Ticket 1"
+        android:textAllCaps="false"
+        android:textSize="15sp"/>
+    <Button
+        android:id="@+id/print_ticket_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Print Ticket 2"
+        android:textAllCaps="false"
+        android:textSize="15sp"/>
+    <Button
+        android:id="@+id/print_ticket_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Print Ticket 3"
+        android:textAllCaps="false"
+        android:textSize="15sp"/>
+    
+    <Button
+        android:id="@+id/commit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Print commit"
+        android:textAllCaps="false"
+        android:textSize="15sp"/>
+    <Button
+        android:id="@+id/exit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Print exit"
+        android:textAllCaps="false"
+        android:textSize="15sp"/>
+
+</LinearLayout>
