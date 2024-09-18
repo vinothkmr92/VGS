@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -247,9 +249,59 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         dialog.setCancelable(false);
         dialog.show();
     }
+    public void showCustomDialog(String title, String Message, final boolean... closeapp) {
+        android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
+        dialogBuilder.setView(dialogView);
+        TextView titleview = new TextView(this);
+        titleview.setText(title);
+        titleview.setBackgroundColor(Color.WHITE);
+        titleview.setPadding(10, 10, 10, 10);
+        titleview.setGravity(Gravity.CENTER);
+        titleview.setTextColor(Color.BLACK);
+        titleview.setTypeface(titleview.getTypeface(), Typeface.BOLD_ITALIC);
+        titleview.setTextSize(20);
+        dialogBuilder.setCustomTitle(titleview);
+        dialogBuilder.setMessage("\n"+Message);
+        if(closeapp.length>1 && closeapp[1]){
+            dialogBuilder.setNeutralButton("Share Device ID", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
+                    whatsappIntent.setType("text/plain");
+                    String shareBody =android_id;
+                    String shareSub = "Share Device ID";
+                    whatsappIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSub);
+                    whatsappIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    try {
+                        startActivity(whatsappIntent);
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(HomeActivity.this,"Whatsapp have not been installed.",Toast.LENGTH_LONG);
+                    }
+                    finally {
+                        finish();
+                        System.exit(0);
+                    }
+                }
+            });
+        }
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                if(closeapp.length>0 && closeapp[0]){
+                    finish();
+                    System.exit(0);
+                }
+            }
+        });
+        android.app.AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
+        b.show();
+    }
     public void ValidateActivationResponse(String response){
         if(!Common.isActivated){
-            showCustomDialog("Msg","Your Android device "+android_id+" is not activated\n"+response,true);
+            showCustomDialog("Msg","Your Android device "+android_id+" is not activated\n"+response,true,true);
         }
     }
     @Override
