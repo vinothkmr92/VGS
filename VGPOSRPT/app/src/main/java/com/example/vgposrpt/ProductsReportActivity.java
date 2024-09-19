@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -250,13 +252,15 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
         }
         PieDataSet dataSet = new PieDataSet(pieEntires,"");
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.orienta);
+        dataSet.setValueTypeface(typeface);
         //dataSet.setDrawValues(false);
         dataSet.setValueTextSize(20);
 
         PieData data = new PieData(dataSet);
         //Get the chart
 
-        prodChart.setCenterText("Top 5 Products");
+        prodChart.setCenterText("Top 4 Products");
         prodChart.setDrawEntryLabels(false);
         prodChart.setContentDescription("");
         prodChart.setCenterTextSize(20);
@@ -286,6 +290,9 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
             pieEntires.add(new PieEntry(amt,cslist.get(i).getCategory()));
         }
         PieDataSet dataSet = new PieDataSet(pieEntires,"");
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.orienta);
+        dataSet.setValueTypeface(typeface);
+        dataSet.setValueFormatter(new IndianRuppeFormatter());
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         //dataSet.setDrawValues(false);
         dataSet.setValueTextSize(20);
@@ -293,7 +300,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
         PieData data = new PieData(dataSet);
         //Get the chart
 
-        chart.setCenterText("Top 5 Categories");
+        chart.setCenterText("Top 4 Categories");
         chart.setDrawEntryLabels(false);
         chart.setContentDescription("");
         chart.setCenterTextSize(20);
@@ -329,6 +336,12 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
 
         @Override
         protected void onPreExecute() {
+            if(frmDate.contains("Sept")){
+                frmDate = frmDate.replace("Sept","Sep");
+            }
+            if(toDate.contains("Sept")){
+                toDate = toDate.replace("Sept","Sep");
+            }
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
             dialog.setIcon(R.mipmap.salesreport);
@@ -369,7 +382,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 if (con == null) {
                     error = "Database Connection Failed.";
                 } else {
-                    String query = String.format("SELECT TOP 5 ROUND(SUM(BP.QUANTITY*BP.PRICE),0) AS PRICE,BP.CATEGORY FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  S.Bill_Date BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT TOP 4 ROUND(SUM(BP.QUANTITY*BP.PRICE),0) AS PRICE,BP.CATEGORY FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  S.Bill_Date BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){
                         query = query+String.format(" AND BP.BRANCH_CODE=%s ",branchCode);
                     }
@@ -406,6 +419,12 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
 
         @Override
         protected void onPreExecute() {
+            if(frmDate.contains("Sept")){
+                frmDate = frmDate.replace("Sept","Sep");
+            }
+            if(toDate.contains("Sept")){
+                toDate = toDate.replace("Sept","Sep");
+            }
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
             dialog.setIcon(R.mipmap.salesreport);
@@ -448,7 +467,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 if (con == null) {
                     error = "Database Connection Failed.";
                 } else {
-                    String query = String.format("SELECT TOP 5 BP.PRODUCT_NAME,SUM(BP.QUANTITY) AS QA FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  S.Bill_Date BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT TOP 4 BP.PRODUCT_NAME,SUM(BP.QUANTITY) AS QA FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  S.Bill_Date BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){
                         query = query+String.format(" AND BP.BRANCH_CODE=%s ",branchCode);
                     }

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,10 +24,17 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -65,12 +73,14 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
     TextInputLayout txtBranch;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     private Boolean doubleBackToExitPressedOnce = false;
+    PieChart chart;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
             super.onCreate(savedInstanceState);
             EdgeToEdge.enable(this);
             setContentView(R.layout.activity_sales_report);
+            chart = findViewById(R.id.salesChart);
             frmDateTextView = (TextView) findViewById(R.id.salesrptFrmDate);
             toDateTextView = (TextView) findViewById(R.id.salesrptToDate);
             txtViewTotalAmt = (TextView)findViewById(R.id.totalRevenueAmt);
@@ -201,6 +211,57 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
     }
+    public static Float convertToFloat(double doubleValue) {
+        return (float) doubleValue;
+    }
+    private void setupPieChart(double cashAmt,double cardAmt,double upiAmt){
+
+        List<PieEntry> pieEntires = new ArrayList<>();
+        Float cashAmtf = convertToFloat(cashAmt);
+        Float cardAmtf = convertToFloat(cardAmt);
+        Float upiAmtf = convertToFloat(upiAmt);
+        if(cashAmt>0){
+            pieEntires.add(new PieEntry(cashAmtf,"Cash"));
+        }
+        if(cardAmt>0){
+            pieEntires.add(new PieEntry(cardAmtf,"Card"));
+        }
+        if(upiAmt>0){
+            pieEntires.add(new PieEntry(upiAmtf,"UPI"));
+        }
+        PieDataSet dataSet = new PieDataSet(pieEntires,"");
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.orienta);
+        dataSet.setValueTypeface(typeface);
+        //dataSet.setDrawValues(false);
+        dataSet.setValueTextSize(20);
+        dataSet.setHighlightEnabled(true);
+        dataSet.setValueFormatter(new IndianRuppeFormatter());
+        PieData data = new PieData(dataSet);
+        //Get the chart
+
+        chart.setCenterText("Sales Summary");
+        chart.setDrawEntryLabels(false);
+        chart.setContentDescription("");
+        chart.setCenterTextSize(20);
+
+        //chart.setDrawMarkers(true);
+        //pieChart.setMaxHighlightDistance(34);
+        //chart.setEntryLabelTextSize(30);
+        chart.setHoleRadius(30);
+
+        //legend attributes
+        Legend legend = chart.getLegend();
+        legend.setForm(Legend.LegendForm.CIRCLE);
+        legend.setWordWrapEnabled(true);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setTextSize(15);
+        legend.setFormSize(20);
+        legend.setFormToTextSpace(2);
+        chart.getDescription().setEnabled(false);
+        chart.setData(data);
+        chart.invalidate();
+    }
     private DatePickerDialog.OnDateSetListener mytoDateListener = new
             DatePickerDialog.OnDateSetListener() {
                 @Override
@@ -220,6 +281,7 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                     Date date = null;
                     try {
                         date = df.parse(sb.toString());
+                        String s = format.format(date);
                         toDateTextView.setText(format.format(date));
                         new GetSales().execute("");
                     } catch (Exception e) {
@@ -297,6 +359,7 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
     {
         String frmDate = frmDateTextView.getText().toString();
         String toDate = toDateTextView.getText().toString();
+
         int branchCode = GetSelectedBranchCode();
         Double revenue = 0d;
         Boolean isSuccess = false;
@@ -305,6 +368,12 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
 
         @Override
         protected void onPreExecute() {
+            if(frmDate.contains("Sept")){
+                frmDate = frmDate.replace("Sept","Sep");
+            }
+            if(toDate.contains("Sept")){
+                toDate = toDate.replace("Sept","Sep");
+            }
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
             dialog.setIcon(R.mipmap.salesreport);
@@ -339,6 +408,14 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                 else {
                     btnViewBills.setVisibility(View.INVISIBLE);
                     txtViewTotalBills.setVisibility(View.INVISIBLE);
+                }
+                if(cashamts==0 && cardamts ==0 && upiamts==0){
+
+                    chart.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    chart.setVisibility(View.VISIBLE);
+                    setupPieChart(cashamts,cardamts,upiamts);
                 }
                 CommonUtil.totalRevenueAmt = billamts;
                 NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));

@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
             }

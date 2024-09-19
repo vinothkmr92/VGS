@@ -243,6 +243,12 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         protected void onPreExecute() {
+            if(frmDate.contains("Sept")){
+                frmDate = frmDate.replace("Sept","Sep");
+            }
+            if(toDate.contains("Sept")){
+                toDate = toDate.replace("Sept","Sep");
+            }
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
             dialog.setIcon(R.mipmap.salesreport);

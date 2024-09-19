@@ -30,7 +30,6 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:text="View Products"
                 android:visibility="invisible"></com.google.android.material.button.MaterialButton>
-
         </LinearLayout>
     <GridLayout
         android:layout_width="fill_parent"
