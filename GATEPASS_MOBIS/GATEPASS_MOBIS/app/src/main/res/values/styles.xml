@@ -8,12 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
-
-    <style name="TextStyle03">
-        <item name="android:textSize">17dp</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">#f5f5f5</item>
-    </style>
     <style name="AppTheme.Main" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:animationDuration">0</item>

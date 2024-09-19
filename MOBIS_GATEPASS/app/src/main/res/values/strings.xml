@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GatePass</string>
+    <string name="ActivationAPIHost" translatable="false">www.vgsandroidapi.somee.com</string>
+    <string name="ActivationAPIHost_Public" translatable="false">60.243.50.58:9092</string>
+    <string name="somehost" translatable="false">www.vgsandroidapi.somee.com</string>
+    <string name="vgshost" translatable="false">60.243.50.58</string>
+</resources>

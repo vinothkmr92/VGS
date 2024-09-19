@@ -1,4 +1,4 @@
-package com.imin.printer;
+package com.example.mobis_gatepass;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -18,26 +18,27 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.imin.printerlib.IminPrintUtils;
@@ -86,6 +87,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
         checkStorageManagerPermission();
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -153,7 +155,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         catch (Exception ex){
             showCustomDialog("Exception",ex.getMessage(),true);
         }
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
     }
+
     private void checkStorageManagerPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
@@ -235,25 +243,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         return connected;
     }
     public void showCustomDialog(String title, String Message, final Boolean close) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(HomeActivity.this);
+        MaterialAlertDialogBuilder dialog =  new MaterialAlertDialogBuilder(HomeActivity.this,
+                com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
+        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
+
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                if(close){
-                    finish();
-                    System.exit(0);
-                }
+                //do something with edt.getText().toString();
             }
         });
         dialog.setCancelable(false);
         dialog.show();
     }
     public void showCustomDialog(String title, String Message, final boolean... closeapp) {
-        android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.custom_dialog, null);
-        dialogBuilder.setView(dialogView);
+        MaterialAlertDialogBuilder dialogBuilder =  new MaterialAlertDialogBuilder(HomeActivity.this,
+                com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
         TextView titleview = new TextView(this);
         titleview.setText(title);
         titleview.setBackgroundColor(Color.WHITE);
@@ -294,10 +300,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
-        android.app.AlertDialog b = dialogBuilder.create();
-        b.setCancelable(false);
-        b.setCanceledOnTouchOutside(false);
-        b.show();
+        dialogBuilder.setCancelable(false);
+        dialogBuilder.show();
     }
     public void ValidateActivationResponse(String response){
         if(!Common.isActivated){
