@@ -202,16 +202,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Common.expireDate = expireDt;
             //android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
             if(!Common.isActivated){
-                boolean internetav = Is_InternetWorking();
-                if(internetav){
-                    Common.isActivated = false;
-                    android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-                    AppActivation appActivation = new AppActivation(HomeActivity.this,android_id,this);
-                    appActivation.CheckActivationStatus();
+                //boolean internetav = Is_InternetWorking();
+                /*if(internetav){
+
                 }
                 else{
                     showCustomDialog("Msg","Please connect to internet and Try again.",true);
-                }
+                }*/
+                Common.isActivated = false;
+                android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+                AppActivation appActivation = new AppActivation(HomeActivity.this,android_id,this);
+                appActivation.CheckActivationStatus();
             }
 
             itemName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -547,7 +548,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
             if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIMAX).getState() == NetworkInfo.State.CONNECTED ||
+                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_VPN).getState() == NetworkInfo.State.CONNECTED) {
                 //we are connected to a network
                 connected = true;
             }

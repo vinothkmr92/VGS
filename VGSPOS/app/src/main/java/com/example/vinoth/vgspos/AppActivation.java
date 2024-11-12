@@ -3,14 +3,11 @@ package com.example.vinoth.vgspos;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.ProgressBar;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -80,21 +77,6 @@ public class AppActivation {
             try
             {
                 String host= context.getApplicationContext().getString(R.string.ActivationAPIHost);
-                boolean isHostReachable = false;
-                boolean reachable = false;
-                try {
-                    String vgshost = context.getApplicationContext().getString(R.string.vgshost);
-                    boolean test = InetAddress.getByName(vgshost).isReachable(1000);
-                    String somehost = context.getApplicationContext().getString(R.string.somehost);
-                    reachable = InetAddress.getByName(somehost).isReachable(1000);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    reachable = false;
-                }
-                if(!reachable){
-                    host = context.getApplicationContext().getString(R.string.ActivationAPIHost_Public);
-                }
                 String imei = params[0];
                 java.net.URL url = new URL("http://"+host+"/api/ActivationAPI/GetActivationStatus?imei="+imei);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -113,28 +95,7 @@ public class AppActivation {
             catch(Exception e)
             {
                 e.printStackTrace();
-                String host = context.getApplicationContext().getString(R.string.ActivationAPIHost_Public);
-                String imei = params[0];
-                try{
-                    java.net.URL url = new URL("http://"+host+"/api/ActivationAPI/GetActivationStatus?imei="+imei);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("POST");
-                    connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
-                    connection.setDoOutput(true);
-                    String responseData = "";
-                    InputStream is = connection.getInputStream();
-                    BufferedReader responseReader = new BufferedReader(new InputStreamReader(is));
-                    if ((responseData = responseReader.readLine()) != null) {
-                        System.out.append("Response: " + responseData);
-                        res = responseData;
-                    }
-                    responseReader.close();
-                }
-                catch (Exception ex){
-                    ex.printStackTrace();
-                    res = "ERROR: "+ex.getMessage().toString();
-                }
-
+                res = "ERROR: "+e.getMessage().toString();
             }
             return  res;
         }

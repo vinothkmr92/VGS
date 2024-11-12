@@ -78,22 +78,7 @@ public class AppActivation {
             String res="";
             try
             {
-                String host= context.getApplicationContext().getString(R.string.ActivationAPIHost);
-                boolean isHostReachable = false;
-                boolean reachable = false;
-                try {
-                    String vgshost = context.getApplicationContext().getString(R.string.vgshost);
-                    boolean test = InetAddress.getByName(vgshost).isReachable(1000);
-                    String somehost = context.getApplicationContext().getString(R.string.somehost);
-                    reachable = InetAddress.getByName(somehost).isReachable(1000);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    reachable = false;
-                }
-                if(!reachable){
-                    host = context.getApplicationContext().getString(R.string.ActivationAPIHost_Public);
-                }
+                String host= context.getApplicationContext().getString(R.string.vgshost);
                 String imei = params[0];
                 URL url = new URL("http://"+host+"/api/ActivationAPI/GetActivationStatus?imei="+imei);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -112,7 +97,7 @@ public class AppActivation {
             catch(Exception e)
             {
                 e.printStackTrace();
-                String host = context.getApplicationContext().getString(R.string.ActivationAPIHost_Public);
+                String host = context.getApplicationContext().getString(R.string.vgshost);
                 String imei = params[0];
                 try{
                     URL url = new URL("http://"+host+"/api/ActivationAPI/GetActivationStatus?imei="+imei);

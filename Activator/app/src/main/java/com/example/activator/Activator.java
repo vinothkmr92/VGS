@@ -63,20 +63,10 @@ public class Activator {
             String res="";
             try
             {
-                String host= context.getApplicationContext().getString(R.string.ActivationAPIHost_Public);
-                boolean isHostReachable = false;
-                boolean reachable = false;
-                try {
-                    reachable = InetAddress.getByName(host).isReachable(1000);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    reachable = false;
-                }
-                if(!isHostReachable){
-                    host = context.getApplicationContext().getString(R.string.ActivationAPIHost);
-                }
+                String host= context.getApplicationContext().getString(R.string.ActivationAPIHost);
+
                 String imei = params[0];
-                java.net.URL url = new URL("http://"+host+":9092/api/ActivationAPI?imei="+imei);
+                java.net.URL url = new URL("http://"+host+"/api/ActivationAPI?imei="+imei);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
