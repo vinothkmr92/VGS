@@ -78,7 +78,7 @@ public class AppActivation {
             String res="";
             try
             {
-                String host= context.getApplicationContext().getString(R.string.vgshost);
+                String host= context.getApplicationContext().getString(R.string.activationapi);
                 String imei = params[0];
                 URL url = new URL("http://"+host+"/api/ActivationAPI/GetActivationStatus?imei="+imei);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -97,28 +97,7 @@ public class AppActivation {
             catch(Exception e)
             {
                 e.printStackTrace();
-                String host = context.getApplicationContext().getString(R.string.vgshost);
-                String imei = params[0];
-                try{
-                    URL url = new URL("http://"+host+"/api/ActivationAPI/GetActivationStatus?imei="+imei);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("POST");
-                    connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
-                    connection.setDoOutput(true);
-                    String responseData = "";
-                    InputStream is = connection.getInputStream();
-                    BufferedReader responseReader = new BufferedReader(new InputStreamReader(is));
-                    if ((responseData = responseReader.readLine()) != null) {
-                        System.out.append("Response: " + responseData);
-                        res = responseData;
-                    }
-                    responseReader.close();
-                }
-                catch (Exception ex){
-                    ex.printStackTrace();
-                    res = "ERROR: "+ex.getMessage().toString();
-                }
-
+                res = "ERROR: "+e.getMessage().toString();
             }
             return  res;
         }
