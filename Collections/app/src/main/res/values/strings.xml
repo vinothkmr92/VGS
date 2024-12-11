@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Collections</string>
+    <string name="SQL_SERVER">59.92.229.192:4299</string>
+    <string name="SQL_USERNAME">sa</string>
+    <string name="SQL_PASSWORD">1@Knowbut</string>
+    <string name="SQL_DBNAME">VG_FINANCE</string>
+    <string name="action_settings">Settings</string>
+</resources>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/PaleGreen"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/loansCart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="10dp"
+            >
+            <GridLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:columnCount="2"
+                android:background="@color/MintCream"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:id="@+id/loanGrid"
+                >
+                <TextView
+                    android:id="@+id/paidDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="2"
+                    android:layout_gravity="left"
+                    android:text="12-Dec-2024 04:32 PM"
+                    android:textColor="@color/DarkBlue"
+                    android:textSize="20dp"
+                    android:textStyle="bold"></TextView>
+
+                <TextView
+                    android:id="@+id/agentName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Daily"
+                    android:textColor="@color/BurlyWood"
+                    android:textSize="15dp"
+                    android:textStyle="bold|italic"></TextView>
+
+                <TextView
+                    android:id="@+id/paidAmt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="10569"
+                    android:textColor="@color/DarkGreen"
+                    android:textSize="20dp"
+                    android:textStyle="bold"></TextView>
+                <TextView
+                    android:id="@+id/paymentModeHist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="CASH"
+                    android:textColor="@color/BlueViolet"
+                    android:textSize="15dp"
+                    android:textStyle="bold"></TextView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReprint"
+                    android:layout_gravity="right"
+                    android:background="@drawable/baseline_print_24"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    ></com.google.android.material.button.MaterialButton>
+            </GridLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+</RelativeLayout>

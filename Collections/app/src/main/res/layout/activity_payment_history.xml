@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PaymentHistoryActivity">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/histHome"
+        android:padding="5dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/memNameViewHist"
+            android:layout_gravity="center"
+            android:textSize="20dp"
+            android:textColor="@color/CornflowerBlue"
+            android:textStyle="bold"
+            android:text="MEMBER NAME">
+        </TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loanNoViewHist"
+            android:layout_gravity="center"
+            android:textSize="10dp"
+            android:textColor="@color/Brown"
+            android:textStyle="bold"
+            android:text="MEMBER NAME">
+        </TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:textSize="15dp"
+            android:textColor="@color/BlueViolet"
+            android:textStyle="italic"
+            android:text="PAYMENT HISTORY">
+        </TextView>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/histHome">
+        <LinearLayout
+            android:id="@+id/viewHist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

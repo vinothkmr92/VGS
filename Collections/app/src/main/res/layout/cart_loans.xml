@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/PapayaWhip"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/loansCart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="10dp"
+            >
+            <GridLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:columnCount="2"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:id="@+id/loanGrid"
+                >
+                <TextView
+                    android:id="@+id/loanno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="5.1"
+                    android:textColor="@color/SaddleBrown"
+                    android:textSize="20dp"
+                    android:textStyle="bold"></TextView>
+                <TextView
+                    android:id="@+id/amtPaid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="10569"
+                    android:textColor="@color/Green"
+                    android:textSize="20dp"
+                    android:textStyle="bold"></TextView>
+
+                <TextView
+                    android:id="@+id/loanType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Daily"
+                    android:textColor="@color/SaddleBrown"
+                    android:textSize="20dp"
+                    android:textStyle="bold"></TextView>
+
+                <TextView
+                    android:id="@+id/loanAmt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="10569"
+                    android:textColor="@color/Red"
+                    android:textSize="25dp"
+                    android:textStyle="bold"></TextView>
+                <LinearLayout android:layout_columnSpan="2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+                <com.google.android.material.button.MaterialButton
+
+                    android:id="@+id/btnPay"
+                    android:layout_gravity="center"
+                    android:background="@drawable/baseline_print_24"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    ></com.google.android.material.button.MaterialButton>
+                <com.google.android.material.button.MaterialButton
+                    android:layout_marginLeft="15dp"
+                    android:id="@+id/btnHist"
+                    android:layout_gravity="center"
+                    android:background="@drawable/baseline_history_24"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    ></com.google.android.material.button.MaterialButton>
+                </LinearLayout>
+            </GridLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+</RelativeLayout>
