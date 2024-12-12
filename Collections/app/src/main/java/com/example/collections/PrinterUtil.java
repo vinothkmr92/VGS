@@ -62,6 +62,7 @@ public class PrinterUtil {
     private String balAmt;
     private String paymentMode;
     private String paymentID;
+    private Boolean rePrint;
 
     public PrinterUtil(Context cntx,
                        String memberName,
@@ -70,8 +71,9 @@ public class PrinterUtil {
                        String Paid,
                        String Balance,
                        String PaymentMode,
-                       String PayemntID) {
+                       String PayemntID,Boolean isReprint) {
         posPtr=new ESCPOSPrinter();
+        rePrint = isReprint;
         isWifi = false;
         if(isWifi){
             wifiPort = WiFiPort.getInstance();
@@ -142,6 +144,9 @@ public class PrinterUtil {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         DecimalFormat formater = new DecimalFormat("#.###");
         String dateStr = format.format(new Date());
+        if(rePrint){
+            posPtr.printNormal(ESC+"|cARECEIPT-COPY.\r\n");
+        }
         posPtr.printNormal(ESC+"|cA"+ESC+"|2CBACKYALAKSHMI MICRO FINANCE P.L\r\n");
         posPtr.printNormal(ESC+"|cA32/37, EZHIL NAGAR, 4TH ST,\r\n");
         posPtr.printNormal(ESC+"|cAB BLK, KODUNGAIYUR, CH-118.\r\n");
@@ -279,21 +284,38 @@ public class PrinterUtil {
                 }
                 catch (Exception ex)
                 {
-                    HomeActivity.getInstance().showCustomDialog("Error",ex.getMessage());
+                    if(rePrint){
+                        PaymentHistoryActivity history = (PaymentHistoryActivity) context;
+                        history.showCustomDialog("Error",ex.getMessage());
+                    }
+                    else {
+                        HomeActivity home = (HomeActivity) context;
+                        home.showCustomDialog("Error",ex.getMessage());
+                    }
                 }
                 finally {
-
                     if(dialog.isShowing())
                         dialog.dismiss();
-                    HomeActivity.getInstance().RefreshViews();
+                    if(!rePrint){
+                        HomeActivity home = (HomeActivity) context;
+                        home.RefreshViews();
+                    }
 
                 }
             }
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                HomeActivity.getInstance().showCustomDialog("Failed to Connect Printer",result);
-                HomeActivity.getInstance().RefreshViews();
+                String errMsg = "Failed to connect to Printer:"+result;
+                if(rePrint){
+                    PaymentHistoryActivity history = (PaymentHistoryActivity) context;
+                    history.showCustomDialog("Error",errMsg);
+                }
+                else {
+                    HomeActivity home = (HomeActivity) context;
+                    home.showCustomDialog("Error",errMsg);
+                    home.RefreshViews();
+                }
             }
             super.onPostExecute(result);
         }

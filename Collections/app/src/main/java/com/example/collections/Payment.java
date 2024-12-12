@@ -1,10 +1,11 @@
 package com.example.collections;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class Payment {
     private Integer PaymentID;
-    private Date PaymentDate;
+    private Timestamp PaymentDate;
     private Double PaidAmount;
     private String CollectedPerson;
     private String PaymentMode;
@@ -33,11 +34,11 @@ public class Payment {
         PaidAmount = paidAmount;
     }
 
-    public Date getPaymentDate() {
+    public Timestamp getPaymentDate() {
         return PaymentDate;
     }
 
-    public void setPaymentDate(Date paymentDate) {
+    public void setPaymentDate(Timestamp paymentDate) {
         PaymentDate = paymentDate;
     }
 

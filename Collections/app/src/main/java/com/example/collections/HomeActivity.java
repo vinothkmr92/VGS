@@ -206,26 +206,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         }
         return doubleValue;
     }
-    public void  ReprintPaymentReceipt(Payment paymentm){
-        try{
-            Double outstanding = CommonUtil.Outstanding+paymentm.getPaidAmount();
-            Double bal = CommonUtil.Outstanding;
-            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
-            formatter.setMaximumFractionDigits(0);
-            String symbol = formatter.getCurrency().getSymbol();
-            String outstandingstr = formatter.format(outstanding).replace(symbol,"Rs. ");
-            String paidAmStr = formatter.format(paymentm.getPaidAmount()).replace(symbol,"Rs. ");
-            String balStr = formatter.format(bal).replace(symbol,"Rs. ");
-            PrinterUtil printerUtil = new PrinterUtil(HomeActivity.getInstance(),CommonUtil.memberName,
-                    CommonUtil.loanNo,outstandingstr,paidAmStr,balStr,
-                    paymentm.getPaymentMode(),String.valueOf(paymentm.getPaymentID()));
-            printerUtil.Print();
-        }
-        catch (Exception ex){
-            showCustomDialog("Error",ex.getMessage());
-        }
 
-    }
     public  void PrintPaymentReceipt(String LoanNo, String paymentMode, String Amt, Integer paymentID){
         try
         {
@@ -237,9 +218,9 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             String outstanding = formatter.format(CommonUtil.Outstanding).replace(symbol,"Rs. ");
             String paidAmStr = formatter.format(paidAmt).replace(symbol,"Rs. ");
             String balStr = formatter.format(balance).replace(symbol,"Rs. ");
-            PrinterUtil printerUtil = new PrinterUtil(HomeActivity.getInstance(),CommonUtil.memberName,
+            PrinterUtil printerUtil = new PrinterUtil(this,CommonUtil.memberName,
                     LoanNo,outstanding,paidAmStr,balStr,
-                    paymentMode,String.valueOf(paymentID));
+                    paymentMode,String.valueOf(paymentID),false);
             printerUtil.Print();
         }
         catch (Exception ex){
@@ -316,7 +297,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                         {
                             Payment payment = new Payment();
                             payment.setPaymentID(rs.getInt("PAYMENT_ID"));
-                            payment.setPaymentDate(rs.getDate("PAYMENT_DATE"));
+                            payment.setPaymentDate(rs.getTimestamp("PAYMENT_DATE"));
                             payment.setPaymentMode(rs.getString("PAYMENT_MODE"));
                             payment.setPaidAmount(rs.getDouble("AMOUNT"));
                             payment.setCollectedPerson(rs.getString("RECEIVED_BY"));

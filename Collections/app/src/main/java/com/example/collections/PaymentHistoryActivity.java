@@ -24,6 +24,7 @@ public class PaymentHistoryActivity extends AppCompatActivity {
     TextView memNametxtView;
     TextView loanNotxtView;
     LinearLayout viewHistory;
+    public static PaymentHistoryActivity instance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +39,7 @@ public class PaymentHistoryActivity extends AppCompatActivity {
             for (Payment p:CommonUtil.payments) {
                 addCard(p);
             }
+            instance = this;
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -87,7 +89,7 @@ public class PaymentHistoryActivity extends AppCompatActivity {
                 Integer paymentID = (Integer)v.getTag();
                 try {
                     Payment payments = GetPayment(paymentID);
-                    HomeActivity.getInstance().ReprintPaymentReceipt(payments);
+                    ReprintPaymentReceipt(payments);
                 }catch (Exception ex){
                     showCustomDialog("Error",ex.getMessage().toString());
                 }
@@ -95,7 +97,26 @@ public class PaymentHistoryActivity extends AppCompatActivity {
         });
         viewHistory.addView(view);
     }
+    public void  ReprintPaymentReceipt(Payment paymentm){
+        try{
+            Double outstanding = CommonUtil.Outstanding+paymentm.getPaidAmount();
+            Double bal = CommonUtil.Outstanding;
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+            formatter.setMaximumFractionDigits(0);
+            String symbol = formatter.getCurrency().getSymbol();
+            String outstandingstr = formatter.format(outstanding).replace(symbol,"Rs. ");
+            String paidAmStr = formatter.format(paymentm.getPaidAmount()).replace(symbol,"Rs. ");
+            String balStr = formatter.format(bal).replace(symbol,"Rs. ");
+            PrinterUtil printerUtil = new PrinterUtil(this,CommonUtil.memberName,
+                    CommonUtil.loanNo,outstandingstr,paidAmStr,balStr,
+                    paymentm.getPaymentMode(),String.valueOf(paymentm.getPaymentID()),true);
+            printerUtil.Print();
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
+        }
 
+    }
     private Payment GetPayment(Integer paymentID){
         Payment payment =null;
         for (Payment p:CommonUtil.payments) {
