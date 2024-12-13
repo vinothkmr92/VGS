@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/White"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -26,11 +27,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/orienta"
                 android:text="Welcome"
                 android:textAlignment="center"
                 android:textColor="@color/BlueViolet"
-                android:textSize="30dp">
+                android:textSize="50dp">
             </TextView>
             <ImageView android:layout_width="400px"
                 android:layout_height="400px"
@@ -43,6 +45,7 @@
                 android:layout_gravity="center"
                 android:inputType="text"
                 android:id="@+id/userid"
+                android:fontFamily="@font/orienta"
                 android:textSize="30dp"
                 android:hint="User Name"
                 android:textAlignment="center"
@@ -58,16 +61,19 @@
                 android:textAlignment="center"
                 android:hint="Password"
                 android:textSize="30dp"
+                android:fontFamily="@font/orienta"
                 android:textColor="@color/black"
                 android:minWidth="200dp">
             </EditText>
             <com.google.android.material.button.MaterialButton
                 android:layout_gravity="center"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_width="100dp"
+                android:background="@drawable/baseline_login_24"
                 android:id="@+id/loginbtn"
                 android:layout_marginTop="30dp"
-                android:text="Login"></com.google.android.material.button.MaterialButton>
+                android:foreground="?android:attr/selectableItemBackground"
+                ></com.google.android.material.button.MaterialButton>
         </GridLayout>
     </LinearLayout>
 

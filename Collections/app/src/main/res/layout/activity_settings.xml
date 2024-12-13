@@ -21,6 +21,7 @@
             android:layout_columnSpan="2"
             android:layout_height="wrap_content"
             android:padding="5dp"
+            android:fontFamily="@font/orienta"
             android:hint="SQL Server Host">
 
             <!--this is the actual edit text which takes the input-->
@@ -29,6 +30,7 @@
                 android:maxLines="1"
                 android:textColor="@color/DarkBlue"
                 android:layout_width="match_parent"
+                android:fontFamily="@font/orienta"
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -42,19 +44,22 @@
             android:id="@+id/printer"
             android:padding="5dp"
             android:hint="Bluetooth Printer"
+            android:fontFamily="@font/orienta"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
             <AutoCompleteTextView
                 android:id="@+id/printers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"
                 android:inputType="none"></AutoCompleteTextView>
         </com.google.android.material.textfield.TextInputLayout>
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/baseline_save_24"
             android:layout_gravity="center"
+            android:foreground="?android:attr/selectableItemBackground"
             android:layout_columnSpan="2"
             android:id="@+id/btnSave"/>
     </GridLayout>

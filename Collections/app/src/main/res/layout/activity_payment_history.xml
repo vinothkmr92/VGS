@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/memNameViewHist"
             android:layout_gravity="center"
-            android:textSize="20dp"
+            android:textSize="30dp"
+            android:fontFamily="@font/orienta"
             android:textColor="@color/CornflowerBlue"
             android:textStyle="bold"
             android:text="MEMBER NAME">
@@ -28,7 +29,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/loanNoViewHist"
             android:layout_gravity="center"
-            android:textSize="10dp"
+            android:textSize="15dp"
+            android:fontFamily="@font/orienta"
             android:textColor="@color/Brown"
             android:textStyle="bold"
             android:text="MEMBER NAME">
@@ -38,9 +40,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:textSize="15dp"
+            android:fontFamily="@font/orienta"
             android:textColor="@color/BlueViolet"
-            android:textStyle="italic"
-            android:text="PAYMENT HISTORY">
+            android:textStyle="bold"
+            android:text="Payments History">
         </TextView>
     </LinearLayout>
     <ScrollView
