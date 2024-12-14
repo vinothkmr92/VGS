@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -63,7 +64,7 @@ public class PrinterUtil {
     private String paymentMode;
     private String paymentID;
     private Boolean rePrint;
-
+    private Date paymentDate;
     public PrinterUtil(Context cntx,
                        String memberName,
                        String LoanNo,
@@ -71,7 +72,9 @@ public class PrinterUtil {
                        String Paid,
                        String Balance,
                        String PaymentMode,
-                       String PayemntID,Boolean isReprint) {
+                       String PayemntID,
+                       Date paidDate,
+                       Boolean isReprint) {
         posPtr=new ESCPOSPrinter();
         rePrint = isReprint;
         isWifi = false;
@@ -89,6 +92,7 @@ public class PrinterUtil {
         this.balAmt = Balance;
         this.paymentMode = PaymentMode;
         this.paymentID = PayemntID;
+        this.paymentDate = paidDate;
     }
     @Override
     protected void finalize() throws Throwable {
@@ -141,16 +145,18 @@ public class PrinterUtil {
 
     }
     private void PrintBill() throws IOException {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
-        DecimalFormat formater = new DecimalFormat("#.###");
-        String dateStr = format.format(new Date());
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm aaa", Locale.getDefault());
+        String dateStr = format.format(paymentDate);
         if(rePrint){
-            posPtr.printNormal(ESC+"|cARECEIPT-COPY.\r\n");
+            posPtr.printNormal(ESC+"|cARECEIPT-COPY\r\n");
         }
-        posPtr.printNormal(ESC+"|cA"+ESC+"|2CBACKYALAKSHMI MICRO FINANCE P.L\r\n");
-        posPtr.printNormal(ESC+"|cA32/37, EZHIL NAGAR, 4TH ST,\r\n");
-        posPtr.printNormal(ESC+"|cAB BLK, KODUNGAIYUR, CH-118.\r\n");
+        Bitmap logo = BitmapFactory.decodeResource(context.getResources(),R.drawable.appicon);
+        posPtr.printBitmap(logo,1,150);
         posPtr.printNormal("\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|2CBACKYALAKSHMI MICRO FINANCE P.L\r\n");
+        //posPtr.printNormal(ESC+"|cA32/37, EZHIL NAGAR, 4TH ST,\r\n");
+        //posPtr.printNormal(ESC+"|cAB BLK, KODUNGAIYUR, CH-118.\r\n");
+
         posPtr.printNormal("--------------------------------");
         posPtr.printNormal(ESC+"|cA"+dateStr+"\r\n");
         String receiptNo = StringUtils.leftPad(paymentID,21);

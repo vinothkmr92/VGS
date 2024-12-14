@@ -75,14 +75,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             pairedDevices = mBluetoothAdapter.getBondedDevices();
             bluethootnamelist = new ArrayList<>();
-            int selectedindex=0;
-            int i=0;
             for (BluetoothDevice device : pairedDevices) {
                 bluethootnamelist.add(device.getName());
-                if(device.getName().equals(bluetothName)){
-                    selectedindex=i;
-                }
-                i++;
             }
             ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,bluethootnamelist);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

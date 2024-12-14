@@ -41,8 +41,11 @@
             android:textStyle="bold"
             android:layout_columnSpan="2"
             android:fontFamily="@font/orienta"
+            android:hint="0"
+            android:textColorHint="@color/DimGray"
             android:inputType="number"
             android:textSize="40dp"
+            android:focusedByDefault="true"
             android:textColor="@color/DarkGreen"></EditText>
         </LinearLayout>
         <LinearLayout android:layout_columnSpan="2"

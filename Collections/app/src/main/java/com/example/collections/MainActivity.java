@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(dialog.isShowing()){
                 dialog.hide();
             }
-            Toast.makeText(MainActivity.this,r,Toast.LENGTH_LONG).show();
+            //Toast.makeText(MainActivity.this,r,Toast.LENGTH_LONG).show();
             if(isSuccess){
                 LoadHome();
             }

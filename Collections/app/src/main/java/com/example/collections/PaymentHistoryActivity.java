@@ -109,7 +109,7 @@ public class PaymentHistoryActivity extends AppCompatActivity {
             String balStr = formatter.format(bal).replace(symbol,"Rs. ");
             PrinterUtil printerUtil = new PrinterUtil(this,CommonUtil.memberName,
                     CommonUtil.loanNo,outstandingstr,paidAmStr,balStr,
-                    paymentm.getPaymentMode(),String.valueOf(paymentm.getPaymentID()),true);
+                    paymentm.getPaymentMode(),String.valueOf(paymentm.getPaymentID()),paymentm.getPaymentDate(),true);
             printerUtil.Print();
         }
         catch (Exception ex){

@@ -37,6 +37,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity implements GetPaymentsDetails.PaymentDialogListener {
@@ -220,7 +221,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             String balStr = formatter.format(balance).replace(symbol,"Rs. ");
             PrinterUtil printerUtil = new PrinterUtil(this,CommonUtil.memberName,
                     LoanNo,outstanding,paidAmStr,balStr,
-                    paymentMode,String.valueOf(paymentID),false);
+                    paymentMode,String.valueOf(paymentID),new Date(),false);
             printerUtil.Print();
         }
         catch (Exception ex){
@@ -264,7 +265,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
 
         @Override
         protected void onPostExecute(String r) {
-            Toast.makeText(HomeActivity.this,r,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(HomeActivity.this,r,Toast.LENGTH_SHORT).show();
             if(dialog.isShowing()){
                 dialog.hide();
             }
@@ -289,7 +290,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT PAYMENT_ID,PAYMENT_DATE,PAYMENT_MODE,AMOUNT,RECEIVED_BY FROM PAYMENTS WHERE LOAN_NO ="+loanNo+" ORDER BY PAYMENT_DATE DESC";
+                        String query = "SELECT PAYMENT_ID,PAYMENT_DATE,PAYMENT_MODE,AMOUNT,RECEIVED_BY FROM PAYMENTS WHERE LOAN_NO ='"+loanNo+"' ORDER BY PAYMENT_DATE DESC";
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Payment> payments = new ArrayList<>();
@@ -344,8 +345,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
 
         @Override
         protected void onPostExecute(String r) {
-
-            Toast.makeText(HomeActivity.this,r,Toast.LENGTH_LONG).show();
+            //Toast.makeText(HomeActivity.this,r,Toast.LENGTH_LONG).show();
             if(isSuccess){
                 //LoadLoans();
                 if(dialog.isShowing()){
@@ -357,7 +357,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 if(dialog.isShowing()){
                     dialog.hide();
                 }
-                showCustomDialog("ERROR",r);
+                showCustomDialog("Status",r);
             }
         }
 
@@ -438,7 +438,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         @Override
         protected void onPostExecute(String r) {
 
-            Toast.makeText(HomeActivity.this,r,Toast.LENGTH_LONG).show();
+            //Toast.makeText(HomeActivity.this,r,Toast.LENGTH_LONG).show();
             if(isSuccess){
                 LoadLoans();
                 if(dialog.isShowing()){
@@ -449,7 +449,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 if(dialog.isShowing()){
                     dialog.hide();
                 }
-                showCustomDialog("ERROR",r);
+                showCustomDialog("Status",r);
             }
         }
 
@@ -465,7 +465,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE FROM LOANS WHERE MEMBER_ID="+memberid;
+                        String query = "SELECT LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM FROM LOANS WHERE MEMBER_ID="+memberid;
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Loan> loans = new ArrayList<>();
@@ -478,11 +478,12 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             loan.setLoanAmount(rs.getDouble("LOAN_AMOUNT"));
                             loan.setInterest(rs.getDouble("INTEREST"));
                             loan.setLoanType(rs.getString("LOAN_TYPE"));
+                            loan.setTerm(rs.getInt("TERM"));
                             loans.add(loan);
                         }
                         for (Loan l:loans)
                         {
-                            query = "SELECT SUM(AMOUNT) AS PAID_AMT FROM PAYMENTS WHERE LOAN_NO="+l.getLoanNo();
+                            query = "SELECT SUM(AMOUNT) AS PAID_AMT FROM PAYMENTS WHERE LOAN_NO='"+l.getLoanNo()+"'";
                             ResultSet rs1 = stmt.executeQuery(query);
                             if(rs1.next()){
                                 l.setPaidAmt(rs1.getDouble("PAID_AMT"));
@@ -526,7 +527,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             if(dialog.isShowing()){
                 dialog.hide();
             }
-            Toast.makeText(HomeActivity.this,r,Toast.LENGTH_LONG).show();
+            //Toast.makeText(HomeActivity.this,r,Toast.LENGTH_LONG).show();
             if(isSuccess){
                 memberView.setVisibility(View.VISIBLE);
                 memberName.setText(CommonUtil.memberName);
@@ -537,7 +538,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 new GetLoanDtl().execute("");
             }
             else {
-                showCustomDialog("ERROR",r);
+                showCustomDialog("Status",r);
             }
         }
 

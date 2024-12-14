@@ -8,6 +8,16 @@ public class Loan {
     private double InterestAmt;
     private double PaidAmt;
     private double BalanceAmt;
+    private Integer Term;
+
+    public Integer getTerm() {
+        return Term;
+    }
+
+    public void setTerm(Integer term) {
+        Term = term;
+    }
+
     public String getLoanNo() {
         return LoanNo;
     }
@@ -37,7 +47,7 @@ public class Loan {
             InterestAmt=0;
         }
         else {
-           InterestAmt = LoanAmount*(Interest/100);
+           InterestAmt = Term*LoanAmount*(Interest/100);
            InterestAmt = Math.round(InterestAmt);
         }
         BalanceAmt = LoanAmount+InterestAmt-PaidAmt;
