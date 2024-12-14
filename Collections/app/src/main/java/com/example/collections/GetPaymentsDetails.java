@@ -82,15 +82,6 @@ public class GetPaymentsDetails extends AppCompatDialogFragment {
         return dialog;
     }
 
-    public void showKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-
-    public void closeKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-    }
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

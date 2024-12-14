@@ -30,7 +30,6 @@ import com.sewoo.request.android.RequestHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -38,21 +37,17 @@ import java.util.Set;
 import java.util.UUID;
 
 public class PrinterUtil {
-    private Context context;
+    private final Context context;
     private Thread hThread;
     private WiFiPort wifiPort;
-    private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     public ESCPOSPrinter posPtr;
-    private int rtn;
-    private boolean printSale;
-    public boolean onlyBill;
-    private static String[] PERMISSIONS_BLUETOOTH = {
+    private static final String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_SCAN
     };
     private BluetoothPort bluetoothPort;
-    private boolean isWifi;
+    private final boolean isWifi;
     // 0x1B
     private final char ESC = ESCPOS.ESC;
     private final char ESC2 = ESCPOS.SP;
@@ -154,6 +149,7 @@ public class PrinterUtil {
         posPtr.printBitmap(logo,1,150);
         posPtr.printNormal("\n");
         posPtr.printNormal(ESC+"|cA"+ESC+"|2CBACKYALAKSHMI MICRO FINANCE P.L\r\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|2CMICRO FINANCE P.L\r\n");
         //posPtr.printNormal(ESC+"|cA32/37, EZHIL NAGAR, 4TH ST,\r\n");
         //posPtr.printNormal(ESC+"|cAB BLK, KODUNGAIYUR, CH-118.\r\n");
 
