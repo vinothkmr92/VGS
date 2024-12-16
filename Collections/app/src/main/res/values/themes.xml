@@ -4,6 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="colorPrimary">@color/CornflowerBlue</item>
+        <item name="android:textColorPrimary">@color/Crimson</item>
         <item name="backgroundColor">@color/PapayaWhip</item>
     </style>
 

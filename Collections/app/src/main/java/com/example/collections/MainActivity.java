@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,6 +22,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -113,8 +117,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void showCustomDialog(String title,String Message) {
         MaterialAlertDialogBuilder dialog =  new MaterialAlertDialogBuilder(MainActivity.this,
                 com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
-        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
-
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -142,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showCustomDialog("Warning","Please enter password.");
             }
             else {
-                String val = new DoLogin().execute("").get();
+                 new DoLogin().execute("");
             }
 
         }
@@ -163,11 +165,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected void onPreExecute() {
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            dialog.setMessage("Connecting to Server..");
+            dialog.setTitle("Loading");
+            dialog.setMessage("Connecting to SQL Server..");
             dialog.show();
             super.onPreExecute();
         }
 
+        public  boolean isHostAvailable(final String host, final int port) {
+            try (final Socket socket = new Socket()) {
+                final InetAddress inetAddress = InetAddress.getByName(host);
+                final InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, port);
+                socket.connect(inetSocketAddress, 5000);
+                return true;
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
         @Override
         protected void onPostExecute(String r) {
             if(dialog.isShowing()){
@@ -178,17 +192,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 LoadHome();
             }
             else {
-                showCustomDialog("ERROR",r);
+                showCustomDialog("Message",r);
             }
         }
 
         @Override
         protected String doInBackground(String... params) {
-            if(userid.trim().equals(""))
-                z = "Please enter Registered Mobile Number";
+            String[] hostwithport = CommonUtil.SQL_SERVER.split(":");
+            if(userid.trim().equals("") || password.trim().equals("")){
+                z = "Please enter valid UserName/Password";
+            }
+            else if(hostwithport.length<1){
+                z = "Please configure valid SQL Server Host.";
+            }
+            else if(!isHostAvailable(hostwithport[0],Integer.parseInt(hostwithport[1]))){
+                z = "Error:"+CommonUtil.SQL_SERVER+" host is unreachable. Please try again Later.";
+            }
             else
             {
                 try {
+
                     ConnectionClass connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
                     Connection con = connectionClass.CONN();
                     if (con == null) {

@@ -27,6 +27,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -157,18 +160,26 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     class CheckDBConnection extends AsyncTask<String,Void,String> {
-
-        //  ArrayList hubList = new ArrayList();
         private final ProgressDialog dialog = new ProgressDialog(SettingsActivity.this);
         @Override
         public void  onPreExecute(){
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            dialog.setMessage("Connecting to Server..");
+            dialog.setMessage("Connecting to SQL Server..");
             dialog.show();
             super.onPreExecute();
         }
-
+        public  boolean isHostAvailable(final String host, final int port) {
+            try (final Socket socket = new Socket()) {
+                final InetAddress inetAddress = InetAddress.getByName(host);
+                final InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, port);
+                socket.connect(inetSocketAddress, 5000);
+                return true;
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
         @Override
         public void onPostExecute(String result) {
             if(dialog.isShowing()){
@@ -190,14 +201,25 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             Connection conn = null;
             Statement st = null;
             try {
-                ConnectionClass connectionClass = new ConnectionClass(strings[0],strings[1],strings[2],strings[3]);
-                Connection con = connectionClass.CONN();
-                if(null != con) {
-                    status = "DB Connection Successful.";
+
+                String[] hostwithport = CommonUtil.SQL_SERVER.split(":");
+                if(hostwithport.length<1){
+                    status = "ERROR:Please configure valid SQL Server Host.";
+                }
+                else if(!isHostAvailable(hostwithport[0],Integer.parseInt(hostwithport[1]))){
+                    status = "ERROR:"+CommonUtil.SQL_SERVER+" host is unreachable. Please try again Later.";
                 }
                 else {
-                    status = "Database Connection Failed.";
+                    ConnectionClass connectionClass = new ConnectionClass(strings[0],strings[1],strings[2],strings[3]);
+                    Connection con = connectionClass.CONN();
+                    if(null != con) {
+                        status = "DB Connection Successful.";
+                    }
+                    else {
+                        status = "Database Connection Failed.";
+                    }
                 }
+
 
             }  catch (Exception e) {
                 //Handle errors for Class.forName
