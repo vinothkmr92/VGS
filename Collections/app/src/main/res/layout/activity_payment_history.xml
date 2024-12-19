@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:textSize="30dp"
             android:fontFamily="@font/orienta"
-            android:textColor="@color/CornflowerBlue"
+            android:textColor="@color/SandyBrown"
             android:textStyle="bold"
             android:text="MEMBER NAME">
         </TextView>

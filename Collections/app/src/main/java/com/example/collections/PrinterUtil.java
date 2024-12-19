@@ -148,8 +148,8 @@ public class PrinterUtil {
         Bitmap logo = BitmapFactory.decodeResource(context.getResources(),R.drawable.appicon);
         posPtr.printBitmap(logo,1,150);
         posPtr.printNormal("\n");
-        posPtr.printNormal(ESC+"|cA"+ESC+"|2CBACKYALAKSHMI MICRO FINANCE P.L\r\n");
-        posPtr.printNormal(ESC+"|cA"+ESC+"|2CMICRO FINANCE P.L\r\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CBACKYALAKSHMI MICRO\r\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CFINANCE PVT. LTD\r\n");
         //posPtr.printNormal(ESC+"|cA32/37, EZHIL NAGAR, 4TH ST,\r\n");
         //posPtr.printNormal(ESC+"|cAB BLK, KODUNGAIYUR, CH-118.\r\n");
 
@@ -188,8 +188,8 @@ public class PrinterUtil {
         posPtr.printNormal("--------------------------------");
         posPtr.lineFeed(1);
         String agent = StringUtils.leftPad(CommonUtil.loggedinUser,21);
-        posPtr.printNormal("COLL.AGENT:"+agent);
-        posPtr.lineFeed(5);
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CCUSTOMER CARE: 7418899988\r\n");
+        posPtr.lineFeed(4);
     }
 
     public void Print() throws Exception{

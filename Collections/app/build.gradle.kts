@@ -24,6 +24,16 @@ android {
                 "proguard-rules.pro"
             )
         }
+        applicationVariants.all {
+            outputs.all {
+                this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+
+                val apkName = "Collections_${versionName}.apk"
+
+                outputFileName = apkName
+            }
+        }
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
