@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/PapayaWhip"
+    tools:context=".Settings">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <GridLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="10dp"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Header Message"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/headerMsg"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"></EditText>
+
+            <TextView
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Address"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/addressMsg"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="4"
+                android:inputType="textMultiLine"
+                android:padding="20px"></EditText>
+
+            <TextView
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Footer Message"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/footerMsg"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"></EditText>
+
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Printer Type"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <RadioButton
+                android:id="@+id/radioBtnWifi"
+                android:checked="true"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Wifi"
+                android:textStyle="bold"></RadioButton>
+
+            <RadioButton
+                android:id="@+id/radioBtnBluetooth"
+                android:layout_columnSpan="2"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Bluetooth"
+                android:textStyle="bold"></RadioButton>
+
+            <TextView
+                android:id="@+id/txtViewBlutooth"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Bluetooth Device"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+            <Spinner
+                android:id="@+id/bltDevice"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_columnSpan="4"
+                android:focusableInTouchMode="true"
+
+                android:spinnerMode="dialog"></Spinner>
+
+            <TextView
+                android:id="@+id/rptsizetxt"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Receipt Size"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <RadioButton
+                android:id="@+id/radiobtn2Inch"
+                android:checked="false"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="2 inch"
+                android:textStyle="bold"></RadioButton>
+
+            <RadioButton
+                android:id="@+id/radiobtn3Inch"
+                android:checked="false"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="3 inch"
+                android:textStyle="bold"></RadioButton>
+
+            <RadioButton
+                android:id="@+id/radiobtn4Inch"
+                android:layout_columnSpan="2"
+                android:checked="false"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="4 inch"
+                android:textStyle="bold"></RadioButton>
+
+            <CheckBox
+                android:id="@+id/includeMRP"
+                android:layout_columnSpan="3"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Include MRP in Receipt"
+                android:textStyle="bold|italic"></CheckBox>
+
+            <TextView
+                android:id="@+id/txtViewIPAddress"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Receipt Printer"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/printerIP"
+                android:layout_width="fill_parent"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"></EditText>
+
+            <CheckBox
+                android:id="@+id/enableKOT"
+                android:layout_columnSpan="3"
+                android:checked="false"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Print KOT"
+                android:textStyle="bold|italic"></CheckBox>
+
+            <TextView
+                android:id="@+id/txtViewIPAddressKOT"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="KOT Printer"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/KOTprinterIP"
+                android:layout_width="fill_parent"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"></EditText>
+
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="No of Bill Copies"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/billcopies"
+                android:layout_width="wrap_content"
+                android:layout_columnSpan="3"
+                android:fontFamily="@font/orienta"
+                android:inputType="number"
+                android:padding="20px"></EditText>
+
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Passcode"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/userpasscode"
+                android:layout_width="184dp"
+                android:layout_columnSpan="3"
+                android:fontFamily="@font/orienta"
+                android:inputType="number"
+                android:maxLength="4"
+                android:padding="20px"
+                android:password="true"></EditText>
+
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:padding="20px"
+                android:text="Device ID"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/deviceid"
+                android:layout_width="184dp"
+                android:layout_columnSpan="3"
+                android:editable="false"
+                android:fontFamily="@font/orienta"
+                android:inputType="none"
+                android:padding="20px"
+                android:textIsSelectable="true"></EditText>
+            <CheckBox android:id="@+id/checkBoxMultiLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="4"
+                android:layout_gravity="center"
+                android:text="Multi-Language"></CheckBox>
+            <ImageView
+                android:id="@+id/imgView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"></ImageView>
+
+            <Button
+                android:id="@+id/buttonLoadPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center"
+                android:layout_weight="0"
+                android:fontFamily="@font/orienta"
+                android:text="Pick Logo"></Button>
+            <ImageButton
+                android:id="@+id/btnclearlogo"
+                android:layout_width="100px"
+                android:layout_height="100px"
+                android:layout_columnSpan="4"
+                android:layout_gravity="left"
+                android:background="@drawable/close">
+            </ImageButton>
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_columnSpan="4"
+                android:layout_gravity="center"
+                android:layout_marginBottom="80dp"
+                android:background="@drawable/baseline_save_24"></Button>
+        </GridLayout>
+    </LinearLayout>
+    </ScrollView>
+</LinearLayout>

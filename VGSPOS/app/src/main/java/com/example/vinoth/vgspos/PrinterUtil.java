@@ -97,21 +97,6 @@ public class PrinterUtil {
     {
         try
         {
-            posPtr.setAsync(true);
-            rtn = posPtr.printerSts();
-            // Do not check the paper near empty.
-            // if( (rtn != 0) && (rtn != ESCPOSConst.STS_PAPERNEAREMPTY)) return rtn;
-            // check the paper near empty.
-            if( rtn != 0 )  return rtn;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-            return rtn;
-        }
-
-        try
-        {
             if(onlyBill){
                 if(Common.includeMRPinReceipt){
                     PrintBillWithMRP();
@@ -243,6 +228,24 @@ public class PrinterUtil {
         }
 
     }
+    private  int GetPrinterStatus() {
+        int sts = 0;
+        try
+        {
+            posPtr.setAsync(true);
+            rtn = posPtr.printerSts();
+            sts = rtn;
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            sts = -1;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            sts = -1;
+        }
+        return sts;
+    }
     private void PrintBill() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(Common.billDate);
@@ -372,18 +375,6 @@ public class PrinterUtil {
     {
         try
         {
-            posPtr.setAsync(true);
-            rtn = posPtr.printerSts();
-            if( rtn != 0 )  return rtn;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-            return rtn;
-        }
-
-        try
-        {
             DecimalFormat formater = new DecimalFormat("#.###");
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
             Date date = new Date();
@@ -451,17 +442,7 @@ public class PrinterUtil {
     }
     public int PrintItemWiseSaleReport() throws InterruptedException
     {
-        try
-        {
-            posPtr.setAsync(true);
-            rtn = posPtr.printerSts();
-            if( rtn != 0 )  return rtn;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-            return rtn;
-        }
+
         try
         {
             DecimalFormat formater = new DecimalFormat("#.###");
@@ -525,17 +506,7 @@ public class PrinterUtil {
     }
     public int PrintSaleReport() throws InterruptedException
     {
-        try
-        {
-            posPtr.setAsync(true);
-            rtn = posPtr.printerSts();
-            if( rtn != 0 )  return rtn;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-            return rtn;
-        }
+
         try
         {
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mmaaa", Locale.getDefault());

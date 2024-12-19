@@ -272,12 +272,12 @@
 
             <Button
                 android:id="@+id/btnSave"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_marginBottom="80dp"
                 android:layout_columnSpan="4"
                 android:layout_gravity="center"
-                android:background="@drawable/save"></Button>
+                android:background="@drawable/baseline_save_24"></Button>
         </GridLayout>
     </LinearLayout>
     </ScrollView>

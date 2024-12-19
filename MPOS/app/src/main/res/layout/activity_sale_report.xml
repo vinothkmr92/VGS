@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/PapayaWhip"
+    android:orientation="vertical"
+    android:theme="@style/Theme.AppCompat.NoActionBar"
+    tools:context=".SaleReportActivity">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+    <GridLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill"
+        android:columnCount="2"
+        android:orientation="horizontal"
+        android:padding="20px">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="2"
+            android:fontFamily="@font/orienta"
+            android:text="SALES REPORTS"
+            android:textAlignment="center"
+            android:textColor="@color/Crimson"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/salerptFrmDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:background="@drawable/editdate"
+            android:drawableRight="@drawable/ic_baseline_date_range_24"
+            android:fontFamily="@font/orienta"
+            android:text="Date"
+            android:textColor="@color/DarkViolet"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/salerptToDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:background="@drawable/editdate"
+            android:drawableRight="@drawable/ic_baseline_date_range_24"
+            android:fontFamily="@font/orienta"
+            android:text="Date"
+            android:textColor="@color/DarkViolet"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+    </GridLayout>
+
+    <GridLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill"
+        android:orientation="horizontal"
+        android:padding="20px">
+
+        <TextView
+            android:id="@+id/customerinfosaleRpt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:background="@android:drawable/editbox_background"
+            android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+            android:fontFamily="@font/orienta"
+            android:hint="Select Customer"
+            android:textColor="@android:color/black" />
+
+        <ImageButton
+            android:id="@+id/btnsalerptprint"
+            android:layout_width="100px"
+            android:layout_height="100px"
+            android:layout_gravity="right"
+            android:background="@drawable/ic_baseline_print_24"
+            android:foreground="?android:attr/selectableItemBackground">
+        </ImageButton>
+        <ImageButton
+            android:id="@+id/btnshareExcel"
+            android:layout_width="100px"
+            android:layout_height="100px"
+            android:background="@drawable/baseline_share_24"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="Print">
+        </ImageButton>
+    </GridLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/totalSaleAmt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/orienta"
+            android:text="₹ 000"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/DarkViolet"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false">
+        <LinearLayout
+            android:id="@+id/saleprtContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </LinearLayout>
+    </ScrollView>
+        </LinearLayout>
+</LinearLayout>

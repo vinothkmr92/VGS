@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/PapayaWhip"
+    tools:context=".HomeActivity">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+    <GridLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill"
+        android:columnCount="4"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/billnoTxt"
+            android:layout_gravity="center"
+            android:padding="15dp"
+            android:text="1"
+            android:textColor="@color/colorRed"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
+
+        <TextView
+            android:id="@+id/customerInfoTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:drawable/editbox_background"
+            android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+            android:fontFamily="@font/orienta"
+            android:hint="Select Customer"
+            android:padding="10dp"
+            android:textColor="@android:color/black" />
+        <ImageButton
+            android:id="@+id/btnAddMember"
+            android:layout_width="150px"
+            android:layout_height="150px"
+            android:layout_gravity="right"
+            android:background="@drawable/ic_baseline_person_add_24"
+            android:foreground="?android:attr/selectableItemBackground"
+            tools:ignore="TouchTargetSizeCheck"></ImageButton>
+
+        <CheckBox
+            android:id="@+id/isAC"
+            android:layout_gravity="right"
+            android:fontFamily="@font/orienta"
+            android:padding="15dp"
+            android:text="AC"
+            android:textStyle="bold"></CheckBox>
+
+    </GridLayout>
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill"
+        android:layout_marginLeft="10dp"
+        android:columnCount="3"
+        android:orientation="horizontal">
+
+        <TextView
+            android:fontFamily="@font/orienta"
+            android:text="ITEM NO"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/itemNo"
+            android:layout_marginLeft="20dp"
+            android:editable="false"
+            android:focusable="true"
+            android:minWidth="500px"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/DarkViolet"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+        <Button
+            android:id="@+id/scanQR"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:background="@drawable/barcode"
+            android:foreground="?android:attr/selectableItemBackground"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <TextView
+            android:fontFamily="@font/orienta"
+            android:text="ITEM NAME"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark" />
+
+        <EditText
+            android:id="@+id/itemName"
+            android:layout_columnSpan="2"
+            android:layout_marginLeft="20dp"
+            android:fontFamily="@font/orienta"
+            android:imeOptions="actionNext"
+            android:inputType="textCapCharacters"
+            android:minWidth="700px"
+            android:textAllCaps="true"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/DarkViolet"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:fontFamily="sans-serif"
+            android:text="PRICE"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark" />
+
+        <EditText
+            android:id="@+id/itemPrice"
+            android:layout_columnSpan="2"
+            android:layout_marginLeft="20dp"
+            android:editable="false"
+            android:focusable="true"
+            android:fontFamily="@font/orienta"
+            android:minWidth="700px"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/DarkViolet"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+        <TextView
+            android:fontFamily="sans-serif"
+            android:text="QUANTITY"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@android:color/background_dark" />
+
+        <EditText
+            android:id="@+id/qty"
+            android:layout_columnSpan="2"
+            android:layout_marginLeft="20dp"
+            android:editable="false"
+            android:focusable="true"
+            android:fontFamily="@font/orienta"
+            android:minWidth="700px"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            android:textColor="@color/DarkViolet"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+    </GridLayout>
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:columnCount="6"
+            android:orientation="horizontal">
+
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:text="TOTAL QTY:  "
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ttQty"
+                android:layout_columnSpan="2"
+                android:fontFamily="@font/orienta"
+                android:text="000     "
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:text="     TOTAL ITEMS:  "
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ttItem"
+                android:layout_columnSpan="2"
+                android:fontFamily="@font/orienta"
+                android:text="000   "
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold" />
+
+        </GridLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/orienta"
+                    android:text="DISCOUNT  (%)"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textStyle="italic|bold"></TextView>
+
+                <EditText
+                    android:id="@+id/discountpercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:editable="false"
+                    android:focusable="true"
+                    android:fontFamily="@font/orienta"
+                    android:minWidth="150px"
+                    android:textColor="@android:color/black"></EditText>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:fontFamily="@font/orienta"
+                    android:text="(₹)"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textStyle="italic|bold"></TextView>
+
+                <EditText
+                    android:id="@+id/discountamt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:editable="false"
+                    android:focusable="true"
+                    android:fontFamily="@font/orienta"
+                    android:minWidth="200px"
+                    android:textColor="@android:color/black"></EditText>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/estimateAmt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="₹ 0"
+                    android:textAlignment="center"
+                    android:textColor="@color/DarkMagenta"
+                    android:textSize="40dp"
+                    android:textStyle="bold"
+                    android:typeface="monospace" />
+            </LinearLayout>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:columnCount="4"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/_1"
+                android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="1"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_2"
+                android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="2"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_3"
+                android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="3"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_clr"
+                android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="←"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_4"
+                android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="4"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_5"
+                android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="5"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_6"
+                android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="6"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_dot"
+                android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="."
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_7"
+                android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="7"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_8"
+                android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="8"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_9"
+                android:background="@color/design_default_color_primary"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="9"
+                android:textColor="@android:color/background_light"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/_0"
+                android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="0"
+                android:textColor="@color/design_default_color_primary"
+                android:textSize="@dimen/numericSize"
+                 />
+
+            <Button
+                android:id="@+id/menu"
+                android:background="@android:color/holo_orange_light"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="REPORT"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                tools:ignore="TextContrastCheck" />
+
+            <Button
+                android:id="@+id/cancel"
+                android:background="?attr/colorError"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="CANCEL"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                 />
+
+            <Button
+                android:id="@+id/print"
+                android:layout_rowSpan="2"
+                android:layout_gravity="fill"
+                android:background="?attr/actionModeSplitBackground"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="SAVE"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                 />
+
+            <Button
+                android:id="@+id/enter"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_rowSpan="2"
+                android:layout_gravity="fill"
+                android:background="@android:color/holo_red_dark"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="ENTER"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                />
+
+            <Button
+                android:id="@+id/viewitems"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:background="@color/colorBrown"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="VIEW ITEMS"
+                android:textColor="@android:color/background_light"
+                android:textSize="20dp"
+                />
+            <Button
+                android:id="@+id/lblPrint"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_columnSpan="2"
+                android:layout_gravity="fill"
+                android:background="@android:color/background_light"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="TESTBARCODE"
+                android:textColor="@android:color/background_dark"
+                android:textSize="20dp"
+                android:visibility="gone"
+                />
+        </GridLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

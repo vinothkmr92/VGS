@@ -34,7 +34,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.1.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
     implementation 'com.google.zxing:core:3.5.3'
-    implementation 'com.journeyapps:zxing-android-embedded:3.0.2@aar'
+    implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
     implementation files('libs/poishadow-all.jar')
     implementation files('libs/tamilutillib.jar')
     implementation 'org.apache.commons:commons-lang3:3.12.0'
