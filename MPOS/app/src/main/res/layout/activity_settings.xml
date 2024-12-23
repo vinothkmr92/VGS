@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/PapayaWhip"
     tools:context=".Settings">
     <ScrollView
@@ -11,9 +12,146 @@
         android:animateLayoutChanges="true"
         android:fillViewport="true">
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"
+                android:text="Header Message"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/headerMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"
+                android:padding="20px"></EditText>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"
+                android:text="Address"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/addressMsg"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:padding="20px"></EditText>
+
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Footer Message"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/footerMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"></EditText></LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="4"
+                android:layout_gravity="center"
+                android:padding="5dp">
+                <TextView
+                    android:fontFamily="@font/orienta"
+                    android:layout_columnSpan="2"
+                    android:text="Printer Type"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+
+                <RadioButton
+                    android:id="@+id/radioBtnWifi"
+                    android:checked="true"
+                    android:layout_gravity="right"
+                    android:fontFamily="@font/orienta"
+                    android:text="Wifi"
+                    android:textStyle="bold"></RadioButton>
+
+                <RadioButton
+                    android:id="@+id/radioBtnBluetooth"
+                    android:fontFamily="@font/orienta"
+                    android:text="Bluetooth"
+                    android:textStyle="bold"></RadioButton>
+                <TextView
+                    android:id="@+id/txtViewBlutooth"
+                    android:layout_columnSpan="2"
+                    android:fontFamily="@font/orienta"
+                    android:text="Bluetooth Device"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+                <Spinner
+                    android:id="@+id/bltDevice"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="fill"
+                    android:layout_height="50dp"
+                    android:layout_columnSpan="2"
+                    android:focusableInTouchMode="true"
+                    android:spinnerMode="dialog"></Spinner>
+                <TextView
+                    android:id="@+id/rptsizetxt"
+                    android:layout_columnSpan="4"
+                    android:fontFamily="@font/orienta"
+                    android:text="Receipt Size"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+
+                <RadioButton
+                    android:id="@+id/radiobtn2Inch"
+                    android:checked="false"
+                    android:fontFamily="@font/orienta"
+                    android:text="2 inch"
+                    android:textStyle="bold"></RadioButton>
+
+                <RadioButton
+                    android:id="@+id/radiobtn3Inch"
+                    android:checked="false"
+                    android:fontFamily="@font/orienta"
+                    android:text="3 inch"
+                    android:textStyle="bold"></RadioButton>
+
+                <RadioButton
+                    android:id="@+id/radiobtn4Inch"
+                    android:checked="false"
+                    android:fontFamily="@font/orienta"
+                    android:text="4 inch"
+                    android:textStyle="bold"></RadioButton>
+            </GridLayout>
+=
+        </com.google.android.material.card.MaterialCardView>
+
         <GridLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -21,127 +159,7 @@
             android:padding="10dp"
             tools:ignore="MissingConstraints">
 
-            <TextView
-                android:layout_columnSpan="4"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="Header Message"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"></TextView>
 
-            <EditText
-                android:id="@+id/headerMsg"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_columnSpan="4"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"></EditText>
-
-            <TextView
-                android:layout_columnSpan="4"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="Address"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"></TextView>
-
-            <EditText
-                android:id="@+id/addressMsg"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_columnSpan="4"
-                android:inputType="textMultiLine"
-                android:padding="20px"></EditText>
-
-            <TextView
-                android:layout_columnSpan="4"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="Footer Message"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"></TextView>
-
-            <EditText
-                android:id="@+id/footerMsg"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_columnSpan="4"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"></EditText>
-
-            <TextView
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="Printer Type"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"></TextView>
-
-            <RadioButton
-                android:id="@+id/radioBtnWifi"
-                android:checked="true"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="Wifi"
-                android:textStyle="bold"></RadioButton>
-
-            <RadioButton
-                android:id="@+id/radioBtnBluetooth"
-                android:layout_columnSpan="2"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="Bluetooth"
-                android:textStyle="bold"></RadioButton>
-
-            <TextView
-                android:id="@+id/txtViewBlutooth"
-                android:layout_columnSpan="4"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="Bluetooth Device"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"></TextView>
-            <Spinner
-                android:id="@+id/bltDevice"
-                android:layout_width="fill_parent"
-                android:layout_height="50dp"
-                android:layout_columnSpan="4"
-                android:focusableInTouchMode="true"
-
-                android:spinnerMode="dialog"></Spinner>
-
-            <TextView
-                android:id="@+id/rptsizetxt"
-                android:layout_columnSpan="4"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="Receipt Size"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"></TextView>
-
-            <RadioButton
-                android:id="@+id/radiobtn2Inch"
-                android:checked="false"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="2 inch"
-                android:textStyle="bold"></RadioButton>
-
-            <RadioButton
-                android:id="@+id/radiobtn3Inch"
-                android:checked="false"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="3 inch"
-                android:textStyle="bold"></RadioButton>
-
-            <RadioButton
-                android:id="@+id/radiobtn4Inch"
-                android:layout_columnSpan="2"
-                android:checked="false"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"
-                android:text="4 inch"
-                android:textStyle="bold"></RadioButton>
 
             <CheckBox
                 android:id="@+id/includeMRP"

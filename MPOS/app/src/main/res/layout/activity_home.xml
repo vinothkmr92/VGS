@@ -97,7 +97,7 @@
             android:layout_marginLeft="20dp"
             android:editable="false"
             android:focusable="true"
-            android:minWidth="500px"
+            android:minWidth="400px"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/DarkViolet"
             android:textSize="16sp"
@@ -105,7 +105,7 @@
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
         <Button
             android:id="@+id/scanQR"
-            android:layout_width="70dp"
+            android:layout_width="80dp"
             android:layout_height="50dp"
             android:background="@drawable/barcode"
             android:foreground="?android:attr/selectableItemBackground"
