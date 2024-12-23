@@ -34,8 +34,12 @@ public class Common {
     public static boolean isAcPrice;
     public static boolean openSettings;
     public static Date billDate;
-    public  static  String RptSize;
-    public  static boolean isAuthenticated;
-    public  static String userPasscode="6565";
+    public static  String RptSize;
+    public static boolean isAuthenticated;
+    public static String userPasscode="6565";
     public static boolean MultiLang;
+    public static String paymentMode;
+    public static double CashAmt;
+    public static double CardAmt;
+    public static double UpiAmt;
 }

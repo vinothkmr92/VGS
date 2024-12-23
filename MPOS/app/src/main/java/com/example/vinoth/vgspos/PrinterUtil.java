@@ -546,15 +546,34 @@ public class PrinterUtil {
                 String line = billno+billDate+amts+"\n";
                 posPtr.printNormal(line);
             }
-            String totalamt = String.format("%.0f",totalAmt);
-            String txttotal = "TOTAL AMOUNT: "+totalamt+"/-";
-            posPtr.lineFeed(1);
+            String cashAmt = String.format("%.0f",Common.CashAmt);
+            String cashAmtstr = "CASH AMOUNT: "+cashAmt;
+            String cardAmt = String.format("%.0f",Common.CardAmt);
+            String cardAmtstr = "CARD AMOUNT: "+cardAmt;
+            String upiAmt = String.format("%.0f",Common.UpiAmt);
+            String upiAmtstr = "CARD AMOUNT: "+upiAmt;
+
+            String textSize = "2";
             if(Common.RptSize.equals("2")){
-                posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|1C"+txttotal+"\n");
+                textSize = "1";
+                posPtr.printNormal("--------------------------------\n");
             }
             else {
-                posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+                posPtr.printNormal("----------------------------------------------\n");
             }
+            if(Common.CashAmt>0){
+                posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|"+textSize+"C"+cashAmtstr+"\n");
+            }
+            if(Common.CardAmt>0){
+                posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|"+textSize+"C"+cardAmtstr+"\n");
+            }
+            if(Common.UpiAmt>0){
+                posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|"+textSize+"C"+upiAmtstr+"\n");
+            }
+            posPtr.lineFeed(1);
+            String totalamt = String.format("%.0f",totalAmt);
+            String txttotal = "TOTAL AMOUNT: "+totalamt+"/-";
+            posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|"+textSize+"C"+txttotal+"\n");
             posPtr.lineFeed(4);
             posPtr.cutPaper();
             if(bluetoothPort!=null){
@@ -830,9 +849,10 @@ public class PrinterUtil {
         @Override
         protected void onPreExecute()
         {
+            dialog.setTitle("Printing");
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            dialog.setMessage("Printing.....");
+            dialog.setMessage("Connecting to Printer.....");
             dialog.show();
             super.onPreExecute();
         }

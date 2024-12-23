@@ -5,10 +5,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +52,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
     TextView outstanding;
     LinearLayout viewLoans;
     public static HomeActivity instance;
+    MaterialAlertDialogBuilder confrimDialog;
+    PrinterUtil printerUtil;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +80,34 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             }
         });
         instance = this;
+        confrimDialog =  new MaterialAlertDialogBuilder(HomeActivity.this,
+                com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
+        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
+
+        confrimDialog.setTitle("Confirm Print");
+        confrimDialog.setMessage("\nDo you want to print the receipt ?");
+        confrimDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                RefreshViews();
+            }
+        });
+        confrimDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                if(printerUtil!=null){
+                    try {
+                        printerUtil.Print();
+                    } catch (Exception e) {
+                        showCustomDialog("Error",e.getMessage());
+                    }
+                    finally {
+                        printerUtil = null;
+                    }
+                }
+            }
+        });
+        confrimDialog.setCancelable(false);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -219,10 +252,10 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             String outstanding = formatter.format(CommonUtil.Outstanding).replace(symbol,"Rs. ");
             String paidAmStr = formatter.format(paidAmt).replace(symbol,"Rs. ");
             String balStr = formatter.format(balance).replace(symbol,"Rs. ");
-            PrinterUtil printerUtil = new PrinterUtil(this,CommonUtil.memberName,
+            printerUtil = new PrinterUtil(this,CommonUtil.memberName,
                     LoanNo,outstanding,paidAmStr,balStr,
                     paymentMode,String.valueOf(paymentID),new Date(),false);
-            printerUtil.Print();
+            confrimDialog.show();
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());

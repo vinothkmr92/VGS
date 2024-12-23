@@ -21,6 +21,7 @@
     android:layout_gravity="fill"
     android:background="@android:color/white"
     android:columnCount="3"
+    android:padding="5dp"
     android:orientation="horizontal"
     >
 
@@ -30,7 +31,7 @@
         android:layout_gravity="left"
         android:layout_marginLeft="10dp"
         android:fontFamily="@font/orienta"
-        android:text="Bill No:"
+        android:text="Bill No"
         android:textColor="@android:color/black"
         android:textSize="15dp"></TextView>
 
@@ -42,12 +43,12 @@
         android:layout_marginLeft="10dp"
         android:fontFamily="@font/orienta"
         android:text="1"
-        android:textColor="@android:color/black"
+        android:textColor="@color/DarkBlue"
         android:textSize="15dp"
         android:textStyle="bold"></TextView>
     <ImageButton android:id="@+id/salecart_print"
-        android:layout_width="100px"
-        android:layout_height="100px"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="right"
         android:background="@drawable/ic_baseline_print_24"
         android:foreground="?android:attr/selectableItemBackground"></ImageButton>
@@ -58,7 +59,7 @@
         android:layout_gravity="left"
         android:layout_marginLeft="10dp"
         android:fontFamily="@font/orienta"
-        android:text="Bill Date:"
+        android:text="Bill Date"
         android:textColor="@android:color/black"
         android:textSize="15dp"></TextView>
 
@@ -70,31 +71,49 @@
         android:layout_marginLeft="10dp"
         android:fontFamily="@font/orienta"
         android:text="26-03-2024"
-        android:textColor="@android:color/black"
+        android:textColor="@color/DarkBlue"
         android:textSize="15dp"
         android:textStyle="bold"></TextView>
     <ImageButton
         android:id="@+id/salecart_delete"
-        android:layout_width="100px"
-        android:layout_height="100px"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="right"
-        android:background="@drawable/del"
+        android:background="@drawable/baseline_delete_24"
         android:foreground="?android:attr/selectableItemBackground"></ImageButton>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="@font/orienta"
+        android:text="Payment Mode"
+        android:textColor="@android:color/black"
+        android:textSize="15dp"></TextView>
 
+    <TextView
+        android:id="@+id/salecart_paymentMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="@font/orienta"
+        android:text="CASH"
+        android:textColor="@color/DarkBlue"
+        android:textSize="20dp"
+        android:textStyle="bold"></TextView>
     <TextView
         android:id="@+id/salecart_saleAmt"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_columnSpan="3"
         android:layout_gravity="fill"
-        android:layout_marginTop="10dp"
-        android:background="@android:color/holo_purple"
         android:fontFamily="@font/orienta"
         android:gravity="center"
         android:text="₹ 123456"
-        android:textColor="@android:color/white"
-        android:textSize="20dp"
-        android:textStyle="bold|italic"></TextView>
+        android:textColor="@color/CornflowerBlue"
+        android:textSize="40dp"
+        android:textStyle="bold"></TextView>
 </GridLayout>
         </androidx.cardview.widget.CardView>
     </RelativeLayout>

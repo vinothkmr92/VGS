@@ -3,38 +3,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/PapayaWhip"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/White"
     android:orientation="vertical"
+    android:layout_gravity="center"
     tools:context=".UploadActivity">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="5dp"
+        android:layout_gravity="center"
+        >
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:columnCount="3"
+        android:columnCount="2"
+        android:padding="10dp"
+        android:background="@color/SandyBrown"
         android:orientation="horizontal">
         <ImageButton
             android:id="@+id/btnUpload"
             android:layout_width="250px"
             android:layout_height="250px"
-            android:background="@drawable/upload"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_upload_24"
             android:foreground="?android:attr/selectableItemBackground"
             android:text="Upload Product"></ImageButton>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></TextView>
         <ImageButton
             android:id="@+id/btnExportproduct"
             android:layout_width="250px"
             android:layout_height="250px"
-            android:background="@drawable/download"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_download_24"
             android:foreground="?android:attr/selectableItemBackground"
             android:text="Export Product"></ImageButton>
         <TextView
             android:id="@+id/lblView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnSpan="3"
+            android:layout_gravity="center"
+            android:textColor="@color/DarkBlue"
+            android:layout_columnSpan="2"
             android:text=""/>
 
         <CheckBox
@@ -42,9 +60,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Delete Existing Products"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/DarkBlue"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center"
             android:textStyle="bold|italic"></CheckBox>
 
     </GridLayout>
-
+    </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 </RelativeLayout>

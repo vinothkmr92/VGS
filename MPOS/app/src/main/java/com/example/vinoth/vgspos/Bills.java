@@ -8,6 +8,15 @@ public class Bills {
 
     private double Final_Amt;
     private double Discount;
+    private String paymentMode;
+
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
+    }
 
     public double getFinal_Amt() {
         Final_Amt = Sale_Amt-Discount;

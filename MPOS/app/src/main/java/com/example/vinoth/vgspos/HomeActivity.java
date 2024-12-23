@@ -53,7 +53,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener, AddCustomerDialog.CustomerDialogListener {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener, AddCustomerDialog.CustomerDialogListener,GetPaymentModeDialog.PaymentDialogListener {
 
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String HEADERMSG = "HEADERMSG";
@@ -809,6 +809,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         //showCustomDialog("Info","Items Cleared.");
         itemNo.requestFocus();
     }
+    public void GetPaymentMode(){
+        try {
+            Common.paymentMode = "";
+            GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
+            addCustomer.show(getSupportFragmentManager(),"");
+        }catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage().toString());
+        }
+    }
     public void OpenAddCustomerDialog(){
         try {
             AddCustomerDialog addCustomer = new AddCustomerDialog();
@@ -929,8 +938,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                    return;
                }
                SortItemsCarts();
-               AlertDialog alert = builder.create();
-               alert.show();
+               GetPaymentMode();
                break;
            case  R.id.enter:
                if(priceTxt.isFocused()){
@@ -1113,6 +1121,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         bills.setSale_Amt(saleAmt);
         bills.setUser(waiter);
         bills.setDiscount(discountAmt);
+        bills.setPaymentMode(Common.paymentMode);
         dbHelper.Insert_Bills(bills);
         int nextBillNo = dbHelper.GetNextBillNo();
         billnoTxtView.setText(String.valueOf(nextBillNo));
@@ -1178,5 +1187,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         for(int i=0;i<customers.size();i++){
             waiters.add(customers.get(i).getCustomerName());
         }
+    }
+
+    @Override
+    public void getPaymentMode(String paymentMode) {
+        Common.paymentMode = paymentMode;
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

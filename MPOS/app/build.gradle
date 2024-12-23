@@ -25,7 +25,9 @@ android {
                     output->
                         // on below line we are adding version name to
                         // our .apk file along with the app name
-                        def name = "MPOS(${variant.versionName}).apk"
+                        def date = new Date()
+                        def formated = date.format("ddMMyyyyHHmm")
+                        def name = "MPOS_${formated}.apk"
                         // on below line we are setting the
                         // outputFile Name to our apk file
                         output.outputFileName = name
@@ -56,5 +58,5 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.fintrace.core.drivers:tspl2-driver:0.0.12'
     implementation "androidx.biometric:biometric:1.1.0"
-
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

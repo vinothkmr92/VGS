@@ -3,11 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/PapayaWhip"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/White"
     android:orientation="vertical"
     android:theme="@style/Theme.AppCompat.NoActionBar"
     tools:context=".SaleReportActivity">
-        <LinearLayout
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false">
+    <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical">
@@ -40,7 +45,7 @@
             android:fontFamily="@font/orienta"
             android:text="Date"
             android:textColor="@color/DarkViolet"
-            android:textSize="20dp"
+            android:textSize="25dp"
             android:textStyle="bold" />
 
         <TextView
@@ -92,12 +97,22 @@
             android:text="Print">
         </ImageButton>
     </GridLayout>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="10dp"
+            android:layout_gravity="center"
+            >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_gravity="center"
+        android:background="@color/White"
         android:orientation="vertical"
-        tools:ignore="MissingConstraints">
+        android:id="@+id/layoutSaleAmt">
 
         <TextView
             android:id="@+id/totalSaleAmt"
@@ -108,19 +123,31 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/DarkViolet"
-            android:textSize="30dp"
+            android:textSize="50dp"
             android:textStyle="bold" />
     </LinearLayout>
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:focusable="false">
+        </com.google.android.material.card.MaterialCardView>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/chartlayout"
+            android:layout_below="@id/layoutSaleAmt"
+            android:gravity="center">
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/salesChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_gravity="center"
+                />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/saleprtContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
         </LinearLayout>
-    </ScrollView>
+
         </LinearLayout>
+    </ScrollView>
 </LinearLayout>

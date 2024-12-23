@@ -2,17 +2,24 @@ package com.example.vinoth.vgspos;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class ViewItemActivity extends AppCompatActivity {
 
     private static ViewItemActivity instance;
-    DynamicView dynamicView;
-    GridLayout gridLayout;
-    private ListView listView;
+    LinearLayout viewItems;
 
     public static ViewItemActivity getInstance() {
         return instance;
@@ -22,7 +29,7 @@ public class ViewItemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_item);
-        gridLayout = (GridLayout)findViewById(R.id.gridData);
+        viewItems = findViewById(R.id.viewItems);
         LoadData();
         instance = this;
     }
@@ -34,19 +41,34 @@ public class ViewItemActivity extends AppCompatActivity {
         startActivity(page);
     }
 
-    public void ClearData(){
-        gridLayout.removeViews(4,Common.itemsCarts.size()*4);
-    }
     public void LoadData(){
+        viewItems.removeAllViews();
         for(int i=0;i<Common.itemsCarts.size();i++){
             ItemsCart item = Common.itemsCarts.get(i);
-            dynamicView = new DynamicView(this.getApplicationContext());
-            gridLayout.addView(dynamicView.clrButton(getApplicationContext(),i));
-            int k = i+1;
-            gridLayout.addView(dynamicView.snoTextView(getApplicationContext(),String.valueOf(k)));
-            gridLayout.addView(dynamicView.itemNameTextView(getApplicationContext(),item.getItem_Name()));
-            gridLayout.addView(dynamicView.qtyTextView(getApplicationContext(),String.valueOf(item.getQty())));
+            AddCarts(item);
         }
+    }
+    private void  AddCarts(ItemsCart cart){
+        View view = getLayoutInflater().inflate(R.layout.viewitem,null);
+        TextView itemName = view.findViewById(R.id.viewcart_name);
+        TextView qty = view.findViewById(R.id.viewcart_qty);
+        ImageButton btnClr = view.findViewById(R.id.viewcart_btnclr);
+        itemName.setText(cart.getItem_Name());
+        NumberFormat nf = DecimalFormat.getInstance();
+        nf.setMaximumFractionDigits(0);
+        String str = nf.format(cart.getQty());
+        qty.setText(str);
+        String btnTag =  cart.getItem_No();
+        btnClr.setTag(btnTag);
+        btnClr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String itemNo = (String)v.getTag();
+                Common.itemsCarts.removeIf(c->c.getItem_No()==itemNo);
+                LoadData();
+            }
+        });
+        viewItems.addView(view);
     }
     public  String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);

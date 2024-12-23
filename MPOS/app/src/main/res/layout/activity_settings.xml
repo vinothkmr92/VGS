@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/PapayaWhip"
+    android:background="@color/SandyBrown"
     tools:context=".Settings">
     <ScrollView
         android:layout_width="fill_parent"
@@ -149,48 +149,67 @@
                     android:text="4 inch"
                     android:textStyle="bold"></RadioButton>
             </GridLayout>
-=
-        </com.google.android.material.card.MaterialCardView>
 
+
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
         <GridLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:columnCount="4"
-            android:padding="10dp"
-            tools:ignore="MissingConstraints">
-
-
-
+            android:padding="10dp">
             <CheckBox
                 android:id="@+id/includeMRP"
-                android:layout_columnSpan="3"
+                android:layout_columnSpan="4"
+                android:layout_gravity="center"
                 android:fontFamily="@font/orienta"
-                android:padding="20px"
                 android:text="Include MRP in Receipt"
+                android:textColor="@color/DarkBlue"
                 android:textStyle="bold|italic"></CheckBox>
 
             <TextView
                 android:id="@+id/txtViewIPAddress"
                 android:layout_columnSpan="4"
                 android:fontFamily="@font/orienta"
-                android:padding="20px"
                 android:text="Receipt Printer"
-                android:textColor="@android:color/black"
+                android:textColor="@color/DarkBlue"
                 android:textStyle="bold"></TextView>
 
             <EditText
                 android:id="@+id/printerIP"
                 android:layout_width="fill_parent"
                 android:layout_columnSpan="4"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"></EditText>
+                android:fontFamily="@font/orienta"></EditText>
+        </GridLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+        <GridLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="10dp">
 
             <CheckBox
                 android:id="@+id/enableKOT"
-                android:layout_columnSpan="3"
+                android:layout_columnSpan="4"
                 android:checked="false"
                 android:fontFamily="@font/orienta"
-                android:padding="20px"
+                android:textColor="@color/DarkBlue"
+                android:layout_gravity="center"
                 android:text="Print KOT"
                 android:textStyle="bold|italic"></CheckBox>
 
@@ -198,23 +217,34 @@
                 android:id="@+id/txtViewIPAddressKOT"
                 android:layout_columnSpan="4"
                 android:fontFamily="@font/orienta"
-                android:padding="20px"
                 android:text="KOT Printer"
-                android:textColor="@android:color/black"
+                android:textColor="@color/DarkBlue"
                 android:textStyle="bold"></TextView>
 
             <EditText
                 android:id="@+id/KOTprinterIP"
                 android:layout_width="fill_parent"
                 android:layout_columnSpan="4"
-                android:fontFamily="@font/orienta"
-                android:padding="20px"></EditText>
-
+                android:fontFamily="@font/orienta"></EditText>
+        </GridLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+        <GridLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="10dp">
             <TextView
                 android:fontFamily="@font/orienta"
-                android:padding="20px"
                 android:text="No of Bill Copies"
-                android:textColor="@android:color/black"
+                android:textColor="@color/DarkBlue"
                 android:textStyle="bold"></TextView>
 
             <EditText
@@ -222,14 +252,12 @@
                 android:layout_width="wrap_content"
                 android:layout_columnSpan="3"
                 android:fontFamily="@font/orienta"
-                android:inputType="number"
-                android:padding="20px"></EditText>
+                android:inputType="number"></EditText>
 
             <TextView
                 android:fontFamily="@font/orienta"
-                android:padding="20px"
                 android:text="Passcode"
-                android:textColor="@android:color/black"
+                android:textColor="@color/DarkBlue"
                 android:textStyle="bold"></TextView>
 
             <EditText
@@ -239,14 +267,12 @@
                 android:fontFamily="@font/orienta"
                 android:inputType="number"
                 android:maxLength="4"
-                android:padding="20px"
                 android:password="true"></EditText>
 
             <TextView
                 android:fontFamily="@font/orienta"
-                android:padding="20px"
                 android:text="Device ID"
-                android:textColor="@android:color/black"
+                android:textColor="@color/DarkBlue"
                 android:textStyle="bold"></TextView>
 
             <EditText
@@ -256,14 +282,29 @@
                 android:editable="false"
                 android:fontFamily="@font/orienta"
                 android:inputType="none"
-                android:padding="20px"
                 android:textIsSelectable="true"></EditText>
             <CheckBox android:id="@+id/checkBoxMultiLanguage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_columnSpan="4"
+                android:textColor="@color/DarkBlue"
                 android:layout_gravity="center"
                 android:text="Multi-Language"></CheckBox>
+        </GridLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+        <GridLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="10dp">
             <ImageView
                 android:id="@+id/imgView"
                 android:layout_width="100dp"
@@ -277,15 +318,18 @@
                 android:layout_columnSpan="3"
                 android:layout_gravity="center"
                 android:layout_weight="0"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:background="@drawable/baseline_add_photo_alternate_24"
                 android:fontFamily="@font/orienta"
-                android:text="Pick Logo"></Button>
+                ></Button>
             <ImageButton
                 android:id="@+id/btnclearlogo"
                 android:layout_width="100px"
                 android:layout_height="100px"
                 android:layout_columnSpan="4"
                 android:layout_gravity="left"
-                android:background="@drawable/close">
+                android:foreground="?android:attr/selectableItemBackground"
+                android:background="@drawable/baseline_close_24">
             </ImageButton>
 
             <Button
@@ -294,9 +338,10 @@
                 android:layout_height="80dp"
                 android:layout_columnSpan="4"
                 android:layout_gravity="center"
-                android:layout_marginBottom="80dp"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:background="@drawable/baseline_save_24"></Button>
         </GridLayout>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
     </ScrollView>
 </LinearLayout>

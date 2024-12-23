@@ -3,7 +3,10 @@ package com.example.collections;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -35,8 +38,16 @@ public class GetPaymentsDetails extends AppCompatDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.layout_get_payment,null);
+        TextView titleview = new TextView(getActivity());
+        titleview.setText("PAYMENT DETAILS");
+        titleview.setBackgroundColor(Color.WHITE);
+        titleview.setPadding(10, 10, 10, 10);
+        titleview.setGravity(Gravity.CENTER);
+        titleview.setTextColor(Color.BLUE);
+        titleview.setTypeface(titleview.getTypeface(), Typeface.BOLD);
+        titleview.setTextSize(20);
         builder.setView(view)
-                .setTitle("Payment Detail")
+                .setCustomTitle(titleview)
                 .setNegativeButton("Cancel", (dialog, which) -> {
 
                 })

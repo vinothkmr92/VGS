@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.NumberFormat;
 import android.net.Uri;
@@ -34,6 +35,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.content.res.ResourcesCompat;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -52,8 +61,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class SaleReportActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -79,6 +92,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     Dialog dialog;
     ImageButton btnExportExcel;
     LinearLayout saleRptContainer;
+    PieChart chart;
     private DatePicker datePicker;
     private Calendar calendar;
     private int year, month, day;
@@ -302,6 +316,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         btnExportExcel.setOnClickListener(this);
         searchTxtView = (TextView)findViewById(R.id.customerinfosaleRpt);
         searchTxtView.setText("ALL");
+        chart = findViewById(R.id.salesChart);
         ArrayList<String> wts = new ArrayList<String>();
         wts.add("ALL");
         ArrayList<Customer> customers = dbHelper.GetCustomers();
@@ -443,10 +458,12 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         TextView billno = view.findViewById(R.id.salecart_billno);
         TextView billDate = view.findViewById(R.id.salecart_billdate);
         TextView billAmt = view.findViewById(R.id.salecart_saleAmt);
+        TextView paymentMode = view.findViewById(R.id.salecart_paymentMode);
         ImageButton printbtn = view.findViewById(R.id.salecart_print);
         ImageButton deletebtn = view.findViewById(R.id.salecart_delete);
+        paymentMode.setText(sr.getPaymentMode());
         billno.setText(sr.getBillNo());
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy",Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm aa",Locale.getDefault());
         billDate.setText(format.format(sr.getBillDt()));
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
@@ -479,7 +496,56 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         ArrayList<SaleReport> sal = dbHelper.GetSalesReport(frmdt,todt,waiter);
         return sal;
     }
+    public static Float convertToFloat(double doubleValue) {
+        return (float) doubleValue;
+    }
+    private void setupPieChart(double cashAmt,double cardAmt,double upiAmt){
+        List<PieEntry> pieEntires = new ArrayList<>();
+        Float cashAmtf = convertToFloat(cashAmt);
+        Float cardAmtf = convertToFloat(cardAmt);
+        Float upiAmtf = convertToFloat(upiAmt);
+        if(cashAmt>0){
+            pieEntires.add(new PieEntry(cashAmtf,"Cash"));
+        }
+        if(cardAmt>0){
+            pieEntires.add(new PieEntry(cardAmtf,"Card"));
+        }
+        if(upiAmt>0){
+            pieEntires.add(new PieEntry(upiAmtf,"UPI"));
+        }
+        PieDataSet dataSet = new PieDataSet(pieEntires,"");
+        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        Typeface typeface = ResourcesCompat.getFont(this, R.font.orienta);
+        dataSet.setValueTypeface(typeface);
+        //dataSet.setDrawValues(false);
+        dataSet.setValueTextSize(20);
+        dataSet.setHighlightEnabled(true);
+        dataSet.setValueFormatter(new IndianRuppeFormatter());
+        PieData data = new PieData(dataSet);
+        //Get the chart
 
+        chart.setCenterText("Sales (₹)");
+        chart.setDrawEntryLabels(false);
+        chart.setContentDescription("");
+        chart.setCenterTextSize(20);
+
+        //chart.setDrawMarkers(true);
+        //pieChart.setMaxHighlightDistance(34);
+        //chart.setEntryLabelTextSize(30);
+        chart.setHoleRadius(40);
+
+        //legend attributes
+        Legend legend = chart.getLegend();
+        legend.setForm(Legend.LegendForm.CIRCLE);
+        legend.setWordWrapEnabled(true);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setTextSize(15);
+        legend.setFormSize(20);
+        legend.setFormToTextSpace(2);
+        chart.getDescription().setEnabled(false);
+        chart.setData(data);
+        chart.invalidate();
+    }
     private void LoadSaleReport(){
         try{
             saleRptContainer.removeAllViews();
@@ -495,6 +561,16 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
             String symbol = formatter.getCurrency().getSymbol();
             String ttSaleAmtstring = formatter.format(totalSaleamt).replace(symbol,symbol+" ");
             txtViewTotalSaleAmt.setText(ttSaleAmtstring);
+            List<SaleReport> cashSales = items.stream().filter(i -> i.getPaymentMode().equals("CASH")).collect(Collectors.toList());
+            List<SaleReport> cardSales = items.stream().filter(i -> i.getPaymentMode().equals("CARD")).collect(Collectors.toList());
+            List<SaleReport> upiSales = items.stream().filter(i -> i.getPaymentMode().equals("UPI")).collect(Collectors.toList());
+            double cashAmt = cashSales.size()>0 ? cashSales.stream().mapToDouble(c->c.getBillAmount()).sum():0;
+            double cardAmt = cardSales.size()>0 ? cardSales.stream().mapToDouble(c->c.getBillAmount()).sum():0;
+            double upiAmt = upiSales.size()>0 ? upiSales.stream().mapToDouble(c->c.getBillAmount()).sum():0;
+            Common.CashAmt = cashAmt;
+            Common.CardAmt = cardAmt;
+            Common.UpiAmt = upiAmt;
+            setupPieChart(cashAmt,cardAmt,upiAmt);
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());

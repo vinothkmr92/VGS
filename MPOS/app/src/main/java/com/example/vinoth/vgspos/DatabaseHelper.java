@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 13);
+        super(context, DATABASE_NAME, null, 15);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("CREATE TABLE TAX (TAX_ID INTEGER PRIMARY KEY,TAX_VALUE NUMERIC)");
       db.execSQL("CREATE TABLE ITEMS (ITEM_NO TEXT PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
-      db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,DISCOUNT NUMERIC,PRIMARY KEY (BILL_NO,BILL_DATE))");
+      db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,DISCOUNT NUMERIC,PAYMENT_MODE TEXT,PRIMARY KEY (BILL_NO,BILL_DATE))");
       db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT,PRICE DOUBLE)");
       db.execSQL("CREATE TABLE CUSTOMERS (NAME TEXT,MOBILE_NUMBER TEXT,ADDRESS TEXT,PRIMARY KEY (MOBILE_NUMBER))");
       InsertMasterUser(db);
@@ -231,7 +231,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public  ArrayList<SaleReport> GetSalesReport(String frmDate,String toDate,String waiter){
         ArrayList<SaleReport> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT,DISCOUNT FROM BILLS WHERE DATE(BILL_DATE)>='"+frmDate+"' AND DATE(BILL_DATE)<='"+toDate+"'";
+        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT,DISCOUNT,PAYMENT_MODE FROM BILLS WHERE DATE(BILL_DATE)>='"+frmDate+"' AND DATE(BILL_DATE)<='"+toDate+"'";
         if(!waiter.equals("ALL")){
             query = query+" AND WAITER='"+waiter+"'";
         }
@@ -246,6 +246,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 r.setBillDate(billDate);
                 double saleAmt = cur.getDouble(2);
                 double discount = cur.getDouble(3);
+                r.setPaymentMode(cur.getString(4));
                 double billAmt = saleAmt-discount;
                 r.setBillAmount(billAmt);
                 r.setSaleAmount(saleAmt);
@@ -380,6 +381,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cnt.put("SALE_AMT",bills.getSale_Amt());
         cnt.put("WAITER",bills.getUser());
         cnt.put("DISCOUNT",bills.getDiscount());
+        cnt.put("PAYMENT_MODE",bills.getPaymentMode());
         long s =db.insert("BILLS",null,cnt);
         if(s>0){
             Log.println(Log.ASSERT,"","Successfully inserted bills");

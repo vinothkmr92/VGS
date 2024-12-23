@@ -9,6 +9,15 @@ public class SaleReport {
     private Double Discount;
     private Double SaleAmount;
     private Date billDt;
+    private String paymentMode;
+
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
+    }
 
     public Double getDiscount() {
         return Discount;
