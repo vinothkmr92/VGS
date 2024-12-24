@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.text.Layout;
@@ -19,6 +20,7 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.sewoo.jpos.command.ESCPOS;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
@@ -212,7 +214,7 @@ public class PrinterUtil {
             mPaint.setColor(Color.BLACK);
             if (typeface != null) mPaint.setTypeface(typeface);
             mPaint.setTextSize(textSize);
-            Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
+            Layout.Alignment alignment = Layout.Alignment.ALIGN_CENTER;
             int widthm = Common.RptSize.equals("2") ? 400:500;
             StaticLayout mStaticLayout = new StaticLayout(text, mPaint, widthm, alignment, 0, 0, true);
             int width = mStaticLayout.getWidth();
@@ -226,7 +228,28 @@ public class PrinterUtil {
         catch (Exception ex){
             return  null;
         }
-
+    }
+    Bitmap getTextAsImage(String text, float textSize,Layout.Alignment alignment)  {
+        try{
+            TextPaint mPaint = new TextPaint();
+            mPaint.setColor(Color.BLACK);
+            Typeface typeface = ResourcesCompat.getFont(context,R.font.orienta);
+            Typeface boldTypeface = Typeface.create(typeface,Typeface.BOLD);
+            mPaint.setTypeface(boldTypeface);
+            mPaint.setTextSize(textSize);
+            int widthm = Common.RptSize.equals("2") ? 380:500;
+            StaticLayout mStaticLayout = new StaticLayout(text, mPaint, widthm, alignment, 0, 0, true);
+            int width = mStaticLayout.getWidth();
+            int height = mStaticLayout.getHeight();
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.drawColor(Color.WHITE);
+            mStaticLayout.draw(canvas);
+            return bitmap;
+        }
+        catch (Exception ex){
+            return  null;
+        }
     }
     private  int GetPrinterStatus() {
         int sts = 0;
@@ -264,7 +287,13 @@ public class PrinterUtil {
             }
         }
         if(onlyBill){
-            posPtr.printNormal(ESC+"|cA"+ESC+"|2CCOPY BILL\r\n");
+            Bitmap header = getTextAsImage("BILL-COPY",30, Layout.Alignment.ALIGN_CENTER);
+            if(header!=null){
+                posPtr.printBitmap(header,0);
+            }
+            else {
+                posPtr.printNormal(ESC + "|cA" + ESC + "|2CCOPY BILL\r\n");
+            }
         }
         DecimalFormat formater = new DecimalFormat("#.###");
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
@@ -357,14 +386,23 @@ public class PrinterUtil {
             posPtr.lineFeed(1);
         }
         totalAmt = billAmt-Common.discount;
-        String totalamt = String.format("%.0f",totalAmt);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
         String txttotal = "NET TOTAL: "+totalamt+"/-";
         posPtr.lineFeed(1);
-        if(Common.RptSize.equals("2")){
-            posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|1C"+txttotal+"\n");
+        Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER);
+        if(bp!=null){
+            posPtr.printBitmap(bp,0);
         }
         else {
-            posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+            if(Common.RptSize.equals("2")){
+                posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|1C"+txttotal+"\n");
+            }
+            else {
+                posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+            }
         }
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|cA"+Common.footerMsg+"\n");
@@ -510,7 +548,14 @@ public class PrinterUtil {
         try
         {
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mmaaa", Locale.getDefault());
-            posPtr.printNormal(ESC+"|cA"+ESC+"|2CSALE REPORT\r\n");
+
+            Bitmap header = getTextAsImage("SALE REPORT",30, Layout.Alignment.ALIGN_CENTER);
+            if(header!=null){
+                posPtr.printBitmap(header,0);
+            }
+            else {
+                posPtr.printNormal(ESC+"|cA"+ESC+"|2CSALE REPORT\r\n");
+            }
             posPtr.printNormal("\n");
             posPtr.printNormal(ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
             posPtr.printNormal(ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
@@ -546,12 +591,16 @@ public class PrinterUtil {
                 String line = billno+billDate+amts+"\n";
                 posPtr.printNormal(line);
             }
-            String cashAmt = String.format("%.0f",Common.CashAmt);
-            String cashAmtstr = "CASH AMOUNT: "+cashAmt;
-            String cardAmt = String.format("%.0f",Common.CardAmt);
-            String cardAmtstr = "CARD AMOUNT: "+cardAmt;
-            String upiAmt = String.format("%.0f",Common.UpiAmt);
-            String upiAmtstr = "CARD AMOUNT: "+upiAmt;
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+            formatter.setMaximumFractionDigits(0);
+            String symbol = formatter.getCurrency().getSymbol();
+
+            String cashAmt = formatter.format(Common.CashAmt).replace(symbol,symbol+" ");
+            String cashAmtstr = "CASH: "+cashAmt;
+            String cardAmt = formatter.format(Common.CardAmt).replace(symbol,symbol+" ");
+            String cardAmtstr = "CARD: "+cardAmt;
+            String upiAmt = formatter.format(Common.UpiAmt).replace(symbol,symbol+" ");
+            String upiAmtstr = "UPI: "+upiAmt;
 
             String textSize = "2";
             if(Common.RptSize.equals("2")){
@@ -561,19 +610,46 @@ public class PrinterUtil {
             else {
                 posPtr.printNormal("----------------------------------------------\n");
             }
+            int splitpaymentSize = 20;
             if(Common.CashAmt>0){
-                posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|"+textSize+"C"+cashAmtstr+"\n");
+                Bitmap bp = getTextAsImage(cashAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE);
+                if(bp!=null){
+                    posPtr.printBitmap(bp,0);
+                }
+                else {
+                    posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|"+textSize+"C"+cashAmtstr+"\n");
+                }
             }
             if(Common.CardAmt>0){
-                posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|"+textSize+"C"+cardAmtstr+"\n");
+                Bitmap bp = getTextAsImage(cardAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE);
+                if(bp!=null){
+                    posPtr.printBitmap(bp,0);
+                }
+                else {
+                    posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|"+textSize+"C"+cardAmtstr+"\n");
+                }
             }
             if(Common.UpiAmt>0){
-                posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|"+textSize+"C"+upiAmtstr+"\n");
+                Bitmap bp = getTextAsImage(upiAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE);
+                if(bp!=null){
+                    posPtr.printBitmap(bp,0);
+                }
+                else {
+                    posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|"+textSize+"C"+upiAmtstr+"\n");
+                }
             }
             posPtr.lineFeed(1);
-            String totalamt = String.format("%.0f",totalAmt);
+
+            String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
             String txttotal = "TOTAL AMOUNT: "+totalamt+"/-";
-            posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|"+textSize+"C"+txttotal+"\n");
+
+            Bitmap bp = getTextAsImage(txttotal,28, Layout.Alignment.ALIGN_CENTER);
+            if(bp!=null){
+                posPtr.printBitmap(bp,0);
+            }
+            else {
+                posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|"+textSize+"C"+txttotal+"\n");
+            }
             posPtr.lineFeed(4);
             posPtr.cutPaper();
             if(bluetoothPort!=null){
