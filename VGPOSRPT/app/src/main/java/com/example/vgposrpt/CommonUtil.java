@@ -14,5 +14,6 @@ public class CommonUtil {
     public static Branch selectedBarnch = new Branch(0,"ALL");
     public static String frmDate = "";
     public static String toDate="";
+    public static String printer="";
 
 }

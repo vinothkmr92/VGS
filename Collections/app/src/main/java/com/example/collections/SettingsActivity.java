@@ -186,10 +186,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 dialog.hide();
             }
             if(!result.startsWith("ERROR")){
-                showCustomDialog("Message",result,false);
+                showCustomDialog("Status",result,false);
                 SaveSettings();
             }
             else {
+                result = result.replace("ERROR","");
                 showCustomDialog("Error",result,false);
             }
         }
@@ -202,12 +203,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             Statement st = null;
             try {
 
-                String[] hostwithport = CommonUtil.SQL_SERVER.split(":");
+                String[] hostwithport = strings[0].split(":");
                 if(hostwithport.length<1){
                     status = "ERROR:Please configure valid SQL Server Host.";
                 }
                 else if(!isHostAvailable(hostwithport[0],Integer.parseInt(hostwithport[1]))){
-                    status = "ERROR:"+CommonUtil.SQL_SERVER+" host is unreachable. Please try again Later.";
+                    status = "ERROR:"+strings[0]+" host is unreachable. Please try again Later.";
                 }
                 else {
                     ConnectionClass connectionClass = new ConnectionClass(strings[0],strings[1],strings[2],strings[3]);
@@ -219,8 +220,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         status = "Database Connection Failed.";
                     }
                 }
-
-
             }  catch (Exception e) {
                 //Handle errors for Class.forName
                 //showCustomDialog("Exception",e.getMessage());

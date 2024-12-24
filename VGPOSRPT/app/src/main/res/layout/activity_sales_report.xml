@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/PapayaWhip"
+    android:background="@color/White"
     tools:context=".SalesReportActivity">
     <ScrollView
         android:layout_width="fill_parent"
@@ -251,7 +251,7 @@
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/salesChart"
                 android:layout_width="match_parent"
-                android:layout_height="600dp"
+                android:layout_height="300dp"
                 android:layout_gravity="center"
                 />
         </LinearLayout>

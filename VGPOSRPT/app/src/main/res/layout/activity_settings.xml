@@ -14,56 +14,69 @@
             android:columnCount="2"
             android:layout_gravity="fill"
             >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_columnSpan="2"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:fontFamily="@font/orienta"
-                android:text="SQL SERVER NAME"
-                android:textColor="@color/DarkViolet"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:maxLines="1"
-                android:id="@+id/host"
-                android:textSize="15dp"
-                android:selectAllOnFocus="true"
-                android:layout_gravity="center"
-                android:textColor="@color/black"
-                android:hint="Enter SQL Server Name">
+                android:hint="SQL Server Host">
 
-            </com.google.android.material.textfield.TextInputEditText>
+                <!--this is the actual edit text which takes the input-->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/host"
+                    android:maxLines="1"
+                    android:textColor="@color/DarkBlue"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/orienta"
+                    android:layout_height="wrap_content" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_columnSpan="2"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:padding="5dp"
                 android:fontFamily="@font/orienta"
-                android:text="DATABASE NAME"
-                android:textColor="@color/DarkViolet"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="wrap_content"
+                android:hint="Database Name">
+
+                <!--this is the actual edit text which takes the input-->
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/dbname"
+                    android:maxLines="1"
+                    android:textColor="@color/DarkBlue"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/orienta"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_columnSpan="2"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15dp"
-                android:inputType="text"
-                android:selectAllOnFocus="true"
-                android:layout_gravity="center"
-                android:maxLines="1"
-                android:textColor="@color/black"
-                android:id="@+id/dbname"
-                android:hint="SQL Database Name"/>
+                android:layout_gravity="left"
+                android:id="@+id/printer"
+                android:padding="5dp"
+                android:hint="Bluetooth Printer"
+                android:fontFamily="@font/orienta"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                <AutoCompleteTextView
+                    android:id="@+id/printers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/orienta"
+                    android:inputType="none"></AutoCompleteTextView>
+            </com.google.android.material.textfield.TextInputLayout>
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Test Connection"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:layout_columnSpan="2"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:background="@drawable/baseline_save_24"
                 android:id="@+id/testButton"/>
         </GridLayout>
 </RelativeLayout>

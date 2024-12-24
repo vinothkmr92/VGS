@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.Date
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -22,6 +25,14 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        applicationVariants.all {
+            outputs.all {
+                this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+                val timestamp = SimpleDateFormat("ddMMyyyy_hhmm").format(Date())
+                val apkName = "VGPOS_${timestamp}.apk"
+                outputFileName = apkName
+            }
         }
     }
     compileOptions {

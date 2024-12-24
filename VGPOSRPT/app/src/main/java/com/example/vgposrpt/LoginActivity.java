@@ -24,6 +24,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -151,7 +154,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 showCustomDialog("Warning","Please enter password.");
             }
             else {
-                String val = new DoLogin().execute("").get();
+                new DoLogin().execute("");
             }
 
         }
@@ -172,6 +175,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         protected void onPreExecute() {
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
+            dialog.setTitle("Login");
             dialog.setMessage("Connecting to Server..");
             dialog.show();
             super.onPreExecute();
@@ -182,7 +186,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if(dialog.isShowing()){
                 dialog.hide();
             }
-            Toast.makeText(LoginActivity.this,r,Toast.LENGTH_LONG).show();
             if(isSuccess){
                 new LoadBranches().execute("");
             }
@@ -190,11 +193,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 showCustomDialog("Error",r);
             }
         }
+        public  boolean isHostAvailable(final String host, final int port) {
+            try (final Socket socket = new Socket()) {
+                final InetAddress inetAddress = InetAddress.getByName(host);
+                final InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, port);
+                socket.connect(inetSocketAddress, 5000);
+                return true;
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
 
         @Override
         protected String doInBackground(String... params) {
-            if(userid.trim().equals(""))
-                z = "Please enter Registered Mobile Number";
+            String[] hostwithport = CommonUtil.SQL_SERVER.split(":");
+            if(userid.trim().equals("") || password.trim().equals("")){
+                z = "Please enter valid UserName/Password";
+            }
+            else if(hostwithport.length<1){
+                z = "Please configure valid SQL Server Host.";
+            }
+            else if(!isHostAvailable(hostwithport[0],Integer.parseInt(hostwithport[1]))){
+                z = "Error:"+CommonUtil.SQL_SERVER+" host is unreachable. Please try again Later.";
+            }
             else
             {
                 try {

@@ -260,14 +260,14 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
         PieData data = new PieData(dataSet);
         //Get the chart
 
-        prodChart.setCenterText("Top 4 Products");
+        prodChart.setCenterText("PRODUCTS");
         prodChart.setDrawEntryLabels(false);
         prodChart.setContentDescription("");
-        prodChart.setCenterTextSize(20);
+        prodChart.setCenterTextSize(15);
         //chart.setDrawMarkers(true);
         //pieChart.setMaxHighlightDistance(34);
         //chart.setEntryLabelTextSize(30);
-        prodChart.setHoleRadius(30);
+        prodChart.setHoleRadius(50);
 
         //legend attributes
         Legend legend = prodChart.getLegend();
@@ -300,14 +300,14 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
         PieData data = new PieData(dataSet);
         //Get the chart
 
-        chart.setCenterText("Top 4 Categories");
+        chart.setCenterText("CATEGORY");
         chart.setDrawEntryLabels(false);
         chart.setContentDescription("");
-        chart.setCenterTextSize(20);
+        chart.setCenterTextSize(15);
         //chart.setDrawMarkers(true);
         //pieChart.setMaxHighlightDistance(34);
         //chart.setEntryLabelTextSize(30);
-        chart.setHoleRadius(30);
+        chart.setHoleRadius(50);
 
         //legend attributes
         Legend legend = chart.getLegend();
@@ -382,7 +382,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 if (con == null) {
                     error = "Database Connection Failed.";
                 } else {
-                    String query = String.format("SELECT TOP 4 ROUND(SUM(BP.QUANTITY*BP.PRICE),0) AS PRICE,BP.CATEGORY FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  S.Bill_Date BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT TOP 4 ROUND(SUM(BP.QUANTITY*BP.PRICE),0) AS PRICE,BP.CATEGORY FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  CAST(S.BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){
                         query = query+String.format(" AND BP.BRANCH_CODE=%s ",branchCode);
                     }
@@ -467,7 +467,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 if (con == null) {
                     error = "Database Connection Failed.";
                 } else {
-                    String query = String.format("SELECT TOP 4 BP.PRODUCT_NAME,SUM(BP.QUANTITY) AS QA FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  S.Bill_Date BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT TOP 4 BP.PRODUCT_NAME,SUM(BP.QUANTITY) AS QA FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND s.BRANCH_CODE=bp.BRANCH_CODE AND S.Bill_Date=BP.Bill_Date AND S.Counter_ID = BP.Counter_Id  AND  CAST(S.BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){
                         query = query+String.format(" AND BP.BRANCH_CODE=%s ",branchCode);
                     }

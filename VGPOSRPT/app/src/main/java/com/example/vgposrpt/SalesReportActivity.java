@@ -156,13 +156,18 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                 finish();
                 System.exit(0);
                 return true;
+            case R.id.action_settings:
+                Intent dcpage = new Intent(this,SettingsActivity.class);
+                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(dcpage);
+                return  true;
             case R.id.action_productrpt:
                 CommonUtil.selectedBarnch = GetSelectedBranch();
                 CommonUtil.frmDate = frmDateTextView.getText().toString();
                 CommonUtil.toDate = toDateTextView.getText().toString();
-                Intent dcpage = new Intent(getApplicationContext(),ProductsReportActivity.class);
-                dcpage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(dcpage);
+                Intent dccpage = new Intent(getApplicationContext(),ProductsReportActivity.class);
+                dccpage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(dccpage);
                 return  true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -240,15 +245,15 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
         PieData data = new PieData(dataSet);
         //Get the chart
 
-        chart.setCenterText("Sales Summary");
+        chart.setCenterText("Sales");
         chart.setDrawEntryLabels(false);
         chart.setContentDescription("");
-        chart.setCenterTextSize(20);
+        chart.setCenterTextSize(15);
 
         //chart.setDrawMarkers(true);
         //pieChart.setMaxHighlightDistance(34);
         //chart.setEntryLabelTextSize(30);
-        chart.setHoleRadius(30);
+        chart.setHoleRadius(50);
 
         //legend attributes
         Legend legend = chart.getLegend();
@@ -354,7 +359,6 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
     }
-
     public class GetSales extends AsyncTask<String,String, ArrayList<Sale>>
     {
         String frmDate = frmDateTextView.getText().toString();
@@ -440,7 +444,7 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                 if (con == null) {
                     error = "Database Connection Failed";
                 } else {
-                    String query = String.format("SELECT Bill_No,cast((BILL_DATE + ' ' + TIME) as datetime) as Bill_Date, BILL_AMMOUNT-(BILL_AMMOUNT*(DISCOUNT/100)) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE BILL_DATE BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT Bill_No,cast(BILL_DATE as datetime) as Bill_Date, BILL_AMMOUNT-(BILL_AMMOUNT*(DISCOUNT/100)) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){
                         query = query+String.format(" AND BRANCH_CODE=%s",branchCode);
                     }
