@@ -30,10 +30,10 @@ public class GetPaymentModeDialog extends AppCompatDialogFragment {
         View view = inflater.inflate(R.layout.getpaymentmode,null);
         TextView titleview = new TextView(getActivity());
         titleview.setText("PAYMENT MODE");
-        titleview.setBackgroundColor(Color.WHITE);
+        titleview.setBackgroundColor(Color.BLACK);
         titleview.setPadding(10, 10, 10, 10);
         titleview.setGravity(Gravity.CENTER);
-        titleview.setTextColor(Color.RED);
+        titleview.setTextColor(Color.BLUE);
         titleview.setTypeface(titleview.getTypeface(), Typeface.BOLD);
         titleview.setTextSize(30);
         builder.setView(view)

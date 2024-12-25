@@ -70,6 +70,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             host = (EditText) findViewById(R.id.host);
             dbname= (EditText)findViewById(R.id.dbname);
             testConnection = (Button)findViewById(R.id.testButton);
+            printer = findViewById(R.id.printer);
+            printerselection = findViewById(R.id.printers);
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             String sqlserver = this.getApplicationContext().getString(R.string.SQL_SERVER);
             String dbnamestr = this.getApplicationContext().getString(R.string.SQL_DBNAME);

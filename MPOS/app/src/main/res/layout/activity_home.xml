@@ -1,73 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/PapayaWhip"
+    android:background="@color/Khaki"
     tools:context=".HomeActivity">
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="5dp"
+        android:id="@+id/topB"
+        android:layout_alignParentTop="true"
+        app:cardBackgroundColor="@color/White"
+        android:layout_gravity="center"
+        >
+        <GridLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:columnCount="4"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/billnoTxt"
+                android:layout_gravity="center"
+                android:padding="15dp"
+                android:text="1"
+                android:textColor="@color/colorRed"
+                android:textSize="30dp"
+                android:textStyle="bold"
+                android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/customerInfoTxtView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:drawable/editbox_background"
+                android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+                android:fontFamily="@font/orienta"
+                android:hint="Select Customer"
+                android:padding="10dp"
+                android:textColor="@android:color/black" />
+            <ImageButton
+                android:id="@+id/btnAddMember"
+                android:layout_width="150px"
+                android:layout_height="150px"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_baseline_person_add_24"
+                android:foreground="?android:attr/selectableItemBackground"
+                tools:ignore="TouchTargetSizeCheck"></ImageButton>
+
+            <CheckBox
+                android:id="@+id/isAC"
+                android:layout_gravity="center"
+                android:fontFamily="@font/orienta"
+                android:padding="15dp"
+                android:text="AC"
+                android:textStyle="bold"></CheckBox>
+
+        </GridLayout>
+    </com.google.android.material.card.MaterialCardView>
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topB"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical">
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="5dp"
-                app:cardBackgroundColor="@color/White"
-                android:layout_gravity="center"
-                >
-            <GridLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="fill"
-        android:columnCount="4"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/billnoTxt"
-            android:layout_gravity="center"
-            android:padding="15dp"
-            android:text="1"
-            android:textColor="@color/colorRed"
-            android:textSize="30dp"
-            android:textStyle="bold"
-            android:typeface="monospace" />
-
-        <TextView
-            android:id="@+id/customerInfoTxtView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@android:drawable/editbox_background"
-            android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
-            android:fontFamily="@font/orienta"
-            android:hint="Select Customer"
-            android:padding="10dp"
-            android:textColor="@android:color/black" />
-        <ImageButton
-            android:id="@+id/btnAddMember"
-            android:layout_width="150px"
-            android:layout_height="150px"
-            android:layout_gravity="center"
-            android:background="@drawable/ic_baseline_person_add_24"
-            android:foreground="?android:attr/selectableItemBackground"
-            tools:ignore="TouchTargetSizeCheck"></ImageButton>
-
-        <CheckBox
-            android:id="@+id/isAC"
-            android:layout_gravity="center"
-            android:fontFamily="@font/orienta"
-            android:padding="15dp"
-            android:text="AC"
-            android:textStyle="bold"></CheckBox>
-
-    </GridLayout>
-            </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -80,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="fill"
-        android:layout_marginLeft="10dp"
+        android:padding="10dp"
         android:columnCount="3"
         android:orientation="horizontal">
 
@@ -105,9 +109,9 @@
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
         <Button
             android:id="@+id/scanQR"
-            android:layout_width="80dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/barcode"
+            android:background="@drawable/ic_baseline_qr_code_scanner_24"
             android:foreground="?android:attr/selectableItemBackground"
             tools:ignore="TouchTargetSizeCheck" />
 
@@ -182,21 +186,19 @@
                 app:cardCornerRadius="15dp"
                 app:cardElevation="5dp"
                 app:cardBackgroundColor="@color/White"
-                android:layout_gravity="center"
                 >
             <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:columnCount="4"
+                android:padding="10dp"
             android:orientation="horizontal">
-
             <TextView
                 android:fontFamily="@font/orienta"
                 android:text="TOTAL QTY:  "
                 android:textColor="@color/DarkBlue"
                  />
-
             <TextView
                 android:id="@+id/ttQty"
                 android:fontFamily="@font/orienta"
@@ -280,14 +282,17 @@
                     android:textStyle="bold"
                     android:typeface="monospace" />
             </com.google.android.material.card.MaterialCardView>
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="5dp"
-                android:layout_gravity="center"
-                >
+        </LinearLayout>
+    </ScrollView>
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        >
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -301,7 +306,7 @@
                 android:text="1"
                 android:textColor="@android:color/background_light"
                 android:textSize="@dimen/numericSize"
-                 />
+                />
 
             <Button
                 android:id="@+id/_2"
@@ -310,7 +315,7 @@
                 android:text="2"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="@dimen/numericSize"
-                 />
+                />
 
             <Button
                 android:id="@+id/_3"
@@ -319,7 +324,7 @@
                 android:text="3"
                 android:textColor="@android:color/background_light"
                 android:textSize="@dimen/numericSize"
-                 />
+                />
 
             <Button
                 android:id="@+id/_clr"
@@ -329,7 +334,7 @@
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="@dimen/numericSize"
                 android:layout_gravity="fill"
-                 />
+                />
 
             <Button
                 android:id="@+id/_4"
@@ -338,7 +343,7 @@
                 android:text="4"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="@dimen/numericSize"
-                 />
+                />
 
             <Button
                 android:id="@+id/_5"
@@ -347,7 +352,7 @@
                 android:text="5"
                 android:textColor="@android:color/background_light"
                 android:textSize="@dimen/numericSize"
-                 />
+                />
 
             <Button
                 android:id="@+id/_6"
@@ -356,7 +361,7 @@
                 android:text="6"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="@dimen/numericSize"
-                 />
+                />
 
             <Button
                 android:id="@+id/_dot"
@@ -367,7 +372,7 @@
                 android:textSize="@dimen/numericSize"
                 android:textAlignment="center"
                 android:layout_gravity="fill"
-                 />
+                />
 
             <Button
                 android:id="@+id/_7"
@@ -376,7 +381,7 @@
                 android:text="7"
                 android:textColor="@android:color/background_light"
                 android:textSize="@dimen/numericSize"
-                 />
+                />
 
             <Button
                 android:id="@+id/_8"
@@ -385,7 +390,7 @@
                 android:text="8"
                 android:textColor="@color/design_default_color_primary"
                 android:textSize="@dimen/numericSize"
-                 />
+                />
 
             <Button
                 android:id="@+id/_9"
@@ -394,7 +399,7 @@
                 android:text="9"
                 android:textColor="@android:color/background_light"
                 android:textSize="@dimen/numericSize"
-                 />
+                />
 
             <Button
                 android:id="@+id/_0"
@@ -405,7 +410,7 @@
                 android:textSize="@dimen/numericSize"
                 android:textAlignment="center"
                 android:layout_gravity="fill"
-                 />
+                />
 
             <Button
                 android:id="@+id/menu"
@@ -423,7 +428,7 @@
                 android:text="CANCEL"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
-                 />
+                />
 
             <Button
                 android:id="@+id/print"
@@ -434,7 +439,7 @@
                 android:text="SAVE"
                 android:textColor="@android:color/background_light"
                 android:textSize="20dp"
-                 />
+                />
 
             <Button
                 android:id="@+id/enter"
@@ -472,7 +477,5 @@
                 android:visibility="gone"
                 />
         </GridLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</RelativeLayout>

@@ -26,7 +26,7 @@ android {
                         // on below line we are adding version name to
                         // our .apk file along with the app name
                         def date = new Date()
-                        def formated = date.format("ddMMyyyy_hhmm")
+                        def formated = date.format("ddMMyyyy_hhmm_aa")
                         def name = "MPOS_${formated}.apk"
                         // on below line we are setting the
                         // outputFile Name to our apk file

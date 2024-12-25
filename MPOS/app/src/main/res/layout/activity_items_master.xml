@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/PapayaWhip"
+    android:background="@color/Khaki"
     tools:context=".ItemsMasterActivity">
     <GridLayout
         android:layout_width="fill_parent"
@@ -18,7 +18,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
             android:text="ITEM NO"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/DarkBlue"
             android:textStyle="bold" />
 
         <EditText
@@ -30,9 +30,9 @@
             android:inputType="number"></EditText>
         <Button
             android:id="@+id/scanQR"
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/barcode"
+            android:background="@drawable/ic_baseline_qr_code_scanner_24"
             android:foreground="?android:attr/selectableItemBackground"
             tools:ignore="TouchTargetSizeCheck" />
     </GridLayout>
@@ -61,7 +61,7 @@
         tools:ignore="MissingConstraints">
         <TextView
             android:text="ITEM NO"
-            android:textColor="@android:color/black"
+            android:textColor="@color/DarkBlue"
              />
 
         <TextView
@@ -74,7 +74,7 @@
 
         <TextView
             android:text="ITEM NAME"
-            android:textColor="@android:color/black"
+            android:textColor="@color/DarkBlue"
              />
 
         <TextView
@@ -87,7 +87,7 @@
 
         <TextView
             android:text="PRICE"
-            android:textColor="@android:color/black"
+            android:textColor="@color/DarkBlue"
              />
 
         <TextView
@@ -99,7 +99,7 @@
             android:textStyle="bold" />
         <TextView
             android:text="STOCK"
-            android:textColor="@android:color/black"
+            android:textColor="@color/DarkBlue"
              />
 
         <TextView
@@ -111,7 +111,7 @@
             android:textStyle="bold" />
         <TextView
             android:text="SPECIAL PRICE"
-            android:textColor="@android:color/black"
+            android:textColor="@color/DarkBlue"
              />
 
         <TextView

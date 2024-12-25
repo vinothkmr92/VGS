@@ -156,6 +156,10 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                 finish();
                 System.exit(0);
                 return true;
+            case R.id.salesnew:
+                Intent salePage = new Intent(this,SaleActivity.class);
+                startActivity(salePage);
+                return true;
             case R.id.action_settings:
                 Intent dcpage = new Intent(this,SettingsActivity.class);
                 dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

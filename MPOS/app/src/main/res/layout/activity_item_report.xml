@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:background="@color/PapayaWhip"
+    android:background="@color/Khaki"
     android:orientation="horizontal"
     android:theme="@style/Theme.AppCompat.NoActionBar"
     tools:context=".ItemReport">
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:padding="10dp"
         android:orientation="vertical">
     <GridLayout
         android:layout_width="fill_parent"
@@ -83,7 +84,7 @@
             android:buttonTint="#307FF1"
             android:fontFamily="@font/orienta"
             android:text="Stocks"
-            android:textColor="#307FF1"></CheckBox>
+            android:textColor="@color/DarkBlue"></CheckBox>
         <ImageButton
             android:id="@+id/btnrptprint"
             android:layout_width="100px"
