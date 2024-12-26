@@ -7,7 +7,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/saleItem"
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             app:cardCornerRadius="15dp"
@@ -20,7 +20,7 @@
                 android:columnCount="4"
                 android:background="@color/white"
                 android:orientation="horizontal"
-                android:padding="10dp"
+                android:padding="2dp"
                 >
                 <TextView
                     android:id="@+id/saleItemName"
@@ -35,30 +35,44 @@
                     android:textSize="15dp"
                     android:maxLines="1"
                     android:textStyle="bold"></TextView>
+                <TextView
+                    android:id="@+id/saleItemRate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/orienta"
+                    android:text="399"
+                    android:textColor="@color/DarkGreen"
+                    android:textSize="25dp"
+                    android:gravity="left"
+                    android:textAlignment="gravity"
+                    android:textStyle="bold"></TextView>
 
                 <ImageButton
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:id="@+id/btnRemoveItem"
+                    android:layout_gravity="right"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:background="@drawable/baseline_remove_circle_outline_24">
                 </ImageButton>
 
                 <TextView
-                    android:id="@+id/saleItemRate"
-                    android:layout_width="80dp"
+                    android:id="@+id/saleItemQty"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnSpan="2"
                     android:fontFamily="@font/orienta"
-                    android:text="399"
-                    android:textColor="@color/DarkGreen"
-                    android:textSize="20dp"
-                    android:textAlignment="center"
+                    android:text="0"
+                    android:textColor="@color/Black"
+                    android:textSize="15dp"
+                    android:gravity="center"
+                    android:textAlignment="gravity"
                     android:textStyle="bold"></TextView>
 
                 <ImageButton
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:id="@+id/btnAddItem"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:background="@drawable/baseline_add_circle_outline_24">
                 </ImageButton>
 

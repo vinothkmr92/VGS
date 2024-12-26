@@ -22,8 +22,8 @@
                 android:layout_gravity="center"
                 android:columnCount="2"
                 android:orientation="horizontal"
-                android:background="@color/LightSalmon"
-                android:padding="20dp"
+                android:background="@color/white"
+                android:padding="5dp"
                 >
 
                 <TextView

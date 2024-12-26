@@ -1,8 +1,10 @@
 package com.example.vgposrpt;
 
+import java.io.Serializable;
+
 import kotlin.jvm.internal.PropertyReference0Impl;
 
-public class Product {
+public class Product implements Serializable {
     private  String ProductName;
     private  Double Price;
     private  Integer Qty;
