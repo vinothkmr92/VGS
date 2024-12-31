@@ -8,7 +8,7 @@ public class BillDetails {
     public String counter = "CD1";
     public String billUser;
     public Double BillAmount;
-    public Double CashAmt;
-    public Double CardAmt;
-    public Double UpiAmt;
+    public Double CashAmt=0d;
+    public Double CardAmt=0d;
+    public Double UpiAmt=0d;
 }

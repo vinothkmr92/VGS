@@ -13,6 +13,7 @@
         android:gravity="center"
         android:orientation="vertical"
         >
+
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,18 +22,24 @@
         android:columnCount="1"
         android:layout_gravity="center"
         >
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/orienta"
             android:text="Welcome"
-            android:layout_marginBottom="80dp"
+            android:layout_marginBottom="50dp"
             android:textAlignment="center"
             android:textColor="@color/DarkViolet"
             android:textSize="40dp">
         </TextView>
+        <ImageView android:layout_gravity="center"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:background="@drawable/pos"
+            android:layout_marginBottom="50dp"
+            >
+        </ImageView>
 
         <EditText
             android:layout_width="wrap_content"
@@ -44,6 +51,7 @@
             android:hint="User Name"
             android:textSize="30dp"
             android:textAlignment="center"
+            android:textColorHint="@color/DarkBlue"
             android:textColor="@color/BlueViolet">
         </EditText>
         <EditText
@@ -54,6 +62,7 @@
             android:inputType="textPassword"
             android:id="@+id/password"
             android:textAlignment="center"
+            android:textColorHint="@color/DarkBlue"
             android:textSize="30dp"
             android:hint="Password"
             android:textColor="@color/BlueViolet"
@@ -64,10 +73,11 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/loginbtn"
             android:layout_width="wrap_content"
-            android:layout_height="78dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:foreground="?android:attr/selectableItemBackground"
             android:background="@drawable/baseline_login_24"></com.google.android.material.button.MaterialButton>
     </GridLayout>
+
     </LinearLayout>
 </RelativeLayout>
