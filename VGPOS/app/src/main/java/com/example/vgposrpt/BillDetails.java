@@ -7,8 +7,8 @@ public class BillDetails {
     public Integer branchCode;
     public String counter = "CD1";
     public String billUser;
-    public Double BillAmount;
-    public Double CashAmt=0d;
-    public Double CardAmt=0d;
-    public Double UpiAmt=0d;
+    public Integer BillAmount;
+    public Integer CashAmt=0;
+    public Integer CardAmt=0;
+    public Integer UpiAmt=0;
 }
