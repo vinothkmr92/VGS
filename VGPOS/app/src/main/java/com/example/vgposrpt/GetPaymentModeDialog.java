@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.core.content.res.ResourcesCompat;
 
 public class GetPaymentModeDialog extends AppCompatDialogFragment {
     ImageButton btnCash;
@@ -29,10 +30,10 @@ public class GetPaymentModeDialog extends AppCompatDialogFragment {
         View view = inflater.inflate(R.layout.getpaymentmode,null);
         TextView titleview = new TextView(getActivity());
         titleview.setText("PAYMENT MODE");
-        titleview.setBackgroundColor(Color.BLACK);
+        titleview.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.SeaGreen, null));
         titleview.setPadding(10, 10, 10, 10);
         titleview.setGravity(Gravity.CENTER);
-        titleview.setTextColor(Color.BLUE);
+        titleview.setTextColor(Color.WHITE);
         titleview.setTypeface(titleview.getTypeface(), Typeface.BOLD);
         titleview.setTextSize(30);
         builder.setView(view)
