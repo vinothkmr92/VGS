@@ -35,7 +35,7 @@ public class GetPaymentModeDialog extends AppCompatDialogFragment {
         titleview.setGravity(Gravity.CENTER);
         titleview.setTextColor(Color.WHITE);
         titleview.setTypeface(titleview.getTypeface(), Typeface.BOLD);
-        titleview.setTextSize(30);
+        titleview.setTextSize(35);
         builder.setView(view)
                 .setCustomTitle(titleview);
         btnCash = view.findViewById(R.id.btnCash);
