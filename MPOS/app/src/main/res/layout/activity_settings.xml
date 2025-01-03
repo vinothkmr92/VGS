@@ -129,8 +129,14 @@
                     android:text="Receipt Size"
                     android:textColor="@color/DarkBlue"
                     android:textStyle="bold"></TextView>
-
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="4"
+                    android:layout_gravity="center">
                 <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:id="@+id/radiobtn2Inch"
                     android:checked="false"
                     android:fontFamily="@font/orienta"
@@ -138,6 +144,8 @@
                     android:textStyle="bold"></RadioButton>
 
                 <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:id="@+id/radiobtn3Inch"
                     android:checked="false"
                     android:fontFamily="@font/orienta"
@@ -145,11 +153,14 @@
                     android:textStyle="bold"></RadioButton>
 
                 <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:id="@+id/radiobtn4Inch"
                     android:checked="false"
                     android:fontFamily="@font/orienta"
                     android:text="4 inch"
                     android:textStyle="bold"></RadioButton>
+                </LinearLayout>
             </GridLayout>
 
 
@@ -167,14 +178,17 @@
             android:layout_height="wrap_content"
             android:columnCount="4"
             android:padding="8dp">
-            <CheckBox
+            <Switch
                 android:id="@+id/includeMRP"
                 android:layout_columnSpan="4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:fontFamily="@font/orienta"
                 android:text="Include MRP in Receipt"
                 android:textColor="@color/DarkBlue"
-                android:textStyle="bold|italic"></CheckBox>
+                android:textStyle="bold|italic">
+            </Switch>
 
             <TextView
                 android:id="@+id/txtViewIPAddress"
@@ -205,15 +219,17 @@
             android:columnCount="4"
             android:padding="8dp">
 
-            <CheckBox
+            <Switch
                 android:id="@+id/enableKOT"
                 android:layout_columnSpan="4"
                 android:checked="false"
                 android:fontFamily="@font/orienta"
                 android:textColor="@color/DarkBlue"
                 android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:text="Print KOT"
-                android:textStyle="bold|italic"></CheckBox>
+                android:textStyle="bold|italic"></Switch>
 
             <TextView
                 android:id="@+id/txtViewIPAddressKOT"
@@ -285,13 +301,13 @@
                 android:fontFamily="@font/orienta"
                 android:inputType="none"
                 android:textIsSelectable="true"></EditText>
-            <CheckBox android:id="@+id/checkBoxMultiLanguage"
-                android:layout_width="wrap_content"
+            <Switch android:id="@+id/checkBoxMultiLanguage"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_columnSpan="4"
                 android:textColor="@color/DarkBlue"
                 android:layout_gravity="center"
-                android:text="Multi-Language"></CheckBox>
+                android:text="Multi-Language for Printing"></Switch>
         </GridLayout>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView

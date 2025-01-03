@@ -280,10 +280,10 @@
                     android:layout_height="wrap_content"
                     android:text="₹ 0"
                     android:textAlignment="center"
-                    android:textColor="@color/DarkMagenta"
-                    android:textSize="40dp"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="35dp"
                     android:textStyle="bold"
-                    android:typeface="monospace" />
+                    android:fontFamily="@font/orienta" />
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </ScrollView>

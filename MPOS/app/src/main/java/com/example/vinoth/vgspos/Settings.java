@@ -28,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,11 +90,11 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     EditText editTextbillcopies;
     EditText editTextkotprinterip;
     DatabaseHelper dbHelper;
-    CheckBox enablekot;
+    Switch enablekot;
     TextView rptsizetextview;
     Spinner spinnerbluetothDevice;
     Button saveBtn;
-    CheckBox checkBoxIncludeMRP;
+    Switch checkBoxIncludeMRP;
     Button loadPictureBtn;
     ImageView imageView;
     EditText editTextaddressline;
@@ -101,7 +102,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     ArrayList<String> bluethootnamelist;
     ImageButton btnclerlogo;
     EditText deviceidView;
-    CheckBox multilang;
+    Switch multilang;
     private MySharedPreferences sharedpreferences;
     private BluetoothAdapter mBluetoothAdapter = null;
     private Dialog progressBar;
@@ -126,10 +127,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         spinnerbluetothDevice = (Spinner) findViewById(R.id.bltDevice);
         txtviewkotprinter = (TextView)findViewById(R.id.txtViewIPAddressKOT);
         editTextkotprinterip = (EditText) findViewById(R.id.KOTprinterIP);
-        enablekot = (CheckBox) findViewById(R.id.enableKOT);
+        enablekot = findViewById(R.id.enableKOT);
         editTextbillcopies = (EditText)findViewById(R.id.billcopies);
         editTextaddressline = (EditText)findViewById(R.id.addressMsg);
-        checkBoxIncludeMRP = (CheckBox)findViewById(R.id.includeMRP);
+        checkBoxIncludeMRP = findViewById(R.id.includeMRP);
         loadPictureBtn = (Button)findViewById(R.id.buttonLoadPicture);
         imageView = (ImageView)findViewById(R.id.imgView);
         deviceidView = (EditText)findViewById(R.id.deviceid);
@@ -179,12 +180,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         radioButtonBluetooth.setChecked(false);
         radioButtonWifi.setChecked(true);
-        txtViewBluetooth.setVisibility(View.INVISIBLE);
-        spinnerbluetothDevice.setVisibility(View.INVISIBLE);
-        rptsizetextview.setVisibility(View.INVISIBLE);
-        radioButton2Inch.setVisibility(View.INVISIBLE);
-        radioButton3Inch.setVisibility(View.INVISIBLE);
-        radioButton4Inch.setVisibility(View.INVISIBLE);
+        txtViewBluetooth.setVisibility(View.GONE);
+        spinnerbluetothDevice.setVisibility(View.GONE);
+        rptsizetextview.setVisibility(View.GONE);
+        radioButton2Inch.setVisibility(View.GONE);
+        radioButton3Inch.setVisibility(View.GONE);
+        radioButton4Inch.setVisibility(View.GONE);
         saveBtn = (Button) findViewById(R.id.btnSave);
         radioButton2Inch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,7 +193,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 if(radioButton2Inch.isChecked()){
                     radioButton3Inch.setChecked(false);
                     radioButton4Inch.setChecked(false);
-                    checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
+                    checkBoxIncludeMRP.setVisibility(View.GONE);
                 }
             }
         });
@@ -205,7 +206,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     radioButton2Inch.setChecked(false);
                 }
                 else{
-                    checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
+                    checkBoxIncludeMRP.setVisibility(View.GONE);
                 }
             }
         });
@@ -218,7 +219,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     radioButton3Inch.setChecked(false);
                 }
                 else{
-                    checkBoxIncludeMRP.setVisibility(View.INVISIBLE);
+                    checkBoxIncludeMRP.setVisibility(View.GONE);
                 }
             }
         });
@@ -228,12 +229,12 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     radioButtonBluetooth.setChecked(false);
-                    txtViewBluetooth.setVisibility(View.INVISIBLE);
-                    spinnerbluetothDevice.setVisibility(View.INVISIBLE);
-                    rptsizetextview.setVisibility(View.INVISIBLE);
-                    radioButton2Inch.setVisibility(View.INVISIBLE);
-                    radioButton3Inch.setVisibility(View.INVISIBLE);
-                    radioButton4Inch.setVisibility(View.INVISIBLE);
+                    txtViewBluetooth.setVisibility(View.GONE);
+                    spinnerbluetothDevice.setVisibility(View.GONE);
+                    rptsizetextview.setVisibility(View.GONE);
+                    radioButton2Inch.setVisibility(View.GONE);
+                    radioButton3Inch.setVisibility(View.GONE);
+                    radioButton4Inch.setVisibility(View.GONE);
                 }
                 else{
                     txtViewBluetooth.setVisibility(View.VISIBLE);
@@ -250,10 +251,10 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                  if(isChecked){
                      radioButtonWifi.setChecked(false);
-                     txtViewPrinterIP.setVisibility(View.INVISIBLE);
-                     editTextPrinterIP.setVisibility(View.INVISIBLE);
-                     txtviewkotprinter.setVisibility(View.INVISIBLE);
-                     editTextkotprinterip.setVisibility(View.INVISIBLE);
+                     txtViewPrinterIP.setVisibility(View.GONE);
+                     editTextPrinterIP.setVisibility(View.GONE);
+                     txtviewkotprinter.setVisibility(View.GONE);
+                     editTextkotprinterip.setVisibility(View.GONE);
                  }
                  else{
                      txtViewPrinterIP.setVisibility(View.VISIBLE);
@@ -286,18 +287,18 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         if(isWifi.equalsIgnoreCase("YES")){
             radioButtonWifi.setChecked(true);
             radioButtonBluetooth.setChecked(false);
-            txtViewBluetooth.setVisibility(View.INVISIBLE);
-            spinnerbluetothDevice.setVisibility(View.INVISIBLE);
-            rptsizetextview.setVisibility(View.INVISIBLE);
-            radioButton2Inch.setVisibility(View.INVISIBLE);
-            radioButton3Inch.setVisibility(View.INVISIBLE);
-            radioButton4Inch.setVisibility(View.INVISIBLE);
+            txtViewBluetooth.setVisibility(View.GONE);
+            spinnerbluetothDevice.setVisibility(View.GONE);
+            rptsizetextview.setVisibility(View.GONE);
+            radioButton2Inch.setVisibility(View.GONE);
+            radioButton3Inch.setVisibility(View.GONE);
+            radioButton4Inch.setVisibility(View.GONE);
         }
         else{
             radioButtonWifi.setChecked(false);
             radioButtonBluetooth.setChecked(true);
-            txtViewPrinterIP.setVisibility(View.INVISIBLE);
-            editTextPrinterIP.setVisibility(View.INVISIBLE);
+            txtViewPrinterIP.setVisibility(View.GONE);
+            editTextPrinterIP.setVisibility(View.GONE);
         }
         saveBtn.setOnClickListener(this);
         btnclerlogo.setOnClickListener(this);

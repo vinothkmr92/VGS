@@ -149,7 +149,14 @@ public class PrinterUtil {
         if(onlyBill){
             posPtr.printNormal(ESC+"|cA"+ESC+"|2CCOPY BILL\r\n");
         }
-        posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
+
+        Bitmap header = getTextAsImage(Common.headerMeg,30, Layout.Alignment.ALIGN_CENTER,null);
+        if(header!=null){
+            posPtr.printBitmap(header,0);
+        }
+        else {
+            posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
+        }
         posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
         posPtr.printNormal(ESC+"|lABILL NO  : "+Common.billNo+"\n");
@@ -189,19 +196,42 @@ public class PrinterUtil {
             posPtr.lineFeed(1);
         }
         posPtr.printNormal("----------------------------------------------\n");
-        String totalamt = String.format("%.0f",totalAmt);
-        String mrptotalStr = String.format("%.0f",mrpTotalAmt);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
+        String mrptotalStr = formatter.format(mrpTotalAmt).replace(symbol,symbol+" ");
         discountAmt = mrpTotalAmt-totalAmt;
-        String discountAmtStr = formater.format(discountAmt);
-        String txttotal = "TOTAL: "+totalamt+"/-";
-        String mrptxt = "MRP TOTAL: "+mrptotalStr+"/-";
-        String discountTxt = "DISCOUNT AMT: "+discountAmtStr+"/-";
+        String discountAmtStr = formatter.format(discountAmt).replace(symbol,symbol+" ");
+        String txttotal = "Grand Total  "+totalamt+"/-";
+        String mrptxt = "MRP Total  "+mrptotalStr;
+        String discountTxt = "Discount Amt  "+discountAmtStr;
         posPtr.lineFeed(1);
-        posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+        Typeface typeface = ResourcesCompat.getFont(context,R.font.orienta);
+        Bitmap mbp = getTextAsImage(mrptxt,25, Layout.Alignment.ALIGN_NORMAL,typeface);
+        if(mbp!=null){
+            posPtr.printBitmap(mbp,0);
+        }
+        else {
+            posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+mrptxt+"\n");
+        }
+        if(discountAmt>0){
+            Bitmap dbp = getTextAsImage(discountTxt,25, Layout.Alignment.ALIGN_NORMAL,typeface);
+            if(dbp!=null){
+                posPtr.printBitmap(dbp,0);
+            }
+            else {
+                posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+discountTxt+"\n");
+            }
+        }
         posPtr.lineFeed(1);
-        posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+mrptxt+"\n");
-        posPtr.lineFeed(1);
-        posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+discountTxt+"\n");
+        Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER,null);
+        if(bp!=null){
+            posPtr.printBitmap(bp,0);
+        }
+        else {
+            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+        }
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|cA"+Common.footerMsg+"\n");
         posPtr.lineFeed(5);
@@ -214,8 +244,8 @@ public class PrinterUtil {
             mPaint.setColor(Color.BLACK);
             if (typeface != null) mPaint.setTypeface(typeface);
             mPaint.setTextSize(textSize);
-            Layout.Alignment alignment = Layout.Alignment.ALIGN_CENTER;
-            int widthm = Common.RptSize.equals("2") ? 400:500;
+            Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
+            int widthm = Common.RptSize.equals("2") ? 400:600;
             StaticLayout mStaticLayout = new StaticLayout(text, mPaint, widthm, alignment, 0, 0, true);
             int width = mStaticLayout.getWidth();
             int height = mStaticLayout.getHeight();
@@ -229,15 +259,20 @@ public class PrinterUtil {
             return  null;
         }
     }
-    Bitmap getTextAsImage(String text, float textSize,Layout.Alignment alignment)  {
+    Bitmap getTextAsImage(String text, float textSize,Layout.Alignment alignment,Typeface tp)  {
         try{
             TextPaint mPaint = new TextPaint();
             mPaint.setColor(Color.BLACK);
-            Typeface typeface = ResourcesCompat.getFont(context,R.font.orienta);
-            Typeface boldTypeface = Typeface.create(typeface,Typeface.BOLD);
-            mPaint.setTypeface(boldTypeface);
+            if(tp==null){
+                Typeface typeface = ResourcesCompat.getFont(context,R.font.orienta);
+                Typeface boldTypeface = Typeface.create(typeface,Typeface.BOLD);
+                mPaint.setTypeface(boldTypeface);
+            }
+            else {
+                mPaint.setTypeface(tp);
+            }
             mPaint.setTextSize(textSize);
-            int widthm = Common.RptSize.equals("2") ? 380:500;
+            int widthm = Common.RptSize.equals("2") ? 380:600;
             StaticLayout mStaticLayout = new StaticLayout(text, mPaint, widthm, alignment, 0, 0, true);
             int width = mStaticLayout.getWidth();
             int height = mStaticLayout.getHeight();
@@ -287,7 +322,7 @@ public class PrinterUtil {
             }
         }
         if(onlyBill){
-            Bitmap header = getTextAsImage("BILL-COPY",30, Layout.Alignment.ALIGN_CENTER);
+            Bitmap header = getTextAsImage("BILL-COPY",30, Layout.Alignment.ALIGN_CENTER,null);
             if(header!=null){
                 posPtr.printBitmap(header,0);
             }
@@ -296,7 +331,14 @@ public class PrinterUtil {
             }
         }
         DecimalFormat formater = new DecimalFormat("#.###");
-        posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
+        Bitmap header = getTextAsImage(Common.headerMeg,30, Layout.Alignment.ALIGN_CENTER,null);
+        if(header!=null){
+            posPtr.printBitmap(header,0);
+        }
+        else {
+            posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
+        }
+
         posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
         posPtr.printNormal(ESC+"|lABILL NO  : "+Common.billNo+"\n");
@@ -365,13 +407,17 @@ public class PrinterUtil {
         else {
             posPtr.printNormal("----------------------------------------------\n");
         }
+        Integer totalItems = Common.itemsCarts.size();
+        Double totalQty = Common.itemsCarts.stream().mapToDouble(c->c.getQty()).sum();
+        posPtr.printNormal("Total Items: "+totalItems+"\n");
+        posPtr.printNormal("Total Qty  : "+formater.format(totalQty)+"\n");
         if(Common.discount>0){
             String tt = String.format("%.0f",billAmt);
             tt = StringUtils.leftPad(tt,6);
             String discount = "(-)"+formater.format(Common.discount);
             discount = StringUtils.leftPad(discount,6);
-            String ttstring = "TOTAL:";
-            String discstring = "DISCOUNT:";
+            String ttstring = "Sub Total:";
+            String discstring = "Discount:";
             if(Common.RptSize.equals("2")){
 
                 ttstring = StringUtils.leftPad(ttstring,26);
@@ -383,16 +429,16 @@ public class PrinterUtil {
             }
             posPtr.printNormal(ttstring+tt+"\n");
             posPtr.printNormal(discstring+discount+"\n");
-            posPtr.lineFeed(1);
+            //posPtr.lineFeed(1);
         }
         totalAmt = billAmt-Common.discount;
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
         String symbol = formatter.getCurrency().getSymbol();
         String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
-        String txttotal = "NET TOTAL: "+totalamt+"/-";
+        String txttotal = "Grand Total  "+totalamt+"/-";
         posPtr.lineFeed(1);
-        Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER);
+        Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER,null);
         if(bp!=null){
             posPtr.printBitmap(bp,0);
         }
@@ -549,7 +595,7 @@ public class PrinterUtil {
         {
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mmaaa", Locale.getDefault());
 
-            Bitmap header = getTextAsImage("SALE REPORT",30, Layout.Alignment.ALIGN_CENTER);
+            Bitmap header = getTextAsImage("SALE REPORT",30, Layout.Alignment.ALIGN_CENTER,null);
             if(header!=null){
                 posPtr.printBitmap(header,0);
             }
@@ -611,8 +657,9 @@ public class PrinterUtil {
                 posPtr.printNormal("----------------------------------------------\n");
             }
             int splitpaymentSize = 20;
+            Typeface typeface = ResourcesCompat.getFont(context,R.font.orienta);
             if(Common.CashAmt>0){
-                Bitmap bp = getTextAsImage(cashAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE);
+                Bitmap bp = getTextAsImage(cashAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE,typeface);
                 if(bp!=null){
                     posPtr.printBitmap(bp,0);
                 }
@@ -621,7 +668,7 @@ public class PrinterUtil {
                 }
             }
             if(Common.CardAmt>0){
-                Bitmap bp = getTextAsImage(cardAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE);
+                Bitmap bp = getTextAsImage(cardAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE,typeface);
                 if(bp!=null){
                     posPtr.printBitmap(bp,0);
                 }
@@ -630,7 +677,7 @@ public class PrinterUtil {
                 }
             }
             if(Common.UpiAmt>0){
-                Bitmap bp = getTextAsImage(upiAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE);
+                Bitmap bp = getTextAsImage(upiAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE,typeface);
                 if(bp!=null){
                     posPtr.printBitmap(bp,0);
                 }
@@ -643,7 +690,7 @@ public class PrinterUtil {
             String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
             String txttotal = "TOTAL AMOUNT: "+totalamt+"/-";
 
-            Bitmap bp = getTextAsImage(txttotal,28, Layout.Alignment.ALIGN_CENTER);
+            Bitmap bp = getTextAsImage(txttotal,28, Layout.Alignment.ALIGN_CENTER,null);
             if(bp!=null){
                 posPtr.printBitmap(bp,0);
             }

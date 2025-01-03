@@ -116,7 +116,7 @@ public class PrinterUtil {
         catch(IOException e)
         {
             e.printStackTrace();
-            Toast.makeText(context,"Error: "+e.getMessage(),Toast.LENGTH_LONG);
+            Toast.makeText(context,"Error: "+e.getMessage(),Toast.LENGTH_LONG).show();
         }
         return 0;
     }
@@ -163,27 +163,56 @@ public class PrinterUtil {
             price = StringUtils.leftPad(price,10);
             amts = StringUtils.leftPad(amts,10);
             String line = qty+mrp+price+amts+"\n";
-            Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
-            if(xb!=null){
-                posPtr.printBitmap(xb,0);
+            if(CommonUtil.MultiLang){
+                Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
+                if(xb!=null){
+                    posPtr.printBitmap(xb,0);
+                }
+                else {
+                    posPtr.printNormal(name+"\n");
+                }
+            }
+            else {
+                posPtr.printNormal(name+"\n");
             }
             posPtr.printNormal(line);
-            posPtr.lineFeed(1);
         }
         posPtr.printNormal("----------------------------------------------\n");
-        String totalamt = String.format("%.0f",totalAmt);
-        String mrptotalStr = String.format("%.0f",mrpTotalAmt);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
+        String mrptotalStr = formatter.format(mrpTotalAmt).replace(symbol,symbol+" ");
         discountAmt = mrpTotalAmt-totalAmt;
-        String discountAmtStr = formater.format(discountAmt);
-        String txttotal = "TOTAL: "+totalamt+"/-";
-        String mrptxt = "MRP TOTAL: "+mrptotalStr+"/-";
-        String discountTxt = "DISCOUNT AMT: "+discountAmtStr+"/-";
+        String discountAmtStr = formatter.format(discountAmt).replace(symbol,symbol+" ");
+        String txttotal = "Grand Total  "+totalamt+"/-";
+        String mrptxt = "MRP Total  "+mrptotalStr;
+        String discountTxt = "Discount Amt  "+discountAmtStr;
         posPtr.lineFeed(1);
-        posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+        Bitmap mbp = getTextAsImage(mrptxt,25, Layout.Alignment.ALIGN_NORMAL);
+        if(mbp!=null){
+            posPtr.printBitmap(mbp,0);
+        }
+        else {
+            posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+mrptxt+"\n");
+        }
+        if(discountAmt>0){
+            Bitmap dbp = getTextAsImage(discountTxt,25, Layout.Alignment.ALIGN_NORMAL);
+            if(dbp!=null){
+                posPtr.printBitmap(dbp,0);
+            }
+            else {
+                posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+discountTxt+"\n");
+            }
+        }
         posPtr.lineFeed(1);
-        posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+mrptxt+"\n");
-        posPtr.lineFeed(1);
-        posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+discountTxt+"\n");
+        Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER);
+        if(bp!=null){
+            posPtr.printBitmap(bp,0);
+        }
+        else {
+            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+        }
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|cA"+CommonUtil.ReceiptFooter+"\n");
         posPtr.lineFeed(5);
@@ -196,8 +225,8 @@ public class PrinterUtil {
             mPaint.setColor(Color.BLACK);
             if (typeface != null) mPaint.setTypeface(typeface);
             mPaint.setTextSize(textSize);
-            Layout.Alignment alignment = Layout.Alignment.ALIGN_CENTER;
-            int widthm = CommonUtil.ReceiptSize.equals("2") ? 400:500;
+            Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
+            int widthm = CommonUtil.ReceiptSize.equals("2") ? 400:600;
             StaticLayout mStaticLayout = new StaticLayout(text, mPaint, widthm, alignment, 0, 0, true);
             int width = mStaticLayout.getWidth();
             int height = mStaticLayout.getHeight();
@@ -219,7 +248,7 @@ public class PrinterUtil {
             Typeface boldTypeface = Typeface.create(typeface,Typeface.BOLD);
             mPaint.setTypeface(boldTypeface);
             mPaint.setTextSize(textSize);
-            int widthm = CommonUtil.ReceiptSize.equals("2") ? 380:500;
+            int widthm = CommonUtil.ReceiptSize.equals("2") ? 380:600;
             StaticLayout mStaticLayout = new StaticLayout(text, mPaint, widthm, alignment, 0, 0, true);
             int width = mStaticLayout.getWidth();
             int height = mStaticLayout.getHeight();
@@ -345,7 +374,7 @@ public class PrinterUtil {
         formatter.setMaximumFractionDigits(0);
         String symbol = formatter.getCurrency().getSymbol();
         String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
-        String txttotal = "NET TOTAL: "+totalamt+"/-";
+        String txttotal = "Grand Total  "+totalamt+"/-";
         posPtr.lineFeed(1);
         Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER);
         if(bp!=null){
@@ -393,7 +422,7 @@ public class PrinterUtil {
     public BluetoothDevice GetBluetoothDevice() throws Exception {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!checkBluetoothPermission()) {
-            Toast.makeText(context,"Please enable Bluetooth permission.",Toast.LENGTH_LONG);
+            Toast.makeText(context,"Please enable Bluetooth permission.",Toast.LENGTH_LONG).show();
         }
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         BluetoothDevice mydevice =null;
@@ -414,9 +443,10 @@ public class PrinterUtil {
         @Override
         protected void onPreExecute()
         {
+            dialog.setTitle("Printing");
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            dialog.setMessage("Printing.....");
+            dialog.setMessage("Connecting to Printer.....");
             dialog.show();
             super.onPreExecute();
         }
@@ -453,7 +483,7 @@ public class PrinterUtil {
                 }
                 catch (Exception ex)
                 {
-                    Toast.makeText(context,"Error: "+ex.getMessage(),Toast.LENGTH_LONG);
+                    Toast.makeText(context,"Error: "+ex.getMessage(),Toast.LENGTH_LONG).show();
                 }
                 finally {
                     if(dialog.isShowing())
@@ -464,7 +494,7 @@ public class PrinterUtil {
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                Toast.makeText(context,"Failed to Connect Printer",Toast.LENGTH_LONG);
+                Toast.makeText(context,"Failed to Connect Printer",Toast.LENGTH_LONG).show();
             }
             super.onPostExecute(result);
         }
@@ -520,7 +550,7 @@ public class PrinterUtil {
                 }
                 catch (Exception ex)
                 {
-                    Toast.makeText(context,"Error: "+ex.getMessage(),Toast.LENGTH_LONG);
+                    Toast.makeText(context,"Error: "+ex.getMessage(),Toast.LENGTH_LONG).show();
                 }
                 finally {
                     if(dialog.isShowing())
@@ -531,7 +561,7 @@ public class PrinterUtil {
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                Toast.makeText(context,"Failed to Connect Printer",Toast.LENGTH_LONG);
+                Toast.makeText(context,"Failed to Connect Printer",Toast.LENGTH_LONG).show();
             }
             super.onPostExecute(result);
         }

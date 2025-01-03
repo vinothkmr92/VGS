@@ -34,8 +34,8 @@
             android:textSize="40dp">
         </TextView>
         <ImageView android:layout_gravity="center"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:background="@drawable/pos"
             android:layout_marginBottom="50dp"
             >
