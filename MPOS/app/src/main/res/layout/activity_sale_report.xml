@@ -46,7 +46,7 @@
             android:fontFamily="@font/orienta"
             android:text="Date"
             android:textColor="@color/DarkViolet"
-            android:textSize="25dp"
+            android:textSize="15dp"
             android:textStyle="bold" />
 
         <TextView
@@ -59,7 +59,7 @@
             android:fontFamily="@font/orienta"
             android:text="Date"
             android:textColor="@color/DarkViolet"
-            android:textSize="25dp"
+            android:textSize="15dp"
             android:textStyle="bold" />
     </GridLayout>
 
@@ -124,7 +124,7 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat"
             android:textColor="@color/DarkViolet"
-            android:textSize="50dp"
+            android:textSize="40dp"
             android:textStyle="bold" />
     </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

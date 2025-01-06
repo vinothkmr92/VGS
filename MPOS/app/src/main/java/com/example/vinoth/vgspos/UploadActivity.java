@@ -19,8 +19,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -92,7 +92,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             });
     ImageButton btnUpload;
     ImageButton btnExport;
-    CheckBox deleteCheckbox;
+    Switch deleteCheckbox;
     DatabaseHelper dbHelper;
     TextView lbl;
     private Dialog progressBar;
@@ -416,7 +416,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         lbl = (TextView) findViewById(R.id.lblView);
         btnUpload = (ImageButton) findViewById(R.id.btnUpload);
         btnExport = (ImageButton)findViewById(R.id.btnExportproduct);
-        deleteCheckbox = (CheckBox)findViewById(R.id.clearProducts);
+        deleteCheckbox = findViewById(R.id.clearProducts);
         dbHelper = new DatabaseHelper(this);
         btnUpload.setOnClickListener(this);
         btnExport.setOnClickListener(this);

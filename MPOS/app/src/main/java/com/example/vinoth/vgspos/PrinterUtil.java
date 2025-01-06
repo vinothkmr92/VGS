@@ -659,7 +659,7 @@ public class PrinterUtil {
             int splitpaymentSize = 20;
             Typeface typeface = ResourcesCompat.getFont(context,R.font.orienta);
             if(Common.CashAmt>0){
-                Bitmap bp = getTextAsImage(cashAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE,typeface);
+                Bitmap bp = getTextAsImage(cashAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_NORMAL,typeface);
                 if(bp!=null){
                     posPtr.printBitmap(bp,0);
                 }
@@ -668,7 +668,7 @@ public class PrinterUtil {
                 }
             }
             if(Common.CardAmt>0){
-                Bitmap bp = getTextAsImage(cardAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE,typeface);
+                Bitmap bp = getTextAsImage(cardAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_NORMAL,typeface);
                 if(bp!=null){
                     posPtr.printBitmap(bp,0);
                 }
@@ -677,7 +677,7 @@ public class PrinterUtil {
                 }
             }
             if(Common.UpiAmt>0){
-                Bitmap bp = getTextAsImage(upiAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_OPPOSITE,typeface);
+                Bitmap bp = getTextAsImage(upiAmtstr,splitpaymentSize, Layout.Alignment.ALIGN_NORMAL,typeface);
                 if(bp!=null){
                     posPtr.printBitmap(bp,0);
                 }

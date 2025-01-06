@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/White"
+    android:background="@color/Khaki"
     android:orientation="vertical"
     android:layout_gravity="center"
     tools:context=".UploadActivity">
@@ -28,7 +28,7 @@
         android:layout_gravity="center"
         android:columnCount="2"
         android:padding="10dp"
-        android:background="@color/SandyBrown"
+        android:background="@color/White"
         android:orientation="horizontal">
         <ImageButton
             android:id="@+id/btnUpload"
@@ -55,15 +55,15 @@
             android:layout_columnSpan="2"
             android:text=""/>
 
-        <CheckBox
+        <Switch
             android:id="@+id/clearProducts"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Delete Existing Products"
             android:textColor="@color/DarkBlue"
             android:layout_columnSpan="2"
             android:layout_gravity="center"
-            android:textStyle="bold|italic"></CheckBox>
+            android:textStyle="bold|italic"></Switch>
 
     </GridLayout>
     </com.google.android.material.card.MaterialCardView>
