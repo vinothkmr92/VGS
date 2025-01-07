@@ -144,6 +144,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             Bitmap bitmap = BitmapFactory.decodeByteArray(ic,0,ic.length);
             imageView.setImageBitmap(bitmap);
         }
+        btnclerlogo.setVisibility(ic!=null ? View.VISIBLE:View.GONE);
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         String headerMsg = sharedpreferences.getString(HEADERMSG,"");
         String footerMsg = sharedpreferences.getString(FOOTERMSG,"");
@@ -235,6 +236,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     radioButton2Inch.setVisibility(View.GONE);
                     radioButton3Inch.setVisibility(View.GONE);
                     radioButton4Inch.setVisibility(View.GONE);
+                    txtviewkotprinter.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
+                    editTextkotprinterip.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
                 }
                 else{
                     txtViewBluetooth.setVisibility(View.VISIBLE);
@@ -259,8 +262,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                  else{
                      txtViewPrinterIP.setVisibility(View.VISIBLE);
                      editTextPrinterIP.setVisibility(View.VISIBLE);
-                     txtviewkotprinter.setVisibility(View.VISIBLE);
-                     editTextkotprinterip.setVisibility(View.VISIBLE);
                  }
             }
         });
@@ -293,13 +294,24 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             radioButton2Inch.setVisibility(View.GONE);
             radioButton3Inch.setVisibility(View.GONE);
             radioButton4Inch.setVisibility(View.GONE);
+            txtviewkotprinter.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
+            editTextkotprinterip.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
         }
         else{
             radioButtonWifi.setChecked(false);
             radioButtonBluetooth.setChecked(true);
             txtViewPrinterIP.setVisibility(View.GONE);
             editTextPrinterIP.setVisibility(View.GONE);
+            txtviewkotprinter.setVisibility(View.GONE);
+            editTextkotprinterip.setVisibility(View.GONE);
         }
+        enablekot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                txtviewkotprinter.setVisibility(isChecked && radioButtonWifi.isChecked()?View.VISIBLE: View.GONE);
+                editTextkotprinterip.setVisibility(isChecked && radioButtonWifi.isChecked()?View.VISIBLE: View.GONE);
+            }
+        });
         saveBtn.setOnClickListener(this);
         btnclerlogo.setOnClickListener(this);
         loadPictureBtn.setOnClickListener(this);
@@ -474,7 +486,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         i.putExtra("crop", "true");
         startActivityForResult(i, RESULT_LOAD_IMAGE);
-
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -490,6 +501,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 String picturePath = cursor.getString(columnIndex);
                 cursor.close();
                 imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                btnclerlogo.setVisibility(View.VISIBLE);
             }
             catch (Exception ex){
                 showCustomDialog("Error",ex.getMessage(),false);

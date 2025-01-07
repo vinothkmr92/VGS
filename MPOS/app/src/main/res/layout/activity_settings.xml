@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/Khaki"
     tools:context=".Settings">
     <ScrollView
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:padding="10dp"
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             app:cardCornerRadius="15dp"
@@ -42,6 +42,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/orienta"
+                android:inputType="text"
+                android:maxLines="1"
                 android:padding="20px"></EditText>
 
             <TextView
@@ -69,6 +71,8 @@
 
             <EditText
                 android:id="@+id/footerMsg"
+                android:inputType="text"
+                android:maxLines="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/orienta"></EditText></LinearLayout>
@@ -81,48 +85,61 @@
             app:cardElevation="5dp"
             android:layout_gravity="center"
             >
-            <GridLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="4"
                 android:layout_gravity="center"
+                android:orientation="vertical"
                 android:padding="8dp">
                 <TextView
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/orienta"
-                    android:layout_columnSpan="2"
+                    android:layout_width="match_parent"
                     android:text="Printer Type"
                     android:textColor="@color/DarkBlue"
                     android:textStyle="bold"></TextView>
 
-                <RadioButton
-                    android:id="@+id/radioBtnWifi"
-                    android:checked="true"
-                    android:layout_gravity="right"
-                    android:fontFamily="@font/orienta"
-                    android:text="Wifi"
-                    android:textStyle="bold"></RadioButton>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content">
+                    <RadioButton
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/radioBtnWifi"
+                        android:checked="true"
+                        android:fontFamily="@font/orienta"
+                        android:text="Wifi"
+                        android:textStyle="bold"></RadioButton>
 
-                <RadioButton
-                    android:id="@+id/radioBtnBluetooth"
-                    android:fontFamily="@font/orienta"
-                    android:text="Bluetooth"
-                    android:textStyle="bold"></RadioButton>
+                    <RadioButton
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/radioBtnBluetooth"
+                        android:fontFamily="@font/orienta"
+                        android:text="Bluetooth"
+                        android:textStyle="bold"></RadioButton>
+                </LinearLayout>
+
                 <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:id="@+id/txtViewBlutooth"
-                    android:layout_columnSpan="2"
                     android:fontFamily="@font/orienta"
                     android:text="Bluetooth Device"
                     android:textColor="@color/DarkBlue"
                     android:textStyle="bold"></TextView>
                 <Spinner
+                    android:layout_height="wrap_content"
                     android:id="@+id/bltDevice"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="fill"
-                    android:layout_height="50dp"
+                    android:layout_width="match_parent"
                     android:layout_columnSpan="2"
+                    android:textAlignment="center"
                     android:focusableInTouchMode="true"
                     android:spinnerMode="dialog"></Spinner>
                 <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
                     android:id="@+id/rptsizetxt"
                     android:layout_columnSpan="4"
                     android:fontFamily="@font/orienta"
@@ -132,7 +149,6 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnSpan="4"
                     android:layout_gravity="center">
                 <RadioButton
                     android:layout_width="wrap_content"
@@ -161,7 +177,7 @@
                     android:text="4 inch"
                     android:textStyle="bold"></RadioButton>
                 </LinearLayout>
-            </GridLayout>
+            </LinearLayout>
 
 
         </com.google.android.material.card.MaterialCardView>
