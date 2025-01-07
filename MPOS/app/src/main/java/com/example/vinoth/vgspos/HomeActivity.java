@@ -19,7 +19,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -44,8 +43,10 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -124,7 +125,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static HomeActivity getInstance() {
         return instance;
     }
-
+    GmsBarcodeScanner scanner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -391,6 +392,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     SaveAndPrintBill(false);
                 }
             });
+            GmsBarcodeScannerOptions options = new GmsBarcodeScannerOptions.Builder()
+                    .setBarcodeFormats(Barcode.FORMAT_QR_CODE,Barcode.FORMAT_CODE_128)
+                    .build();
+            scanner = GmsBarcodeScanning.getClient(HomeActivity.this,options);
             builder.setCancelable(true);
             itemNo.requestFocus();
         } catch (Exception ex) {
@@ -419,14 +424,32 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-    private void requestPermission() {
+    private void requestCameraPermission() {
         ActivityCompat.requestPermissions(
                 this,
                 CAMERA_PERMISSION,
                 CAMERA_REQUEST_CODE
         );
     }
-
+    private void ScanQRCode(){
+        if(scanner!=null){
+            scanner.startScan().addOnSuccessListener(
+                            barcode -> {
+                                String rawValue = barcode.getRawValue();
+                                itemNo.requestFocus();
+                                itemNo.setText(rawValue);
+                                LoadProductNameandPrice();
+                            })
+                    .addOnCanceledListener(
+                            () -> {
+                                Toast.makeText(HomeActivity.this,"Scanning was cancelled",Toast.LENGTH_SHORT).show();
+                            })
+                    .addOnFailureListener(
+                            e -> {
+                                Toast.makeText(HomeActivity.this,"Failed To Scan. Error: "+e.getMessage(),Toast.LENGTH_SHORT).show();
+                            });
+        }
+    }
     private void  SaveAndPrintBill(boolean print){
         int billno = SaveDetails();
         Common.billNo = billno;
@@ -960,19 +983,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
            case R.id.scanQR:
                try{
                    if(!hasCameraPermission()){
-                       requestPermission();
+                       requestCameraPermission();
                    }
                    else {
-                       IntentIntegrator intentIntegrator = new IntentIntegrator(HomeActivity.this);
-                       intentIntegrator.setDesiredBarcodeFormats(intentIntegrator.ALL_CODE_TYPES);
-                       intentIntegrator.setBeepEnabled(true);
-                       intentIntegrator.setOrientationLocked(false);
-                       intentIntegrator.setCameraId(0);
-                       intentIntegrator.setPrompt("Scan Barcode/QR Code");
-                       //intentIntegrator.setBarcodeImageEnabled(false);
-                       intentIntegrator.initiateScan();
+                       ScanQRCode();
                    }
-
                }
                catch (Exception ex){
                    showCustomDialog("Error",ex.getMessage());
@@ -1148,27 +1163,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         isAcPrice.setChecked(false);
         progressBar.hide();
         itemNo.requestFocus();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        IntentResult Result = IntentIntegrator.parseActivityResult(requestCode , resultCode ,data);
-        if(Result != null){
-            if(Result.getContents() == null){
-                Log.d("MainActivity" , "cancelled scan");
-                Toast.makeText(HomeActivity.this, "cancelled", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                Log.d("MainActivity" , "Scanned");
-                itemNo.requestFocus();
-                itemNo.setText(Result.getContents());
-                LoadProductNameandPrice();
-            }
-        }
-        else {
-            super.onActivityResult(requestCode , resultCode , data);
-        }
     }
 
     @Override

@@ -4,18 +4,18 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,8 +30,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
 import java.util.ArrayList;
 
@@ -51,6 +53,7 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
     Dialog itemSearchdialog;
     Button btnScan;
     private  ProgressDialog dialog;
+    GmsBarcodeScanner scanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +88,10 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
         dialog = new ProgressDialog(ItemsMasterActivity.this);
         dialog.setTitle(" ");
         dialog.setMessage("Loading.....");
+        GmsBarcodeScannerOptions options = new GmsBarcodeScannerOptions.Builder()
+                .setBarcodeFormats(Barcode.FORMAT_QR_CODE,Barcode.FORMAT_CODE_128)
+                .build();
+        scanner = GmsBarcodeScanning.getClient(ItemsMasterActivity.this,options);
     }
     public void showCustomDialog(String title, String Message) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -246,25 +253,8 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
                 dialog.dismiss();
         }
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        IntentResult Result = IntentIntegrator.parseActivityResult(requestCode , resultCode ,data);
-        if(Result != null){
-            if(Result.getContents() == null){
-                Log.d("ItemsMasterActivity" , "Cancelled scan");
-                Toast.makeText(getApplicationContext(), "cancelled", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                editTextItemNo.setText(Result.getContents());
-                SearchItems();
-            }
-        }
-        else {
-            super.onActivityResult(requestCode , resultCode , data);
-        }
-    }
-    private void requestPermission() {
+    private void requestCameraPermission() {
         ActivityCompat.requestPermissions(
                 this,
                 CAMERA_PERMISSION,
@@ -278,23 +268,40 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
                 Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED;
     }
+    public void showKeyboard(){
+        InputMethodManager inputMethodManager = (InputMethodManager) ItemsMasterActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+    private void ScanQRCode(){
+        if(scanner!=null){
+            scanner.startScan().addOnSuccessListener(
+                            barcode -> {
+                                String rawValue = barcode.getRawValue();
+                                editTextItemNo.setText(rawValue);
+                                editTextItemNo.requestFocus();
+                                showKeyboard();
+                                //dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                            })
+                    .addOnCanceledListener(
+                            () -> {
+                                Toast.makeText(ItemsMasterActivity.this,"Scanning was cancelled",Toast.LENGTH_SHORT).show();
+                            })
+                    .addOnFailureListener(
+                            e -> {
+                                Toast.makeText(ItemsMasterActivity.this,"Failed To Scan. Error: "+e.getMessage(),Toast.LENGTH_SHORT).show();
+                            });
+        }
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.scanQR:
                 try{
                     if(!hasCameraPermission()){
-                        requestPermission();
+                        requestCameraPermission();
                     }
                     else {
-                        IntentIntegrator intentIntegrator = new IntentIntegrator(ItemsMasterActivity.this);
-                        intentIntegrator.setDesiredBarcodeFormats(intentIntegrator.ALL_CODE_TYPES);
-                        intentIntegrator.setBeepEnabled(true);
-                        intentIntegrator.setOrientationLocked(false);
-                        intentIntegrator.setCameraId(0);
-                        intentIntegrator.setPrompt("Scan Barcode/QR Code");
-                        //intentIntegrator.setBarcodeImageEnabled(false);
-                        intentIntegrator.initiateScan();
+                        ScanQRCode();
                     }
 
                 }
