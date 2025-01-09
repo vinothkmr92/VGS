@@ -1,5 +1,3 @@
-import java.text.SimpleDateFormat
-import java.util.Date
 
 plugins {
     alias(libs.plugins.android.application)
@@ -30,8 +28,8 @@ android {
         applicationVariants.all {
             outputs.all {
                 this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-                val timestamp = SimpleDateFormat("ddMMyyyy_hhmm_aa").format(Date())
-                val apkName = "Collections_${timestamp}.apk"
+                //val timestamp = SimpleDateFormat("ddMMyyyy_hhmm_aa").format(Date())
+                val apkName = "Collections.apk"
                 outputFileName = apkName
             }
         }
@@ -44,7 +42,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -55,5 +52,6 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation("org.jetbrains.kotlin:kotlin-script-runtime:2.1.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(kotlin("script-runtime"))
 }

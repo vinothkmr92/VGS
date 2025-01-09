@@ -1,5 +1,6 @@
 package com.example.collections;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -42,6 +43,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.RecursiveTask;
 
 public class HomeActivity extends AppCompatActivity implements GetPaymentsDetails.PaymentDialogListener {
 
@@ -54,6 +56,10 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
     public static HomeActivity instance;
     MaterialAlertDialogBuilder confrimDialog;
     PrinterUtil printerUtil;
+    private MySharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String SQLSERVER = "SQLSERVER";
+    public static final String PRINTER = "PRINTER";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +72,10 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         outstanding = findViewById(R.id.outstanding);
         viewLoans = findViewById(R.id.viewLoans);
         usernameView.setText(CommonUtil.loggedinUser);
+        sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
+        String sqlserver = this.getApplicationContext().getString(R.string.SQL_SERVER);
+        CommonUtil.SQL_SERVER = sharedpreferences.getString(SQLSERVER,sqlserver);
+        CommonUtil.Printer = sharedpreferences.getString(PRINTER,"");
         memberidEditView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -143,6 +153,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         dialog.show();
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -167,6 +178,11 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(dcpage);
                 return  true;
+            case R.id.action_collectionRpt:
+                Intent collRpt = new Intent(this,CollectionReportActivity.class);
+                collRpt.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(collRpt);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -371,7 +387,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             con = connectionClass.CONN();
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            dialog.setMessage("Getting Loan Details.");
+            dialog.setTitle("Updating Payments");
+            dialog.setMessage("Please Wait...");
             dialog.show();
             super.onPreExecute();
         }
@@ -397,7 +414,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         private Integer GetNextPaymentID(){
             Integer paymentID = 0;
             try{
-                String query = "SELECT MAX(PAYMENT_ID) AS ID FROM PAYMENTS";
+                String query = "SELECT MAX(PAYMENT_ID) AS ID FROM PAYMENTS WHERE IS_FIELD_COLLECTION=1";
                 Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery(query);
                 if(rs.next()){
@@ -426,10 +443,10 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                         amtpaying = params[2];
                         paymentID = GetNextPaymentID();
                         if(paymentID>0){
-                            String query = "DELETE FROM PAYMENTS WHERE PAYMENT_ID="+paymentID;
+                            String query = "DELETE FROM PAYMENTS WHERE IS_FIELD_COLLECTION=1 AND PAYMENT_ID="+paymentID;
                             Statement stmt = con.createStatement();
                             stmt.executeUpdate(query);
-                            query = "INSERT INTO PAYMENTS VALUES ("+paymentID+",GETDATE(),"+memberid+",'"+paymentMode+"',"+amtpaying+",'"+CommonUtil.loggedinUser+"','',"+loanNo+")";
+                            query = "INSERT INTO PAYMENTS VALUES ("+paymentID+",GETDATE(),"+memberid+",'"+paymentMode+"',"+amtpaying+",'"+CommonUtil.loggedinUser+"','','"+loanNo+"',1)";
                             int paymentRowAff = stmt.executeUpdate(query);
                             query = "UPDATE MEMBERS SET PAID_AMOUNT=PAID_AMOUNT+"+amtpaying+" WHERE MEMBER_ID="+memberid;
                             int memberBal = stmt.executeUpdate(query);

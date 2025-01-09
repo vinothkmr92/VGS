@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -186,7 +187,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 dialog.hide();
             }
             if(!result.startsWith("ERROR")){
-                showCustomDialog("Status",result,false);
+                Toast.makeText(SettingsActivity.this,"Status-"+result,Toast.LENGTH_SHORT).show();
                 SaveSettings();
             }
             else {

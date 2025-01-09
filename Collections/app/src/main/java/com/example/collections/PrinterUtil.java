@@ -245,7 +245,8 @@ public class PrinterUtil {
         {
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            dialog.setMessage("Printing.....");
+            dialog.setTitle("Printing");
+            dialog.setMessage("Please Wait...");
             dialog.show();
             super.onPreExecute();
         }

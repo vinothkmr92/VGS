@@ -40,10 +40,10 @@ public class GetPaymentsDetails extends AppCompatDialogFragment {
         View view = inflater.inflate(R.layout.layout_get_payment,null);
         TextView titleview = new TextView(getActivity());
         titleview.setText("PAYMENT DETAILS");
-        titleview.setBackgroundColor(Color.WHITE);
+        titleview.setBackgroundColor(Color.BLUE);
         titleview.setPadding(10, 10, 10, 10);
         titleview.setGravity(Gravity.CENTER);
-        titleview.setTextColor(Color.BLUE);
+        titleview.setTextColor(Color.WHITE);
         titleview.setTypeface(titleview.getTypeface(), Typeface.BOLD);
         titleview.setTextSize(20);
         builder.setView(view)

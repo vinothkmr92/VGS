@@ -17,10 +17,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="25dp"
-                android:textColor="@color/MediumVioletRed"
+                android:textColor="@color/Crimson"
                 android:textStyle="bold"
                 android:fontFamily="@font/orienta"
-                android:text="LOAN COLLECTIONS">
+                android:text="LOANS COLLECTIONS">
 
             </TextView>
 
@@ -30,6 +30,7 @@
                 android:layout_margin="0dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="5dp"
+                android:padding="10dp"
                 android:layout_gravity="right"
                 >
                 <com.google.android.material.textview.MaterialTextView
@@ -39,12 +40,12 @@
                     android:layout_gravity="right"
                     android:drawableLeft="@drawable/baseline_account_circle_24"
                     android:text=""
-                    android:textColor="@color/DarkBlue"
+                    android:textColor="@color/MediumVioletRed"
                     android:textSize="25dp"
                     android:fontFamily="@font/orienta"
                     android:textAlignment="gravity"
                     android:id="@+id/username"
-                    android:textStyle="bold|italic">
+                    android:padding="8dp">
                 </com.google.android.material.textview.MaterialTextView>
             </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.textfield.TextInputLayout

@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.collections.MainActivity">
     <item
+        android:id="@+id/action_collectionRpt"
+        android:title="Collections Report"
+        android:icon="@drawable/baseline_data_exploration_24"/>
+    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:icon="@drawable/baseline_settings_24"/>
