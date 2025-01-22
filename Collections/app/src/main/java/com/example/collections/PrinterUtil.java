@@ -158,6 +158,7 @@ public class PrinterUtil {
         String receiptNo = StringUtils.leftPad(paymentID,21);
         posPtr.printNormal("RECEIPT NO:"+receiptNo);
         String customerName = StringUtils.leftPad(memberName,21);
+        customerName = customerName.substring(0,21);
         posPtr.printNormal("MEM.  NAME:"+customerName);
         String acNo = StringUtils.leftPad(LoanNo,21);
         posPtr.printNormal("LOAN NO   :"+acNo);
