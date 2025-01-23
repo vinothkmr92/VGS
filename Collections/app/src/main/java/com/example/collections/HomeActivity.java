@@ -448,9 +448,11 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             stmt.executeUpdate(query);
                             query = "INSERT INTO PAYMENTS VALUES ("+paymentID+",GETDATE(),"+memberid+",'"+paymentMode+"',"+amtpaying+",'"+CommonUtil.loggedinUser+"','','"+loanNo+"',1)";
                             int paymentRowAff = stmt.executeUpdate(query);
-                            query = "UPDATE MEMBERS SET PAID_AMOUNT=PAID_AMOUNT+"+amtpaying+" WHERE MEMBER_ID="+memberid;
+                            query = "UPDATE MEMBERS SET DUE_AMOUNT=DUE_AMOUNT-"+amtpaying+" WHERE MEMBER_ID="+memberid;
                             int memberBal = stmt.executeUpdate(query);
-                            query = "UPDATE MEMBERS SET OUTSTANDING_AMOUNT=LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT";
+                            query = "UPDATE LOANS SET LOANS.PAID_AMOUNT = P.PAID FROM [LOANS] L INNER JOIN(SELECT LOAN_NO, SUM(AMOUNT) PAID FROM PAYMENTS GROUP BY  LOAN_NO) P ON L.LOAN_NO = P.LOAN_NO;";
+                            stmt.executeUpdate(query);
+                            query = "UPDATE MEMBERS SET MEMBERS.OUTSTANDING_AMOUNT =LOANS.LOAN_AMOUNT+LOANS.INTEREST_AMOUNT+PENALTY_AMOUNT - LOANS.PAID_AMOUNT FROM MEMBERS,LOANS WHERE MEMBERS.MEMBER_ID = LOANS.MEMBER_ID and (LOANS.LOAN_AMOUNT+LOANS.INTEREST_AMOUNT -LOANS.PAID_AMOUNT)>0;";
                             stmt.executeUpdate(query);
                             isSuccess = paymentRowAff >0 && memberBal>0;
                             z = isSuccess?"Payment Saved":"Unable to Save Payment Please Contact Support Team.";
@@ -515,11 +517,10 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM FROM LOANS WHERE MEMBER_ID="+memberid;
+                        String query = "SELECT LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM FROM LOANS WHERE (LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT) > 0 AND MEMBER_ID="+memberid;
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Loan> loans = new ArrayList<>();
-                        ArrayList<Loan> pendingLoans = new ArrayList<>();
                         while (rs.next())
                         {
                             Loan loan = new Loan();
@@ -531,18 +532,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             loan.setTerm(rs.getInt("TERM"));
                             loans.add(loan);
                         }
-                        for (Loan l:loans)
-                        {
-                            query = "SELECT SUM(AMOUNT) AS PAID_AMT FROM PAYMENTS WHERE LOAN_NO='"+l.getLoanNo()+"'";
-                            ResultSet rs1 = stmt.executeQuery(query);
-                            if(rs1.next()){
-                                l.setPaidAmt(rs1.getDouble("PAID_AMT"));
-                            }
-                            if(l.getBalanceAmt()>0){
-                                pendingLoans.add(l);
-                            }
-                        }
-                        CommonUtil.loans = pendingLoans;
+                        CommonUtil.loans = loans;
                         isSuccess=CommonUtil.loans.size()>0;
                         z =isSuccess ? "Loans Found.":"No Pending Loans.";
                     }
