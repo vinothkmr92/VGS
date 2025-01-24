@@ -1,6 +1,7 @@
 package com.example.collections;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -113,13 +114,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         startActivity(page);
     }
     public void showCustomDialog(String title,String Message,Boolean close) {
-        MaterialAlertDialogBuilder dialog =  new MaterialAlertDialogBuilder(SettingsActivity.this,
-                com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
-        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
-
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle(title);
+        dialogBuilder.setMessage("\n"+Message);
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
                 if(close){
@@ -127,8 +125,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-        dialog.setCancelable(false);
-        dialog.show();
+        AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
+        b.show();
     }
     public  void  SaveSettings(){
         String hostname = host.getText().toString();

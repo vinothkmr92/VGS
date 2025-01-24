@@ -1,6 +1,7 @@
 package com.example.collections;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -119,17 +120,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     public void showCustomDialog(String title,String Message) {
-        MaterialAlertDialogBuilder dialog =  new MaterialAlertDialogBuilder(MainActivity.this,
-                com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle(title);
+        dialogBuilder.setMessage("\n"+Message);
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
+
             }
         });
-        dialog.setCancelable(false);
-        dialog.show();
+        AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
+        b.show();
     }
     private void LoadHome() {
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);

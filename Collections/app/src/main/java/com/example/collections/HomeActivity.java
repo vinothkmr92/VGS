@@ -2,6 +2,7 @@ package com.example.collections;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +56,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
     TextView outstanding;
     LinearLayout viewLoans;
     public static HomeActivity instance;
-    MaterialAlertDialogBuilder confrimDialog;
+    AlertDialog.Builder confrimDialog;
     PrinterUtil printerUtil;
     private MySharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
@@ -90,8 +92,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             }
         });
         instance = this;
-        confrimDialog =  new MaterialAlertDialogBuilder(HomeActivity.this,
-                com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
+        confrimDialog =  new AlertDialog.Builder(this);
         // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
 
         confrimDialog.setTitle("Confirm Print");
@@ -137,20 +138,19 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         startActivity(page);
     }
     public void showCustomDialog(String title,String Message) {
-        MaterialAlertDialogBuilder dialog =  new MaterialAlertDialogBuilder(HomeActivity.this,
-                com.google.android.material.R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog_Centered);
-        // final EditText edt = (EditText) dialogView.findViewById(R.id.dialog_info);
-
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle(title);
+        dialogBuilder.setMessage("\n"+Message);
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
 
             }
         });
-        dialog.setCancelable(false);
-        dialog.show();
+        AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
+        b.show();
     }
 
     @SuppressLint("RestrictedApi")
@@ -517,7 +517,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM FROM LOANS WHERE (LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT) > 0 AND MEMBER_ID="+memberid;
+                        String query = "SELECT LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM,PAID_AMOUNT FROM LOANS WHERE (LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT) > 0 AND MEMBER_ID="+memberid;
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Loan> loans = new ArrayList<>();
@@ -530,6 +530,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             loan.setInterest(rs.getDouble("INTEREST"));
                             loan.setLoanType(rs.getString("LOAN_TYPE"));
                             loan.setTerm(rs.getInt("TERM"));
+                            loan.setPaidAmt(rs.getDouble("PAID_AMOUNT"));
                             loans.add(loan);
                         }
                         CommonUtil.loans = loans;
