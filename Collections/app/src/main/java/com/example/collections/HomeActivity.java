@@ -452,7 +452,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             int memberBal = stmt.executeUpdate(query);
                             query = "UPDATE LOANS SET LOANS.PAID_AMOUNT = P.PAID FROM [LOANS] L INNER JOIN(SELECT LOAN_NO, SUM(AMOUNT) PAID FROM PAYMENTS GROUP BY  LOAN_NO) P ON L.LOAN_NO = P.LOAN_NO;";
                             stmt.executeUpdate(query);
-                            query = "UPDATE MEMBERS SET MEMBERS.OUTSTANDING_AMOUNT =LOANS.LOAN_AMOUNT+LOANS.INTEREST_AMOUNT+PENALTY_AMOUNT - LOANS.PAID_AMOUNT FROM MEMBERS,LOANS WHERE MEMBERS.MEMBER_ID = LOANS.MEMBER_ID and (LOANS.LOAN_AMOUNT+LOANS.INTEREST_AMOUNT -LOANS.PAID_AMOUNT)>0;";
+                            query = "UPDATE MEMBERS SET MEMBERS.OUTSTANDING_AMOUNT = P.BAL FROM [MEMBERS] L INNER JOIN(SELECT MEMBER_ID, SUM(LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT) AS BAL FROM LOANS GROUP BY  MEMBER_ID) P ON L.MEMBER_ID = P.MEMBER_ID;";
                             stmt.executeUpdate(query);
                             isSuccess = paymentRowAff >0 && memberBal>0;
                             z = isSuccess?"Payment Saved":"Unable to Save Payment Please Contact Support Team.";

@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/loanNoViewHist"
             android:layout_gravity="center"
-            android:textSize="15dp"
+            android:textSize="20dp"
             android:fontFamily="@font/orienta"
             android:textColor="@color/Brown"
             android:textStyle="bold"

@@ -41,8 +41,8 @@
                     android:drawableLeft="@drawable/baseline_account_circle_24"
                     android:text=""
                     android:textColor="@color/MediumVioletRed"
-                    android:textSize="25dp"
-                    android:fontFamily="@font/orienta"
+                    android:textSize="20dp"
+                    android:fontFamily="@font/special_elite"
                     android:textAlignment="gravity"
                     android:id="@+id/username"
                     android:padding="8dp">
