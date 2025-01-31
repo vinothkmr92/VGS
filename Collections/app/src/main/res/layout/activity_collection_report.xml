@@ -182,9 +182,18 @@
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_margin="5dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="5dp"
+                >
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:id="@+id/chartlayout"
                 android:layout_below="@id/splitlayoutcashcard"
                 android:gravity="center">
@@ -195,6 +204,21 @@
                     android:layout_gravity="center"
                     />
             </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PRINT REPORT"
+                android:textColor="@color/DarkBlue"
+                android:drawableLeft="@drawable/baseline_print_24_white"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:fontFamily="@font/orienta"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:visibility="gone"
+                android:backgroundTint="@color/MintCream"
+                android:id="@+id/btnPrintReport"/>
         </LinearLayout>
+
     </ScrollView>
 </RelativeLayout>

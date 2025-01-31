@@ -13,8 +13,11 @@ public class CommonUtil {
     public static String toDate="";
     public static String memberName = "";
     public static double Outstanding = 0d;
+    public static String mobileNumber = "";
+    public static String address = "";
     public static ArrayList<Loan> loans;
     public static String loanNo;
     public static String Printer="";
     public static ArrayList<Payment> payments;
+    public static CollectionsRpt collectionsRpt;
 }

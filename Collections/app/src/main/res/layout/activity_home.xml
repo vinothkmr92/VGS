@@ -93,11 +93,31 @@
                         android:layout_gravity="center"
                         android:text="memberName"
                         android:textColor="@color/DarkOliveGreen"
-                        android:textSize="35dp"
+                        android:textSize="30dp"
                         android:id="@+id/memberName"
                         android:fontFamily="@font/orienta"
                         android:textStyle="bold"></com.google.android.material.textview.MaterialTextView>
-
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="sdfdd"
+                        android:textColor="@color/DarkBlue"
+                        android:textSize="25dp"
+                        android:id="@+id/mobileNumber"
+                        android:fontFamily="@font/orienta"
+                        android:drawableRight="@drawable/baseline_call_24"
+                        android:textStyle="bold"></com.google.android.material.textview.MaterialTextView>
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="sdfdd"
+                        android:textColor="@color/black"
+                        android:textSize="15dp"
+                        android:id="@+id/address"
+                        android:fontFamily="@font/orienta"
+                        android:textStyle="bold"></com.google.android.material.textview.MaterialTextView>
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/outstanding"
                         android:layout_width="wrap_content"

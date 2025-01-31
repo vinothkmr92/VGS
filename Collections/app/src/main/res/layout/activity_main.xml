@@ -49,7 +49,7 @@
                 android:textSize="30dp"
                 android:hint="User Name"
                 android:textAlignment="center"
-                android:textColor="@color/black"
+                android:textColor="@color/DarkBlue"
                 android:minWidth="200dp">
             </EditText>
             <EditText
@@ -62,7 +62,7 @@
                 android:hint="Password"
                 android:textSize="30dp"
                 android:fontFamily="@font/orienta"
-                android:textColor="@color/black"
+                android:textColor="@color/DarkBlue"
                 android:minWidth="200dp">
             </EditText>
             <com.google.android.material.button.MaterialButton

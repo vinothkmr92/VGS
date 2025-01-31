@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.text.Layout;
@@ -60,19 +61,17 @@ public class PrinterUtil {
     private String paymentID;
     private Boolean rePrint;
     private Date paymentDate;
+    private boolean printCollectionReport;
+    private CollectionsRpt collectionsRpt;
     public PrinterUtil(Context cntx,
-                       String memberName,
-                       String LoanNo,
-                       String OutStanding,
-                       String Paid,
-                       String Balance,
-                       String PaymentMode,
-                       String PayemntID,
-                       Date paidDate,
-                       Boolean isReprint) {
+                       ReceiptDtl receiptDtl,
+                       CollectionsRpt collectionsRpt,
+                       Boolean isReprint,
+                       Boolean collectionPrint) {
         posPtr=new ESCPOSPrinter();
         rePrint = isReprint;
         isWifi = false;
+        printCollectionReport = collectionPrint;
         if(isWifi){
             wifiPort = WiFiPort.getInstance();
         }
@@ -80,14 +79,17 @@ public class PrinterUtil {
             bluetoothPort = BluetoothPort.getInstance();
         }
         context = cntx;
-        this.memberName = memberName;
-        this.LoanNo = LoanNo;
-        this.outStanding = OutStanding;
-        this.paidAmt = Paid;
-        this.balAmt = Balance;
-        this.paymentMode = PaymentMode;
-        this.paymentID = PayemntID;
-        this.paymentDate = paidDate;
+        if(receiptDtl!=null){
+            this.memberName = receiptDtl.MemberName;
+            this.LoanNo = receiptDtl.LoanNo;
+            this.outStanding = receiptDtl.Outstanding;
+            this.paidAmt = receiptDtl.Paid;
+            this.balAmt = receiptDtl.Balance;
+            this.paymentMode = receiptDtl.PaymentMode;
+            this.paymentID = receiptDtl.PaymentID;
+            this.paymentDate = receiptDtl.PaidDate;
+        }
+        this.collectionsRpt = collectionsRpt;
     }
     @Override
     protected void finalize() throws Throwable {
@@ -138,6 +140,41 @@ public class PrinterUtil {
             return  null;
         }
 
+    }
+    private void PrintCollectionReport() throws IOException {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String dateStr = format.format(collectionsRpt.frmDate);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        SimpleDateFormat dtformat = new SimpleDateFormat("dd-MM-yyyy hh:mm aaa", Locale.getDefault());
+        String currentDt = dtformat.format(new Date());
+
+        posPtr.printNormal("\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CBACKYALAKSHMI MICRO\r\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CFINANCE PVT. LTD\r\n");
+        posPtr.printNormal("\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CCOLLECTIONS REPORT\r\n");
+        posPtr.printNormal("--------------------------------");
+        posPtr.printNormal("        DATE: "+dateStr+"\r\n");
+        posPtr.printNormal("  AGENT NAME: "+CommonUtil.loggedinUser+"\r\n");
+        posPtr.printNormal("NO. OF BILLS: "+collectionsRpt.NoofBills+"\r\n");
+        posPtr.printNormal("  CASH BILLS: "+collectionsRpt.CashBills+"\r\n");
+        posPtr.printNormal("  UPI  BILLS: "+collectionsRpt.UpiBills+"\r\n");
+        String cashAmt = formatter.format(collectionsRpt.CashAmt).replace(symbol,"Rs. ");
+        cashAmt = StringUtils.leftPad(cashAmt,19);
+        posPtr.printNormal(" CASH AMOUNT:"+cashAmt);
+        String upiAmt = formatter.format(collectionsRpt.UpiAmt).replace(symbol,"Rs. ");
+        upiAmt = StringUtils.leftPad(upiAmt,19);
+        posPtr.printNormal("  UPI AMOUNT:"+upiAmt);
+        posPtr.printNormal("--------------------------------");
+        String totalAmt = formatter.format(collectionsRpt.TotalAmt).replace(symbol,"Rs. ");
+        totalAmt = StringUtils.leftPad(totalAmt,19);
+        posPtr.printNormal("TOTAL AMOUNT:"+totalAmt);
+        posPtr.printNormal("--------------------------------");
+        posPtr.lineFeed(1);
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CPrinted on "+currentDt+"\r\n");
+        posPtr.lineFeed(4);
     }
     private void PrintBill() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm aaa", Locale.getDefault());
@@ -284,11 +321,20 @@ public class PrinterUtil {
                 posPtr = new ESCPOSPrinter();
                 posPtr.setAsync(true);
                 try{
-                    PrintBill();
+                    if(printCollectionReport){
+                        PrintCollectionReport();
+                    }
+                    else {
+                        PrintBill();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    if(rePrint){
+                    if(printCollectionReport){
+                        CollectionReportActivity history = (CollectionReportActivity) context;
+                        history.showCustomDialog("Error",ex.getMessage());
+                    }
+                    else if(rePrint){
                         PaymentHistoryActivity history = (PaymentHistoryActivity) context;
                         history.showCustomDialog("Error",ex.getMessage());
                     }
@@ -300,7 +346,7 @@ public class PrinterUtil {
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
-                    if(!rePrint){
+                    if(!rePrint && !printCollectionReport){
                         HomeActivity home = (HomeActivity) context;
                         home.RefreshViews();
                     }
@@ -311,7 +357,11 @@ public class PrinterUtil {
                 if(dialog.isShowing())
                     dialog.dismiss();
                 String errMsg = "Failed to connect to Printer:"+result;
-                if(rePrint){
+                if(printCollectionReport){
+                    CollectionReportActivity history = (CollectionReportActivity) context;
+                    history.showCustomDialog("Error",errMsg);
+                }
+                else if(rePrint){
                     PaymentHistoryActivity history = (PaymentHistoryActivity) context;
                     history.showCustomDialog("Error",errMsg);
                 }

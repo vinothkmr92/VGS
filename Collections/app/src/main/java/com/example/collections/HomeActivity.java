@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.icu.text.NumberFormat;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,13 +48,15 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.RecursiveTask;
 
-public class HomeActivity extends AppCompatActivity implements GetPaymentsDetails.PaymentDialogListener {
+public class HomeActivity extends AppCompatActivity implements GetPaymentsDetails.PaymentDialogListener, View.OnClickListener {
 
     TextView usernameView;
     EditText memberidEditView;
     CardView memberView;
     TextView memberName;
     TextView outstanding;
+    TextView mobileNumber;
+    TextView address;
     LinearLayout viewLoans;
     public static HomeActivity instance;
     AlertDialog.Builder confrimDialog;
@@ -72,6 +75,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         memberView = findViewById(R.id.memberView);
         memberName = findViewById(R.id.memberName);
         outstanding = findViewById(R.id.outstanding);
+        mobileNumber = findViewById(R.id.mobileNumber);
+        address = findViewById(R.id.address);
         viewLoans = findViewById(R.id.viewLoans);
         usernameView.setText(CommonUtil.loggedinUser);
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
@@ -118,7 +123,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             }
         });
         confrimDialog.setCancelable(false);
-
+        mobileNumber.setOnClickListener(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -268,9 +273,16 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             String outstanding = formatter.format(CommonUtil.Outstanding).replace(symbol,"Rs. ");
             String paidAmStr = formatter.format(paidAmt).replace(symbol,"Rs. ");
             String balStr = formatter.format(balance).replace(symbol,"Rs. ");
-            printerUtil = new PrinterUtil(this,CommonUtil.memberName,
-                    LoanNo,outstanding,paidAmStr,balStr,
-                    paymentMode,String.valueOf(paymentID),new Date(),false);
+            ReceiptDtl rptDtl = new ReceiptDtl();
+            rptDtl.MemberName = CommonUtil.memberName;
+            rptDtl.LoanNo = LoanNo;
+            rptDtl.Outstanding = outstanding;
+            rptDtl.Paid = paidAmStr;
+            rptDtl.Balance = balStr;
+            rptDtl.PaymentMode = paymentMode;
+            rptDtl.PaymentID = String.valueOf(paymentID);
+            rptDtl.PaidDate = new Date();
+            printerUtil = new PrinterUtil(this,rptDtl,null,false,false);
             confrimDialog.show();
         }
         catch (Exception ex){
@@ -293,6 +305,18 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.mobileNumber:
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+mobileNumber.getText().toString()));
+                startActivity(intent);
+                break;
+
         }
     }
 
@@ -524,8 +548,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                         while (rs.next())
                         {
                             Loan loan = new Loan();
-                            double d = rs.getDouble("LOAN_NO");
-                            loan.setLoanNo(String.valueOf(d));
+                            loan.setLoanNo(rs.getString("LOAN_NO"));
                             loan.setLoanAmount(rs.getDouble("LOAN_AMOUNT"));
                             loan.setInterest(rs.getDouble("INTEREST"));
                             loan.setLoanType(rs.getString("LOAN_TYPE"));
@@ -576,6 +599,10 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 formatter.setMaximumFractionDigits(0);
                 String symbol = formatter.getCurrency().getSymbol();
                 outstanding.setText(formatter.format(CommonUtil.Outstanding).replace(symbol,symbol+" "));
+                mobileNumber.setVisibility(View.VISIBLE);
+                mobileNumber.setText(CommonUtil.mobileNumber);
+                address.setVisibility(View.VISIBLE);
+                address.setText(CommonUtil.address);
                 new GetLoanDtl().execute("");
             }
             else {
@@ -595,13 +622,15 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT NAME_1,OUTSTANDING_AMOUNT FROM MEMBERS WHERE MEMBER_ID="+memberid;
+                        String query = "SELECT NAME_1,MOBILE_1,ADDRESS_1,OUTSTANDING_AMOUNT FROM MEMBERS WHERE MEMBER_ID="+memberid;
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         if(rs.next())
                         {
                             CommonUtil.memberName = rs.getString("NAME_1");
                             CommonUtil.Outstanding = rs.getDouble("OUTSTANDING_AMOUNT");
+                            CommonUtil.mobileNumber = rs.getString("MOBILE_1");
+                            CommonUtil.address = rs.getString("ADDRESS_1");
                             z = "Member Found.";
                             isSuccess=true;
                         }

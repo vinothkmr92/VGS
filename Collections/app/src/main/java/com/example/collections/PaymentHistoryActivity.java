@@ -18,6 +18,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class PaymentHistoryActivity extends AppCompatActivity {
@@ -109,9 +110,16 @@ public class PaymentHistoryActivity extends AppCompatActivity {
             String outstandingstr = formatter.format(outstanding).replace(symbol,"Rs. ");
             String paidAmStr = formatter.format(paymentm.getPaidAmount()).replace(symbol,"Rs. ");
             String balStr = formatter.format(bal).replace(symbol,"Rs. ");
-            PrinterUtil printerUtil = new PrinterUtil(this,CommonUtil.memberName,
-                    CommonUtil.loanNo,outstandingstr,paidAmStr,balStr,
-                    paymentm.getPaymentMode(),String.valueOf(paymentm.getPaymentID()),paymentm.getPaymentDate(),true);
+            ReceiptDtl rptDtl = new ReceiptDtl();
+            rptDtl.MemberName = CommonUtil.memberName;
+            rptDtl.LoanNo = CommonUtil.loanNo;
+            rptDtl.Outstanding = outstandingstr;
+            rptDtl.Paid = paidAmStr;
+            rptDtl.Balance = balStr;
+            rptDtl.PaymentMode = paymentm.getPaymentMode();
+            rptDtl.PaymentID = String.valueOf(paymentm.getPaymentID());
+            rptDtl.PaidDate = paymentm.getPaymentDate();
+            PrinterUtil printerUtil = new PrinterUtil(this,rptDtl,null,true,false);
             printerUtil.Print();
         }
         catch (Exception ex){

@@ -9,6 +9,7 @@ import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
@@ -54,6 +55,7 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
     private int year, month, day;
     DatePickerDialog datePickerDialog;
     DatePickerDialog todatePickerDialog;
+    Button btnPrint;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     @Override
@@ -88,12 +90,14 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
         cashAmtView = findViewById(R.id.cashAmt);
         upiAmtView = findViewById(R.id.upiAmt);
         collectionChart = findViewById(R.id.collectionChart);
+        btnPrint = findViewById(R.id.btnPrintReport);
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         datePickerDialog = new DatePickerDialog(CollectionReportActivity.this,myDateListener,year,month,day);
         todatePickerDialog = new DatePickerDialog(CollectionReportActivity.this,mytoDateListener,year,month,day);
+        btnPrint.setOnClickListener(this);
         fromDateView.setOnClickListener(this);
         toDateView.setOnClickListener(this);
         Typeface typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.orienta);
@@ -229,7 +233,24 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
             case R.id.toDt:
                 todatePickerDialog.show();
                 break;
+            case R.id.btnPrintReport:
+                PrintCollectionReport();
+                break;
         }
+    }
+    private void PrintCollectionReport(){
+      try{
+          if(CommonUtil.collectionsRpt!=null){
+              PrinterUtil printerUtil = new PrinterUtil(this,null,CommonUtil.collectionsRpt,false,true);
+              printerUtil.Print();
+          }
+          else {
+              showCustomDialog("Warning","No Data to Print.");
+          }
+      }
+      catch (Exception ex){
+          showCustomDialog("Error",ex.getMessage());
+      }
     }
 
     public class GetCollections extends AsyncTask<String,String, CollectionsRpt>
@@ -245,7 +266,8 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
         Connection con = null;
         @Override
         protected void onPreExecute() {
-
+            btnPrint.setVisibility(View.GONE);
+            CommonUtil.collectionsRpt = null;
             if(frmDate.contains("Sept")){
                 frmDate = frmDate.replace("Sept","Sep");
             }
@@ -264,7 +286,6 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
 
         @Override
         protected void onPostExecute(CollectionsRpt r) {
-
             if(!error.isEmpty()){
                 if(dialog.isShowing()){
                     dialog.hide();
@@ -272,6 +293,8 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
                 showCustomDialog("Error",error);
             }
             else {
+                btnPrint.setVisibility(View.VISIBLE);
+                CommonUtil.collectionsRpt = r;
                 Double billamts = r.TotalAmt;
                 Double cashamts = r.CashAmt;
                 Double upiamts = r.UpiAmt;
@@ -296,19 +319,23 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
         @Override
         protected CollectionsRpt doInBackground(String... params) {
             CollectionsRpt coll = new CollectionsRpt();
+            SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
             try {
                 if (con == null) {
                     error = "Database Connection Failed";
                 }
                 else
                 {
-                    String query = String.format("SELECT SUM(AMOUNT) AS AMT FROM PAYMENTS WHERE IS_FIELD_COLLECTION=1 AND CAST(PAYMENT_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    coll.frmDate = format.parse(frmDate);
+                    coll.toDate = format.parse(toDate);
+                    String query = String.format("SELECT SUM(AMOUNT) AS AMT,COUNT(*) AS CN FROM PAYMENTS WHERE IS_FIELD_COLLECTION=1 AND CAST(PAYMENT_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     query = query+String.format(" AND RECEIVED_BY='%s'",selectedUser);
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
                     if(rs.next())
                     {
                         coll.TotalAmt = rs.getDouble("AMT");
+                        coll.NoofBills = rs.getInt("CN");
                         isSuccess = true;
                     }
                     rs.close();
@@ -317,11 +344,13 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
                     ResultSet cashR = stmt.executeQuery(cashQuery);
                     if(cashR.next()){
                         coll.CashAmt = cashR.getDouble("AMT");
+                        coll.CashBills = cashR.getInt("CN");
                     }
                     cashR.close();
                     ResultSet upiR = stmt.executeQuery(upiQuery);
                     if(upiR.next()){
                         coll.UpiAmt = upiR.getDouble("AMT");
+                        coll.UpiBills = upiR.getInt("CN");
                     }
                     upiR.close();
                 }
