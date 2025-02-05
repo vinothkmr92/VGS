@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">InventorySlip</string>
+    <string name="SQL_SERVER">60.243.50.58:4277</string>
+    <string name="SQL_USERNAME">sa</string>
+    <string name="SQL_PASSWORD">1@Knowbut</string>
+    <string name="SQL_DBNAME">INVENTORY_SLIP</string>
+    <string name="ActivationAPIHost">60.243.50.58:9092</string>
+</resources>
