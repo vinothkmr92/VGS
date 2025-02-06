@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     EditText editTextPartID;
     EditText editTextPartNo;
     EditText editTextDescription;
+    Button btnSavePrint;
+    EditText editTextQty;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,12 +73,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             editTextPartID = findViewById(R.id.partid);
             editTextPartNo = findViewById(R.id.partno);
             editTextDescription = findViewById(R.id.partdesc);
+            btnSavePrint = findViewById(R.id.btnPrint);
+            editTextQty = findViewById(R.id.qty);
             calendar = Calendar.getInstance();
             year = calendar.get(Calendar.YEAR);
             month = calendar.get(Calendar.MONTH);
             day = calendar.get(Calendar.DAY_OF_MONTH);
             datePickerDialog = new DatePickerDialog(HomeActivity.this,myDateListener,year,month,day);
             fromDateView.setOnClickListener(this);
+            btnSavePrint.setOnClickListener(this);
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
             Date date = new Date();
             fromDateView.setText(format.format(date));
@@ -129,6 +136,40 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         dialog.setCancelable(false);
         dialog.show();
     }
+    private void SaveSlipEntry(){
+        String qtystr = editTextQty.getText().toString();
+        Integer qty = 0;
+        if(!qtystr.isEmpty()){
+            qty = Integer.parseInt(qtystr);
+        }
+        if(editTextStLocation.getEditText().getText().toString().isEmpty()){
+            showCustomDialog("Warning","Please select valid Storage Location");
+            return;
+        }
+        else if(editTextInvLocation.getEditText().getText().toString().isEmpty()){
+            showCustomDialog("Warning","Please select valid Inventory Location");
+            return;
+        }
+        else if(editTextPartID.getText().toString().isEmpty()){
+            showCustomDialog("Warning","Please enter valid PartID");
+            return;
+        }
+        else if(editTextPartNo.getText().toString().isEmpty()){
+            showCustomDialog("Warning","Invalid Parts Details");
+            return;
+        }
+        else if(editTextDescription.getText().toString().isEmpty()){
+            showCustomDialog("Warning","Invalid Parts Details");
+            return;
+        }
+        else if(qty<=0){
+            showCustomDialog("Warning","Please enter valid Quantity");
+            return;
+        }
+        else {
+            new SaveSlip().execute("");
+        }
+    }
     private DatePickerDialog.OnDateSetListener myDateListener = new
             DatePickerDialog.OnDateSetListener() {
                 @Override
@@ -161,6 +202,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         switch ((v.getId())){
             case R.id.frmDt:
                 datePickerDialog.show();
+                break;
+            case R.id.btnPrint:
+                SaveSlipEntry();
                 break;
         }
     }
@@ -301,6 +345,100 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     rs.close();
                     slipno++;
                     r = String.valueOf(slipno);
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccess = false;
+                error = "Exceptions: "+ex.getMessage();
+            }
+            return r;
+        }
+    }
+    public class SaveSlip extends AsyncTask<String,String, String>
+    {
+        Boolean isSuccess = false;
+        String error = "";
+        private final ProgressDialog dialog = new ProgressDialog(HomeActivity.this);
+        ConnectionClass connectionClass = null;
+        Connection con = null;
+        @Override
+        protected void onPreExecute() {
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setTitle("Loading");
+            dialog.setMessage("Please Wait...");
+            dialog.show();
+            connectionClass = new ConnectionClass(Common.SQL_SERVER,Common.DB,Common.USERNAME,Common.PASSWORD);
+            con = connectionClass.CONN();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String r) {
+            if(!error.isEmpty()){
+                if(dialog.isShowing()){
+                    dialog.hide();
+                }
+                showCustomDialog("Error",error);
+            }
+            else {
+                if(isSuccess){
+                    showCustomDialog("Info","Entry Successfully Saved.");
+                    editTextStLocation.getEditText().setText("");
+                    editTextInvLocation.getEditText().setText("");
+                    editTextPartID.setText("");
+                    editTextPartNo.setText("");
+                    editTextDescription.setText("");
+                    editTextQty.setText("");
+                    slipnoTxtview.setText(r);
+                }
+                else {
+                    showCustomDialog("Warning","Unable to Save Slip Details.\n Please contact support team.");
+                }
+            }
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+        }
+
+        private Integer GetLatestSlipNo() throws SQLException {
+            String query = "SELECT MAX(SLIP_NO) AS SLIP_NO FROM SLIPS";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            Integer slipno = 0;
+            if(rs.next())
+            {
+                slipno = rs.getInt("SLIP_NO");
+            }
+            rs.close();
+            slipno++;
+            return slipno;
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            String r = "";
+            try {
+                if (con == null) {
+                    error = "Database Connection Failed";
+                }
+                else
+                {
+                    Integer slipNo = GetLatestSlipNo();
+                    r = String.valueOf(slipNo);
+                    String stLocation = editTextStLocation.getEditText().getText().toString();
+                    String invLocation = editTextInvLocation.getEditText().getText().toString();
+                    String PartID = editTextPartID.getText().toString();
+                    String qty = editTextQty.getText().toString();
+                    String username = Common.loggedinUser;
+                    String query = String.format("INSERT INTO SLIPS VALUES (%s,GETDATE(),'%s',%s,'%s','%s','%s')",slipNo,PartID,qty,stLocation,invLocation,username);
+                    Statement stmt = con.createStatement();
+                    int rowAff = stmt.executeUpdate(query);
+                    isSuccess = rowAff>0;
+                    if(isSuccess){
+                        slipNo = GetLatestSlipNo();
+                        r = String.valueOf(slipNo);
+                    }
                 }
             }
             catch (Exception ex)
