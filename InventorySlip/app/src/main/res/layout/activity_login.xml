@@ -36,18 +36,25 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/appicon"></ImageView>
-            <EditText
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:inputType="text"
-                android:id="@+id/userid"
-                android:textSize="30dp"
-                android:hint="User Name"
+                android:id="@+id/username"
+                android:hint="Select User"
+                android:textColorHint="@color/DarkSalmon"
+                android:textStyle="bold"
                 android:textAlignment="center"
-                android:textColor="@color/DarkBlue"
-                android:minWidth="200dp">
-            </EditText>
+                android:padding="10dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                <AutoCompleteTextView
+                    android:id="@+id/users"
+                    android:layout_width="match_parent"
+                    android:textColor="@color/DarkBlue"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"></AutoCompleteTextView>
+            </com.google.android.material.textfield.TextInputLayout>
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

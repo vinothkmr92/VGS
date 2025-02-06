@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -21,14 +24,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -45,7 +51,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String sqlUserName;
     String sqlPassword;
     String sqlDB;
-    EditText editTextUserName;
+    AutoCompleteTextView autocompleteUsers;
+    TextInputLayout editTextUserName;
     EditText editTextPassword;
     MaterialButton buttonLogin;
     String android_id;
@@ -59,9 +66,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
         try{
-            editTextUserName = (EditText) findViewById(R.id.userid);
+            editTextUserName = findViewById(R.id.username);
             editTextPassword = (EditText) findViewById(R.id.password);
             buttonLogin = (MaterialButton) findViewById(R.id.loginbtn);
+            autocompleteUsers = findViewById(R.id.users);
             buttonLogin.setOnClickListener(this);
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             CheckSQLSettings();
@@ -80,6 +88,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 AppActivation appActivation = new AppActivation(LoginActivity.this,android_id,this);
                 appActivation.CheckActivationStatus();
             }
+            else{
+                if(Common.usersList.isEmpty()){
+                    new LoadUsers().execute();
+                }
+            }
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -93,6 +106,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void ValidateActivationResponse(String response){
         if(!Common.isActivated){
             showCustomDialog("Msg","Your Android device "+android_id+" is not activated\n"+response,true,true);
+        }
+        else {
+            if(Common.usersList.isEmpty()){
+                new LoadUsers().execute();
+            }
         }
     }
     public void  CheckSQLSettings(){
@@ -192,7 +210,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         try{
-            String userid = editTextUserName.getText().toString();
+            String userid = editTextUserName.getEditText().getText().toString();
             String password = editTextPassword.getText().toString();
             if(userid.isEmpty()){
                 showCustomDialog("Warning","Please enter valid username.");
@@ -210,11 +228,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    public void LoadUsersAutoComplete(){
+        ArrayAdapter<String> useradapter = new ArrayAdapter<>(this,com.google.android.material.R.layout.support_simple_spinner_dropdown_item,Common.usersList);
+        autocompleteUsers.setAdapter(useradapter);
+        autocompleteUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                editTextPassword.requestFocus();
+            }
+        });
+    }
+
     public class DoLogin extends AsyncTask<String,String,String>
     {
         String z = "";
         Boolean isSuccess = false;
-        String userid = editTextUserName.getText().toString();
+        String userid = editTextUserName.getEditText().getText().toString();
         String password = editTextPassword.getText().toString();
         private final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
 
@@ -288,6 +317,108 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             isSuccess = false;
                         }
 
+                    }
+                }
+                catch (Exception ex)
+                {
+                    isSuccess = false;
+                    z = ex.getMessage();
+                }
+            }
+            return z;
+        }
+    }
+
+    public class LoadUsers extends AsyncTask<String,String,String>
+    {
+        String z = "";
+        Boolean isSuccess = false;
+        private final ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
+        ConnectionClass connectionClass = null;
+        Connection con = null;
+        @Override
+        protected void onPreExecute() {
+            connectionClass = new ConnectionClass(Common.SQL_SERVER,Common.DB,Common.USERNAME,Common.PASSWORD);
+            con = connectionClass.CONN();
+            Common.usersList = new ArrayList<>();
+            Common.stLocations = new ArrayList<>();
+            Common.invLocations = new ArrayList<>();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setTitle("Loading Users");
+            dialog.setMessage("Connecting to SQL Server..");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        public  boolean isHostAvailable(final String host, final int port) {
+            try (final Socket socket = new Socket()) {
+                final InetAddress inetAddress = InetAddress.getByName(host);
+                final InetSocketAddress inetSocketAddress = new InetSocketAddress(inetAddress, port);
+                socket.connect(inetSocketAddress, 5000);
+                return true;
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        @Override
+        protected void onPostExecute(String r) {
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+            //Toast.makeText(MainActivity.this,r,Toast.LENGTH_LONG).show();
+            if(isSuccess){
+                LoadUsersAutoComplete();
+            }
+            else {
+                showCustomDialog("Message",r);
+            }
+        }
+
+        private ArrayList<String> GetLocations(boolean isStore) throws SQLException {
+            ArrayList<String> locations  = new ArrayList<>();
+            String tbName = isStore ? "STORAGE ":"INVENTORY ";
+            String query = "SELECT * FROM "+tbName;
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()){
+                locations.add(rs.getString("LOCATION_NAME").toUpperCase());
+            }
+            return locations;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String[] hostwithport = Common.SQL_SERVER.split(":");
+            if(hostwithport.length<1){
+                z = "Please configure valid SQL Server Host.";
+            }
+            else if(!isHostAvailable(hostwithport[0],Integer.parseInt(hostwithport[1]))){
+                z = "Error:"+Common.SQL_SERVER+" host is unreachable. Please try again Later.";
+            }
+            else
+            {
+                try {
+                    if (con == null) {
+                        z = "Database Connection Failed";
+                    } else {
+                        String query = "SELECT * FROM USERS WHERE UPPER(USERNAME) NOT IN ('ADMIN','VINOTH')";
+                        Statement stmt = con.createStatement();
+                        ResultSet rs = stmt.executeQuery(query);
+                        ArrayList<String> userslist = new ArrayList<>();
+                        while (rs.next()){
+                            userslist.add(rs.getString("USERNAME").toUpperCase());
+                            isSuccess = true;
+                        }
+                        if(userslist.isEmpty()){
+                            z="No valid users found";
+                        }
+                        else {
+                            Common.usersList = userslist;
+                            Common.stLocations = GetLocations(true);
+                            Common.invLocations = GetLocations(false);
+                        }
                     }
                 }
                 catch (Exception ex)

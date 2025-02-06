@@ -24,6 +24,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+        applicationVariants.all {
+            outputs.all {
+                this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+                //val timestamp = SimpleDateFormat("ddMMyyyy_hhmm_aa").format(Date())
+                val apkName = "Inventoryslips.apk"
+                outputFileName = apkName
+            }
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -40,4 +48,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
