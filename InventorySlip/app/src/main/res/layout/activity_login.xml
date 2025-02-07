@@ -42,7 +42,7 @@
                 android:layout_gravity="center"
                 android:id="@+id/username"
                 android:hint="Select User"
-                android:textColorHint="@color/DarkSalmon"
+                android:textColorHint="@color/DarkBlue"
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:padding="10dp"

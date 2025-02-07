@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static final String SQLPASSWORD = "SQLPASSWORD";
     public static final String SQLDB = "SQLDB";
     public static final String EXPIRE_DT = "EXPIRE_DT";
+    public static final String PRINTER = "PRINTER";
     String sqlServer ;
     String sqlUserName;
     String sqlPassword;
@@ -73,6 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             buttonLogin.setOnClickListener(this);
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             CheckSQLSettings();
+            Common.Printer = sharedpreferences.getString(PRINTER, "");
             instance = this;
             Date dt = new Date();
             Date yesterday = getYesterday();
@@ -91,6 +93,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             else{
                 if(Common.usersList.isEmpty()){
                     new LoadUsers().execute();
+                }
+                else {
+                    LoadUsersAutoComplete();
                 }
             }
         }

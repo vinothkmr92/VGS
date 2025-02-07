@@ -58,6 +58,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     EditText editTextDescription;
     Button btnSavePrint;
     EditText editTextQty;
+    public static HomeActivity instance;
+    public static HomeActivity getInstance() {
+        return instance;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +110,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     return false;
                 }
             });
+            instance = this;
             new GetLatestSlipNo().execute("");
         }
         catch (Exception ex){
@@ -131,6 +136,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //
+            }
+        });
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+    public void showPopup(String title,String Message,Slip slip) {
+        AlertDialog.Builder dialog =  new AlertDialog.Builder(HomeActivity.this);
+        dialog.setTitle(title);
+        dialog.setMessage("\n"+Message);
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                PrintSlip(slip);
             }
         });
         dialog.setCancelable(false);
@@ -355,7 +372,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             return r;
         }
     }
-    public class SaveSlip extends AsyncTask<String,String, String>
+
+    private void PrintSlip(Slip slip){
+        try{
+            PrinterUtil printerUtil = new PrinterUtil(this,slip);
+            printerUtil.Print();
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
+        }
+    }
+    public class SaveSlip extends AsyncTask<String,String, Slip>
     {
         Boolean isSuccess = false;
         String error = "";
@@ -375,7 +402,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
-        protected void onPostExecute(String r) {
+        protected void onPostExecute(Slip r) {
             if(!error.isEmpty()){
                 if(dialog.isShowing()){
                     dialog.hide();
@@ -384,14 +411,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             else {
                 if(isSuccess){
-                    showCustomDialog("Info","Entry Successfully Saved.");
                     editTextStLocation.getEditText().setText("");
                     editTextInvLocation.getEditText().setText("");
                     editTextPartID.setText("");
                     editTextPartNo.setText("");
                     editTextDescription.setText("");
                     editTextQty.setText("");
-                    slipnoTxtview.setText(r);
+                    slipnoTxtview.setText(String.valueOf(r.nextSlipNo));
+                    showPopup("Info","Slip No -"+r.slipNo+" Successfully Saved.",r);
                 }
                 else {
                     showCustomDialog("Warning","Unable to Save Slip Details.\n Please contact support team.");
@@ -416,8 +443,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             return slipno;
         }
         @Override
-        protected String doInBackground(String... params) {
-            String r = "";
+        protected Slip doInBackground(String... params) {
+            Slip r = new Slip();
             try {
                 if (con == null) {
                     error = "Database Connection Failed";
@@ -425,19 +452,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 else
                 {
                     Integer slipNo = GetLatestSlipNo();
-                    r = String.valueOf(slipNo);
-                    String stLocation = editTextStLocation.getEditText().getText().toString();
-                    String invLocation = editTextInvLocation.getEditText().getText().toString();
-                    String PartID = editTextPartID.getText().toString();
+                    r.slipNo = slipNo;
+                    r.stLocation = editTextStLocation.getEditText().getText().toString();
+                    r.invLocation= editTextInvLocation.getEditText().getText().toString();
+                    r.partID = editTextPartID.getText().toString();
                     String qty = editTextQty.getText().toString();
-                    String username = Common.loggedinUser;
-                    String query = String.format("INSERT INTO SLIPS VALUES (%s,GETDATE(),'%s',%s,'%s','%s','%s')",slipNo,PartID,qty,stLocation,invLocation,username);
+                    r.qty = qty.isEmpty() ? 0:Integer.parseInt(qty);
+                    r.userName = Common.loggedinUser;
+                    r.slipDate = new Date();
+                    r.partNo = editTextPartNo.getText().toString();
+                    r.partDescription = editTextDescription.getText().toString();
+                    String query = String.format("INSERT INTO SLIPS VALUES (%s,GETDATE(),'%s',%s,'%s','%s','%s')",slipNo,r.partID,qty,r.stLocation,r.invLocation,r.userName);
                     Statement stmt = con.createStatement();
                     int rowAff = stmt.executeUpdate(query);
                     isSuccess = rowAff>0;
                     if(isSuccess){
                         slipNo = GetLatestSlipNo();
-                        r = String.valueOf(slipNo);
+                        r.nextSlipNo = slipNo;
                     }
                 }
             }

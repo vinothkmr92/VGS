@@ -12,7 +12,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -27,8 +26,7 @@ android {
         applicationVariants.all {
             outputs.all {
                 this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-                //val timestamp = SimpleDateFormat("ddMMyyyy_hhmm_aa").format(Date())
-                val apkName = "Inventoryslips.apk"
+                val apkName = "InventorySlips.apk"
                 outputFileName = apkName
             }
         }
@@ -40,7 +38,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
