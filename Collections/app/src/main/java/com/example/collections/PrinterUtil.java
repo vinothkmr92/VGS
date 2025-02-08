@@ -162,7 +162,7 @@ public class PrinterUtil {
         posPtr.printNormal(ESC+"|cA"+ESC+"|1CBACKYALAKSHMI MICRO\r\n");
         posPtr.printNormal(ESC+"|cA"+ESC+"|1CFINANCE PVT. LTD\r\n");
         posPtr.printNormal("\n");
-        posPtr.printNormal(ESC+"|cA"+ESC+"|1CCOLLECTIONS REPORT\r\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CCollections Report\r\n");
         posPtr.printNormal("--------------------------------");
         posPtr.printNormal("        DATE: "+dateStr+"\r\n");
         posPtr.printNormal("  AGENT NAME: "+CommonUtil.loggedinUser+"\r\n");
@@ -173,7 +173,7 @@ public class PrinterUtil {
             Collections c = cols.get(i);
             String receiptNo = StringUtils.rightPad(c.paymentID,12);
             String accno = StringUtils.rightPad(c.MemberID,6);
-            String amt = formatter.format(c.Amount).replace(symbol,"Rs. ");
+            String amt = formatter.format(c.Amount).replace(symbol,"");
             amt = StringUtils.leftPad(amt,14);
             String line = receiptNo+accno+amt+"\r\n";
             posPtr.printNormal(line);
@@ -198,7 +198,7 @@ public class PrinterUtil {
         posPtr.printNormal(ESC+"|cA"+ESC+"|1CBACKYALAKSHMI MICRO\r\n");
         posPtr.printNormal(ESC+"|cA"+ESC+"|1CFINANCE PVT. LTD\r\n");
         posPtr.printNormal("\n");
-        posPtr.printNormal(ESC+"|cA"+ESC+"|1CCOLLECTIONS REPORT\r\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CConsolidated Col. Report\r\n");
         posPtr.printNormal("--------------------------------");
         posPtr.printNormal("        DATE: "+dateStr+"\r\n");
         posPtr.printNormal("  AGENT NAME: "+CommonUtil.loggedinUser+"\r\n");

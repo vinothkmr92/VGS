@@ -62,6 +62,7 @@
                     android:id="@+id/memberid"
                     android:inputType="number"
                     android:maxLines="1"
+                    android:imeOptions="actionSearch"
                     android:fontFamily="@font/orienta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

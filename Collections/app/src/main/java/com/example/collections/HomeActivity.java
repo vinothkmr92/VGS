@@ -86,7 +86,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         memberidEditView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     viewLoans.removeAllViews();
                     memberView.setVisibility(View.INVISIBLE);
                     hideKeyboard(HomeActivity.this);

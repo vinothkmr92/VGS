@@ -268,6 +268,7 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
         protected void onPreExecute() {
             CommonUtil.collections = new ArrayList<>();
             btnPrint.setVisibility(View.GONE);
+            consolidatedRpt.setVisibility(View.GONE);
             CommonUtil.collectionsRptConsolidated = null;
             if(frmDate.contains("Sept")){
                 frmDate = frmDate.replace("Sept","Sep");
@@ -294,11 +295,12 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
                 showCustomDialog("Error",error);
             }
             else {
-                btnPrint.setVisibility(View.VISIBLE);
                 CommonUtil.collectionsRptConsolidated = r;
                 Double billamts = r.TotalAmt;
                 Double cashamts = r.CashAmt;
                 Double upiamts = r.UpiAmt;
+                btnPrint.setVisibility(billamts>0 ? View.VISIBLE:View.GONE);
+                consolidatedRpt.setVisibility(billamts>0?View.VISIBLE:View.GONE);
                 if(billamts>0){
                     setupPieChart(cashamts,upiamts);
                 }
