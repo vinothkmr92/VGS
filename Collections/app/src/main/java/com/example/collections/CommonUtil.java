@@ -19,5 +19,6 @@ public class CommonUtil {
     public static String loanNo;
     public static String Printer="";
     public static ArrayList<Payment> payments;
-    public static CollectionsRpt collectionsRpt;
+    public static CollectionsRptConsolidated collectionsRptConsolidated;
+    public static ArrayList<Collections> collections;
 }

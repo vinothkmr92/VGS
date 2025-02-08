@@ -282,7 +282,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             rptDtl.PaymentMode = paymentMode;
             rptDtl.PaymentID = String.valueOf(paymentID);
             rptDtl.PaidDate = new Date();
-            printerUtil = new PrinterUtil(this,rptDtl,null,false,false);
+            printerUtil = new PrinterUtil(this,rptDtl,
+                    null,null,false,false,false);
             confrimDialog.show();
         }
         catch (Exception ex){
@@ -363,7 +364,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT PAYMENT_ID,PAYMENT_DATE,PAYMENT_MODE,AMOUNT,RECEIVED_BY FROM PAYMENTS WHERE LOAN_NO ='"+loanNo+"' ORDER BY PAYMENT_DATE DESC";
+                        String query = "SELECT PAYMENT_ID,PAYMENT_DATE,PAYMENT_MODE,AMOUNT,RECEIVED_BY,MEMBER_ID FROM PAYMENTS WHERE LOAN_NO ='"+loanNo+"' ORDER BY PAYMENT_DATE DESC";
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Payment> payments = new ArrayList<>();
@@ -375,6 +376,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             payment.setPaymentMode(rs.getString("PAYMENT_MODE"));
                             payment.setPaidAmount(rs.getDouble("AMOUNT"));
                             payment.setCollectedPerson(rs.getString("RECEIVED_BY"));
+                            payment.MemberID = rs.getString("MEMBER_ID");
                             payments.add(payment);
                         }
                         CommonUtil.payments = payments;
@@ -425,7 +427,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 if(dialog.isShowing()){
                     dialog.hide();
                 }
-                PrintPaymentReceipt(loanNo,paymentMode,amtpaying,paymentID);
+                PrintPaymentReceipt(memberid,paymentMode,amtpaying,paymentID);
             }
             else {
                 if(dialog.isShowing()){
@@ -474,6 +476,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             int paymentRowAff = stmt.executeUpdate(query);
                             query = "UPDATE MEMBERS SET DUE_AMOUNT=DUE_AMOUNT-"+amtpaying+" WHERE MEMBER_ID="+memberid;
                             int memberBal = stmt.executeUpdate(query);
+                            query = "UPDATE LOANS SET PAID_AMOUNT=0";
+                            stmt.executeUpdate(query);
                             query = "UPDATE LOANS SET LOANS.PAID_AMOUNT = P.PAID FROM [LOANS] L INNER JOIN(SELECT LOAN_NO, SUM(AMOUNT) PAID FROM PAYMENTS GROUP BY  LOAN_NO) P ON L.LOAN_NO = P.LOAN_NO;";
                             stmt.executeUpdate(query);
                             query = "UPDATE MEMBERS SET MEMBERS.OUTSTANDING_AMOUNT = P.BAL FROM [MEMBERS] L INNER JOIN(SELECT MEMBER_ID, SUM(LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT) AS BAL FROM LOANS GROUP BY  MEMBER_ID) P ON L.MEMBER_ID = P.MEMBER_ID;";

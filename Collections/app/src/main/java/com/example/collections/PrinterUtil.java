@@ -32,10 +32,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
-import java.util.UUID;
 
 public class PrinterUtil {
     private final Context context;
@@ -62,12 +62,16 @@ public class PrinterUtil {
     private Boolean rePrint;
     private Date paymentDate;
     private boolean printCollectionReport;
-    private CollectionsRpt collectionsRpt;
+    private boolean isConsolidated;
+    private ArrayList<Collections> cols;
+    private CollectionsRptConsolidated collectionsRptConsolidated;
     public PrinterUtil(Context cntx,
                        ReceiptDtl receiptDtl,
-                       CollectionsRpt collectionsRpt,
+                       CollectionsRptConsolidated collectionsRptConsolidated,
+                       ArrayList<Collections> cols,
                        Boolean isReprint,
-                       Boolean collectionPrint) {
+                       Boolean collectionPrint,
+                       Boolean isConsolidated) {
         posPtr=new ESCPOSPrinter();
         rePrint = isReprint;
         isWifi = false;
@@ -89,7 +93,9 @@ public class PrinterUtil {
             this.paymentID = receiptDtl.PaymentID;
             this.paymentDate = receiptDtl.PaidDate;
         }
-        this.collectionsRpt = collectionsRpt;
+        this.collectionsRptConsolidated = collectionsRptConsolidated;
+        this.cols = cols;
+        this.isConsolidated = isConsolidated;
     }
     @Override
     protected void finalize() throws Throwable {
@@ -143,7 +149,45 @@ public class PrinterUtil {
     }
     private void PrintCollectionReport() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String dateStr = format.format(collectionsRpt.frmDate);
+        String dateStr = format.format(collectionsRptConsolidated.frmDate);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        SimpleDateFormat dtformat = new SimpleDateFormat("dd-MM-yyyy hh:mm aaa", Locale.getDefault());
+        String currentDt = dtformat.format(new Date());
+        Double totalAmt = cols.stream().mapToDouble(c->c.Amount).sum();
+        String ttAmt = formatter.format(totalAmt).replace(symbol,"Rs. ");
+        ttAmt = StringUtils.leftPad(ttAmt,19);
+        posPtr.printNormal("\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CBACKYALAKSHMI MICRO\r\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CFINANCE PVT. LTD\r\n");
+        posPtr.printNormal("\n");
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CCOLLECTIONS REPORT\r\n");
+        posPtr.printNormal("--------------------------------");
+        posPtr.printNormal("        DATE: "+dateStr+"\r\n");
+        posPtr.printNormal("  AGENT NAME: "+CommonUtil.loggedinUser+"\r\n");
+        posPtr.printNormal("--------------------------------");
+        posPtr.printNormal("RCPT NO     ACC NO        AMOUNT");
+        posPtr.printNormal("--------------------------------");
+        for(int i=0;i<cols.size();i++){
+            Collections c = cols.get(i);
+            String receiptNo = StringUtils.rightPad(c.paymentID,12);
+            String accno = StringUtils.rightPad(c.MemberID,6);
+            String amt = formatter.format(c.Amount).replace(symbol,"Rs. ");
+            amt = StringUtils.leftPad(amt,14);
+            String line = receiptNo+accno+amt+"\r\n";
+            posPtr.printNormal(line);
+        }
+        posPtr.printNormal("--------------------------------");
+        posPtr.printNormal("TOTAL AMOUNT:"+ttAmt);
+        posPtr.printNormal("--------------------------------");
+        posPtr.lineFeed(1);
+        posPtr.printNormal(ESC+"|cA"+ESC+"|1CPrinted on "+currentDt+"\r\n");
+        posPtr.lineFeed(4);
+    }
+    private void PrintConsolidatedCollectionReport() throws IOException {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String dateStr = format.format(collectionsRptConsolidated.frmDate);
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
         String symbol = formatter.getCurrency().getSymbol();
@@ -158,17 +202,17 @@ public class PrinterUtil {
         posPtr.printNormal("--------------------------------");
         posPtr.printNormal("        DATE: "+dateStr+"\r\n");
         posPtr.printNormal("  AGENT NAME: "+CommonUtil.loggedinUser+"\r\n");
-        posPtr.printNormal("NO. OF BILLS: "+collectionsRpt.NoofBills+"\r\n");
-        posPtr.printNormal("  CASH BILLS: "+collectionsRpt.CashBills+"\r\n");
-        posPtr.printNormal("  UPI  BILLS: "+collectionsRpt.UpiBills+"\r\n");
-        String cashAmt = formatter.format(collectionsRpt.CashAmt).replace(symbol,"Rs. ");
+        posPtr.printNormal("NO. OF BILLS: "+ collectionsRptConsolidated.NoofBills+"\r\n");
+        posPtr.printNormal("  CASH BILLS: "+ collectionsRptConsolidated.CashBills+"\r\n");
+        posPtr.printNormal("  UPI  BILLS: "+ collectionsRptConsolidated.UpiBills+"\r\n");
+        String cashAmt = formatter.format(collectionsRptConsolidated.CashAmt).replace(symbol,"Rs. ");
         cashAmt = StringUtils.leftPad(cashAmt,19);
         posPtr.printNormal(" CASH AMOUNT:"+cashAmt);
-        String upiAmt = formatter.format(collectionsRpt.UpiAmt).replace(symbol,"Rs. ");
+        String upiAmt = formatter.format(collectionsRptConsolidated.UpiAmt).replace(symbol,"Rs. ");
         upiAmt = StringUtils.leftPad(upiAmt,19);
         posPtr.printNormal("  UPI AMOUNT:"+upiAmt);
         posPtr.printNormal("--------------------------------");
-        String totalAmt = formatter.format(collectionsRpt.TotalAmt).replace(symbol,"Rs. ");
+        String totalAmt = formatter.format(collectionsRptConsolidated.TotalAmt).replace(symbol,"Rs. ");
         totalAmt = StringUtils.leftPad(totalAmt,19);
         posPtr.printNormal("TOTAL AMOUNT:"+totalAmt);
         posPtr.printNormal("--------------------------------");
@@ -322,7 +366,12 @@ public class PrinterUtil {
                 posPtr.setAsync(true);
                 try{
                     if(printCollectionReport){
-                        PrintCollectionReport();
+                        if(isConsolidated){
+                            PrintConsolidatedCollectionReport();
+                        }
+                        else {
+                            PrintCollectionReport();
+                        }
                     }
                     else {
                         PrintBill();

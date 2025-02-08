@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -32,9 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,7 +56,7 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
     DatePickerDialog todatePickerDialog;
     Button btnPrint;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-
+    Switch consolidatedRpt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +68,6 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
             Date date = new Date();
             fromDateView.setText(format.format(date));
             toDateView.setText(format.format(date));
-
             new GetCollections().execute("");
 
         }
@@ -91,6 +89,7 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
         upiAmtView = findViewById(R.id.upiAmt);
         collectionChart = findViewById(R.id.collectionChart);
         btnPrint = findViewById(R.id.btnPrintReport);
+        consolidatedRpt = findViewById(R.id.consolidated);
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
@@ -240,8 +239,9 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
     }
     private void PrintCollectionReport(){
       try{
-          if(CommonUtil.collectionsRpt!=null){
-              PrinterUtil printerUtil = new PrinterUtil(this,null,CommonUtil.collectionsRpt,false,true);
+          if(CommonUtil.collectionsRptConsolidated !=null && !CommonUtil.collections.isEmpty()){
+              PrinterUtil printerUtil = new PrinterUtil(this,null,
+                      CommonUtil.collectionsRptConsolidated,CommonUtil.collections,false,true,consolidatedRpt.isChecked());
               printerUtil.Print();
           }
           else {
@@ -253,11 +253,11 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
       }
     }
 
-    public class GetCollections extends AsyncTask<String,String, CollectionsRpt>
+    public class GetCollections extends AsyncTask<String,String, CollectionsRptConsolidated>
     {
         String frmDate = fromDateView.getText().toString();
         String toDate = toDateView.getText().toString();
-        String selectedUser = CommonUtil.loggedinUser;
+        String selectedUser = CommonUtil.loggedinUser.toUpperCase();
         Double revenue = 0d;
         Boolean isSuccess = false;
         String error = "";
@@ -266,8 +266,9 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
         Connection con = null;
         @Override
         protected void onPreExecute() {
+            CommonUtil.collections = new ArrayList<>();
             btnPrint.setVisibility(View.GONE);
-            CommonUtil.collectionsRpt = null;
+            CommonUtil.collectionsRptConsolidated = null;
             if(frmDate.contains("Sept")){
                 frmDate = frmDate.replace("Sept","Sep");
             }
@@ -285,7 +286,7 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
         }
 
         @Override
-        protected void onPostExecute(CollectionsRpt r) {
+        protected void onPostExecute(CollectionsRptConsolidated r) {
             if(!error.isEmpty()){
                 if(dialog.isShowing()){
                     dialog.hide();
@@ -294,7 +295,7 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
             }
             else {
                 btnPrint.setVisibility(View.VISIBLE);
-                CommonUtil.collectionsRpt = r;
+                CommonUtil.collectionsRptConsolidated = r;
                 Double billamts = r.TotalAmt;
                 Double cashamts = r.CashAmt;
                 Double upiamts = r.UpiAmt;
@@ -317,8 +318,8 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
         }
 
         @Override
-        protected CollectionsRpt doInBackground(String... params) {
-            CollectionsRpt coll = new CollectionsRpt();
+        protected CollectionsRptConsolidated doInBackground(String... params) {
+            CollectionsRptConsolidated coll = new CollectionsRptConsolidated();
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
             try {
                 if (con == null) {
@@ -329,7 +330,7 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
                     coll.frmDate = format.parse(frmDate);
                     coll.toDate = format.parse(toDate);
                     String query = String.format("SELECT SUM(AMOUNT) AS AMT,COUNT(*) AS CN FROM PAYMENTS WHERE IS_FIELD_COLLECTION=1 AND CAST(PAYMENT_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
-                    query = query+String.format(" AND RECEIVED_BY='%s'",selectedUser);
+                    query = query+String.format(" AND UPPER(RECEIVED_BY)='%s'",selectedUser);
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
                     if(rs.next())
@@ -353,6 +354,18 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
                         coll.UpiBills = upiR.getInt("CN");
                     }
                     upiR.close();
+                    String colQuery = String.format("SELECT PAYMENT_ID,MEMBER_ID,LOAN_NO,AMOUNT FROM PAYMENTS WHERE IS_FIELD_COLLECTION=1 AND CAST(PAYMENT_DATE AS DATE) BETWEEN '%s' AND '%s' AND UPPER(RECEIVED_BY)='%s'",frmDate,toDate,selectedUser);
+                    ResultSet colResult = stmt.executeQuery(colQuery);
+                    ArrayList<Collections> cols = new ArrayList<>();
+                    while (colResult.next()){
+                        Collections col = new Collections();
+                        col.paymentID = colResult.getString("PAYMENT_ID");
+                        col.MemberID = colResult.getString("MEMBER_ID");
+                        col.AccNo = colResult.getString("LOAN_NO");
+                        col.Amount = colResult.getDouble("AMOUNT");
+                        cols.add(col);
+                    }
+                    CommonUtil.collections = cols;
                 }
             }
             catch (Exception ex)

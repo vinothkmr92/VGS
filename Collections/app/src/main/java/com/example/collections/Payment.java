@@ -9,6 +9,7 @@ public class Payment {
     private Double PaidAmount;
     private String CollectedPerson;
     private String PaymentMode;
+    public String MemberID;
 
     public String getPaymentMode() {
         return PaymentMode;

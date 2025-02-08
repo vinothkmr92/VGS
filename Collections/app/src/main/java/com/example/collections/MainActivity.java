@@ -238,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             z = "Invalid Username or Password. Please try again.";
                             isSuccess = false;
                         }
-
                     }
                 }
                 catch (Exception ex)

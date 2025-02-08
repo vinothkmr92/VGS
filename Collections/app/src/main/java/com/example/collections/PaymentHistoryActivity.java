@@ -112,14 +112,14 @@ public class PaymentHistoryActivity extends AppCompatActivity {
             String balStr = formatter.format(bal).replace(symbol,"Rs. ");
             ReceiptDtl rptDtl = new ReceiptDtl();
             rptDtl.MemberName = CommonUtil.memberName;
-            rptDtl.LoanNo = CommonUtil.loanNo;
+            rptDtl.LoanNo = paymentm.MemberID;
             rptDtl.Outstanding = outstandingstr;
             rptDtl.Paid = paidAmStr;
             rptDtl.Balance = balStr;
             rptDtl.PaymentMode = paymentm.getPaymentMode();
             rptDtl.PaymentID = String.valueOf(paymentm.getPaymentID());
             rptDtl.PaidDate = paymentm.getPaymentDate();
-            PrinterUtil printerUtil = new PrinterUtil(this,rptDtl,null,true,false);
+            PrinterUtil printerUtil = new PrinterUtil(this,rptDtl,null,null,true,false,false);
             printerUtil.Print();
         }
         catch (Exception ex){

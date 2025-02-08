@@ -205,6 +205,15 @@
                     />
             </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+            <Switch
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/consolidated"
+                android:text="Print Consolidated Report"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:textColor="@color/MediumVioletRed"
+                ></Switch>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -215,7 +224,7 @@
                 android:textStyle="bold"
                 android:fontFamily="@font/orienta"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:backgroundTint="@color/MintCream"
                 android:id="@+id/btnPrintReport"/>
         </LinearLayout>
