@@ -158,6 +158,8 @@ public class PrinterUtil {
         Double totalAmt = cols.stream().mapToDouble(c->c.Amount).sum();
         String ttAmt = formatter.format(totalAmt).replace(symbol,"Rs. ");
         ttAmt = StringUtils.leftPad(ttAmt,19);
+        String noofreceipts = String.valueOf(cols.size());
+        noofreceipts = StringUtils.leftPad(noofreceipts,19);
         posPtr.printNormal("\n");
         posPtr.printNormal(ESC+"|cA"+ESC+"|1CBACKYALAKSHMI MICRO\r\n");
         posPtr.printNormal(ESC+"|cA"+ESC+"|1CFINANCE PVT. LTD\r\n");
@@ -179,6 +181,7 @@ public class PrinterUtil {
             posPtr.printNormal(line);
         }
         posPtr.printNormal("--------------------------------");
+        posPtr.printNormal("NO.OF RECPTS:"+noofreceipts);
         posPtr.printNormal("TOTAL AMOUNT:"+ttAmt);
         posPtr.printNormal("--------------------------------");
         posPtr.lineFeed(1);
