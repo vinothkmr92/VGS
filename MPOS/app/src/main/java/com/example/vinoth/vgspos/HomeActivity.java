@@ -61,7 +61,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String FOOTERMSG= "FOOTERMSG";
     public static final String PRINTERIP = "PRINTERIP";
     public static final String BLUETOOTNAME = "BLUETOOTHNAME";
-    public static final String ISWIFI = "ISWIFI";
+    public static final String PRINTTYPE = "WIFI";
     public static final String IS3INCH = "IS3INCH";
     public static final String EXPIRE_DT = "EXPIRE_DT";
     public static final String PRINTKOT = "PRINTKOT";
@@ -364,10 +364,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Common.bluetoothDeviceName = bluetothName;
             String RptSize = sharedpreferences.getString(IS3INCH,"3");
             Common.RptSize = RptSize;
-            String isWifi = sharedpreferences.getString(ISWIFI,"YES");
-            isWifiPrint = isWifi.equalsIgnoreCase("YES");
-            Common.isWifiPrint = isWifiPrint;
-            if(!isWifiPrint){
+            String printType = sharedpreferences.getString(PRINTTYPE,"WIFI");
+            Common.printType = printType;
+            boolean isBlueetooth = !printType.equals("USB") && !printType.equals("WIFI");
+            if(isBlueetooth){
                 if(!checkBLuetoothPermission()){
                     ActivityCompat.requestPermissions(HomeActivity.this,PERMISSIONS_BLUETOOTH
                             ,1);
@@ -452,11 +452,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void  SaveAndPrintBill(boolean print){
         int billno = SaveDetails();
-        Common.billNo = billno;
-        Common.billDate = new Date();
-        Common.waiter  = searchTxtView.getText().toString();
+        double discountAmt = 0;
+        if(!discountAmtEditText.getText().toString().isEmpty()){
+            discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
+        }
+        ReceiptData receiptData = new ReceiptData();
+        receiptData.billno = billno;
+        receiptData.discount = discountAmt;
+        receiptData.billDate = new Date();
+        receiptData.waiter = searchTxtView.getText().toString();
+        receiptData.itemsCarts = Common.itemsCarts;
         if(print){
-            Print();
+            Print(receiptData);
         }
         else {
             RefreshViews();
@@ -615,7 +622,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void Print(){
+    private void Print(ReceiptData receiptData){
         try
         {
             if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
@@ -629,7 +636,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                     , 1);
                         }
                     }
-                    PrinterUtil printerUtil = new PrinterUtil(HomeActivity.this,true,isWifiPrint);
+                    PrinterUtil printerUtil = new PrinterUtil(HomeActivity.this,this,true);
+                    printerUtil.receiptData = receiptData;
                     printerUtil.Print();
                 }
                 catch (Exception ex){
@@ -1140,7 +1148,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         dbHelper.Insert_Bills(bills);
         int nextBillNo = dbHelper.GetNextBillNo();
         billnoTxtView.setText(String.valueOf(nextBillNo));
-        Common.discount = discountAmt;
         return newbillno;
     }
     public void RefreshViews(){

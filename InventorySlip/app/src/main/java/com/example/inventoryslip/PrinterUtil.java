@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.hardware.usb.UsbDeviceConnection;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.text.Layout;
@@ -24,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import com.sewoo.jpos.command.ESCPOS;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
 import com.sewoo.port.android.BluetoothPort;
+import com.sewoo.port.android.USBPort;
 import com.sewoo.port.android.WiFiPort;
 import com.sewoo.request.android.RequestHandler;
 
@@ -39,6 +41,8 @@ public class PrinterUtil {
     private final Context context;
     private Thread hThread;
     private WiFiPort wifiPort;
+    private USBPort usbPort;
+    private UsbDeviceConnection usbConnection;
     public ESCPOSPrinter posPtr;
     private static final String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,

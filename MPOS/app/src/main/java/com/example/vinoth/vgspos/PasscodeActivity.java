@@ -16,8 +16,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Date;
-
 public class PasscodeActivity extends AppCompatActivity {
 
     public static boolean isUserPasscode;
@@ -95,10 +93,6 @@ public class PasscodeActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed(){
-        Common.billDate = new Date();
-        Common.billNo = 0;
-        Common.itemsCarts = null;
-        Common.waiter = "";
         isUserPasscode = false;
         //GoHome();
     }

@@ -313,11 +313,11 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
         try {
             String frmdt = frmDateTextView.getText().toString();
             String todt = toDateTextView.getText().toString();
-            Common.itemsRpts = items;
             Common.saleReportFrmDate = frmdt;
             Common.saleReportToDate = todt;
             Common.isItemWiseRptBill = true;
-            PrinterUtil printerUtil = new PrinterUtil(ItemReport.this,false,Common.isWifiPrint);
+            PrinterUtil printerUtil = new PrinterUtil(ItemReport.this,this,false);
+            printerUtil.itemsRpts = items;
             printerUtil.Print();
 
         } catch (Exception e) {
@@ -435,10 +435,6 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
 
     @Override
     public void onBackPressed(){
-        Common.billDate = new Date();
-        Common.billNo = 0;
-        Common.discount = 0;
-        Common.itemsCarts = null;
         Common.waiter = "";
         super.onBackPressed();
     }

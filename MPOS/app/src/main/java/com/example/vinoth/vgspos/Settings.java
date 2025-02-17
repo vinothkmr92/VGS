@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -56,7 +55,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     public static final String KOTPRINTERIP = "KOTPRINTERIP";
     public static final String BILLCOPIES = "BILLCOPIES";
     public static final String MULTILANG = "MULTILANG";
-    public static final String ISWIFI = "ISWIFI";
+    public static final String PRINTTYPE = "WIFI";
     private static int RESULT_LOAD_IMAGE = 1;
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
@@ -82,6 +81,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     RadioButton radioButton4Inch;
     RadioButton radioButtonBluetooth;
     RadioButton radioButtonWifi;
+    RadioButton radioButtonUSB;
     TextView txtViewBluetooth;
     TextView txtViewPrinterIP;
     EditText editTextPrinterIP;
@@ -117,6 +117,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         btnclerlogo = (ImageButton)findViewById(R.id.btnclearlogo);
         radioButtonBluetooth = (RadioButton) findViewById(R.id.radioBtnBluetooth);
         radioButtonWifi = (RadioButton) findViewById(R.id.radioBtnWifi);
+        radioButtonUSB = findViewById(R.id.radioBtnUSB);
         txtViewBluetooth = (TextView) findViewById(R.id.txtViewBlutooth);
         txtViewPrinterIP = (TextView) findViewById(R.id.txtViewIPAddress);
         editTextPrinterIP = (EditText) findViewById(R.id.printerIP);
@@ -150,7 +151,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         String footerMsg = sharedpreferences.getString(FOOTERMSG,"");
         String printerip = sharedpreferences.getString(PRINTERIP,"");
         String bluetothName = sharedpreferences.getString(BLUETOOTNAME,"");
-        String isWifi = sharedpreferences.getString(ISWIFI,"YES");
+        String printType = sharedpreferences.getString(PRINTTYPE,"WIFI");
         String rptsize = sharedpreferences.getString(IS3INCH,"3");
         String printkot = sharedpreferences.getString(PRINTKOT,"NO");
         String kotprinterip = sharedpreferences.getString(KOTPRINTERIP,"");
@@ -229,6 +230,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
+                    radioButtonUSB.setChecked(false);
                     radioButtonBluetooth.setChecked(false);
                     txtViewBluetooth.setVisibility(View.GONE);
                     spinnerbluetothDevice.setVisibility(View.GONE);
@@ -253,6 +255,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                  if(isChecked){
+                     radioButtonUSB.setChecked(false);
                      radioButtonWifi.setChecked(false);
                      txtViewPrinterIP.setVisibility(View.GONE);
                      editTextPrinterIP.setVisibility(View.GONE);
@@ -263,6 +266,20 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                      txtViewPrinterIP.setVisibility(View.VISIBLE);
                      editTextPrinterIP.setVisibility(View.VISIBLE);
                  }
+            }
+        });
+        radioButtonUSB.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                radioButtonWifi.setChecked(!isChecked);
+                radioButtonBluetooth.setChecked(!isChecked);
+                txtViewPrinterIP.setVisibility(isChecked ? View.GONE:View.VISIBLE);
+                editTextPrinterIP.setVisibility(isChecked ? View.GONE:View.VISIBLE);
+                txtviewkotprinter.setVisibility(isChecked ? View.GONE:View.VISIBLE);
+                editTextkotprinterip.setVisibility(isChecked ? View.GONE:View.VISIBLE);
+                txtViewBluetooth.setVisibility(isChecked ? View.GONE:View.VISIBLE);
+                spinnerbluetothDevice.setVisibility(isChecked? View.GONE:View.VISIBLE);
             }
         });
         if(!checkPermission()){
@@ -285,25 +302,36 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerbluetothDevice.setAdapter(adapter);
         spinnerbluetothDevice.setSelection(selectedindex);
-        if(isWifi.equalsIgnoreCase("YES")){
-            radioButtonWifi.setChecked(true);
-            radioButtonBluetooth.setChecked(false);
-            txtViewBluetooth.setVisibility(View.GONE);
-            spinnerbluetothDevice.setVisibility(View.GONE);
-            rptsizetextview.setVisibility(View.GONE);
-            radioButton2Inch.setVisibility(View.GONE);
-            radioButton3Inch.setVisibility(View.GONE);
-            radioButton4Inch.setVisibility(View.GONE);
-            txtviewkotprinter.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
-            editTextkotprinterip.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
-        }
-        else{
-            radioButtonWifi.setChecked(false);
-            radioButtonBluetooth.setChecked(true);
-            txtViewPrinterIP.setVisibility(View.GONE);
-            editTextPrinterIP.setVisibility(View.GONE);
-            txtviewkotprinter.setVisibility(View.GONE);
-            editTextkotprinterip.setVisibility(View.GONE);
+        switch (printType){
+            case "WIFI":
+                radioButtonWifi.setChecked(true);
+                radioButtonBluetooth.setChecked(false);
+                txtViewBluetooth.setVisibility(View.GONE);
+                spinnerbluetothDevice.setVisibility(View.GONE);
+                rptsizetextview.setVisibility(View.GONE);
+                radioButton2Inch.setVisibility(View.GONE);
+                radioButton3Inch.setVisibility(View.GONE);
+                radioButton4Inch.setVisibility(View.GONE);
+                txtviewkotprinter.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
+                editTextkotprinterip.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
+                break;
+            case "USB":
+                radioButtonUSB.setChecked(true);
+                radioButtonWifi.setChecked(false);
+                radioButtonBluetooth.setChecked(false);
+                txtViewPrinterIP.setVisibility(View.GONE);
+                editTextPrinterIP.setVisibility(View.GONE);
+                txtviewkotprinter.setVisibility(View.GONE);
+                editTextkotprinterip.setVisibility(View.GONE);
+                break;
+            default:
+                radioButtonWifi.setChecked(false);
+                radioButtonBluetooth.setChecked(true);
+                txtViewPrinterIP.setVisibility(View.GONE);
+                editTextPrinterIP.setVisibility(View.GONE);
+                txtviewkotprinter.setVisibility(View.GONE);
+                editTextkotprinterip.setVisibility(View.GONE);
+                break;
         }
         enablekot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -421,7 +449,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             String footerMsg = editTextFooterMsg.getText().toString();
             String printer = editTextPrinterIP.getText().toString();
             String bluetoothName = radioButtonBluetooth.isChecked()? spinnerbluetothDevice.getSelectedItem().toString(): " ";
-            String isWifi = radioButtonWifi.isChecked() ? "YES":"NO";
+            String printType = radioButtonUSB.isChecked() ? "USB" : radioButtonWifi.isChecked()?"WIFI": "BLUETOOTH";
             String rptSize = radioButton2Inch.isChecked()?"2":radioButton3Inch.isChecked()?"3":radioButton4Inch.isChecked()?"4":"3";
             String printKOT = enablekot.isChecked()?"YES":"NO";
             String includeMRP = checkBoxIncludeMRP.isChecked()?"YES":"NO";
@@ -434,7 +462,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             sharedpreferences.putString(FOOTERMSG,footerMsg);
             sharedpreferences.putString(PRINTERIP,printer);
             sharedpreferences.putString(BLUETOOTNAME,bluetoothName);
-            sharedpreferences.putString(ISWIFI,isWifi);
+            sharedpreferences.putString(PRINTTYPE,printType);
             sharedpreferences.putString(IS3INCH,rptSize);
             sharedpreferences.putString(PRINTKOT,printKOT);
             sharedpreferences.putString(KOTPRINTERIP,kotprinterip);
@@ -469,7 +497,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             Common.billcopies = billcopies;
             Common.bluetoothDeviceName = bluetoothName;
             Common.includeMRPinReceipt = includeMRP.equalsIgnoreCase("YES");
-            Common.isWifiPrint = radioButtonWifi.isChecked();
+            Common.printType = printType;
             Common.RptSize = rptSize;
             Common.printKOT = enablekot.isChecked();
             Common.kotprinterIP = kotprinterip;

@@ -1,15 +1,22 @@
 package com.example.vinoth.vgspos;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -17,6 +24,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,6 +33,8 @@ import androidx.core.content.res.ResourcesCompat;
 import com.sewoo.jpos.command.ESCPOS;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
 import com.sewoo.port.android.BluetoothPort;
+import com.sewoo.port.android.USBPort;
+import com.sewoo.port.android.USBPortConnection;
 import com.sewoo.port.android.WiFiPort;
 import com.sewoo.request.android.RequestHandler;
 
@@ -33,12 +43,17 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
+
 public class PrinterUtil {
+    private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
@@ -56,10 +71,48 @@ public class PrinterUtil {
     private int rtn;
     private boolean printSale;
     private BluetoothPort bluetoothPort;
+    public ReceiptData receiptData;
     private boolean isWifi;
-    public  PrinterUtil(Context cntx,boolean prtSale,boolean iswifi) {
+    public ArrayList<ItemsRpt> itemsRpts;
+    public ArrayList<SaleReport> saleReports;
+    private USBPort usbPort;
+    private boolean isUsbport;
+    private UsbDevice usbDevice;
+    private UsbManager usbManager;
+    private Activity activity;
+    private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                synchronized (this) {
+                    usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
+                    usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                        if (usbManager != null && usbDevice != null) {
+                            // YOUR PRINT CODE HERE
+                            usbPort = new USBPort(usbManager);
+                            new ConnectUSBPrinter().execute();
+                        }
+                    }
+                }
+            }
+        }
+    };
+    private boolean isBluetooth;
+    public  PrinterUtil(Context cntx,Activity act,boolean prtSale){
+        activity = act;
         posPtr=new ESCPOSPrinter();
-        isWifi = iswifi;
+        switch (Common.printType){
+            case "WIFI":
+                isWifi = true;
+                break;
+            case "USB":
+                isUsbport = true;
+                break;
+            default:
+                isBluetooth = true;
+                break;
+        }
         if(isWifi){
             wifiPort = WiFiPort.getInstance();
         }
@@ -69,6 +122,37 @@ public class PrinterUtil {
         context = cntx;
         printSale = prtSale;
     }
+
+    public void ConnectUSB() {
+        usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
+        Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
+        UsbDevice mDevice = null;
+        while (mDeviceIterator.hasNext()) {
+            mDevice = mDeviceIterator.next();
+            int interfaceCount = mDevice.getInterfaceCount();
+            Toast.makeText(activity, "INTERFACE COUNT: " + String.valueOf(interfaceCount), Toast.LENGTH_SHORT).show();
+
+            if (mDevice == null) {
+                Toast.makeText(activity, "mDevice is null", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(activity, "USB Device found", Toast.LENGTH_SHORT).show();
+            }
+        }
+        usbDevice = mDevice;
+        if (usbManager != null) {
+            PendingIntent permissionIntent = PendingIntent.getBroadcast(
+                    activity,
+                    0,
+                    new Intent(ACTION_USB_PERMISSION),
+                    android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE : 0
+            );
+            IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+            activity.registerReceiver(this.usbReceiver, filter);
+            usbManager.requestPermission(mDevice, permissionIntent);
+        }
+    }
+
     @Override
     protected void finalize() throws Throwable {
         try
@@ -137,7 +221,7 @@ public class PrinterUtil {
     }
     private void PrintBillWithMRP() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
-        String dateStr = format.format(Common.billDate);
+        String dateStr = format.format(receiptData.billDate);
         Bitmap bitmapIcon = Common.shopLogo;
         if(bitmapIcon!=null){
             try {
@@ -159,9 +243,9 @@ public class PrinterUtil {
         }
         posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
-        posPtr.printNormal(ESC+"|lABILL NO  : "+Common.billNo+"\n");
-        if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
-            posPtr.printNormal(ESC+"|lANAME     : "+Common.waiter);
+        posPtr.printNormal(ESC+"|lABILL NO  : "+receiptData.billno+"\n");
+        if(!receiptData.waiter.isEmpty() && !receiptData.waiter.equals("NONE")){
+            posPtr.printNormal(ESC+"|lANAME     : "+receiptData.waiter);
             posPtr.printNormal("\n");
         }
         posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
@@ -172,15 +256,15 @@ public class PrinterUtil {
         double mrpTotalAmt = 0d;
         double discountAmt = 0d;
         DecimalFormat formater = new DecimalFormat("#.###");
-        for(int k=0;k<Common.itemsCarts.size();k++){
-            String name = Common.itemsCarts.get(k).getItem_Name();
-            String qty = formater.format(Common.itemsCarts.get(k).getQty());
-            String price = formater.format(Common.itemsCarts.get(k).getPrice());
-            String mrp = formater.format(Common.itemsCarts.get(k).getMRP());
-            double mrpd = Common.itemsCarts.get(k).getMRP();
-            Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
+        for(int k=0;k<receiptData.itemsCarts.size();k++){
+            String name = receiptData.itemsCarts.get(k).getItem_Name();
+            String qty = formater.format(receiptData.itemsCarts.get(k).getQty());
+            String price = formater.format(receiptData.itemsCarts.get(k).getPrice());
+            String mrp = formater.format(receiptData.itemsCarts.get(k).getMRP());
+            double mrpd = receiptData.itemsCarts.get(k).getMRP();
+            Double amt = receiptData.itemsCarts.get(k).getPrice()* receiptData.itemsCarts.get(k).getQty();
             totalAmt+=amt;
-            double mrpamt = mrpd*Common.itemsCarts.get(k).getQty();
+            double mrpamt = mrpd* receiptData.itemsCarts.get(k).getQty();
             mrpTotalAmt+=mrpamt;
             String amts=String.format("%.0f",amt);
             qty = StringUtils.leftPad(qty,19);
@@ -306,7 +390,7 @@ public class PrinterUtil {
     }
     private void PrintBill() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
-        String dateStr = format.format(Common.billDate);
+        String dateStr = format.format(receiptData.billDate);
         Bitmap bitmapIcon = Common.shopLogo;
         if(bitmapIcon!=null){
             try {
@@ -341,9 +425,9 @@ public class PrinterUtil {
 
         posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
-        posPtr.printNormal(ESC+"|lABILL NO  : "+Common.billNo+"\n");
-        if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
-            posPtr.printNormal(ESC+"|lANAME     : "+Common.waiter);
+        posPtr.printNormal(ESC+"|lABILL NO  : "+ receiptData.billno+"\n");
+        if(!receiptData.waiter.isEmpty() && !receiptData.waiter.equals("NONE")){
+            posPtr.printNormal(ESC+"|lANAME     : "+ receiptData.waiter);
             posPtr.printNormal("\n");
         }
         posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
@@ -361,11 +445,11 @@ public class PrinterUtil {
         double totalAmt = 0d;
         double billAmt = 0d;
         posPtr.setAlignment(0);
-        for(int k=0;k<Common.itemsCarts.size();k++){
-            String name = Common.itemsCarts.get(k).getItem_Name();
-            String qty = formater.format(Common.itemsCarts.get(k).getQty());
-            String price = formater.format(Common.itemsCarts.get(k).getPrice());
-            Double amt = Common.itemsCarts.get(k).getPrice()*Common.itemsCarts.get(k).getQty();
+        for(int k=0;k<receiptData.itemsCarts.size();k++){
+            String name = receiptData.itemsCarts.get(k).getItem_Name();
+            String qty = formater.format(receiptData.itemsCarts.get(k).getQty());
+            String price = formater.format(receiptData.itemsCarts.get(k).getPrice());
+            Double amt = receiptData.itemsCarts.get(k).getPrice()*receiptData.itemsCarts.get(k).getQty();
             billAmt+=amt;
             String amts=String.format("%.0f",amt);
             String line = "";
@@ -407,14 +491,14 @@ public class PrinterUtil {
         else {
             posPtr.printNormal("----------------------------------------------\n");
         }
-        Integer totalItems = Common.itemsCarts.size();
-        Double totalQty = Common.itemsCarts.stream().mapToDouble(c->c.getQty()).sum();
+        Integer totalItems = receiptData.itemsCarts.size();
+        Double totalQty = receiptData.itemsCarts.stream().mapToDouble(c->c.getQty()).sum();
         posPtr.printNormal("Total Items: "+totalItems+"\n");
         posPtr.printNormal("Total Qty  : "+formater.format(totalQty)+"\n");
-        if(Common.discount>0){
+        if(receiptData.discount>0){
             String tt = String.format("%.0f",billAmt);
             tt = StringUtils.leftPad(tt,6);
-            String discount = "(-)"+formater.format(Common.discount);
+            String discount = "(-)"+formater.format(receiptData.discount);
             discount = StringUtils.leftPad(discount,6);
             String ttstring = "Sub Total:";
             String discstring = "Discount:";
@@ -431,7 +515,7 @@ public class PrinterUtil {
             posPtr.printNormal(discstring+discount+"\n");
             //posPtr.lineFeed(1);
         }
-        totalAmt = billAmt-Common.discount;
+        totalAmt = billAmt-receiptData.discount;
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
         String symbol = formatter.getCurrency().getSymbol();
@@ -466,7 +550,7 @@ public class PrinterUtil {
             posPtr.printNormal(ESC+"|cA"+ESC+"|2CKOT\r\n");
             posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
             posPtr.printNormal("\n");
-            posPtr.printNormal(ESC+"|lABILL NO  : "+Common.billNo+"\n");
+            posPtr.printNormal(ESC+"|lABILL NO  : "+receiptData.billno+"\n");
             if(!Common.waiter.isEmpty() && !Common.waiter.equals("NONE")){
                 posPtr.printNormal(ESC+"|lANAME     : "+Common.waiter);
                 posPtr.printNormal("\n");
@@ -483,9 +567,9 @@ public class PrinterUtil {
                 posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                                   QTY\n");
                 posPtr.printNormal("----------------------------------------------\n");
             }
-            for(int k=0;k<Common.itemsCarts.size();k++){
-                String name = Common.itemsCarts.get(k).getItem_Name();
-                String qty = formater.format(Common.itemsCarts.get(k).getQty());
+            for(int k=0;k<receiptData.itemsCarts.size();k++){
+                String name = receiptData.itemsCarts.get(k).getItem_Name();
+                String qty = formater.format(receiptData.itemsCarts.get(k).getQty());
                 if(Common.RptSize.equals("2")){
                     qty = StringUtils.leftPad(qty,32);
                 }
@@ -545,8 +629,8 @@ public class PrinterUtil {
                 posPtr.printNormal("----------------------------------------------\n");
             }
 
-            for(int k=0;k<Common.itemsRpts.size();k++){
-                ItemsRpt itemsRpt = Common.itemsRpts.get(k);
+            for(int k=0;k<itemsRpts.size();k++){
+                ItemsRpt itemsRpt = itemsRpts.get(k);
                 String itemname = itemsRpt.getItemName();
                 Double qty = itemsRpt.getQuantity();
                 String qtystr=formater.format(qty);
@@ -590,11 +674,9 @@ public class PrinterUtil {
     }
     public int PrintSaleReport() throws InterruptedException
     {
-
         try
         {
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mmaaa", Locale.getDefault());
-
             Bitmap header = getTextAsImage("SALE REPORT",30, Layout.Alignment.ALIGN_CENTER,null);
             if(header!=null){
                 posPtr.printBitmap(header,0);
@@ -616,8 +698,8 @@ public class PrinterUtil {
                 posPtr.printNormal("----------------------------------------------\n");
             }
             double totalAmt = 0d;
-            for(int k=0;k<Common.saleReports.size();k++){
-                SaleReport saleReport = Common.saleReports.get(k);
+            for(int k=0;k<saleReports.size();k++){
+                SaleReport saleReport = saleReports.get(k);
                 String billno = saleReport.getBillNo();
                 Date bDate = saleReport.getBillDt();
                 String billDate = format.format(bDate);
@@ -719,7 +801,10 @@ public class PrinterUtil {
 
     public void Print() throws Exception{
         try{
-            if(isWifi){
+            if(isUsbport){
+                ConnectUSB();
+            }
+            else if(isWifi){
                 new ConnectPrinter().execute(Common.printerIP);
             }
             else {
@@ -745,7 +830,7 @@ public class PrinterUtil {
     public BluetoothDevice GetBluetoothDevice() throws Exception {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!checkBluetoothPermission()) {
-            ActivityCompat.requestPermissions(HomeActivity.getInstance(), PERMISSIONS_BLUETOOTH
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_BLUETOOTH
                     , 1);
         }
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -1049,6 +1134,101 @@ public class PrinterUtil {
                 HomeActivity.getInstance().showCustomDialog("Failed to Connect Printer",result);
             }
             super.onPostExecute(result);
+        }
+    }
+    class ConnectUSBPrinter extends AsyncTask<String, Void, USBPortConnection>
+    {
+        private final ProgressDialog dialog = new ProgressDialog(context);
+        @Override
+        protected void onPreExecute()
+        {
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setMessage("Printing.....");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected USBPortConnection doInBackground(String... params)
+        {
+            USBPortConnection retVal = null;
+            try
+            {
+                // ip
+                retVal = usbPort.connect_device(usbDevice);
+            }
+            catch (Exception e)
+            {
+                retVal = null;
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(USBPortConnection usbconnection)
+        {
+            if(usbconnection!=null) {
+                RequestHandler rh = new RequestHandler();
+                hThread = new Thread(rh);
+                hThread.start();
+                try {
+                    posPtr = new ESCPOSPrinter(usbconnection);
+                    posPtr.setAsync(true);
+                    if (Common.isItemWiseRptBill) {
+                        PrintItemWiseSaleReport();
+                    } else if (printSale) {
+                        PrintBillData();
+                    } else {
+                        PrintSaleReport();
+                    }
+                } catch (Exception ex) {
+                    String localClassName = activity.getLocalClassName();
+                    switch (localClassName){
+                        case "HomeActivity":
+                            HomeActivity.getInstance().showCustomDialog("Error", ex.getMessage());
+                            break;
+                        case "ItemReport":
+                            ItemReport.getInstance().showCustomDialog("Error", ex.getMessage());
+                            break;
+                        case "SaleReportActivity":
+                            SaleReportActivity.getInstance().showCustomDialog("Error", ex.getMessage());
+                            break;
+                    }
+
+                } finally {
+                    if (Common.isItemWiseRptBill) {
+                        Common.isItemWiseRptBill = false;
+                    }
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                    if (!onlyBill && printSale) {
+                        if (Common.printKOT) {
+                            new ConnectPrinterKOT().execute(Common.kotprinterIP);
+                        } else {
+                            HomeActivity.getInstance().RefreshViews();
+                        }
+                    }
+
+                }
+            }
+            else{
+                if(dialog.isShowing())
+                    dialog.dismiss();
+                String localClassName = activity.getLocalClassName();
+                switch (localClassName){
+                    case "HomeActivity":
+                        HomeActivity.getInstance().showCustomDialog("Connection Failed","Failed to Connect Printer");
+                        break;
+                    case "ItemReport":
+                        ItemReport.getInstance().showCustomDialog("Connection Failed","Failed to Connect Printer");
+                        break;
+                    case "SaleReportActivity":
+                        SaleReportActivity.getInstance().showCustomDialog("Connection Failed","Failed to Connect Printer");
+                        break;
+                }
+            }
+            super.onPostExecute(usbconnection);
         }
     }
 }

@@ -119,6 +119,14 @@
                         android:fontFamily="@font/orienta"
                         android:text="Bluetooth"
                         android:textStyle="bold"></RadioButton>
+                    <RadioButton
+                        android:id="@+id/radioBtnUSB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:fontFamily="@font/orienta"
+                        android:text="USB"
+                        android:textStyle="bold"></RadioButton>
                 </LinearLayout>
 
                 <TextView

@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.icu.text.NumberFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -64,8 +66,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executor;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class SaleReportActivity extends AppCompatActivity implements View.OnClickListener {
@@ -98,6 +98,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     private int year, month, day;
     private Dialog progressBar;
     private Executor executor;
+    private UsbManager usbManager;
+    private UsbDevice usbDevice;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
     private DatePickerDialog.OnDateSetListener mytoDateListener = new
@@ -281,14 +283,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onBackPressed(){
-        Common.billDate = new Date();
-        Common.billNo = 0;
-        Common.discount = 0;
-        Common.itemsCarts = null;
         Common.waiter = "";
         super.onBackPressed();
     }
-
     private  void GetDefaultDate(){
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
@@ -610,10 +607,10 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 try{
                     ArrayList<SaleReport> items = GetSaleReport();
                     if(items.size()>0){
-                        Common.saleReports = items;
                         Common.saleReportFrmDate = frmDateTextView.getText().toString();
                         Common.saleReportToDate = toDateTextView.getText().toString();
-                        PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this,false,Common.isWifiPrint);
+                        PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this,this,false);
+                        printerUtil.saleReports = items;
                         printerUtil.Print();
                     }
                     else {
@@ -668,13 +665,14 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         try{
             String[] bd = billdetail.split("~");
             if(bd.length>1){
+                ReceiptData receiptData = new ReceiptData();
                 int billno = 0;
                 String user = "";
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
                 SimpleDateFormat formatwithtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
                 Date billds = format.parse(bd[1]);
                 Date billdt = formatwithtime.parse(bd[1]);
-                Common.discount = dbHelper.GetDiscountOnBill(format.format(billds),bd[0]);
+                receiptData.discount = dbHelper.GetDiscountOnBill(format.format(billds),bd[0]);
                 ArrayList<Bills_Item> bills = dbHelper.GetBills_Item(format.format(billds),bd[0]);
                 ArrayList<ItemsCart> itemsCarts = new ArrayList<>();
                 for (Bills_Item bi:
@@ -693,12 +691,12 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     billdt = bi.getBill_Date();
                     itemsCarts.add(ic);
                 }
-                Common.billDate = billdt;
-                Common.billNo = billno;
-                Common.itemsCarts = itemsCarts;
-                Common.waiter = user;
-                PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this,true,Common.isWifiPrint);
-                printerUtil.onlyBill = true;
+                receiptData.billDate = billdt;
+                receiptData.billno = billno;
+                receiptData.itemsCarts = itemsCarts;
+                receiptData.waiter = user;
+                PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this,this,true);
+                printerUtil.receiptData = receiptData;
                 printerUtil.Print();
             }
         }
@@ -706,4 +704,5 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
             showCustomDialog("Error",ex.getMessage());
         }
     }
+
 }
