@@ -536,6 +536,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void UploadExcel(){
         try {
+            excelData.clear();
             Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
             fileintent.setType("*/*");
             startActivityForResult(fileintent, requestcode);
@@ -612,6 +613,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 counter++;
                                 excelData.add(cellData);
                             }
+                            tableView.removeAllViews();
                             tableView.setStretchAllColumns(true);
                             tableView.bringToFront();
                             for(int i=0;i<excelData.size();i++){
@@ -697,6 +699,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
+        }
+        finally {
+            commandToPrint.clear();
+            excelData.clear();
+            tableView.removeAllViews();
         }
     }
     private ArrayList<String> CreateCommandToPrint(){
