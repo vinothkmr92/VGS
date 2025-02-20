@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Upload Excel"
+            android:drawableLeft="@drawable/baseline_upload_file_24"
             android:id="@+id/btnUploadExcel">
         </Button>
         <TableLayout
@@ -25,11 +26,19 @@
             android:id="@+id/tblLayout">
         </TableLayout>
     </LinearLayout>
-<Button
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/btn"
-    android:layout_alignParentBottom="true"
-    android:text="Print"
-    ></Button>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn"
+            android:drawableLeft="@drawable/baseline_print_24"
+            android:layout_alignParentBottom="true"
+            android:text="Print"
+            ></Button>
+    </LinearLayout>
+
 </RelativeLayout>

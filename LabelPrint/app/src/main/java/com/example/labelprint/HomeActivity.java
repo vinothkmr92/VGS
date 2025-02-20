@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
@@ -619,6 +620,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 for(int k=0;k<row.size();k++){
                                     TextView c1 = new TextView(this);
                                     c1.setText(row.get(k));
+                                    c1.setTextColor(Color.BLUE);
                                     tr.addView(c1);
                                 }
                                 tableView.addView(tr);
