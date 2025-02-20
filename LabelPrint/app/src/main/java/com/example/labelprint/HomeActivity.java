@@ -78,12 +78,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -99,6 +102,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     Button btnPrint;
     Button btnUpload;
     public TSCUSBActivity TscUSB;
+    public static final String EXPIRE_DT = "EXPIRE_DT";
     public static final String PRNPATH = "PRN";
     public static final String NOC = "NOC";
     public static final String MyPREFERENCES = "MyPrefs";
@@ -112,6 +116,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private static Sheet sheet = null;
     TableLayout tableView;
     Integer NofColumns;
+    String android_id;
     static {
         System.setProperty(
                 "org.apache.poi.javax.xml.stream.XMLInputFactory",
@@ -412,6 +417,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             prn = sharedpreferences.getString(PRNPATH,"");
             NofColumns = sharedpreferences.getInt(NOC,0);
+            Date dt = new Date();
+            Date yesterday = getYesterday();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            String expiredtstr = sharedpreferences.getString(EXPIRE_DT,simpleDateFormat.format(yesterday));
+            Date expireDt = simpleDateFormat.parse(expiredtstr);
+            Date compare = new Date(dt.getYear(),dt.getMonth(),dt.getDate());
+            Common.isActivated = expireDt.compareTo(compare)>=0;
+            Common.expireDate = expireDt;
+            android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+            if(!Common.isActivated){
+                Common.isActivated = false;
+                AppActivation appActivation = new AppActivation(HomeActivity.this,android_id,this);
+                appActivation.CheckActivationStatus();
+            }
             if(prn.isEmpty()){
                 showCustomDialog("Please upload valid PRN file.");
             }
@@ -427,6 +446,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+    private Date getYesterday(){
+        return new Date(System.currentTimeMillis()-24*60*60*1000);
     }
     public void showCustomDialog(String title,String Message) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -453,6 +475,45 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 Intent settingsPage = new Intent(HomeActivity.this,SettingsActivity.class);
                 settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(settingsPage);
+            }
+        });
+        AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
+        b.setCanceledOnTouchOutside(false);
+        b.show();
+    }
+    public void showCustomDialog(String Message,boolean close) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Warning");
+        dialogBuilder.setMessage("\n"+Message);
+        if(close){
+            dialogBuilder.setNeutralButton("Share Device ID", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
+                    whatsappIntent.setType("text/plain");
+                    String shareBody =android_id;
+                    String shareSub = "Share Device ID";
+                    whatsappIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSub);
+                    whatsappIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    try {
+                        startActivity(whatsappIntent);
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(HomeActivity.this,"Whatsapp have not been installed.",Toast.LENGTH_LONG);
+                    }
+                    finally {
+                        finish();
+                        System.exit(0);
+                    }
+                }
+            });
+        }
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                if(close){
+                    finish();
+                    System.exit(0);
+                }
             }
         });
         AlertDialog b = dialogBuilder.create();
@@ -853,6 +914,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void ValidateActivationResponse(String response){
+        if(!Common.isActivated){
+            showCustomDialog("Your Android device "+android_id+" is not activated\n"+response,true);
+        }
+    }
     class ConnectLabelPrinter extends AsyncTask<String, Void, ArrayList<String>>
     {
         private final ProgressDialog dialog = new ProgressDialog(HomeActivity.this);
