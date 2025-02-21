@@ -315,9 +315,9 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
             String todt = toDateTextView.getText().toString();
             Common.saleReportFrmDate = frmdt;
             Common.saleReportToDate = todt;
-            Common.isItemWiseRptBill = true;
             PrinterUtil printerUtil = new PrinterUtil(ItemReport.this,this,false);
             printerUtil.itemsRpts = items;
+            printerUtil.isItemWiseRptBill = true;
             printerUtil.Print();
 
         } catch (Exception e) {

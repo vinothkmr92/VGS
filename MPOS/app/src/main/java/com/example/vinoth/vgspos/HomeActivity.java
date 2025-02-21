@@ -91,7 +91,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     String android_id;
     AlertDialog.Builder builder;
     private Dialog progressBar;
-    private Button lblPrint;
     private EditText itemNo;
     private EditText itemName;
     private EditText Quantity;
@@ -168,8 +167,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             btnPrint = (Button) findViewById(R.id.print);
             btnEnter = (Button) findViewById(R.id.enter);
             btnAddCustomer = (ImageButton)findViewById(R.id.btnAddMember);
-            lblPrint = (Button)findViewById(R.id.lblPrint);
-            lblPrint.setOnClickListener(this);
             btnAddCustomer.setOnClickListener(this);
             btnScanQr.setOnClickListener(this);
             btn1.setOnClickListener(this);
@@ -860,15 +857,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
        switch (v.getId()){
-           case R.id.lblPrint:
-               try{
-                   //
-               }
-               catch (Exception ex){
-                   showCustomDialog("Exception",ex.getMessage().toString());
-                   CancelBt();
-               }
-               break;
            case R.id.btnAddMember:
                OpenAddCustomerDialog();
                break;

@@ -18,7 +18,6 @@ public class Common {
     public static boolean includeMRPinReceipt;
     public static String saleReportFrmDate;
     public static String saleReportToDate;
-    public static boolean isItemWiseRptBill;
     public static ArrayList<Customer> customers;
     public static String printType;
     public static boolean isActivated;

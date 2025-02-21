@@ -117,6 +117,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     TableLayout tableView;
     Integer NofColumns;
     String android_id;
+    private boolean receivedBrodCast;
     static {
         System.setProperty(
                 "org.apache.poi.javax.xml.stream.XMLInputFactory",
@@ -740,7 +741,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
                     usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-                    if(usbManager.hasPermission(usbDevice)){
+                    if(usbManager.hasPermission(usbDevice) && !receivedBrodCast){
+                        receivedBrodCast = true;
                         SendPrintLabelCommands(usbManager,usbDevice);
                     }
                 }
@@ -762,6 +764,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             showCustomDialog("Error",ex.getMessage());
         }
         finally {
+            receivedBrodCast = false;
             commandToPrint.clear();
             excelData.clear();
             tableView.removeAllViews();

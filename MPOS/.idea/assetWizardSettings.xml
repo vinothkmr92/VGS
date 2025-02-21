@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/delete/baseline_delete_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/receipt_long/baseline_receipt_long_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -34,8 +34,8 @@
                         <option name="values">
                           <map>
                             <entry key="autoMirrored" value="true" />
-                            <entry key="color" value="f30722" />
-                            <entry key="outputName" value="baseline_delete_24" />
+                            <entry key="color" value="0a0a0a" />
+                            <entry key="outputName" value="baseline_receipt_long_24" />
                             <entry key="sourceFile" value="D:\AndroidProjects\VGS\VGSPOS" />
                           </map>
                         </option>
