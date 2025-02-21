@@ -5,19 +5,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/Khaki"
+    android:background="@color/White"
     android:orientation="vertical"
     android:padding="15dp"
     >
 
     <!-- Text view to show the text Select course-->
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/orienta"
-        android:text="Search Items"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
+        android:text="SEARCH ITEMS"
+        android:textAlignment="center"
+        android:textColor="@color/MediumVioletRed"
+        android:textSize="20dp"
         android:textStyle="bold" />
 
     <!-- Edit text to allow user to type name
@@ -28,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/PapayaWhip"
+        android:background="@color/WhiteSmoke"
         android:fontFamily="@font/orienta"
         android:hint="Search..."
         android:padding="12dp"

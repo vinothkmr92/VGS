@@ -147,7 +147,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             isAcPrice = (CheckBox) findViewById(R.id.isAC);
             int newbillno = dbHelper.GetNextBillNo();
             billnoTxtView.setText(String.valueOf(newbillno));
-            //searchTxtView.setText("NONE");
             btn1 = (Button) findViewById(R.id._1);
             btn2 = (Button) findViewById(R.id._2);
             btn3 = (Button) findViewById(R.id._3);
@@ -202,21 +201,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Date compare = new Date(dt.getYear(),dt.getMonth(),dt.getDate());
             Common.isActivated = expireDt.compareTo(compare)>=0;
             Common.expireDate = expireDt;
-            //android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+            android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
             if(!Common.isActivated){
-                //boolean internetav = Is_InternetWorking();
-                /*if(internetav){
-
-                }
-                else{
-                    showCustomDialog("Msg","Please connect to internet and Try again.",true);
-                }*/
                 Common.isActivated = false;
-                android_id = android.provider.Settings.Secure.getString(HomeActivity.this.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
                 AppActivation appActivation = new AppActivation(HomeActivity.this,android_id,this);
                 appActivation.CheckActivationStatus();
             }
-
             itemName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -523,7 +513,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         // Initialize array adapter
         ArrayList<String> itemnames = dbHelper.GetItemNames();
-        ArrayAdapter<String> adapter=new ArrayAdapter<>(HomeActivity.this, android.R.layout.simple_list_item_1,itemnames);
+        ArrayAdapter<String> adapter=new ArrayAdapter<>(HomeActivity.this,  R.layout.products_list_view, R.id.list_content,itemnames);
 
         // set adapter
         listView.setAdapter(adapter);
