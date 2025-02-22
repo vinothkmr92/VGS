@@ -119,6 +119,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton btnAddCustomer;
     private EditText discountperEditText;
     private EditText discountAmtEditText;
+    private EditText advanceAmtEditText;
     private MySharedPreferences sharedpreferences;
 
     public static HomeActivity getInstance() {
@@ -139,6 +140,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             tQty = (TextView) findViewById(R.id.ttQty);
             discountAmtEditText = (EditText)findViewById(R.id.discountamt);
             discountperEditText = (EditText)findViewById(R.id.discountpercent);
+            advanceAmtEditText = findViewById(R.id.advanceAmt);
             tItem = (TextView) findViewById(R.id.ttItem);
             estAmt = (TextView)findViewById(R.id.estimateAmt);
             priceTxt = (EditText)findViewById(R.id.itemPrice);
@@ -251,6 +253,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             discountperEditText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
                 public void onFocusChange(View v, boolean hasFocus){
                     String txt = discountperEditText.getText().toString();
+                    if(hasFocus && !txt.isEmpty()){
+                        ((EditText)v).selectAll();
+                    }
+                }
+            });
+            advanceAmtEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    String txt = advanceAmtEditText.getText().toString();
                     if(hasFocus && !txt.isEmpty()){
                         ((EditText)v).selectAll();
                     }
@@ -443,9 +454,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if(!discountAmtEditText.getText().toString().isEmpty()){
             discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
         }
+        double advanceAmt = 0;
+        if(!advanceAmtEditText.getText().toString().isEmpty()){
+            advanceAmt = Double.valueOf(advanceAmtEditText.getText().toString());
+        }
         ReceiptData receiptData = new ReceiptData();
         receiptData.billno = billno;
         receiptData.discount = discountAmt;
+        receiptData.advance = advanceAmt;
         receiptData.billDate = new Date();
         receiptData.waiter = searchTxtView.getText().toString();
         receiptData.itemsCarts = Common.itemsCarts;
@@ -467,6 +483,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         return totalAmt;
     }
 
+    private void CalculateAdvanceAmt(){
+        double billAmt = GetBillAmt();
+        if(billAmt>0){
+            double advance = Double.valueOf(advanceAmtEditText.getText().toString());
+            double finalBillValue = billAmt-advance;
+            estAmt.setText(GetCurrency(finalBillValue));
+        }
+    }
     private void CalculateDiscountPer(){
         double billAmt = GetBillAmt();
         if(billAmt>0){
@@ -962,6 +986,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                else if(discountAmtEditText.isFocused()){
                    CalculateDiscountPer();
                }
+               else if(advanceAmtEditText.isFocused()){
+                   CalculateAdvanceAmt();
+               }
                else{
                    LoadProductNameandPrice();
                }
@@ -1011,6 +1038,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                            String sr = discountAmtEditText.getText().toString();
                            sr+=addstr;
                            discountAmtEditText.setText(sr);
+                       }
+                   }
+                   else if(advanceAmtEditText.isFocused()){
+                       int startSelection = advanceAmtEditText.getSelectionStart();
+                       int endSelection = advanceAmtEditText.getSelectionEnd();
+                       String selectedText = advanceAmtEditText.getText().toString().substring(startSelection,endSelection);
+                       if(!selectedText.isEmpty()){
+                           advanceAmtEditText.setText(addstr);
+                       }
+                       else {
+                           String sr = advanceAmtEditText.getText().toString();
+                           sr+=addstr;
+                           advanceAmtEditText.setText(sr);
                        }
                    }
                    else if(Quantity.isFocused()){
@@ -1131,8 +1171,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void RefreshViews(){
         this.itemName.setText("");
         this.Quantity.setText("");
-        this.discountAmtEditText.setText("");
-        this.discountperEditText.setText("");
+        this.discountAmtEditText.setText("0");
+        this.discountperEditText.setText("0");
+        this.advanceAmtEditText.setText("0");
         if(Common.itemsCarts!=null){
             Common.itemsCarts.clear();
         }

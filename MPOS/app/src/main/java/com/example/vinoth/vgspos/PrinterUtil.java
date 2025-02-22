@@ -465,27 +465,29 @@ public class PrinterUtil {
         Double totalQty = rcptData.itemsCarts.stream().mapToDouble(c->c.getQty()).sum();
         posPtr.printNormal("Total Items: "+totalItems+"\n");
         posPtr.printNormal("Total Qty  : "+formater.format(totalQty)+"\n");
-        if(rcptData.discount>0){
+        if(rcptData.discount>0 || rcptData.advance>0){
             String tt = String.format("%.0f",billAmt);
             tt = StringUtils.leftPad(tt,6);
             String discount = "(-)"+formater.format(rcptData.discount);
             discount = StringUtils.leftPad(discount,6);
+            String advance = "(-)"+formater.format(rcptData.advance);
+            advance = StringUtils.leftPad(advance,6);
             String ttstring = "Sub Total:";
             String discstring = "Discount:";
-            if(Common.RptSize.equals("2")){
-
-                ttstring = StringUtils.leftPad(ttstring,26);
-                discstring = StringUtils.leftPad(discstring,26);
-            }
-            else {
-                ttstring = StringUtils.leftPad(ttstring,40);
-                discstring = StringUtils.leftPad(discstring,40);
-            }
+            String advancestring = "Advance:";
+            int padleft = Common.RptSize.equals("2") ? 26:40;
+            ttstring = StringUtils.leftPad(ttstring,padleft);
+            discstring = StringUtils.leftPad(discstring,padleft);
+            advancestring= StringUtils.leftPad(advancestring,padleft);
             posPtr.printNormal(ttstring+tt+"\n");
-            posPtr.printNormal(discstring+discount+"\n");
-            //posPtr.lineFeed(1);
+            if(rcptData.discount>0){
+                posPtr.printNormal(discstring+discount+"\n");
+            }
+            if(rcptData.advance>0){
+                posPtr.printNormal(advancestring+advance+"\n");
+            }
         }
-        totalAmt = billAmt-rcptData.discount;
+        totalAmt = billAmt-rcptData.discount-rcptData.advance;
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
         String symbol = formatter.getCurrency().getSymbol();

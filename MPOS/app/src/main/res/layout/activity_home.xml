@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,12 +9,12 @@
     tools:context=".HomeActivity">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dip"
+        android:layout_weight="1"
         >
       <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:isScrollContainer="true"
             android:orientation="vertical">
      <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -184,158 +184,130 @@
               app:cardCornerRadius="15dp"
               app:cardElevation="5dp"
               >
-              <GridLayout
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_gravity="center"
-                  android:columnCount="4"
-                  android:orientation="horizontal"
-                  android:padding="10dp">
-                  <TextView
-                      android:fontFamily="@font/orienta"
-                      android:text="TOTAL QTY:  "
-                      android:textColor="@color/DarkBlue"
-                      />
-                  <TextView
-                      android:id="@+id/ttQty"
-                      android:fontFamily="@font/orienta"
-                      android:text="000"
-                      android:textColor="@color/Black"
-                      android:textStyle="bold" />
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:gravity="center"
+                 android:orientation="vertical"
+                 android:padding="0dp">
+                 <LinearLayout
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:gravity="center">
+                     <TextView
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:fontFamily="@font/orienta"
+                         android:text="TOTAL QTY:  "
+                         android:textColor="@color/DarkBlue"
+                         android:textSize="15dp"
+                         />
+                     <TextView
+                         android:id="@+id/ttQty"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:fontFamily="@font/orienta"
+                         android:text="000"
+                         android:textColor="@color/Black"
+                         android:textSize="15dp"
+                         android:textStyle="bold" />
 
-                  <TextView
-                      android:fontFamily="@font/orienta"
-                      android:text="     TOTAL ITEMS:  "
-                      android:textColor="@color/DarkBlue" />
+                     <TextView
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:fontFamily="@font/orienta"
+                         android:text="     TOTAL ITEMS:  "
+                         android:textColor="@color/DarkBlue"
+                         android:textSize="15dp" />
 
-                  <TextView
-                      android:id="@+id/ttItem"
-                      android:fontFamily="@font/orienta"
-                      android:text="000"
-                      android:textColor="@color/Black"
-                      android:textStyle="bold" />
-                  <LinearLayout
-                      android:layout_columnSpan="4"
-                      android:layout_gravity="center"
-                      >
-                      <TextView
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:fontFamily="@font/orienta"
-                          android:text="DISCOUNT  (%)"
-                          android:textColor="@android:color/holo_red_dark"
-                          android:textStyle="italic|bold"/>
+                     <TextView
+                         android:id="@+id/ttItem"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:fontFamily="@font/orienta"
+                         android:text="000"
+                         android:textColor="@color/Black"
+                         android:textSize="15dp"
+                         android:textStyle="bold" />
+                 </LinearLayout>
+                 <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:gravity="center">
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:fontFamily="@font/orienta"
+                   android:text="DISCOUNT  (%)"
+                   android:textColor="@android:color/holo_red_dark"
+                   android:textSize="15dp"
+                   android:textStyle="italic|bold"/>
 
-                      <EditText
-                          android:id="@+id/discountpercent"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:editable="false"
-                          android:focusable="true"
-                          android:fontFamily="@font/orienta"
-                          android:hint="0"
-                          android:textColor="@android:color/black"/>
+               <EditText
+                   android:id="@+id/discountpercent"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:editable="false"
+                   android:focusable="true"
+                   android:fontFamily="@font/orienta"
+                   android:hint="0"
+                   android:textColor="@android:color/black"
+                   android:textSize="15dp"/>
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="       "
+                   android:textSize="15dp"
+                   ></TextView>
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:fontFamily="@font/orienta"
+                   android:text="(₹)"
+                   android:textColor="@android:color/holo_red_dark"
+                   android:textSize="15dp"
+                   android:textStyle="italic|bold"/>
+               <EditText
+                   android:id="@+id/discountamt"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:editable="false"
+                   android:focusable="true"
+                   android:fontFamily="@font/orienta"
+                   android:hint="0"
+                   android:textColor="@android:color/black"
+                   android:textSize="15dp"/>
+           </LinearLayout>
+                 <LinearLayout
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:gravity="center">
+                     <TextView android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:fontFamily="@font/orienta"
+                         android:text="ADVANCE (₹): "
+                         android:textColor="@color/DarkViolet"
+                         android:textSize="15dp"></TextView>
+                     <EditText
+                         android:id="@+id/advanceAmt"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:editable="false"
+                         android:focusable="true"
+                         android:fontFamily="@font/orienta"
+                         android:hint="0"
+                         android:textColor="@android:color/black"
+                         android:textSize="15dp"/>
+                 </LinearLayout>
+             </LinearLayout>
 
-                      <TextView
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:fontFamily="@font/orienta"
-                          android:text="(₹)"
-                          android:textColor="@android:color/holo_red_dark"
-                          android:textStyle="italic|bold"/>
-                      <EditText
-                          android:id="@+id/discountamt"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:editable="false"
-                          android:focusable="true"
-                          android:fontFamily="@font/orienta"
-                          android:hint="0"
-                          android:textColor="@android:color/black"/>
-                  </LinearLayout>
-              </GridLayout>
           </com.google.android.material.card.MaterialCardView>
-       <com.google.android.material.card.MaterialCardView
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_margin="5dp"
-              app:cardBackgroundColor="@color/White"
-              app:cardCornerRadius="15dp"
-              app:cardElevation="5dp"
-              >
-              <GridLayout
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_gravity="center"
-                  android:columnCount="4"
-                  android:orientation="horizontal"
-                  android:padding="10dp">
-                  <TextView
-                      android:fontFamily="@font/orienta"
-                      android:text="TOTAL QTY:  "
-                      android:textColor="@color/DarkBlue"
-                      />
-                  <TextView
-                      android:fontFamily="@font/orienta"
-                      android:text="000"
-                      android:textColor="@color/Black"
-                      android:textStyle="bold" />
 
-                  <TextView
-                      android:fontFamily="@font/orienta"
-                      android:text="     TOTAL ITEMS:  "
-                      android:textColor="@color/DarkBlue" />
-
-                  <TextView
-                      android:fontFamily="@font/orienta"
-                      android:text="000"
-                      android:textColor="@color/Black"
-                      android:textStyle="bold" />
-                  <LinearLayout
-                      android:layout_columnSpan="4"
-                      android:layout_gravity="center"
-                      >
-                      <TextView
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:fontFamily="@font/orienta"
-                          android:text="DISCOUNT  (%)"
-                          android:textColor="@android:color/holo_red_dark"
-                          android:textStyle="italic|bold"/>
-
-                      <EditText
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:editable="false"
-                          android:focusable="true"
-                          android:fontFamily="@font/orienta"
-                          android:hint="0"
-                          android:textColor="@android:color/black"/>
-
-                      <TextView
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:fontFamily="@font/orienta"
-                          android:text="(₹)"
-                          android:textColor="@android:color/holo_red_dark"
-                          android:textStyle="italic|bold"/>
-                      <EditText
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:editable="false"
-                          android:focusable="true"
-                          android:fontFamily="@font/orienta"
-                          android:hint="0"
-                          android:textColor="@android:color/black"/>
-                  </LinearLayout>
-              </GridLayout>
-          </com.google.android.material.card.MaterialCardView>
       </LinearLayout>
     </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -351,7 +323,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp">
+                    android:padding="0dp">
                     <TextView
                         android:id="@+id/estimateAmt"
                         android:layout_width="fill_parent"
@@ -359,8 +331,8 @@
                         android:fontFamily="@font/orienta"
                         android:text="₹ 0"
                         android:textAlignment="center"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="35dp"
+                        android:textColor="@color/MediumVioletRed"
+                        android:textSize="30dp"
                         android:textStyle="bold" />
                 </LinearLayout>
                 <LinearLayout
@@ -620,4 +592,4 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

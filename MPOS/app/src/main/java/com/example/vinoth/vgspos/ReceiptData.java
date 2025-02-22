@@ -9,4 +9,5 @@ public class ReceiptData {
     public String waiter;
     public ArrayList<ItemsCart> itemsCarts;
     public Double discount;
+    public Double advance;
 }
