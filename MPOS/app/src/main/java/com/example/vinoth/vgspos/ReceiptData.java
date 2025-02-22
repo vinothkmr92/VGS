@@ -8,6 +8,6 @@ public class ReceiptData {
     public Integer billno;
     public String waiter;
     public ArrayList<ItemsCart> itemsCarts;
-    public Double discount;
-    public Double advance;
+    public Double discount=0d;
+    public Double advance=0d;
 }
