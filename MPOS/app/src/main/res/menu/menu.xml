@@ -20,6 +20,10 @@
         android:id="@+id/saleReort"
         android:icon="@drawable/baseline_data_exploration_24"
         android:title="Sales Report"/>
+    <item
+        android:id="@+id/newSale"
+        android:icon="@drawable/baseline_screenshot_monitor_24"
+        android:title="New Home"/>
     <item android:id="@+id/exit"
         android:icon="@drawable/baseline_exit_to_app_24"
         android:title="Exit"/>

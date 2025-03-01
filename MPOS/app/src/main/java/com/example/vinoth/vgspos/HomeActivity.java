@@ -691,6 +691,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 itemmaster.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(itemmaster);
                 return true;
+            case R.id.newSale:
+                Intent newSale = new Intent(this,HomePage.class);
+                newSale.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(newSale);
+                return true;
             case R.id.settings:
                 Common.openSettings = false;
                 Intent settingsPage = new Intent(this,Settings.class);

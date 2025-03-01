@@ -324,6 +324,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
          }
         return ItemList;
     }
+    public ArrayList<ItemsCart> GetItemsAsItemCart(){
+        ArrayList<ItemsCart> ItemList = new ArrayList<ItemsCart>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cur = db.rawQuery("SELECT I.* FROM ITEMS I",null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                ItemsCart cart = new ItemsCart();
+                cart.setItem_No(cur.getString(0));
+                cart.setItem_Name(cur.getString(1));
+                cart.setPrice(cur.getDouble(2));
+                cart.setMRP(cur.getDouble(3));
+                ItemList.add(cart);
+            }
+        }
+        return ItemList;
+    }
     public void DeleteAllItem(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("ITEMS",null,null);
