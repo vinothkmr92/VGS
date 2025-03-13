@@ -27,5 +27,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.journeyapps:zxing-android-embedded:3.4.0'
     implementation files('libs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
+    implementation 'com.google.android.gms:play-services-code-scanner:16.0.0'
 
 }

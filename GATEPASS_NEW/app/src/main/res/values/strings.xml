@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Gatepass</string>
+    <string name="ActivationAPIHost" translatable="false">60.243.50.58:9092</string>
+</resources>
