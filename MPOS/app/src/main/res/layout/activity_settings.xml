@@ -128,7 +128,21 @@
                         android:text="USB"
                         android:textStyle="bold"></RadioButton>
                 </LinearLayout>
-
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtViewUSBDevice"
+                    android:fontFamily="@font/orienta"
+                    android:text="USB Device"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+                <Spinner
+                    android:layout_height="wrap_content"
+                    android:id="@+id/usbDevice"
+                    android:layout_width="match_parent"
+                    android:textAlignment="center"
+                    android:focusableInTouchMode="true"
+                    android:spinnerMode="dialog"></Spinner>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -141,7 +155,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/bltDevice"
                     android:layout_width="match_parent"
-                    android:layout_columnSpan="2"
                     android:textAlignment="center"
                     android:focusableInTouchMode="true"
                     android:spinnerMode="dialog"></Spinner>

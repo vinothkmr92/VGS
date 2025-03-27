@@ -53,7 +53,7 @@ import java.util.UUID;
 
 
 public class PrinterUtil {
-    private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
+    private static final String ACTION_USB_PERMISSION = "com.example.vinoth.vgspos.USB_PERMISSION";
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
@@ -88,7 +88,9 @@ public class PrinterUtil {
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
                     usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
-                    usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                        usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
+
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if (usbManager != null && usbDevice != null && !receivedBrodCast) {
                             // YOUR PRINT CODE HERE
@@ -97,6 +99,12 @@ public class PrinterUtil {
                             new ConnectUSBPrinter().execute();
                         }
                     }
+                    /*if (usbManager != null && usbDevice != null && !receivedBrodCast) {
+                        // YOUR PRINT CODE HERE
+                        receivedBrodCast = true;
+                        usbPort = new USBPort(usbManager);
+                        new ConnectUSBPrinter().execute();
+                    }*/
                 }
             }
         }
@@ -827,13 +835,13 @@ public class PrinterUtil {
         UsbDevice mDevice = null;
         while (mDeviceIterator.hasNext()) {
             mDevice = mDeviceIterator.next();
-            int interfaceCount = mDevice.getInterfaceCount();
-            Toast.makeText(activity, "INTERFACE COUNT: " + String.valueOf(interfaceCount), Toast.LENGTH_SHORT).show();
-
             if (mDevice == null) {
                 Toast.makeText(activity, "mDevice is null", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(activity, "USB Device found", Toast.LENGTH_SHORT).show();
+                if(mDevice.getProductName().equals(Common.usbDeviceName)){
+                    break;
+                }
             }
         }
         usbDevice = mDevice;
@@ -842,7 +850,7 @@ public class PrinterUtil {
                     activity,
                     0,
                     new Intent(ACTION_USB_PERMISSION),
-                    android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S ? PendingIntent.FLAG_MUTABLE : 0
+                    PendingIntent.FLAG_MUTABLE
             );
             IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
             activity.registerReceiver(this.usbReceiver, filter);
@@ -1237,6 +1245,9 @@ public class PrinterUtil {
                             }
                             catch (Exception ex){
                                 PassMsgToActivity("Error",ex.getMessage());
+                            }
+                            finally {
+                                HomeActivity.getInstance().RefreshViews();
                             }
                         } else {
                             HomeActivity.getInstance().RefreshViews();

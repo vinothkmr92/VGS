@@ -480,7 +480,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             stmt.executeUpdate(query);
                             query = "UPDATE LOANS SET LOANS.PAID_AMOUNT = P.PAID FROM [LOANS] L INNER JOIN(SELECT LOAN_NO, SUM(AMOUNT) PAID FROM PAYMENTS GROUP BY  LOAN_NO) P ON L.LOAN_NO = P.LOAN_NO;";
                             stmt.executeUpdate(query);
-                            query = "UPDATE MEMBERS SET MEMBERS.OUTSTANDING_AMOUNT = P.BAL FROM [MEMBERS] L INNER JOIN(SELECT MEMBER_ID, SUM(LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT) AS BAL FROM LOANS GROUP BY  MEMBER_ID) P ON L.MEMBER_ID = P.MEMBER_ID;";
+                            query = "UPDATE MEMBERS SET MEMBERS.OUTSTANDING_AMOUNT = P.BAL FROM [MEMBERS] L INNER JOIN(SELECT MEMBER_ID, SUM(LOAN_AMOUNT+INTEREST_AMOUNT+PENALTY_AMOUNT-PAID_AMOUNT) AS BAL FROM LOANS GROUP BY  MEMBER_ID) P ON L.MEMBER_ID = P.MEMBER_ID;";
                             stmt.executeUpdate(query);
                             isSuccess = paymentRowAff >0 && memberBal>0;
                             z = isSuccess?"Payment Saved":"Unable to Save Payment Please Contact Support Team.";
@@ -545,13 +545,14 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM,PAID_AMOUNT FROM LOANS WHERE (LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT) > 0 AND MEMBER_ID="+memberid;
+                        String query = "SELECT PENALTY_AMOUNT,LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM,PAID_AMOUNT FROM LOANS WHERE (LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT) > 0 AND MEMBER_ID="+memberid;
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Loan> loans = new ArrayList<>();
                         while (rs.next())
                         {
                             Loan loan = new Loan();
+                            loan.PenaltyAmt = rs.getDouble("PENALTY_AMOUNT");
                             loan.setLoanNo(rs.getString("LOAN_NO"));
                             loan.setLoanAmount(rs.getDouble("LOAN_AMOUNT"));
                             loan.setInterest(rs.getDouble("INTEREST"));

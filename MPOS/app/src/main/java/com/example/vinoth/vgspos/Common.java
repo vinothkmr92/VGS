@@ -11,6 +11,7 @@ public class Common {
     public static Bitmap shopLogo;
     public static String printerIP;
     public static String bluetoothDeviceName;
+    public static String usbDeviceName;
     public static String headerMeg;
     public static String addressline;
     public static String footerMsg;

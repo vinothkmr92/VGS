@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +42,8 @@ import androidx.core.content.ContextCompat;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 
 public class Settings extends AppCompatActivity implements View.OnClickListener {
@@ -56,6 +61,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     public static final String BILLCOPIES = "BILLCOPIES";
     public static final String MULTILANG = "MULTILANG";
     public static final String PRINTTYPE = "WIFI";
+    public static final String USBDEVICENAME = "USBDEVICE";
     private static int RESULT_LOAD_IMAGE = 1;
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
@@ -82,6 +88,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     RadioButton radioButtonBluetooth;
     RadioButton radioButtonWifi;
     RadioButton radioButtonUSB;
+    TextView txtViewUSBDevice;
     TextView txtViewBluetooth;
     TextView txtViewPrinterIP;
     EditText editTextPrinterIP;
@@ -93,6 +100,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     Switch enablekot;
     TextView rptsizetextview;
     Spinner spinnerbluetothDevice;
+    Spinner spinnerUsbDevice;
     Button saveBtn;
     Switch checkBoxIncludeMRP;
     Button loadPictureBtn;
@@ -119,6 +127,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         radioButtonWifi = (RadioButton) findViewById(R.id.radioBtnWifi);
         radioButtonUSB = findViewById(R.id.radioBtnUSB);
         txtViewBluetooth = (TextView) findViewById(R.id.txtViewBlutooth);
+        txtViewUSBDevice = findViewById(R.id.txtViewUSBDevice);
         txtViewPrinterIP = (TextView) findViewById(R.id.txtViewIPAddress);
         editTextPrinterIP = (EditText) findViewById(R.id.printerIP);
         rptsizetextview = (TextView)findViewById(R.id.rptsizetxt);
@@ -126,6 +135,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         radioButton3Inch = (RadioButton)findViewById(R.id.radiobtn3Inch);
         radioButton4Inch = (RadioButton)findViewById(R.id.radiobtn4Inch);
         spinnerbluetothDevice = (Spinner) findViewById(R.id.bltDevice);
+        spinnerUsbDevice = findViewById(R.id.usbDevice);
         txtviewkotprinter = (TextView)findViewById(R.id.txtViewIPAddressKOT);
         editTextkotprinterip = (EditText) findViewById(R.id.KOTprinterIP);
         enablekot = findViewById(R.id.enableKOT);
@@ -159,6 +169,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         String addressline = sharedpreferences.getString(ADDRESSLINE,"");
         String includeMRP = sharedpreferences.getString(INCLUDEMRP,"NO");
         String isMultiLang = sharedpreferences.getString(MULTILANG,"NO");
+        String usbDevice = sharedpreferences.getString(USBDEVICENAME,"");
         enablekot.setChecked(printkot.equalsIgnoreCase("YES"));
         multilang.setChecked(isMultiLang.equalsIgnoreCase("YES"));
         editTextkotprinterip.setText(kotprinterip);
@@ -232,6 +243,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 if(isChecked){
                     radioButtonUSB.setChecked(false);
                     radioButtonBluetooth.setChecked(false);
+                    txtViewUSBDevice.setVisibility(View.GONE);
+                    spinnerUsbDevice.setVisibility(View.GONE);
                     txtViewBluetooth.setVisibility(View.GONE);
                     spinnerbluetothDevice.setVisibility(View.GONE);
                     rptsizetextview.setVisibility(View.GONE);
@@ -257,6 +270,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                  if(isChecked){
                      radioButtonUSB.setChecked(false);
                      radioButtonWifi.setChecked(false);
+                     txtViewUSBDevice.setVisibility(View.GONE);
+                     spinnerUsbDevice.setVisibility(View.GONE);
                      txtViewPrinterIP.setVisibility(View.GONE);
                      editTextPrinterIP.setVisibility(View.GONE);
                      txtviewkotprinter.setVisibility(View.GONE);
@@ -271,7 +286,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         radioButtonUSB.setOnCheckedChangeListener(new RadioButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                 radioButtonWifi.setChecked(!isChecked);
                 radioButtonBluetooth.setChecked(!isChecked);
                 txtViewPrinterIP.setVisibility(isChecked ? View.GONE:View.VISIBLE);
@@ -280,13 +294,14 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 editTextkotprinterip.setVisibility(isChecked ? View.GONE:View.VISIBLE);
                 txtViewBluetooth.setVisibility(isChecked ? View.GONE:View.VISIBLE);
                 spinnerbluetothDevice.setVisibility(isChecked? View.GONE:View.VISIBLE);
+                txtViewUSBDevice.setVisibility(isChecked ? View.VISIBLE: View.GONE);
+                spinnerUsbDevice.setVisibility(isChecked ? View.VISIBLE: View.GONE);
             }
         });
         if(!checkPermission()){
             ActivityCompat.requestPermissions(Settings.this,PERMISSIONS_BLUETOOTH
                     ,1);
         }
-
         pairedDevices = mBluetoothAdapter.getBondedDevices();
         bluethootnamelist = new ArrayList<>();
         int selectedindex=0;
@@ -302,6 +317,20 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerbluetothDevice.setAdapter(adapter);
         spinnerbluetothDevice.setSelection(selectedindex);
+        int selectedindedusbdevice=0;
+        int k=0;
+        ArrayList<String> usbdevicelist = GetUSBDevice();
+        for(String d:usbdevicelist){
+            String[] vas = d.split("~");
+            if(vas[1].equals(usbDevice)){
+                selectedindedusbdevice = k;
+            }
+            k++;
+        }
+        ArrayAdapter usbAdaptor = new ArrayAdapter(this, android.R.layout.simple_spinner_item,usbdevicelist);
+        usbAdaptor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerUsbDevice.setAdapter(usbAdaptor);
+        spinnerUsbDevice.setSelection(selectedindedusbdevice);
         switch (printType){
             case "WIFI":
                 radioButtonWifi.setChecked(true);
@@ -312,6 +341,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 radioButton2Inch.setVisibility(View.GONE);
                 radioButton3Inch.setVisibility(View.GONE);
                 radioButton4Inch.setVisibility(View.GONE);
+                txtViewUSBDevice.setVisibility(View.GONE);
+                spinnerUsbDevice.setVisibility(View.GONE);
                 txtviewkotprinter.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
                 editTextkotprinterip.setVisibility(enablekot.isChecked()?View.VISIBLE:View.GONE);
                 break;
@@ -323,6 +354,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 editTextPrinterIP.setVisibility(View.GONE);
                 txtviewkotprinter.setVisibility(View.GONE);
                 editTextkotprinterip.setVisibility(View.GONE);
+                txtViewUSBDevice.setVisibility(View.VISIBLE);
+                spinnerUsbDevice.setVisibility(View.VISIBLE);
                 break;
             default:
                 radioButtonWifi.setChecked(false);
@@ -331,6 +364,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 editTextPrinterIP.setVisibility(View.GONE);
                 txtviewkotprinter.setVisibility(View.GONE);
                 editTextkotprinterip.setVisibility(View.GONE);
+                txtViewUSBDevice.setVisibility(View.GONE);
+                spinnerUsbDevice.setVisibility(View.GONE);
                 break;
         }
         enablekot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -388,6 +423,21 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
+    public ArrayList<String> GetUSBDevice(){
+        ArrayList<String> deviceList = new ArrayList<>();
+        UsbManager usbManager = (UsbManager) Settings.this.getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
+        Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
+        UsbDevice mDevice = null;
+        while (mDeviceIterator.hasNext()) {
+            mDevice = mDeviceIterator.next();
+            if(mDevice!=null){
+                String devicename = mDevice.getManufacturerName()+"~"+mDevice.getProductName();
+                deviceList.add(devicename);
+            }
+        }
+        return deviceList;
+    }
     public boolean checkFilePermission(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
             return  Environment.isExternalStorageManager();
@@ -457,6 +507,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             String nocopies = editTextbillcopies.getText().toString();
             String addressline = editTextaddressline.getText().toString();
             String isMultilang = multilang.isChecked()?"YES":"NO";
+            String usbselected = radioButtonUSB.isChecked()?spinnerUsbDevice.getSelectedItem().toString():" ~ ";
+            String[] sb = usbselected.split("~");
+            sharedpreferences.putString(USBDEVICENAME,sb[1]);
             sharedpreferences.putString(MULTILANG,isMultilang);
             sharedpreferences.putString(HEADERMSG,headerMsg);
             sharedpreferences.putString(FOOTERMSG,footerMsg);
@@ -502,6 +555,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             Common.printKOT = enablekot.isChecked();
             Common.kotprinterIP = kotprinterip;
             Common.userPasscode = txtViewuserpasscode.getText().toString();
+            Common.usbDeviceName = sb[1];
             Toast.makeText(getApplicationContext(),"Settings Details Updated.!",Toast.LENGTH_SHORT).show();
             GoHome();
         }

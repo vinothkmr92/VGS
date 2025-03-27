@@ -70,6 +70,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ADDRESSLINE = "ADDRESSLINE";
     public static final String INCLUDEMRP = "INCLUDEMRP";
     public static final String MULTILANG = "MULTILANG";
+    public static final String USBDEVICENAME = "USBDEVICE";
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;
     public static HomeActivity instance;
@@ -360,6 +361,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Common.footerMsg = footerMsg;
             bluetothName = sharedpreferences.getString(BLUETOOTNAME,"");
             Common.bluetoothDeviceName = bluetothName;
+            Common.usbDeviceName = sharedpreferences.getString(USBDEVICENAME,"");
             String RptSize = sharedpreferences.getString(IS3INCH,"3");
             Common.RptSize = RptSize;
             String printType = sharedpreferences.getString(PRINTTYPE,"WIFI");

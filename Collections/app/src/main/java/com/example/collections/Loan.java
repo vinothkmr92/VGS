@@ -10,6 +10,7 @@ public class Loan {
     private double BalanceAmt;
     private Integer Term;
 
+    public double PenaltyAmt;
     public Integer getTerm() {
         return Term;
     }
@@ -50,7 +51,7 @@ public class Loan {
            InterestAmt = Term*LoanAmount*(Interest/100);
            InterestAmt = Math.round(InterestAmt);
         }
-        BalanceAmt = LoanAmount+InterestAmt-PaidAmt;
+        BalanceAmt = LoanAmount+InterestAmt+PenaltyAmt-PaidAmt;
         return BalanceAmt;
     }
 
