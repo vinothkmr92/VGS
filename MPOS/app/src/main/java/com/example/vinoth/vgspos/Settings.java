@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -568,22 +569,36 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         i.putExtra("crop", "true");
         startActivityForResult(i, RESULT_LOAD_IMAGE);
+
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             try{
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
-                imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-                btnclerlogo.setVisibility(View.VISIBLE);
+                Bitmap photo = null;
+                if(selectedImage!=null){
+                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                    Cursor cursor = getContentResolver().query(selectedImage,
+                            filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    cursor.close();
+                    photo = BitmapFactory.decodeFile(picturePath);
+                }
+                else {
+                    photo = (Bitmap) data.getExtras().get("data");
+                }
+                if(photo!=null){
+                    imageView.setImageBitmap(photo);
+                    btnclerlogo.setVisibility(View.VISIBLE);
+                }
+                else {
+                    showCustomDialog("Warning","Could not load image. Please contact support team.",false);
+                }
             }
             catch (Exception ex){
                 showCustomDialog("Error",ex.getMessage(),false);
