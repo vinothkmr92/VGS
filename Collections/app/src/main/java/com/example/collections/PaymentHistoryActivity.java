@@ -16,16 +16,25 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.radiobutton.MaterialRadioButton;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PaymentHistoryActivity extends AppCompatActivity {
 
     TextView memNametxtView;
     TextView loanNotxtView;
     LinearLayout viewHistory;
+    LinearLayout payoptionlayout;
+    TextView totalpaid;
+    private MaterialRadioButton principalRadioBtn;
+    private MaterialRadioButton interestRadioBtn;
     public static PaymentHistoryActivity instance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +45,37 @@ public class PaymentHistoryActivity extends AppCompatActivity {
             memNametxtView = findViewById(R.id.memNameViewHist);
             loanNotxtView = findViewById(R.id.loanNoViewHist);
             viewHistory = findViewById(R.id.viewHist);
+            payoptionlayout = findViewById(R.id.payoptionLayout);
+            principalRadioBtn = findViewById(R.id.principalPay);
+            interestRadioBtn = findViewById(R.id.intesetPay);
+            totalpaid = findViewById(R.id.totalpaidAmt);
             memNametxtView.setText(CommonUtil.memberName);
             loanNotxtView.setText(CommonUtil.loanNo);
+            payoptionlayout.setVisibility(CommonUtil.isinterestonly?View.VISIBLE:View.GONE);
+            interestRadioBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    principalRadioBtn.setChecked(!interestRadioBtn.isChecked());
+                    List<Payment> payms = CommonUtil.payments.stream().filter(k->k.isInterest==interestRadioBtn.isChecked()).collect(Collectors.toList());
+                    LoadPaymentsCart(payms);
+                }
+            });
+            principalRadioBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    interestRadioBtn.setChecked(!principalRadioBtn.isChecked());
+                    List<Payment> payms = CommonUtil.payments.stream().filter(k->k.isInterest==interestRadioBtn.isChecked()).collect(Collectors.toList());
+                    LoadPaymentsCart(payms);
+                }
+            });
             for (Payment p:CommonUtil.payments) {
                 addCard(p);
             }
+            Double paidAmt = CommonUtil.payments.size()>0 ? CommonUtil.payments.stream().mapToDouble(k->k.getPaidAmount()).sum():0;
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+            formatter.setMaximumFractionDigits(0);
+            String symbol = formatter.getCurrency().getSymbol();
+            totalpaid.setText(formatter.format(paidAmt).replace(symbol,symbol+" "));
             instance = this;
         }
         catch (Exception ex){
@@ -52,7 +87,17 @@ public class PaymentHistoryActivity extends AppCompatActivity {
             return insets;
         });
     }
-
+    private void LoadPaymentsCart(List<Payment> payments){
+        viewHistory.removeAllViews();
+        for(Payment p :payments){
+            addCard(p);
+        }
+        Double paidAmt = payments.size()>0 ? payments.stream().mapToDouble(k->k.getPaidAmount()).sum():0;
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+        totalpaid.setText(formatter.format(paidAmt).replace(symbol,symbol+" "));
+    }
     public void showCustomDialog(String title,String Message) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setTitle(title);
@@ -119,6 +164,7 @@ public class PaymentHistoryActivity extends AppCompatActivity {
             rptDtl.PaymentMode = paymentm.getPaymentMode();
             rptDtl.PaymentID = String.valueOf(paymentm.getPaymentID());
             rptDtl.PaidDate = paymentm.getPaymentDate();
+            rptDtl.EndDate = paymentm.EndDate;
             PrinterUtil printerUtil = new PrinterUtil(this,rptDtl,null,null,true,false,false);
             printerUtil.Print();
         }

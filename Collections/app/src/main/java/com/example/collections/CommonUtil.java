@@ -21,4 +21,6 @@ public class CommonUtil {
     public static ArrayList<Payment> payments;
     public static CollectionsRptConsolidated collectionsRptConsolidated;
     public static ArrayList<Collections> collections;
+    public static Loan loanDtl;
+    public static boolean isinterestonly;
 }

@@ -11,4 +11,5 @@ public class ReceiptDtl {
    public String PaymentMode;
    public String PaymentID;
    public Date  PaidDate;
+   public Date EndDate;
 }

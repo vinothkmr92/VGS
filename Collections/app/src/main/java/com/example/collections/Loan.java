@@ -1,5 +1,7 @@
 package com.example.collections;
 
+import java.util.Date;
+
 public class Loan {
     private String LoanNo;
     private String LoanType;
@@ -10,6 +12,7 @@ public class Loan {
     private double BalanceAmt;
     private Integer Term;
 
+    public Date EndDate;
     public double PenaltyAmt;
     public Integer getTerm() {
         return Term;

@@ -7,16 +7,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.icu.text.NumberFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +21,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -208,17 +203,21 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         String paidmony = formatter.format(sr.getPaidAmt()).replace(symbol,symbol+" ");
         paidAmt.setText(paidmony);
         loanAmount.setText(moneyString);
-        String btnTag =  sr.getLoanNo();
+        String btnTag =  sr.getLoanNo()+"~"+sr.getLoanType();
         btnPay.setTag(btnTag);
         btnHist.setTag(btnTag);
         loanType.setText(sr.getLoanType());
         btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String loanNo = (String)v.getTag();
+                String tag = (String)v.getTag();
+                String[] stags = tag.split("~");
+                String loanNo = stags[0];
+                String loanType = stags[1];
                 try {
                     GetPaymentsDetails getPayment = new GetPaymentsDetails();
                     getPayment.loanNo = loanNo;
+                    getPayment.isInterestLoan = loanType.contains("Interest");
                     getPayment.show(getSupportFragmentManager(),"Payment Details");
                 }catch (Exception ex){
                     showCustomDialog("Error",ex.getMessage().toString());
@@ -228,7 +227,9 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         btnHist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String loanNo = (String)v.getTag();
+                String tag = (String)v.getTag();
+                String[] stags = tag.split("~");
+                String loanNo = stags[0];
                 try {
                    new GetPayments().execute(loanNo);
                 }catch (Exception ex){
@@ -243,10 +244,10 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
     }
 
     @Override
-    public void getPaymentInfo(String loanNo,String paymentmode,double amount) {
+    public void getPaymentInfo(String loanNo,String paymentmode,double amount,boolean isInterest) {
         try
         {
-           new SavePayment().execute(loanNo,paymentmode,String.valueOf(amount));
+           new SavePayment().execute(loanNo,paymentmode,String.valueOf(amount),isInterest?"Y":"N");
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -282,6 +283,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             rptDtl.PaymentMode = paymentMode;
             rptDtl.PaymentID = String.valueOf(paymentID);
             rptDtl.PaidDate = new Date();
+            rptDtl.EndDate = CommonUtil.loanDtl.EndDate;
             printerUtil = new PrinterUtil(this,rptDtl,
                     null,null,false,false,false);
             confrimDialog.show();
@@ -364,7 +366,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT PAYMENT_ID,PAYMENT_DATE,PAYMENT_MODE,AMOUNT,RECEIVED_BY,MEMBER_ID FROM PAYMENTS WHERE LOAN_NO ='"+loanNo+"' ORDER BY PAYMENT_DATE DESC";
+                        String query = "SELECT IS_INTEREST,PAYMENT_ID,PAYMENT_DATE,PAYMENT_MODE,AMOUNT,RECEIVED_BY,MEMBER_ID FROM PAYMENTS WHERE LOAN_NO ='"+loanNo+"' ORDER BY PAYMENT_DATE DESC";
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Payment> payments = new ArrayList<>();
@@ -376,11 +378,14 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             payment.setPaymentMode(rs.getString("PAYMENT_MODE"));
                             payment.setPaidAmount(rs.getDouble("AMOUNT"));
                             payment.setCollectedPerson(rs.getString("RECEIVED_BY"));
+                            payment.isInterest = rs.getBoolean("IS_INTEREST");
                             payment.MemberID = rs.getString("MEMBER_ID");
+                            payment.EndDate = CommonUtil.loanDtl.EndDate;
                             payments.add(payment);
                         }
                         CommonUtil.payments = payments;
                         CommonUtil.loanNo = loanNo;
+                        CommonUtil.isinterestonly = CommonUtil.loanDtl.getLoanType().contains("Interest");
                         isSuccess=CommonUtil.payments.size()>0;
                         z =isSuccess ? "Payments Found.":"No Payments Found.";
                     }
@@ -436,7 +441,21 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 showCustomDialog("Status",r);
             }
         }
-
+        private Double GetCurrentOutstanding(){
+            Double outstanding = 0d;
+            try{
+                String query = "SELECT OUTSTANDING_AMOUNT FROM MEMBERS WHERE MEMBER_ID="+memberid;
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(query);
+                if(rs.next()){
+                    outstanding = rs.getDouble("OUTSTANDING_AMOUNT");
+                }
+            }
+            catch(Exception ex){
+                Log.e("ERROR",ex.getMessage());
+            }
+            return  outstanding;
+        }
         private Integer GetNextPaymentID(){
             Integer paymentID = 0;
             try{
@@ -467,26 +486,38 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                         loanNo = params[0];
                         paymentMode = params[1];
                         amtpaying = params[2];
+                        boolean isintest = params[3].equals("Y");
                         paymentID = GetNextPaymentID();
                         if(paymentID>0){
                             String query = "DELETE FROM PAYMENTS WHERE IS_FIELD_COLLECTION=1 AND PAYMENT_ID="+paymentID;
                             Statement stmt = con.createStatement();
                             stmt.executeUpdate(query);
-                            query = "INSERT INTO PAYMENTS VALUES ("+paymentID+",GETDATE(),"+memberid+",'"+paymentMode+"',"+amtpaying+",'"+CommonUtil.loggedinUser+"','','"+loanNo+"',1)";
+                            query = "INSERT INTO PAYMENTS VALUES ("+paymentID+",GETDATE(),"+memberid+",'"+paymentMode+"',"+amtpaying+",'"+CommonUtil.loggedinUser+"','','"+loanNo+"',1,"+(isintest?"1":"0")+")";
                             int paymentRowAff = stmt.executeUpdate(query);
                             query = "UPDATE MEMBERS SET DUE_AMOUNT=DUE_AMOUNT-"+amtpaying+" WHERE MEMBER_ID="+memberid;
                             int memberBal = stmt.executeUpdate(query);
                             query = "UPDATE MEMBERS SET DUE_AMOUNT=0 WHERE DUE_AMOUNT<0";
                             stmt.executeUpdate(query);
+                            query = "UPDATE LOANS SET INTEREST_PAID=0";
+                            stmt.executeUpdate(query);
+                            query = "UPDATE LOANS SET LOANS.INTEREST_PAID = P.PAID FROM [LOANS] L INNER JOIN(SELECT LOAN_NO, SUM(AMOUNT) PAID FROM PAYMENTS WHERE IS_INTEREST=1 GROUP BY  LOAN_NO) P ON L.LOAN_NO = P.LOAN_NO WHERE L.LOAN_TYPE='InterestOnly';";
+                            stmt.executeUpdate(query);
                             query = "UPDATE LOANS SET PAID_AMOUNT=0";
                             stmt.executeUpdate(query);
-                            query = "UPDATE LOANS SET LOANS.PAID_AMOUNT = P.PAID FROM [LOANS] L INNER JOIN(SELECT LOAN_NO, SUM(AMOUNT) PAID FROM PAYMENTS GROUP BY  LOAN_NO) P ON L.LOAN_NO = P.LOAN_NO;";
+                            query = "UPDATE LOANS SET LOANS.PAID_AMOUNT = P.PAID FROM [LOANS] L INNER JOIN(SELECT LOAN_NO, SUM(AMOUNT) PAID FROM PAYMENTS WHERE IS_INTEREST=0 GROUP BY  LOAN_NO) P ON L.LOAN_NO = P.LOAN_NO;";
                             stmt.executeUpdate(query);
                             query = "UPDATE MEMBERS SET MEMBERS.OUTSTANDING_AMOUNT = P.BAL FROM [MEMBERS] L INNER JOIN(SELECT MEMBER_ID, SUM(LOAN_AMOUNT+INTEREST_AMOUNT+PENALTY_AMOUNT-PAID_AMOUNT) AS BAL FROM LOANS GROUP BY  MEMBER_ID) P ON L.MEMBER_ID = P.MEMBER_ID;";
                             stmt.executeUpdate(query);
                             query = "UPDATE MEMBERS SET PENALTY_AMOUNT=0 WHERE OUTSTANDING_AMOUNT=0";
                             stmt.executeUpdate(query);
+                            if(CommonUtil.loanDtl.getLoanType().contains("Interest")){
+                                Double outstanding = GetCurrentOutstanding();
+                                Double dueAmt = outstanding*(CommonUtil.loanDtl.getInterest()*100);
+                                query = "UPDATE LOANS SET DUE_AMOUNT="+String.format("%.0f",dueAmt)+" WHERE LOAN_NO='"+loanNo+"'";
+                                stmt.executeUpdate(query);
+                            }
                             isSuccess = paymentRowAff >0 && memberBal>0;
+
                             z = isSuccess?"Payment Saved":"Unable to Save Payment Please Contact Support Team.";
                         }
                         else {
@@ -549,7 +580,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT PENALTY_AMOUNT,LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM,PAID_AMOUNT FROM LOANS WHERE (LOAN_AMOUNT+INTEREST_AMOUNT-PAID_AMOUNT) > 0 AND MEMBER_ID="+memberid;
+                        String query = "SELECT END_DATE,PENALTY_AMOUNT,LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM,PAID_AMOUNT FROM LOANS WHERE (LOAN_AMOUNT+INTEREST_AMOUNT+PENALTY_AMOUNT-PAID_AMOUNT) > 0 AND MEMBER_ID="+memberid;
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Loan> loans = new ArrayList<>();
@@ -563,10 +594,12 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             loan.setLoanType(rs.getString("LOAN_TYPE"));
                             loan.setTerm(rs.getInt("TERM"));
                             loan.setPaidAmt(rs.getDouble("PAID_AMOUNT"));
+                            loan.EndDate = rs.getDate("END_DATE");
                             loans.add(loan);
+                            CommonUtil.loanDtl = loan;
                         }
                         CommonUtil.loans = loans;
-                        isSuccess=CommonUtil.loans.size()>0;
+                        isSuccess= !CommonUtil.loans.isEmpty();
                         z =isSuccess ? "Loans Found.":"No Pending Loans.";
                     }
                 }

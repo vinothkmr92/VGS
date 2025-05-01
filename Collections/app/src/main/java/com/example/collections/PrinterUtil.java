@@ -59,6 +59,7 @@ public class PrinterUtil {
     private String balAmt;
     private String paymentMode;
     private String paymentID;
+    private Date EndDate;
     private Boolean rePrint;
     private Date paymentDate;
     private boolean printCollectionReport;
@@ -92,6 +93,7 @@ public class PrinterUtil {
             this.paymentMode = receiptDtl.PaymentMode;
             this.paymentID = receiptDtl.PaymentID;
             this.paymentDate = receiptDtl.PaidDate;
+            this.EndDate = receiptDtl.EndDate;
         }
         this.collectionsRptConsolidated = collectionsRptConsolidated;
         this.cols = cols;
@@ -225,6 +227,8 @@ public class PrinterUtil {
     }
     private void PrintBill() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm aaa", Locale.getDefault());
+        SimpleDateFormat formatD = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        String enddatestr =StringUtils.leftPad(formatD.format(EndDate),21);
         String dateStr = format.format(paymentDate);
         if(rePrint){
             posPtr.printNormal(ESC+"|cARECEIPT-COPY\r\n");
@@ -271,7 +275,8 @@ public class PrinterUtil {
         }*/
         posPtr.printNormal("BAL. AMT  :"+total);
         posPtr.printNormal("--------------------------------");
-        posPtr.lineFeed(1);
+        posPtr.printNormal("END DATE  :"+enddatestr);
+        posPtr.lineFeed(2);
         String agent = StringUtils.leftPad(CommonUtil.loggedinUser,21);
         posPtr.printNormal(ESC+"|cA"+ESC+"|1CCUSTOMER CARE: 7418899988\r\n");
         posPtr.lineFeed(4);

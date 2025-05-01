@@ -45,11 +45,51 @@
             android:textStyle="bold"
             android:text="Payments History">
         </TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="18dp"
+            android:id="@+id/totalpaidAmt"
+            android:fontFamily="@font/orienta"
+            android:textColor="@color/DarkGreen"
+            android:textStyle="bold"
+            android:text="0">
+        </TextView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:gravity="center"
+        android:id="@+id/payoptionLayout"
+        android:layout_below="@id/histHome"
+        android:layout_height="wrap_content">
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Principal"
+            android:textStyle="bold"
+            android:fontFamily="@font/orienta"
+            android:id="@+id/principalPay"
+            android:textSize="15dp"
+            android:textColor="@color/DarkOrange"
+            ></com.google.android.material.radiobutton.MaterialRadioButton>
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Interest"
+            android:textStyle="bold"
+            android:fontFamily="@font/orienta"
+            android:textSize="15dp"
+            android:id="@+id/intesetPay"
+            android:checked="true"
+            android:textColor="@color/Orchid"
+            ></com.google.android.material.radiobutton.MaterialRadioButton>
     </LinearLayout>
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/histHome">
+        android:layout_below="@id/payoptionLayout">
         <LinearLayout
             android:id="@+id/viewHist"
             android:layout_width="match_parent"

@@ -10,7 +10,8 @@ public class Payment {
     private String CollectedPerson;
     private String PaymentMode;
     public String MemberID;
-
+    public Date EndDate;
+    public boolean isInterest;
     public String getPaymentMode() {
         return PaymentMode;
     }

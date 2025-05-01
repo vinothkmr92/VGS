@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,10 +29,14 @@ import java.util.ArrayList;
 public class GetPaymentsDetails extends AppCompatDialogFragment {
    private EditText payingAmt;
    private TextView loanNotxtView;
+   private LinearLayout intprinlayout;
    private PaymentDialogListener listener;
    private MaterialRadioButton cashRadioBtn;
    private MaterialRadioButton upiRadioBtn;
+   private MaterialRadioButton principalRadioBtn;
+   private MaterialRadioButton interestRadioBtn;
    public String loanNo;
+   public boolean isInterestLoan;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -55,18 +60,22 @@ public class GetPaymentsDetails extends AppCompatDialogFragment {
                     String LoanNo = loanNotxtView.getText().toString();
                     String amt = payingAmt.getText().toString();
                     Double amtToPay = convertToDouble(amt);
+                    boolean isintereset = intprinlayout.getVisibility()==View.VISIBLE ? interestRadioBtn.isChecked():false;
                     if(amtToPay>0){
                         String paymentMode = cashRadioBtn.isChecked() ? "CASH":"UPI";
-                        listener.getPaymentInfo(LoanNo,paymentMode,amtToPay);
+                        listener.getPaymentInfo(LoanNo,paymentMode,amtToPay,isintereset);
                     }
                     else {
                         Toast.makeText(getContext(),"Please enter valid amount to pay.",Toast.LENGTH_LONG);
                     }
                 });
+        intprinlayout = view.findViewById(R.id.intprinlayout);
         loanNotxtView = view.findViewById(R.id.loannopayment);
         payingAmt = view.findViewById(R.id.paymentAmt);
         cashRadioBtn = view.findViewById(R.id.cashRadioBtn);
         upiRadioBtn = view.findViewById(R.id.upiRadioBtn);
+        interestRadioBtn = view.findViewById(R.id.intestRadioBtn);
+        principalRadioBtn = view.findViewById(R.id.principalRadioBtn);
         cashRadioBtn.setChecked(true);
         cashRadioBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,9 +89,22 @@ public class GetPaymentsDetails extends AppCompatDialogFragment {
                 cashRadioBtn.setChecked(!upiRadioBtn.isChecked());
             }
         });
+        interestRadioBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                principalRadioBtn.setChecked(!interestRadioBtn.isChecked());
+            }
+        });
+        principalRadioBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                interestRadioBtn.setChecked(!principalRadioBtn.isChecked());
+            }
+        });
         if(!loanNo.isEmpty()){
             loanNotxtView.setText(loanNo);
         }
+        intprinlayout.setVisibility(isInterestLoan?View.VISIBLE:View.GONE);
         payingAmt.requestFocus();
         Dialog dialog = builder.create();
         dialog.setCancelable(false);
@@ -116,6 +138,6 @@ public class GetPaymentsDetails extends AppCompatDialogFragment {
         return doubleValue;
     }
     public interface PaymentDialogListener{
-        void getPaymentInfo(String loanNo,String paymentMode,double amount);
+        void getPaymentInfo(String loanNo,String paymentMode,double amount,boolean isInterest);
     }
 }
