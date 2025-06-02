@@ -210,7 +210,7 @@ public class BtWeighingScaleService {
                 try{
                     String d = openBTGetValue();
                     if(!d.isEmpty()){
-                        HomeActivity.getInstance().SetWeight(d);
+                        //HomeActivity.getInstance().SetWeight(d);
                     }
                 }
                 catch (Exception ex)

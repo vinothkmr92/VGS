@@ -21,8 +21,8 @@
                 android:textStyle="bold"
                 android:fontFamily="@font/orienta"
                 android:text="LOANS COLLECTIONS">
-
             </TextView>
+
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="wrap_content"
@@ -55,19 +55,31 @@
                 android:layout_width="match_parent"
                 android:fontFamily="@font/orienta"
                 android:layout_height="wrap_content"
+                app:endIconMode="clear_text"
                 android:hint="Enter Member ID">
-
                 <!--this is the actual edit text which takes the input-->
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/memberid"
                     android:inputType="number"
                     android:maxLines="1"
+
                     android:imeOptions="actionSearch"
                     android:fontFamily="@font/orienta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginLeft="15dp"
+            android:id="@+id/btnRefresh"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_refresh_24"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:foreground="?android:attr/selectableItemBackground"
+            ></com.google.android.material.button.MaterialButton>
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

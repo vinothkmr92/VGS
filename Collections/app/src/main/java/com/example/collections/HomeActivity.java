@@ -45,6 +45,7 @@ import java.util.concurrent.RecursiveTask;
 
 public class HomeActivity extends AppCompatActivity implements GetPaymentsDetails.PaymentDialogListener, View.OnClickListener {
 
+    MaterialButton btnRefresh;
     TextView usernameView;
     EditText memberidEditView;
     CardView memberView;
@@ -74,6 +75,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         address = findViewById(R.id.address);
         viewLoans = findViewById(R.id.viewLoans);
         usernameView.setText(CommonUtil.loggedinUser);
+        btnRefresh = findViewById(R.id.btnRefresh);
         sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         String sqlserver = this.getApplicationContext().getString(R.string.SQL_SERVER);
         CommonUtil.SQL_SERVER = sharedpreferences.getString(SQLSERVER,sqlserver);
@@ -119,6 +121,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         });
         confrimDialog.setCancelable(false);
         mobileNumber.setOnClickListener(this);
+        btnRefresh.setOnClickListener(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -319,6 +322,21 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 intent.setData(Uri.parse("tel:"+mobileNumber.getText().toString()));
                 startActivity(intent);
                 break;
+            case R.id.btnRefresh:
+                memberidEditView.setEnabled(true);
+                btnRefresh.setVisibility(View.GONE);
+                memberView.setVisibility(View.GONE);
+                memberName.setText("");
+                outstanding.setText("");
+                mobileNumber.setVisibility(View.GONE);
+                mobileNumber.setText("");
+                address.setVisibility(View.GONE);
+                address.setText("");
+                viewLoans.removeAllViews();
+                memberidEditView.setText("");
+                InputMethodManager inputMethodManager =  (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInputFromWindow(memberidEditView.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+                memberidEditView.requestFocus();
 
         }
     }
@@ -635,6 +653,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             }
             //Toast.makeText(HomeActivity.this,r,Toast.LENGTH_LONG).show();
             if(isSuccess){
+                memberidEditView.setEnabled(false);
+                btnRefresh.setVisibility(View.VISIBLE);
                 memberView.setVisibility(View.VISIBLE);
                 memberName.setText(CommonUtil.memberName);
                 NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
@@ -648,6 +668,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 new GetLoanDtl().execute("");
             }
             else {
+                memberidEditView.setEnabled(true);
+                btnRefresh.setVisibility(View.GONE);
                 showCustomDialog("Status",r);
             }
         }
