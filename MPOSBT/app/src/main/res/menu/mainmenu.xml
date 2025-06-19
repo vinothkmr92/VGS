@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/uploadExcel"
+        android:icon="@drawable/baseline_import_export_24"
+        android:title="Import/Export Items"/>
+    <item android:id="@+id/exit"
+        android:icon="@drawable/baseline_exit_to_app_24"
+        android:title="Exit"/>
+</menu>
