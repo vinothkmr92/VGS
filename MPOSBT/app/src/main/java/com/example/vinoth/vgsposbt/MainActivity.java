@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -23,8 +22,6 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
-import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,28 +73,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ArrayAdapter scadapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,zoneslist);
             scadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             zoneSpinner.setAdapter(scadapter);
-            if(zoneslist.size()>0){
-                String zn = zoneslist.get(0);
-                ArrayList<String> wards = dbHelper.GetWards(zn);
-                ArrayAdapter wardAdaptor = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,wards);
-                wardAdaptor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                wardSpinner.setAdapter(wardAdaptor);
-            }
-            zoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String selectedZone = zoneSpinner.getSelectedItem().toString();
-                    ArrayList<String> wards = dbHelper.GetWards(selectedZone);
-                    ArrayAdapter wardAdaptor = new ArrayAdapter(MainActivity.this, android.R.layout.simple_spinner_dropdown_item,wards);
-                    wardAdaptor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    wardSpinner.setAdapter(wardAdaptor);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
+            ArrayList<String> wards = dbHelper.GetWards();
+            ArrayAdapter wardAdaptor = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,wards);
+            wardAdaptor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            wardSpinner.setAdapter(wardAdaptor);
             loginBtn.setOnClickListener(this);
         }
         catch (Exception ex){
@@ -205,6 +184,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     showCustomDialog("Warning","Please select valid Zone/Ward Details.");
                 }
                 else {
+                    Common.zoneSelected = zoneSelected;
+                    Common.wardSelected = wardSelected;
                     Intent homePage = new Intent(this, HomeActivity.class);
                     homePage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(homePage);
