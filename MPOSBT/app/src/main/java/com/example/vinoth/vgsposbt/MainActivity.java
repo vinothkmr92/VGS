@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static MainActivity instance;
     String android_id;
     Spinner zoneSpinner;
-    Spinner wardSpinner;
     ImageButton loginBtn;
     DatabaseHelper dbHelper;
     private MySharedPreferences sharedpreferences;
@@ -52,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dbHelper = new DatabaseHelper(this);
             sharedpreferences = MySharedPreferences.getInstance(this, MyPREFERENCES);
             zoneSpinner = findViewById(R.id.zoneNo);
-            wardSpinner = findViewById(R.id.wardNo);
             loginBtn = findViewById(R.id.loginbtn);
             instance = this;
             Date dt = new Date();
@@ -73,10 +71,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ArrayAdapter scadapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,zoneslist);
             scadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             zoneSpinner.setAdapter(scadapter);
-            ArrayList<String> wards = dbHelper.GetWards();
-            ArrayAdapter wardAdaptor = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,wards);
-            wardAdaptor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            wardSpinner.setAdapter(wardAdaptor);
             loginBtn.setOnClickListener(this);
         }
         catch (Exception ex){
@@ -179,13 +173,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.loginbtn:
                 String zoneSelected = zoneSpinner.getSelectedItem().toString();
-                String wardSelected = wardSpinner.getSelectedItem().toString();
-                if(zoneSelected.isEmpty() || wardSelected.isEmpty()){
+                if(zoneSelected.isEmpty()){
                     showCustomDialog("Warning","Please select valid Zone/Ward Details.");
                 }
                 else {
                     Common.zoneSelected = zoneSelected;
-                    Common.wardSelected = wardSelected;
                     Intent homePage = new Intent(this, HomeActivity.class);
                     homePage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(homePage);

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -41,13 +40,6 @@
             android:padding="20dp">
             <Spinner
                 android:id="@+id/zoneNo"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:focusableInTouchMode="true"
-                android:spinnerMode="dialog"
-                android:textAlignment="center"></Spinner>
-            <Spinner
-                android:id="@+id/wardNo"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
