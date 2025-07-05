@@ -372,7 +372,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cont.put("QUANTITY",billsItem.getQty());
         cont.put("WAITER",billsItem.getWaiter());
         cont.put("PRICE",billsItem.getPrice());
-        BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT,PRICE DOUBLE)
         long s = db.insert("BILLS_ITEM",null,cont);
         if(s>0){
             Log.println(Log.ASSERT,"","Successfully inserted bill items");

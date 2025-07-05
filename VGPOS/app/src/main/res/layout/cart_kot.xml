@@ -8,44 +8,35 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/kotCart"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="5dp"
-            >
-            <LinearLayout
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:layout_gravity="fill">
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp"
-                android:layout_gravity="fill">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:id="@+id/kotCartItemName"
-                    android:textStyle="bold"
-                    android:text="PRODUCT NAME"
-                    android:textColor="@color/Indigo"
-                    android:fontFamily="@font/orienta"
-                    android:textSize="20dp"></TextView>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/kotCartQty"
-                    android:layout_weight="3"
-                    android:textStyle="bold"
-                    android:text="56"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorAccent"
-                    android:fontFamily="@font/orienta"
-                    android:textSize="20dp"
-                    >
-                </TextView>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_weight="0.5"
+                android:id="@+id/kotCartItemName"
+                android:textStyle="bold"
+                android:text="PRODUCT NAME"
+                android:textColor="@color/Indigo"
+                android:fontFamily="@font/orienta"
+                android:textSize="15dp"></TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/kotCartQty"
+                android:layout_weight="3"
+                android:textStyle="bold"
+                android:text="56"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:fontFamily="@font/orienta"
+                android:textSize="15dp"
+                >
+            </TextView>
+        </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

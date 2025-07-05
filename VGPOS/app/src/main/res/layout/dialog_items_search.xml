@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Linear layout as parent layout-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/White"
+    android:orientation="vertical"
+    android:padding="15dp"
+    >
+
+    <!-- Text view to show the text Select course-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/orienta"
+        android:text="SEARCH ITEMS"
+        android:textAlignment="center"
+        android:textColor="@color/MediumVioletRed"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <!-- Edit text to allow user to type name
+        of item he/she wants to search-->
+    <EditText
+        android:id="@+id/edit_textItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/WhiteSmoke"
+        android:fontFamily="@font/orienta"
+        android:hint="Search..."
+        android:padding="12dp"
+        android:singleLine="true"
+        android:textColor="@android:color/black" />
+
+    <!-- List view to insert list of items-->
+    <ListView
+        android:id="@+id/list_viewItem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+</LinearLayout>

@@ -34,24 +34,32 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2.5"
-                        android:id="@+id/billnoTxt"
+                        android:id="@+id/kotNoTxt"
                         android:text="1"
                         android:padding="8dp"
                         android:textColor="@color/Red"
                         android:textSize="30dp"
                         android:textStyle="bold"
                         android:typeface="monospace" />
-                    <TextView
-                        android:id="@+id/counterInfo"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_weight="0.4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:layout_gravity="center"
-                        android:background="@android:drawable/editbox_background"
-                        android:drawableEnd="@drawable/baseline_keyboard_arrow_down_24"
-                        android:fontFamily="@font/orienta"
-                        android:hint="Select Table"
-                        android:textColor="@android:color/black" />
+                        android:id="@+id/kotTb"
+                        android:hint="Dine-in Table"
+                        android:textColorHint="@color/Indigo"
+                        android:textStyle="bold"
+                        android:textAlignment="center"
+                        android:padding="10dp"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                        <AutoCompleteTextView
+                            android:id="@+id/kotTables"
+                            android:layout_width="match_parent"
+                            android:textColor="@color/DarkBlue"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orienta"
+                            android:inputType="none"></AutoCompleteTextView>
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -113,6 +121,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.55"
+                        android:editable="false"
                         android:fontFamily="@font/orienta"
                         android:imeOptions="actionNext"
                         android:inputType="textCapCharacters"
@@ -163,7 +172,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/kotCartlayout"
-                    android:padding="10dp"
+                    android:padding="2dp"
                     android:orientation="vertical"
                     >
                 </LinearLayout>
@@ -357,14 +366,14 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
                             <Button
-                                android:id="@+id/menu"
+                                android:id="@+id/closeTable"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.25"
                                 android:backgroundTint="@android:color/holo_orange_light"
                                 android:drawableLeft="@drawable/baseline_receipt_long_24"
                                 android:foreground="?android:attr/selectableItemBackground"
-                                android:text="REPORT"
+                                android:text="CLOSE TABLE"
                                 android:textColor="@android:color/background_light"
                                 android:textSize="8dp"
                                 tools:ignore="TextContrastCheck" />
@@ -382,24 +391,7 @@
                                 android:textSize="8dp"
                                 />
                         </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <Button
-                                android:id="@+id/viewitems"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.25"
-                                android:backgroundTint="@color/DarkKhaki"
-                                android:drawableLeft="@drawable/baseline_shopping_cart_24"
-                                android:foreground="?android:attr/selectableItemBackground"
-                                android:text="VIEW ITEMS"
-                                android:textColor="@color/White"
-                                android:textSize="15dp"
-                                />
 
-                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
