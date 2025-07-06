@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
@@ -58,6 +59,7 @@ public class PrinterUtil {
     private BluetoothPort bluetoothPort;
     private boolean isWifi;
     public BillDetails billDetail;
+    public ArrayList<KotDetails> kotDetails;
     public PrinterUtil(Context cntx) {
         posPtr=new ESCPOSPrinter();
         isWifi = CommonUtil.PrintOption.equalsIgnoreCase("WIFI");
@@ -280,6 +282,74 @@ public class PrinterUtil {
         }
         return sts;
     }
+    private void PrintKot() throws IOException {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
+        String dateStr = format.format(new Date());
+        DecimalFormat formater = new DecimalFormat("#.###");
+        KotDetails firstitme = kotDetails.stream().findFirst().orElse(null);
+
+        posPtr.printNormal(ESC+"|cA"+ESC+"|2CKOT - "+firstitme.KotID+"\r\n");
+        posPtr.printNormal("\n");
+        if(!firstitme.KotUser.isEmpty()){
+            posPtr.printNormal(ESC+"|lAUSER     : "+firstitme.KotUser);
+            posPtr.printNormal("\n");
+        }
+        posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
+        if(CommonUtil.ReceiptSize.equals("2")){
+            posPtr.printNormal("--------------------------------");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME               QUANTITY\n");
+            posPtr.printNormal("--------------------------------");
+        }
+        else {
+            posPtr.printNormal("----------------------------------------------\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                             QUANTITY\n");
+            posPtr.printNormal("----------------------------------------------\n");
+        }
+
+        posPtr.setAlignment(0);
+
+        for(int k=0;k<kotDetails.size();k++){
+            KotDetails pr = kotDetails.get(k);
+            String name = pr.ProductName;
+            String qty = String.valueOf(pr.Qty);
+            String line = "";
+            if(CommonUtil.ReceiptSize.equals("2")){
+                if(name.length()>33){
+                    name = name.substring(0,32);
+                }
+                qty = StringUtils.leftPad(qty,27);
+                line = qty+"\n";
+            }
+            else {
+                if(name.length()>47){
+                    name = name.substring(0,46);
+                }
+                qty = StringUtils.leftPad(qty,41);
+                line = qty+"\n";
+            }
+            if(CommonUtil.MultiLang){
+                Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
+                if(xb!=null){
+                    posPtr.printBitmap(xb,0);
+                }
+                else {
+                    posPtr.printNormal(name+"\n");
+                }
+            }
+            else {
+                posPtr.printNormal(name+"\n");
+            }
+            posPtr.printNormal(line);
+        }
+        if(CommonUtil.ReceiptSize.equals("2")){
+            posPtr.printNormal("--------------------------------");
+        }
+        else {
+            posPtr.printNormal("----------------------------------------------\n");
+        }
+        posPtr.lineFeed(3);
+        posPtr.cutPaper();
+    }
     private void PrintBill() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(new Date());
@@ -479,7 +549,12 @@ public class PrinterUtil {
                 posPtr = new ESCPOSPrinter();
                 posPtr.setAsync(true);
                 try{
-                    PrintBillData();
+                    if(billDetail!=null){
+                        PrintBillData();
+                    }
+                    if(kotDetails!=null){
+                        PrintKot();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -546,7 +621,12 @@ public class PrinterUtil {
                 posPtr = new ESCPOSPrinter();
                 posPtr.setAsync(true);
                 try{
-                    PrintBillData();
+                    if(billDetail!=null){
+                        PrintBillData();
+                    }
+                    if(kotDetails!=null){
+                        PrintKot();
+                    }
                 }
                 catch (Exception ex)
                 {

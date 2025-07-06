@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/PapayaWhip"
+    android:background="@color/white"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -18,25 +18,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
+                android:layout_gravity="center"
                 android:id="@+id/kotCartItemName"
                 android:textStyle="bold"
                 android:text="PRODUCT NAME"
                 android:textColor="@color/Indigo"
                 android:fontFamily="@font/orienta"
                 android:textSize="15dp"></TextView>
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/btnRemoveKot"
+                android:layout_gravity="right"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:background="@drawable/baseline_remove_circle_outline_24">
+            </ImageButton>
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/kotCartQty"
-                android:layout_weight="3"
+                android:layout_gravity="center"
                 android:textStyle="bold"
                 android:text="56"
                 android:textAlignment="center"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/Black"
                 android:fontFamily="@font/orienta"
                 android:textSize="15dp"
                 >
             </TextView>
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/btnAddKot"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:background="@drawable/baseline_add_circle_outline_24">
+            </ImageButton>
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

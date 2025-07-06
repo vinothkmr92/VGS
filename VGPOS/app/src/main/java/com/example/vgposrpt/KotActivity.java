@@ -2,11 +2,13 @@ package com.example.vgposrpt;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.NumberFormat;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,7 +33,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,29 +49,19 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
 
     TextView kotNoTextView;
     TextInputLayout tableNo;
-    EditText itemNoEditText;
-    EditText itemNameEditText;
-    EditText qtyEditText;
+    EditText catEditText;
+    EditText prNameEditText;
     LinearLayout kotCartlayout;
     AutoCompleteTextView tablesAutoComplete;
-    private Button btn1;
-    private Button btn2;
-    private Button btn3;
-    private Button btn4;
-    private Button btn5;
-    private Button btn6;
-    private Button btn7;
-    private Button btn8;
-    private Button btn9;
-    private Button btn0;
-    private Button btnClear;
-    private Button btnDot;
+    ImageButton btnCatSearch;
+    ImageButton btnPrSearch;
+    Button btnAdd;
     private Button btnCloseTable;
     private Button btnCancel;
     private Button btnPrint;
-    private Button btnEnter;
     Dialog itemSearchdialog;
     ArrayList<KotDetails> kotDetails;
+    ArrayList<KotDetails> kotDetailsOld;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,45 +73,35 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             kotNoTextView = findViewById(R.id.kotNoTxt);
             kotNoTextView.setText(String.valueOf(CommonUtil.kotNo));
             tableNo = findViewById(R.id.kotTb);
-            itemNoEditText = findViewById(R.id.itemNo);
-            itemNameEditText = findViewById(R.id.itemName);
-            qtyEditText = findViewById(R.id.qty);
+            catEditText = findViewById(R.id.catEditText);
+            prNameEditText = findViewById(R.id.prNameEditText);
+            btnAdd = findViewById(R.id.btnPrAdd);
+            btnCatSearch = findViewById(R.id.btnCatSearch);
+            btnPrSearch = findViewById(R.id.btnPrSearch);
             tablesAutoComplete = findViewById(R.id.kotTables);
             List<String> tableNames = CommonUtil.tablesList.stream().map(c->c.TableName).collect(Collectors.toList());
             ArrayAdapter<String> tablesAdaptor = new ArrayAdapter<>(this,com.google.android.material.R.layout.support_simple_spinner_dropdown_item,tableNames);
             tablesAutoComplete.setAdapter(tablesAdaptor);
-            btn1 = (Button) findViewById(R.id._1);
-            btn2 = (Button) findViewById(R.id._2);
-            btn3 = (Button) findViewById(R.id._3);
-            btn4 = (Button) findViewById(R.id._4);
-            btn5 = (Button) findViewById(R.id._5);
-            btn6 = (Button) findViewById(R.id._6);
-            btn7 = (Button) findViewById(R.id._7);
-            btn8 = (Button) findViewById(R.id._8);
-            btn9 = (Button) findViewById(R.id._9);
-            btn0 = (Button) findViewById(R.id._0);
-            btnClear = (Button) findViewById(R.id._clr);
-            btnDot = (Button) findViewById(R.id._dot);
+            tablesAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String tbName = tableNo.getEditText().getText().toString();
+                    Tables tb = CommonUtil.tablesList.stream().filter(c->c.TableName.equals(tbName)).findFirst().orElse(null);
+                    if(tb!=null){
+                        new LoadKotDetails().execute(String.valueOf(tb.TableID));
+                    }
+                }
+            });
             btnCloseTable = (Button) findViewById(R.id.closeTable);
             btnCancel = (Button) findViewById(R.id.cancel);
             btnPrint = (Button) findViewById(R.id.print);
-            btnEnter = (Button) findViewById(R.id.enter);
-            btn1.setOnClickListener(this);
-            btn2.setOnClickListener(this);
-            btn3.setOnClickListener(this);
-            btn4.setOnClickListener(this);
-            btn5.setOnClickListener(this);
-            btn6.setOnClickListener(this);
-            btn7.setOnClickListener(this);
-            btn8.setOnClickListener(this);
-            btn9.setOnClickListener(this);
-            btn0.setOnClickListener(this);
-            btnClear.setOnClickListener(this);
-            btnDot.setOnClickListener(this);
+            btnPrSearch.setOnClickListener(this);
+            btnCatSearch.setOnClickListener(this);
+            btnAdd.setOnClickListener(this);
             btnCloseTable.setOnClickListener(this);
             btnCancel.setOnClickListener(this);
             btnPrint.setOnClickListener(this);
-            btnEnter.setOnClickListener(this);
+            tableNo.requestFocus();
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -125,7 +112,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             return insets;
         });
     }
-    private void OpenItemSearchDialog(){
+    private void OpenItemSearchDialog(boolean isCat){
         itemSearchdialog =new Dialog(KotActivity.this);
 
         // set custom dialog
@@ -143,10 +130,20 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         // Initialize and assign variable
         EditText editText=itemSearchdialog.findViewById(R.id.edit_textItem);
         ListView listView=itemSearchdialog.findViewById(R.id.list_viewItem);
+        TextView header = itemSearchdialog.findViewById(R.id.searchDialogHeader);
 
+        String headertxt = isCat?"Search Category":"Search Products";
+        header.setText(headertxt);
         // Initialize array adapter
-        List<String> itemnames = CommonUtil.productsFull.stream().map(c->c.getProductName()).collect(Collectors.toList());
-        ArrayAdapter<String> adapter=new ArrayAdapter<>(KotActivity.this,  R.layout.products_list_view, R.id.list_content,itemnames);
+        List<String> listItems = new ArrayList<>();
+        if(isCat){
+            listItems = CommonUtil.categories;
+        }
+        else {
+            String cat = catEditText.getText().toString();
+            listItems = CommonUtil.productsFull.stream().filter(c->c.getCategory().equals(cat)).map(c->c.getProductName()).collect(Collectors.toList());
+        }
+        ArrayAdapter<String> adapter=new ArrayAdapter<>(KotActivity.this,  R.layout.products_list_view, R.id.list_content,listItems);
 
         // set adapter
         listView.setAdapter(adapter);
@@ -176,17 +173,11 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
 
                 // Dismiss dialog
                 itemSearchdialog.dismiss();
-                Product pr = CommonUtil.productsFull.stream().filter(c->c.getProductName().equals(selectredName)).findFirst().orElse(null);
-                if(pr!=null){
-                    itemNoEditText.setText(pr.getProductID());
-                    itemNameEditText.setText(pr.getProductName());
-                    qtyEditText.setText("1");
-                    qtyEditText.selectAll();
-                    qtyEditText.requestFocus();
+                if(isCat){
+                    catEditText.setText(selectredName);
                 }
-                else{
-                    itemNoEditText.requestFocus();
-                    Toast.makeText(getApplicationContext(),"Invalid Product ID.",Toast.LENGTH_LONG);
+                else {
+                    prNameEditText.setText(selectredName);
                 }
             }
         });
@@ -205,24 +196,30 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
     }
     public  void  UpdateCarts(){
         KotDetails kotd = new KotDetails();
-        kotd.ProductId = itemNoEditText.getText().toString();
-        kotd.ProductName = itemNameEditText.getText().toString();
-        kotd.Qty = Integer.valueOf(qtyEditText.getText().toString());
-        kotd.KotID = Integer.valueOf(kotNoTextView.getText().toString());
-        kotd.KotDate = new Date();
-        kotd.BranchCode = CommonUtil.defBranch;
-        kotd.KotUser = CommonUtil.USERNAME;
-        String tableName = tableNo.getEditText().getText().toString();
-        Tables tb = CommonUtil.tablesList.stream().filter(c->c.TableName.equals(tableName)).findFirst().orElse(null);
-        kotd.TableID = tb!=null ? tb.TableID:0;
-
-        KotDetails exits = kotDetails.stream().filter(c->c.ProductId.equals(kotd.ProductId)).findFirst().orElse(null);
-        if(exits!=null){
-            kotd.Qty +=exits.Qty;
-            kotDetails.remove(exits);
+        kotd.ProductName = prNameEditText.getText().toString();
+        Product pr = CommonUtil.productsFull.stream().filter(c->c.getProductName().equals(kotd.ProductName)).findFirst().orElse(null);
+        if(pr!=null){
+            kotd.ProductId = pr.getProductID();
+            kotd.Qty = 1;
+            kotd.KotID = Integer.valueOf(kotNoTextView.getText().toString());
+            kotd.KotDate = new Date();
+            kotd.BranchCode = CommonUtil.defBranch;
+            kotd.KotUser = CommonUtil.loggedinUser;
+            String tableName = tableNo.getEditText().getText().toString();
+            Tables tb = CommonUtil.tablesList.stream().filter(c->c.TableName.equals(tableName)).findFirst().orElse(null);
+            kotd.TableID = tb!=null ? tb.TableID:0;
+            KotDetails exits = kotDetails.stream().filter(c->c.ProductId.equals(kotd.ProductId)).findFirst().orElse(null);
+            if(exits!=null){
+                kotd.Qty +=exits.Qty;
+                kotDetails.remove(exits);
+            }
+            kotDetails.add(kotd);
+            LoadKotCartView();
         }
-        kotDetails.add(kotd);
-        LoadKotCartView();
+        else {
+            Toast.makeText(this,"Not a valid Product.",Toast.LENGTH_LONG).show();
+        }
+
     }
     private void LoadKotCartView(){
         kotCartlayout.removeAllViews();
@@ -233,46 +230,123 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             TextView prQty = view.findViewById(R.id.kotCartQty);
             prName.setText(pr.ProductName);
             prQty.setText(String.valueOf(pr.Qty));
+            ImageButton btnRemove = view.findViewById(R.id.btnRemoveKot);
+            ImageButton btnAdd = view.findViewById(R.id.btnAddKot);
+            btnAdd.setTag(pr.ProductId);
+            btnRemove.setTag(pr.ProductId);
+            if(pr.Qty>0){
+                btnRemove.setVisibility(View.VISIBLE);
+            }
+            else {
+                btnRemove.setVisibility(View.INVISIBLE);
+            }
+            btnRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String prid = (String) v.getTag();
+                    KotDetails pn = null;
+                    for (KotDetails p:kotDetails) {
+                        if(p.ProductId==prid){
+                            pn = p;
+                            break;
+                        }
+                    }
+                    if(pn!=null){
+                        int qty = RemoveItemToKot(pn);
+                        prQty.setText(String.valueOf(qty));
+                        if(qty>0){
+                            btnRemove.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            btnRemove.setVisibility(View.INVISIBLE);
+                            LoadKotCartView();
+                        }
+                    }
+                }
+            });
+            btnAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String prid = (String) v.getTag();
+                    KotDetails pn = null;
+                    for (KotDetails p:kotDetails) {
+                        if(p.ProductId==prid){
+                            pn = p;
+                            break;
+                        }
+                    }
+                    if(pn!=null){
+                        int qty = AddItemToKot(pn);
+                        prQty.setText(String.valueOf(qty));
+                        if(qty>0){
+                            btnRemove.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            btnRemove.setVisibility(View.INVISIBLE);
+                            LoadKotCartView();
+                        }
+                    }
+                }
+            });
             kotCartlayout.addView(view);
         }
     }
+    private int AddItemToKot(KotDetails pr){
+        int latestQty = 0;
+        KotDetails alreadyExits = null;
+        for (KotDetails p:kotDetails) {
+            if(p.ProductId==pr.ProductId){
+                alreadyExits = p;
+                break;
+            }
+        }
+        if(alreadyExits!=null){
+            Integer qty = alreadyExits.Qty;
+            qty+=1;
+            pr.Qty = qty;
+            kotDetails.remove(alreadyExits);
+        }
+        kotDetails.add(pr);
+        latestQty = pr.Qty;
+        return  latestQty;
+    }
+
+    private int RemoveItemToKot(KotDetails pr){
+        int latestQty = 0;
+        KotDetails alreadyExits = null;
+        for (KotDetails p:kotDetails) {
+            if(p.ProductId==pr.ProductId){
+                alreadyExits = p;
+                break;
+            }
+        }
+        if(alreadyExits!=null){
+            Integer qty = alreadyExits.Qty;
+            if(qty==1){
+                kotDetails.remove(alreadyExits);
+                pr.Qty=0;
+            }
+            else {
+                qty-=1;
+                pr.Qty=qty;
+                kotDetails.remove(alreadyExits);
+                kotDetails.add(pr);
+            }
+        }
+        latestQty = pr.Qty;
+        return latestQty;
+    }
     public void Cancel() {
-        //QuantityListener.itemsCarts.clear();
-        //Common.itemsCarts.clear();
         kotDetails.clear();
         LoadKotCartView();
-        this.itemNameEditText.setText("");
-        this.itemNoEditText.setText("");
-        this.qtyEditText.setText("");
-        //showCustomDialog("Info","Items Cleared.");
-        itemNoEditText.requestFocus();
+        this.catEditText.setText("");
+        this.prNameEditText.setText("");
+        tableNo.requestFocus();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id._clr:
-                if (itemNoEditText.isFocused()) {
-                    String sr = itemNoEditText.getText().toString();
-                    if (sr.length() > 0) {
-                        sr = sr.substring(0, sr.length() - 1);
-                        itemNoEditText.setText(sr);
-                    }
-                } else if (qtyEditText.isFocused()) {
-                    String sr = qtyEditText.getText().toString();
-                    if (sr.length() > 0) {
-                        sr = sr.substring(0, sr.length() - 1);
-                        qtyEditText.setText(sr);
-                    }
-                }
-                break;
-            case R.id._dot:
-                if (itemNoEditText.isFocused()) {
-                    String sr = itemNoEditText.getText().toString();
-                    sr += ".";
-                    itemNoEditText.setText(sr);
-                }
-                break;
             case R.id.closeTable:
                 try {
                     //closeBT();
@@ -285,73 +359,249 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                 break;
             case R.id.print:
                 //
+                if(kotDetails.size()>0){
+                    new SaveKot().execute(kotDetails);
+                }
+                else {
+                    showCustomDialog("Warning","No Products Added. Please Add Products.");
+                }
                 break;
-            case R.id.enter:
-                LoadProductName();
-                break;
-            default:
-                String addstr = getResources().getResourceEntryName(v.getId());
-                addstr = addstr.replace("_", "");
-                if (itemNoEditText.isFocused()) {
-                    String sr = itemNoEditText.getText().toString();
-                    sr += addstr;
-                    itemNoEditText.setText(sr);
-                } else if (qtyEditText.isFocused()) {
-                    int startSelection = qtyEditText.getSelectionStart();
-                    int endSelection = qtyEditText.getSelectionEnd();
-                    String selectedText = qtyEditText.getText().toString().substring(startSelection, endSelection);
-                    if (!selectedText.isEmpty()) {
-                        qtyEditText.setText(addstr);
-                    } else {
-                        String sr = qtyEditText.getText().toString();
-                        sr += addstr;
-                        qtyEditText.setText(sr);
+            case  R.id.btnCatSearch:
+                String tableName = tableNo.getEditText().getText().toString();
+                if(tableName.isEmpty()){
+                    showCustomDialog("Warning","Please Select Table First");
+                    tableNo.requestFocus();
+                }
+                else {
+                    if(itemSearchdialog !=null){
+                        if(!itemSearchdialog.isShowing()){
+                            OpenItemSearchDialog(true);
+                        }
+                    }
+                    else {
+                        OpenItemSearchDialog(true);
                     }
                 }
+                break;
+            case  R.id.btnPrSearch:
+                String tbName = tableNo.getEditText().getText().toString();
+                if(tbName.isEmpty()){
+                    showCustomDialog("Warning","Please Select Table First");
+                    tableNo.requestFocus();
+                    break;
+                }
+                String cat = catEditText.getText().toString();
+                if(cat.isEmpty()){
+                    showCustomDialog("Warning","Please Select Valid Category.");
+                }
+                else {
+                    if(itemSearchdialog !=null){
+                        if(!itemSearchdialog.isShowing()){
+                            OpenItemSearchDialog(false);
+                        }
+                    }
+                    else {
+                        OpenItemSearchDialog(false);
+                    }
+                }
+                break;
+            case  R.id.btnPrAdd:
+                UpdateCarts();
+                prNameEditText.setText("");
                 break;
         }
     }
 
-    public void LoadProductName(){
-        if(itemNoEditText.isFocused()){
-            String itemnostr = itemNoEditText.getText().toString();
-            if(!itemnostr.isEmpty()){
-                Product pr = CommonUtil.productsFull.stream().filter(c->c.getProductID().equals(itemnostr)).findFirst().orElse(null);
-                if(pr!=null){
-                    itemNameEditText.setText(pr.getProductName());
-                    qtyEditText.setText("1");
-                    qtyEditText.selectAll();
-                    qtyEditText.requestFocus();
-                }
-                else{
-                    itemNoEditText.requestFocus();
-                    Toast.makeText(getApplicationContext(),"Invalid Product ID.",Toast.LENGTH_LONG);
-                }
-
-            }
-            else{
-                if(itemSearchdialog !=null){
-                    if(!itemSearchdialog.isShowing()){
-                        OpenItemSearchDialog();
+    public void RefreshKotPage(String title,String Message,boolean print,ArrayList<KotDetails> kotDetails) {
+        AlertDialog.Builder dialog =  new AlertDialog.Builder(KotActivity.this);
+        dialog.setTitle(title);
+        dialog.setMessage("\n"+Message);
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                if(print){
+                    try{
+                        PrinterUtil printerUtil = new PrinterUtil(KotActivity.this);
+                        printerUtil.kotDetails = kotDetails;
+                        printerUtil.Print();
+                    }
+                    catch (Exception ex){
+                        showCustomDialog("Error",ex.getMessage());
                     }
                 }
-                else {
-                    OpenItemSearchDialog();
-                }
+                Cancel();
             }
+        });
+        dialog.setCancelable(false);
+        dialog.show();
+    }
 
+    public class SaveKot extends AsyncTask<ArrayList<KotDetails>,String, Integer>
+    {
+        Boolean isSuccess = false;
+        String error = "";
+        private final ProgressDialog dialog = new ProgressDialog(KotActivity.this);
+        ConnectionClass connectionClass = null;
+        Connection con = null;
+        ArrayList<KotDetails> kotlist;
+        @Override
+        protected void onPreExecute() {
+            connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+            con = connectionClass.CONN();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setMessage("Generating KOT..Please Wait..");
+            dialog.show();
+            super.onPreExecute();
         }
-        else if(qtyEditText.isFocused()){
-            if(itemNoEditText.getText().toString().isEmpty()){
-                showCustomDialog("Warning","Enter Valid Product");
+
+        @Override
+        protected void onPostExecute(Integer kotNo) {
+            if(isSuccess){
+                String msg = "";
+                if(kotNo>0){
+                    msg ="Kot No - "+kotNo+" is saved Successfully.";
+                }
+                else {
+                    msg = "Failed to Save KOT. Contact support Team.";
+                }
+                boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
+                RefreshKotPage("Status",msg,print,kotlist);
             }
             else {
-                UpdateCarts();
-                itemNoEditText.setText("");
-                itemNameEditText.setText("");
-                qtyEditText.setText("");
-                itemNoEditText.requestFocus();
+                if(dialog.isShowing()){
+                    dialog.hide();
+                }
+                if(!error.isEmpty()){
+                    showCustomDialog("Status",error);
+                }
             }
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+        }
+
+        @Override
+        protected Integer doInBackground(ArrayList<KotDetails>... params) {
+            Integer kotNo = 0;
+            kotlist = params[0];
+            try {
+                if (con == null) {
+                    error = "Database Connection Failed";
+                } else {
+                    SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                    Date date = new Date();
+                    String today = format.format(date);
+                    String kotnoquery = "SELECT MAX(KOT_ID) AS KOTID FROM KOT WHERE CAST(KOT_DATE AS DATE)='"+today+"'";
+                    Statement stmt = con.createStatement();
+                    ResultSet kotnoRs = stmt.executeQuery(kotnoquery);
+                    kotNo = 0;
+                    if(kotnoRs.next()){
+                        kotNo = kotnoRs.getInt("KOTID");
+                    }
+                    kotNo++;
+                    boolean kotsaved = false;
+                    for(KotDetails kot:kotlist){
+                        try{
+                            String query = "INSERT INTO KOT VALUES ("+kotNo+",GETDATE(),"+kot.TableID+","+kot.BranchCode+",'"+kot.ProductId+"',"+kot.Qty+",'"+kot.KotUser+"')";
+                            Integer rowAff = stmt.executeUpdate(query);
+                            kotsaved = rowAff>0;
+                            if(!kotsaved){
+                                break;
+                            }
+                        }
+                        catch (Exception ex){
+                            kotsaved = false;
+                            break;
+                        }
+                    }
+                    isSuccess = kotsaved;
+                    if(!kotsaved) {
+                        isSuccess = false;
+                        String delBillQuery = "DELETE KOT WHERE KOT_ID="+kotNo+" AND CAST(KOT_DATE AS DATE)='"+today+"'";
+                        stmt.executeUpdate(delBillQuery);
+                        error="[Failed to Insert into Kot Table] Unable to Save Kot Details. Please Contact Support Team.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccess = false;
+                error = "Exceptions"+ex.getMessage();
+            }
+            return kotNo;
+        }
+    }
+
+    public class LoadKotDetails extends AsyncTask<String,String,ArrayList<KotDetails>>
+    {
+        String z = "";
+        Boolean isSuccess = false;
+        private final ProgressDialog dialog = new ProgressDialog(KotActivity.this);
+        ConnectionClass connectionClass = null;
+        Connection con = null;
+        @Override
+        protected void onPreExecute() {
+            connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+            con = connectionClass.CONN();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setMessage("Loading Kot Details...");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<KotDetails> r) {
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+            if(isSuccess){
+                kotDetails = r;
+                if(r.size()>0){
+                    KotDetails first = kotDetails.get(0);
+                    kotNoTextView.setText(String.valueOf(first.KotID));
+                }
+                LoadKotCartView();
+            }
+            else {
+                showCustomDialog("Error",z);
+            }
+        }
+
+        @Override
+        protected ArrayList<KotDetails> doInBackground(String... params) {
+            ArrayList<KotDetails> kotlist = new ArrayList<>();
+            try {
+                if (con == null) {
+                    z = "Error in connection with SQL server";
+                } else {
+                    String tbid = params[0];
+                    String query = "SELECT * FROM KOT WHERE IS_OPEN=1 AND BRANCH_CODE="+CommonUtil.defBranch+" AND CAST(KOT_DATE AS DATE)=CAST(GETDATE() AS DATE) AND TABLE_ID="+tbid;
+                    Statement stmt = con.createStatement();
+                    ResultSet rs = stmt.executeQuery(query);
+                    while (rs.next())
+                    {
+                        KotDetails kot = new KotDetails();
+                        kot.KotID = rs.getInt("KOT_ID");
+                        kot.KotDate = rs.getDate("KOT_DATE");
+                        kot.TableID = rs.getInt("TABLE_ID");
+                        kot.ProductId = rs.getString("PRODUCT_ID");
+                        Product pr = CommonUtil.productsFull.stream().filter(c->c.getProductID().equals(kot.ProductId)).findFirst().orElse(null);
+                        kot.ProductName = pr!=null ? pr.getProductName():"";
+                        kot.Qty = rs.getInt("QUANTITY");
+                        kot.KotUser = rs.getString("KOT_USER");
+                        kotlist.add(kot);
+                    }
+                    rs.close();
+                    isSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccess = false;
+                z = "Exceptions";
+            }
+            return kotlist;
         }
     }
 }
