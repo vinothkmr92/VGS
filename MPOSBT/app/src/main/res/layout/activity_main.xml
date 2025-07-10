@@ -4,6 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/White"
     tools:context=".MainActivity">
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,11 +27,11 @@
                 android:textColor="@color/Indigo"
                 android:textSize="50dp">
             </TextView>
-            <ImageView android:layout_width="400px"
-                android:layout_height="400px"
+            <ImageView android:layout_width="450px"
+                android:layout_height="450px"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"
-                android:background="@drawable/btw"></ImageView>
+                android:background="@drawable/gr"></ImageView>
         </LinearLayout>
         <LinearLayout
             android:layout_width="fill_parent"
