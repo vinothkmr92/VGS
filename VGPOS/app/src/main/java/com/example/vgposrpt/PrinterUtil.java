@@ -294,7 +294,11 @@ public class PrinterUtil {
             posPtr.printNormal(ESC+"|lAUSER     : "+firstitme.KotUser);
             posPtr.printNormal("\n");
         }
-        posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
+        Tables tb = CommonUtil.tablesList.stream().filter(c->c.TableID==firstitme.TableID).findFirst().orElse(null);
+        posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n");
+        if(tb!=null){
+            posPtr.printNormal(ESC+"|lATABLE    : "+tb.TableName+"\n\n");
+        }
         if(CommonUtil.ReceiptSize.equals("2")){
             posPtr.printNormal("--------------------------------");
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME               QUANTITY\n");
@@ -345,10 +349,24 @@ public class PrinterUtil {
             posPtr.printNormal("--------------------------------");
         }
         else {
-            posPtr.printNormal("----------------------------------------------\n");
+            posPtr.printNormal("----------------------------------------------\n\n\n");
         }
-        posPtr.lineFeed(3);
+        posPtr.lineFeed(4);
         posPtr.cutPaper();
+        if(bluetoothPort!=null){
+            try {
+                bluetoothPort.disconnect();
+            } catch (InterruptedException e) {
+                //
+            }
+        }
+        if(wifiPort != null){
+            try {
+                wifiPort.disconnect();
+            } catch (InterruptedException e) {
+                //
+            }
+        }
     }
     private void PrintBill() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());

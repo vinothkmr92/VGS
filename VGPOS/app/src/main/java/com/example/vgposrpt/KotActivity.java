@@ -338,10 +338,25 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
     }
     public void Cancel() {
         kotDetails.clear();
+        kotNoTextView.setText(String.valueOf(CommonUtil.kotNo));
         LoadKotCartView();
         this.catEditText.setText("");
         this.prNameEditText.setText("");
+        this.tableNo.getEditText().setText("");
         tableNo.requestFocus();
+    }
+
+    public ArrayList<Product> GetBillProductsFromKot(){
+        ArrayList<Product> billProducts = new ArrayList<>();
+        for (KotDetails kot:
+             kotDetails) {
+            Product pr = CommonUtil.productsFull.stream().filter(c->c.getProductID().equals(kot.ProductId)).findFirst().orElse(null);
+            if(pr!=null){
+                pr.setQty(kot.Qty);
+                billProducts.add(pr);
+            }
+        }
+        return billProducts;
     }
 
     @Override
@@ -350,6 +365,20 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             case R.id.closeTable:
                 try {
                     //closeBT();
+                    if(kotDetails.size()>0){
+                        BillDetails bd = new BillDetails();
+                        bd.branchCode = CommonUtil.defBranch;
+                        ArrayList<Product> prds = GetBillProductsFromKot();
+                        bd.billProducts = prds;
+                        Double billAmt = prds.stream().mapToDouble(c->c.getAmount()).sum();
+                        bd.BillAmount = (int) Math.round(billAmt);
+                        bd.billUser = CommonUtil.loggedinUser;
+                        bd.CashAmt = bd.BillAmount;
+                        new SaveNewBill().execute(bd);
+                    }
+                    else {
+                        showCustomDialog("Warning","No Items Added to Close the Table.");
+                    }
                 } catch (Exception e) {
                     Toast.makeText(this,"Error:"+e.getMessage(), Toast.LENGTH_SHORT);
                 }
@@ -443,6 +472,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         ConnectionClass connectionClass = null;
         Connection con = null;
         ArrayList<KotDetails> kotlist;
+        ArrayList<KotDetails> kotForPrint;
         @Override
         protected void onPreExecute() {
             connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
@@ -460,12 +490,13 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                 String msg = "";
                 if(kotNo>0){
                     msg ="Kot No - "+kotNo+" is saved Successfully.";
+                    CommonUtil.kotNo = kotNo+1;
                 }
                 else {
                     msg = "Failed to Save KOT. Contact support Team.";
                 }
                 boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
-                RefreshKotPage("Status",msg,print,kotlist);
+                RefreshKotPage("Status",msg,print,kotForPrint);
             }
             else {
                 if(dialog.isShowing()){
@@ -478,6 +509,29 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             if(dialog.isShowing()){
                 dialog.hide();
             }
+        }
+
+        public ArrayList<KotDetails> GetKotDetails(String tbid) throws SQLException {
+            ArrayList<KotDetails> kotlist = new ArrayList<>();
+            String query = "SELECT * FROM KOT WHERE IS_OPEN=1 AND BRANCH_CODE="+CommonUtil.defBranch+" AND TABLE_ID="+tbid;
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next())
+            {
+                KotDetails kot = new KotDetails();
+                kot.KotID = rs.getInt("KOT_ID");
+                kot.KotDate = rs.getDate("KOT_DATE");
+                kot.TableID = rs.getInt("TABLE_ID");
+                kot.ProductId = rs.getString("PRODUCT_ID");
+                Product pr = CommonUtil.productsFull.stream().filter(c->c.getProductID().equals(kot.ProductId)).findFirst().orElse(null);
+                kot.ProductName = pr!=null ? pr.getProductName():"";
+                kot.Qty = rs.getInt("QUANTITY");
+                kot.KotUser = rs.getString("KOT_USER");
+                kot.BranchCode = rs.getInt("BRANCH_CODE");
+                kotlist.add(kot);
+            }
+            rs.close();
+            return kotlist;
         }
 
         @Override
@@ -500,14 +554,33 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                     }
                     kotNo++;
                     boolean kotsaved = false;
+                    Integer tableid = kotlist.size()>0 ? kotlist.get(0).TableID:0;
+                    ArrayList<KotDetails> oldkot = GetKotDetails(String.valueOf(tableid));
+                    kotNo = oldkot.size()>0 ? oldkot.get(0).KotID:kotNo;
+                    kotForPrint = new ArrayList<>();
                     for(KotDetails kot:kotlist){
                         try{
-                            String query = "INSERT INTO KOT VALUES ("+kotNo+",GETDATE(),"+kot.TableID+","+kot.BranchCode+",'"+kot.ProductId+"',"+kot.Qty+",'"+kot.KotUser+"')";
+                            kot.KotID = kotNo;
+                            KotDetails exists = oldkot.stream().filter(c->c.ProductId.equals(kot.ProductId)).findFirst().orElse(null);
+                            String query = exists!=null ?"UPDATE KOT SET QUANTITY="+kot.Qty+" WHERE KOT_ID="+exists.KotID+" AND BRANCH_CODE="+kot.BranchCode+" AND TABLE_ID="+kot.TableID+" AND PRODUCT_ID='"+exists.ProductId+"' AND IS_OPEN=1":
+                                    "INSERT INTO KOT VALUES ("+kotNo+",GETDATE(),"+kot.TableID+","+kot.BranchCode+",'"+kot.ProductId+"',"+kot.Qty+",'"+kot.KotUser+"',1)";
+
                             Integer rowAff = stmt.executeUpdate(query);
                             kotsaved = rowAff>0;
                             if(!kotsaved){
                                 break;
                             }
+                            if(exists!=null){
+                                Integer qtyex = kot.Qty-exists.Qty;
+                                if(qtyex>0){
+                                    kot.Qty = qtyex;
+                                    kotForPrint.add(kot);
+                                }
+                            }
+                            else{
+                                kotForPrint.add(kot);
+                            }
+
                         }
                         catch (Exception ex){
                             kotsaved = false;
@@ -556,10 +629,14 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                 dialog.hide();
             }
             if(isSuccess){
+                kotDetailsOld = r;
                 kotDetails = r;
                 if(r.size()>0){
                     KotDetails first = kotDetails.get(0);
                     kotNoTextView.setText(String.valueOf(first.KotID));
+                }
+                else {
+                    kotNoTextView.setText(String.valueOf(CommonUtil.kotNo));
                 }
                 LoadKotCartView();
             }
@@ -576,7 +653,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                     z = "Error in connection with SQL server";
                 } else {
                     String tbid = params[0];
-                    String query = "SELECT * FROM KOT WHERE IS_OPEN=1 AND BRANCH_CODE="+CommonUtil.defBranch+" AND CAST(KOT_DATE AS DATE)=CAST(GETDATE() AS DATE) AND TABLE_ID="+tbid;
+                    String query = "SELECT * FROM KOT WHERE IS_OPEN=1 AND BRANCH_CODE="+CommonUtil.defBranch+" AND TABLE_ID="+tbid;
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
                     while (rs.next())
@@ -590,6 +667,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                         kot.ProductName = pr!=null ? pr.getProductName():"";
                         kot.Qty = rs.getInt("QUANTITY");
                         kot.KotUser = rs.getString("KOT_USER");
+                        kot.BranchCode = rs.getInt("BRANCH_CODE");
                         kotlist.add(kot);
                     }
                     rs.close();
@@ -602,6 +680,168 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                 z = "Exceptions";
             }
             return kotlist;
+        }
+    }
+
+    public class SaveNewBill extends AsyncTask<BillDetails,String, Integer>
+    {
+        Boolean isSuccess = false;
+        String error = "";
+        private final ProgressDialog dialog = new ProgressDialog(KotActivity.this);
+        ConnectionClass connectionClass = null;
+        Connection con = null;
+        BillDetails billDetails;
+        ArrayList<KotDetails> kotlist;
+        @Override
+        protected void onPreExecute() {
+            connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+            con = connectionClass.CONN();
+            kotlist = kotDetails;
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setIcon(R.mipmap.salesreport);
+            dialog.setMessage("Closing Table and Generating Bill.");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer billNo) {
+            if(isSuccess){
+                String msg = "";
+                if(billNo>0){
+                    msg ="Bill No - "+billNo+" is saved Successfully.";
+                    CommonUtil.cartItems = new ArrayList<>();
+                }
+                else {
+                    msg = "Failed to Save new Bill. Contact support Team.";
+                }
+                RefreshKotPage("Status",msg,false,null);
+            }
+            else {
+                if(dialog.isShowing()){
+                    dialog.hide();
+                }
+                if(!error.isEmpty()){
+                    showCustomDialog("Status",error);
+                }
+            }
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+        }
+        private  Double GetAvailableQty(String productID,Integer branchCode) throws SQLException {
+            Double qty = 0d;
+            String query = "SELECT S.AVAILABLE_QUANTITY FROM Stocks S,(SELECT PRODUCT_ID,BRANCH_CODE,MAX(UPDATED_DATE) AS DT FROM STOCKS GROUP BY PRODUCT_ID,BRANCH_CODE) A WHERE S.PRODUCT_ID=A.PRODUCT_ID AND A.BRANCH_CODE=S.BRANCH_CODE AND S.UPDATED_DATE=A.DT and A.Product_ID='"+productID+"' AND A.BRANCH_CODE="+branchCode;
+            Statement stmt = con.createStatement();
+            ResultSet s = stmt.executeQuery(query);
+            if(s.next()){
+                qty = s.getDouble("AVAILABLE_QUANTITY");
+            }
+            return qty;
+        }
+        private boolean UpdateStocks(Product pr) throws SQLException {
+            boolean isDone = false;
+            Double avQty = GetAvailableQty(pr.getProductID(),pr.getBranchCode());
+            Double avNow = avQty-pr.getQty();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
+            Date date = new Date();
+            String upddt = format.format(date);
+            String query = "INSERT INTO STOCKS VALUES ('"+pr.getProductID()+"',"+avNow+","+pr.getQty()+",0,'"+upddt+"',"+pr.getBranchCode()+")";
+            Statement stmt = con.createStatement();
+            Integer rowAff = stmt.executeUpdate(query);
+            isDone = rowAff>0;
+            if(!pr.getBatchNo().isEmpty()){
+                UpdateBatchDetails(pr);
+            }
+            return  isDone;
+        }
+        private Double GetBatchAvailableQty(String productID,String BatchNo,Integer branchCode) throws SQLException {
+            Double qty = 0d;
+            String query = "SELECT Available_Quantity FROM Product_Batch_Details WHERE Product_ID = '"+productID+"' AND BRANCH_CODE ="+branchCode+" AND Batch_No='"+BatchNo+"'";
+            Statement stmt = con.createStatement();
+            ResultSet s = stmt.executeQuery(query);
+            if(s.next()){
+                qty = s.getDouble("Available_Quantity");
+            }
+            return qty;
+        }
+        private void UpdateBatchDetails(Product pr) throws SQLException {
+            Double avQty = GetBatchAvailableQty(pr.getProductID(),pr.getBatchNo(),pr.getBranchCode());
+            Double avNow = avQty-pr.getQty();
+            String query = "UPDATE PRODUCT_BATCH_DETAILS SET AVAILABLE_QUANTITY="+avNow+" WHERE BATCH_NO='"+pr.getBatchNo()+"' AND PRODUCT_ID='"+pr.getProductID()+"' AND BRANCH_CODE="+pr.getBranchCode();
+            Statement stmt = con.createStatement();
+            stmt.executeUpdate(query);
+        }
+
+        @Override
+        protected Integer doInBackground(BillDetails... params) {
+            Integer billNo = 0;
+            billDetails = params[0];
+            try {
+                if (con == null) {
+                    error = "Database Connection Failed";
+                } else {
+                    Integer tableID = kotlist.size()>0 ? kotlist.get(0).TableID:0;
+                    String getBillNoQuery = "SELECT MAX(BILL_NO) AS BILL_NO FROM SALE WHERE BRANCH_CODE="+CommonUtil.defBranch+" AND COUNTER_ID='CD1' AND BILL_TYPE='Normal'";
+                    Statement stmt = con.createStatement();
+                    ResultSet billNoRs = stmt.executeQuery(getBillNoQuery);
+                    billNo = 0;
+                    if(billNoRs.next()){
+                        billNo = billNoRs.getInt("BILL_NO");
+                    }
+                    billNo++;
+                    billDetails.BillNo = billNo;
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    Date date = new Date();
+                    String expdt = format.format(date);
+                    int serialNo = 1;
+                    boolean billProductsSaved = false;
+                    for (Product p:billDetails.billProducts) {
+                        try{
+                            String billprodQuery = "INSERT INTO BILL_PRODUCTS VALUES ("+billNo+",'"+p.getProductID()+"',GETDATE(),'CD1',"+p.getQty()+",'"+p.getBatchNo()+"',"+p.getPrice()+","+p.getMRP()+",'"+p.getProductName()+"','"+p.getSupplierName()+"','"+expdt+"',0,"+p.getBranchCode()+","+serialNo+",'"+p.getCategory()+"','Normal',0,0)";
+                            Integer rowAff = stmt.executeUpdate(billprodQuery);
+                            billProductsSaved = rowAff>0;
+                            if(billProductsSaved){
+                                UpdateStocks(p);
+                            }
+                            else {
+                                break;
+                            }
+                            serialNo++;
+                        }
+                        catch(Exception ex){
+                            billProductsSaved = false;
+                            break;
+                        }
+                    }
+                    if(billProductsSaved){
+                        Double profit = billDetails.billProducts.stream().mapToDouble(c->(c.getPrice()-c.getPurchasedPrice())*c.getQty()).sum();
+                        String saleQuery = "INSERT INTO SALE VALUES ("+billNo+",GETDATE(),'CD1','"+billDetails.billUser+"',"+billDetails.BillAmount+","+billDetails.CashAmt+","+billDetails.CardAmt+","+billDetails.UpiAmt+",0,0,'',0,"+profit+","+tableID+",0,0,0,'Normal',0,0,0,'CLOSE','',0,"+billDetails.branchCode+")";
+                        Integer rowAff = stmt.executeUpdate(saleQuery);
+                        if(rowAff>0){
+                            isSuccess = true;
+                            KotDetails kot = kotDetails.stream().findFirst().orElse(null);
+                            if(kot!=null){
+                                String closeTableQuery = "UPDATE KOT SET IS_OPEN=0 WHERE KOT_ID="+kot.KotID+" AND BRANCH_CODE="+kot.BranchCode+" AND TABLE_ID="+kot.TableID;
+                                stmt.executeUpdate(closeTableQuery);
+                            }
+                        }
+                    }
+                    else {
+                        isSuccess = false;
+                        String delBillQuery = "DELETE BILL_PRODUCTS WHERE BILL_NO="+billNo+" AND COUNTER_ID='CD1' AND BRANCH_CODE="+billDetails.branchCode;
+                        stmt.executeUpdate(delBillQuery);
+                        error="[Failed to Update Bill Products] Unable to Save Bill Details. Please Contact Support Team.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccess = false;
+                error = "Exceptions"+ex.getMessage();
+            }
+            return billNo;
         }
     }
 }
