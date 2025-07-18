@@ -65,7 +65,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String IS3INCH = "IS3INCH";
     public static final String EXPIRE_DT = "EXPIRE_DT";
     public static final String PRINTKOT = "PRINTKOT";
-    public static final String PRINTKOT = "PRINTKOT";
     public static final String KOTPRINTERIP = "KOTPRINTERIP";
     public static final String BILLCOPIES = "BILLCOPIES";
     public static final String ADDRESSLINE = "ADDRESSLINE";

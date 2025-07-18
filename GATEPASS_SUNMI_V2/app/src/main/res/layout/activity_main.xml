@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,18 +9,18 @@
     <LinearLayout android:id="@+id/Liner1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:orientation="vertical">
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="400px">
+            android:layout_gravity="center">
             <CheckBox
                 android:layout_width="wrap_content"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"
                 android:id="@+id/byPassCheckbox"
-                android:textSize="10dp"
+                android:textSize="20dp"
                 android:layout_height="wrap_content"
                 android:text="SKIP SAP"/>
         </LinearLayout>
@@ -146,41 +146,40 @@
             android:textSize="13dp"
             android:focusable="false"
             android:id="@+id/gateNo"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20px"
-            >
-
-            <ImageButton
-                android:id="@+id/printBtn"
-                android:layout_width="120px"
-                android:layout_height="120px"
-                android:layout_marginLeft="40px"
-                android:background="@drawable/printer"
-                android:backgroundTint="@color/colorAccent"
-                android:text="PRINT"
-                android:textColor="@color/zxing_status_text"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/ScanBtn"
-                android:layout_width="120px"
-                android:layout_height="120px"
-                android:layout_marginLeft="300px"
-                android:background="@drawable/scanqr"
-                android:text="SCAN QR CODE"
-                android:textColor="@color/zxing_status_text"
-                android:textStyle="bold|italic" />
-        </RelativeLayout>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:layout_alignParentBottom="true"
+        >
+        <ImageButton
+            android:id="@+id/printBtn"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="0.25"
+            android:layout_gravity="left"
+            android:background="@drawable/printer"
+            android:backgroundTint="@color/colorAccent"
+            android:text="PRINT"
+            android:textColor="@color/zxing_status_text"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="match_parent">
 
-
-
-
-
-
-
-</android.support.constraint.ConstraintLayout>
+        </TextView>
+        <ImageButton
+            android:id="@+id/ScanBtn"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="0.25"
+            android:layout_gravity="right"
+            android:background="@drawable/scanqr"
+            android:text="SCAN QR CODE"
+            android:textColor="@color/zxing_status_text"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+</RelativeLayout>

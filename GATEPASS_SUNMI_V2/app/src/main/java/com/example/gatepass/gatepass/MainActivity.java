@@ -18,8 +18,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -39,10 +37,6 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.sunmi.peripheral.printer.InnerPrinterCallback;
-import com.sunmi.peripheral.printer.InnerPrinterManager;
-import com.sunmi.peripheral.printer.InnerResultCallback;
-import com.sunmi.peripheral.printer.SunmiPrinterService;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -58,7 +52,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -73,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText securityid;
     private ImageButton btnPrint;
     private CheckBox bypasssap;
-    private SunmiPrinterService printerService;
 
     private String serviceVersion;
     private EditText vendorName;
@@ -89,10 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ISNGXDEVICE = "ISNGX";
     public static final String isActivated = "IsActivated";
     public SharedPreferences sharedpreferences;
-    private InnerResultCallback resultCallback;
-    private InnerPrinterCallback innerPrinterCallback;
-
-
+    public static MainActivity instace;
+    public static MainActivity getInstance() {
+        return instace;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -163,54 +156,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return false;
                 }
             });
-            resultCallback = new InnerResultCallback(){
-
-                @Override
-                public void onRunResult(boolean isSuccess) throws RemoteException {
-
-                }
-
-                @Override
-                public void onReturnString(String result) throws RemoteException {
-
-                }
-
-                @Override
-                public void onRaiseException(int code, String msg) throws RemoteException {
-
-                }
-
-                @Override
-                public void onPrintResult(int code, String msg) throws RemoteException {
-
-                }
-            };
-             innerPrinterCallback= new InnerPrinterCallback(){
-                @Override protected void onConnected(SunmiPrinterService service)
-                {
-                    printerService = service;
-                    Toast.makeText(MainActivity.this, "PrinterConnected.", Toast.LENGTH_LONG).show();
-                    // Get the interface handle of the remote service after the binding service has been successfully connected.
-                    // You can call supported printing methods through service.
-                }
-                @Override protected void onDisconnected()
-                    {
-                        //The method will be called back if the service is disconnected abnormally.
-                        // A reconnection strategy is recommended here.
-                    }
-            };
-            boolean result = InnerPrinterManager.getInstance().bindService(getApplicationContext(), innerPrinterCallback);
-            if(result){
-                Toast.makeText(MainActivity.this, "PrinterBound.", Toast.LENGTH_SHORT).show();
-            }
+            instace = this;
         } catch (Exception e) {
             showCustomDialog("Initialize Error",e.getMessage());
         }
         finally {
 
         }
-
     }
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -222,12 +178,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.exit:
-                try{
-                    InnerPrinterManager.getInstance().unBindService(MainActivity.this,innerPrinterCallback);
-                }
-                catch (Exception e){
-                    Log.println(Log.ERROR,"Error","exception: "+e.getMessage());
-                }
                 finishAffinity();
                 return true;
             case R.id.refreshPage:
@@ -348,69 +298,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy' & 'hh:mm:aaa", Locale.getDefault());
             Date date = new Date();
-            Bitmap hyndaiLogo = BitmapFactory.decodeResource(this.getResources(),R.drawable.hyundai_logo);
-            printerService.setAlignment(1,resultCallback);
-            printerService.printBitmap(hyndaiLogo,resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.setFontSize(28,resultCallback);
-            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x1},resultCallback);
-            printerService.printText("HYUNDAI MOTOR INDIA LIMITED",resultCallback);
-            printerService.lineWrap(2,resultCallback);
-            printerService.setFontSize(35,resultCallback);
-            printerService.printText("GATE PASS",resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.setFontSize(28,resultCallback);
-            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x0},resultCallback);
-            printerService.printText("VENDOR EMPTIES RETURN", resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            //ngxPrinter.setStyleBold();
-            printerService.setFontSize(24,resultCallback);
-            printerService.setAlignment(0,resultCallback);
-            printerService.printText("SLIP NO  : "+slipNo,resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("DATE     : " + format.format(date),resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("SHOP     : "+ shopName,resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("GATE NO  : "+gateNo,resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("VENDOR   : " + vnName, resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("TRUCK NO : " + trNumber, resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x1},resultCallback);
-            printerService.printText("------------------------------", resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("ITEM                     QTY", resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("------------------------------", resultCallback);
-            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x0},resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("EMPTY TROLLEYS           " + empTrolly, resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("EMPTY BINS               " + empBin, resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("OTHERS                   " + othr, resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x1},resultCallback);
-            printerService.printText("------------------------------", resultCallback);
-            printerService.lineWrap(1,resultCallback);
-            printerService.printText("SECURITY\\GA             "+Securityno,resultCallback);
-            printerService.sendRAWData(new byte[]{0x1B, 0x45, 0x0},resultCallback);
-            printerService.lineWrap(7,resultCallback);
-            //printerService.setDefault();
-            Toast.makeText(this, "Print Queued Successfully.!", Toast.LENGTH_LONG).show();
-            this.truckNumber.setText("");
-            this.vendorName.setText("");
-            this.emptyTrolly.setText("");
-            this.emptyBin.setText("");
-            this.gateNo.setText("");
-            this.shopName.setText("");
-            this.other.setText("");
-            this.securityid.setText("");
-            SharedPreferences.Editor editor = sharedpreferences.edit();
-            editor.putString(SlipNo,String.valueOf(sl));
-            editor.commit();
+            ReceiptData rpt = new ReceiptData();
+            rpt.date = format.format(date);
+            rpt.slipno = slipNo;
+            rpt.securityno = Securityno;
+            rpt.VendorName = vnName;
+            rpt.gateno = gateNo;
+            rpt.shopname = shopName;
+            rpt.empBin = empBin;
+            rpt.empTrolly = empTrolly;
+            rpt.others = othr;
+            rpt.truckNo = trNumber;
+            PrinterUtil printerUtil = new PrinterUtil(this,MainActivity.this);
+            printerUtil.receiptData = rpt;
+            printerUtil.Print();
         }
         catch (RemoteException ex){
             showCustomDialog("Print Error",ex.getMessage());
@@ -425,6 +326,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         finally {
 
         }
+    }
+    public void RefreshViews(){
+        this.truckNumber.setText("");
+        this.vendorName.setText("");
+        this.emptyTrolly.setText("");
+        this.emptyBin.setText("");
+        this.gateNo.setText("");
+        this.shopName.setText("");
+        this.other.setText("");
+        this.securityid.setText("");
+        String slipNo = sharedpreferences.getString(SlipNo,"");
+        String othr = other.getText().toString();
+
+        if(slipNo.isEmpty()){
+            slipNo = "0";
+        }
+        int sl = Integer.parseInt(slipNo);
+        sl += 1;
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString(SlipNo,String.valueOf(sl));
+        editor.commit();
     }
     public  void PrintGatePass() {
             PrintSummiGatePass();
