@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/Ivory"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    tools:context=".UploadActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="5dp"
+        android:layout_gravity="center"
+        >
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:columnCount="2"
+        android:padding="10dp"
+        android:background="@color/White"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/btnUpload"
+            android:layout_width="250px"
+            android:layout_height="250px"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_upload_24"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="Upload Product"></ImageButton>
+        <ImageButton
+            android:id="@+id/btnExportproduct"
+            android:layout_width="250px"
+            android:layout_height="250px"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_download_24"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="Export Product"></ImageButton>
+        <TextView
+            android:id="@+id/lblView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/DarkBlue"
+            android:layout_columnSpan="2"
+            android:text=""/>
+
+        <Switch
+            android:id="@+id/clearProducts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete Existing Products"
+            android:textColor="@color/DarkBlue"
+            android:layout_columnSpan="2"
+            android:layout_gravity="center"
+            android:textStyle="bold|italic"></Switch>
+
+    </GridLayout>
+    </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</RelativeLayout>

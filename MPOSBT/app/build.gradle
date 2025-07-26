@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        applicationId "com.example.vinoth.vgsposbt"
+        minSdkVersion 26
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        applicationVariants.all{
+                // this method is use to rename your all apk weather
+                // it may be signed or unsigned(debug apk)
+            variant ->
+                variant.outputs.each{
+                        // on below line we are setting
+                        // a name to our apk as GFG.apk
+                    output->
+                        // on below line we are adding version name to
+                        // our .apk file along with the app name
+                        //def date = new Date()
+                        //def formated = date.format("ddMMyyyy_hhmm_aa")
+                        def name = "Green.apk"
+                        // on below line we are setting the
+                        // outputFile Name to our apk file
+                        output.outputFileName = name
+                }
+        }
+    }
+    namespace 'com.example.vinoth.vgsposbt'
+    buildFeatures {
+        buildConfig true
+    }
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.activity:activity:1.4.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation files('libs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
+    implementation 'com.google.android.gms:play-services-code-scanner:16.0.0'
+    implementation files('libs/poishadow-all.jar')
+    implementation files('libs/tamilutillib.jar')
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.fintrace.core.drivers:tspl2-driver:0.0.12'
+    implementation "androidx.biometric:biometric:1.1.0"
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+}

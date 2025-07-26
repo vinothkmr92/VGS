@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/Ivory"
+    tools:context=".Settings">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:padding="10dp"
+        android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"
+                android:text="Header Message"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/headerMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="20px"></EditText>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"
+                android:text="Address"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/addressMsg"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:padding="20px"></EditText>
+
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Footer Message"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/footerMsg"
+                android:inputType="text"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orienta"></EditText></LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/orienta"
+                    android:layout_width="match_parent"
+                    android:text="Printer Type"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content">
+                    <RadioButton
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/radioBtnWifi"
+                        android:checked="true"
+                        android:fontFamily="@font/orienta"
+                        android:text="Wifi"
+                        android:textStyle="bold"></RadioButton>
+
+                    <RadioButton
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:id="@+id/radioBtnBluetooth"
+                        android:fontFamily="@font/orienta"
+                        android:text="Bluetooth"
+                        android:textStyle="bold"></RadioButton>
+                    <RadioButton
+                        android:id="@+id/radioBtnUSB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:fontFamily="@font/orienta"
+                        android:text="USB"
+                        android:textStyle="bold"></RadioButton>
+                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtViewUSBDevice"
+                    android:fontFamily="@font/orienta"
+                    android:text="USB Device"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+                <Spinner
+                    android:layout_height="wrap_content"
+                    android:id="@+id/usbDevice"
+                    android:layout_width="match_parent"
+                    android:textAlignment="center"
+                    android:focusableInTouchMode="true"
+                    android:spinnerMode="dialog"></Spinner>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtViewBlutooth"
+                    android:fontFamily="@font/orienta"
+                    android:text="Bluetooth Device"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+                <Spinner
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bltDevice"
+                    android:layout_width="match_parent"
+                    android:textAlignment="center"
+                    android:focusableInTouchMode="true"
+                    android:spinnerMode="dialog"></Spinner>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:id="@+id/rptsizetxt"
+                    android:layout_columnSpan="4"
+                    android:fontFamily="@font/orienta"
+                    android:text="Receipt Size"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radiobtn2Inch"
+                    android:checked="false"
+                    android:fontFamily="@font/orienta"
+                    android:text="2 inch"
+                    android:textStyle="bold"></RadioButton>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radiobtn3Inch"
+                    android:checked="false"
+                    android:fontFamily="@font/orienta"
+                    android:text="3 inch"
+                    android:textStyle="bold"></RadioButton>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radiobtn4Inch"
+                    android:checked="false"
+                    android:fontFamily="@font/orienta"
+                    android:text="4 inch"
+                    android:textStyle="bold"></RadioButton>
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+            <GridLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="4"
+                android:padding="8dp">
+                <TextView
+                    android:layout_columnSpan="4"
+                    android:fontFamily="@font/orienta"
+                    android:text="Weighing Scale"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+                <Spinner
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bltWtDevice"
+                    android:layout_width="match_parent"
+                    android:textAlignment="center"
+                    android:focusableInTouchMode="true"
+                    android:spinnerMode="dialog"></Spinner>
+                <TextView
+                    android:layout_columnSpan="4"
+                    android:fontFamily="@font/orienta"
+                    android:text="Device UserName"
+                    android:textColor="@color/DarkBlue"
+                    android:textStyle="bold"></TextView>
+                <EditText
+                    android:id="@+id/deviceUser"
+                    android:layout_width="fill_parent"
+                    android:layout_columnSpan="4"
+                    android:fontFamily="@font/orienta"></EditText>
+            </GridLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+        <GridLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="8dp">
+            <TextView
+                android:id="@+id/txtViewIPAddress"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"
+                android:text="Receipt Printer"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/printerIP"
+                android:layout_width="fill_parent"
+                android:layout_columnSpan="4"
+                android:fontFamily="@font/orienta"></EditText>
+        </GridLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+        <GridLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="8dp">
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:text="No of Bill Copies"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/billcopies"
+                android:layout_width="wrap_content"
+                android:layout_columnSpan="3"
+                android:fontFamily="@font/orienta"
+                android:inputType="number"></EditText>
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:text="Default Bin Weight"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/binwt"
+                android:layout_width="wrap_content"
+                android:layout_columnSpan="3"
+                android:fontFamily="@font/orienta"
+                android:inputType="numberDecimal"></EditText>
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:text="Passcode"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/userpasscode"
+                android:layout_width="184dp"
+                android:layout_columnSpan="3"
+                android:fontFamily="@font/orienta"
+                android:inputType="number"
+                android:maxLength="4"
+                android:password="true"></EditText>
+
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:text="Device ID"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/deviceid"
+                android:layout_width="184dp"
+                android:layout_columnSpan="3"
+                android:editable="false"
+                android:fontFamily="@font/orienta"
+                android:inputType="none"
+                android:textIsSelectable="true"></EditText>
+            <Switch android:id="@+id/checkBoxMultiLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="4"
+                android:textColor="@color/DarkBlue"
+                android:layout_gravity="center"
+                android:text="Multi-Language for Printing"></Switch>
+        </GridLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="5dp"
+            android:layout_gravity="center"
+            >
+        <GridLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="8dp">
+            <TextView
+                android:fontFamily="@font/orienta"
+                android:text="PICK LOGO"
+                android:layout_gravity="center"
+                android:layout_columnSpan="4"
+                android:textColor="@color/Purple"
+                android:textStyle="bold"></TextView>
+            <ImageView
+                android:id="@+id/imgView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"></ImageView>
+
+            <Button
+                android:id="@+id/buttonLoadPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center"
+                android:layout_weight="0"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:background="@drawable/baseline_add_photo_alternate_24"
+                android:fontFamily="@font/orienta"
+                ></Button>
+            <ImageButton
+                android:id="@+id/btnclearlogo"
+                android:layout_width="100px"
+                android:layout_height="100px"
+                android:layout_columnSpan="4"
+                android:layout_gravity="left"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:background="@drawable/baseline_close_24">
+            </ImageButton>
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_columnSpan="4"
+                android:layout_gravity="center"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:background="@drawable/baseline_save_24"></Button>
+        </GridLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".HomePage">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/billnoTxt_homepage"
+            android:text="1"
+            android:padding="8dp"
+            android:textColor="@color/colorRed"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
+        <TextView
+            android:id="@+id/customerInfoTxtView_homepage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:drawable/editbox_background"
+            android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+            android:fontFamily="@font/orienta"
+            android:hint="Select Customer"
+            android:textColor="@android:color/black" />
+        <ImageButton
+            android:id="@+id/btnAddMember_homepage"
+            android:layout_width="100px"
+            android:layout_height="100px"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_baseline_person_add_24"
+            android:foreground="?android:attr/selectableItemBackground"
+            tools:ignore="TouchTargetSizeCheck"></ImageButton>
+
+        <CheckBox
+            android:id="@+id/isAC_homepage"
+            android:layout_gravity="center"
+            android:fontFamily="@font/orienta"
+            android:text="AC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"></CheckBox>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="0dip"
+        android:layout_weight="1">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:padding="15dp"
+            android:scrollIndicators="start"
+            android:id="@+id/tblLayout">
+        </TableLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:padding="0dp">
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/baseline_shopping_cart_24"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:id="@+id/viewCart_homepage"
+            >
+        </Button>
+    <TextView
+        android:id="@+id/estimateAmt_homepage"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/orienta"
+        android:text="₹ 0"
+        android:textAlignment="center"
+        android:textColor="@color/DarkGreen"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

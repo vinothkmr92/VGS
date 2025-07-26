@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">LabelPrint</string>
+    <string name="ActivationAPIHost">60.243.50.58:9092</string>
+</resources>
