@@ -87,7 +87,7 @@
                         android:textStyle="bold"
                         android:textFontWeight="10"
                         android:textColor="@color/DarkViolet"
-                        android:textSize="18dp" />
+                        android:textSize="15dp" />
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -122,7 +122,7 @@
                         android:textStyle="bold"
                         android:textFontWeight="10"
                         android:textColor="@color/DarkViolet"
-                        android:textSize="18dp" />
+                        android:textSize="15dp" />
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -182,7 +182,8 @@
     </ScrollView>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp">
+
+        android:layout_height="100dp">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
@@ -194,6 +195,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:padding="10dp"
                 android:background="@color/white"
                 android:orientation="horizontal">
 
