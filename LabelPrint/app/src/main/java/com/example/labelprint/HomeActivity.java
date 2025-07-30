@@ -55,6 +55,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.tscdll.TSCUSBActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -76,6 +78,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -105,6 +108,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String EXPIRE_DT = "EXPIRE_DT";
     public static final String PRNPATH = "PRN";
     public static final String NOC = "NOC";
+    public static final String PRINTER = "PRINTER";
     public static final String MyPREFERENCES = "MyPrefs";
     private MySharedPreferences sharedpreferences;
     public String prn;
@@ -402,7 +406,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
-
+    public static String usbPrinter="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -418,6 +422,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             prn = sharedpreferences.getString(PRNPATH,"");
             NofColumns = sharedpreferences.getInt(NOC,0);
+            usbDevice = Common.usbDevice;
             Date dt = new Date();
             Date yesterday = getYesterday();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -708,32 +713,36 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void ConnectUSB() {
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
-        Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
-        UsbDevice mDevice = null;
-        while (mDeviceIterator.hasNext()) {
-            mDevice = mDeviceIterator.next();
-            int interfaceCount = mDevice.getInterfaceCount();
-            Toast.makeText(HomeActivity.this, "INTERFACE COUNT: " + String.valueOf(interfaceCount), Toast.LENGTH_SHORT).show();
-
-            if (mDevice == null) {
-                Toast.makeText(HomeActivity.this, "mDevice is null", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(HomeActivity.this, "USB Device found", Toast.LENGTH_SHORT).show();
+        if(usbDevice==null){
+            HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
+            Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
+            UsbDevice mDevice = null;
+            while (mDeviceIterator.hasNext()) {
+                mDevice = mDeviceIterator.next();
+                int interfaceCount = mDevice.getInterfaceCount();
+                Toast.makeText(HomeActivity.this, "INTERFACE COUNT: " + String.valueOf(interfaceCount), Toast.LENGTH_SHORT).show();
+                if (mDevice == null) {
+                    Toast.makeText(HomeActivity.this, "mDevice is null", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(HomeActivity.this, "USB Device found", Toast.LENGTH_SHORT).show();
+                }
+            }
+            usbDevice = mDevice;
+        }
+        else {
+            if (usbManager != null) {
+                PendingIntent permissionIntent = PendingIntent.getBroadcast(
+                        HomeActivity.this,
+                        0,
+                        new Intent(ACTION_USB_PERMISSION),
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? PendingIntent.FLAG_IMMUTABLE : 0
+                );
+                IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+                registerReceiver(usbReceiver, filter, Context.RECEIVER_EXPORTED);
+                usbManager.requestPermission(usbDevice, permissionIntent);
             }
         }
-        usbDevice = mDevice;
-        if (usbManager != null) {
-            PendingIntent permissionIntent = PendingIntent.getBroadcast(
-                    HomeActivity.this,
-                    0,
-                    new Intent(ACTION_USB_PERMISSION),
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? PendingIntent.FLAG_IMMUTABLE : 0
-            );
-            IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-            registerReceiver(usbReceiver, filter, Context.RECEIVER_EXPORTED);
-            usbManager.requestPermission(mDevice, permissionIntent);
-        }
+
     }
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {

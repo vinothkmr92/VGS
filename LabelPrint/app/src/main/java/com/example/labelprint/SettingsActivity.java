@@ -2,19 +2,24 @@ package com.example.labelprint;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -27,20 +32,28 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String PRNPATH = "PRN";
     public static final String NOC = "NOC";
     public static final String MyPREFERENCES = "MyPrefs";
+    public static final String PRINTER = "PRINTER";
+    public UsbDevice selectedUSBDevice;
     EditText prnpath;
     EditText noc;
     Button btnUpload;
     Button btnSave;
+    Spinner usbDevices;
     private MySharedPreferences sharedpreferences;
     private static int RESULT_LOAD_FILE = 1;
     private final ActivityResultLauncher<Intent> storeageActivitytResultLanucher = registerForActivityResult(
@@ -64,15 +77,31 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             btnSave = findViewById(R.id.btnSaveSettings);
             btnUpload = findViewById(R.id.btnUploadprn);
             noc = findViewById(R.id.noc);
+            usbDevices = findViewById(R.id.usbDevice);
             btnUpload.setOnClickListener(this);
             btnSave.setOnClickListener(this);
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             String prnfile = sharedpreferences.getString(PRNPATH,"");
             Integer nofcolumns = sharedpreferences.getInt(NOC,0);
+            String usbDevice = sharedpreferences.getString(PRINTER,"");
             noc.setText(String.valueOf(nofcolumns));
             if(!prnfile.isEmpty()){
                 prnpath.setText(prnfile);
             }
+            int selectedindedusbdevice = 0;
+            int k=0;
+            ArrayList<String> usbdevicelist = GetUSBDevice();
+            for(String d:usbdevicelist){
+                String[] vas = d.split("~");
+                if(vas[1].equals(usbDevice)){
+                    selectedindedusbdevice = k;
+                }
+                k++;
+            }
+            ArrayAdapter usbAdaptor = new ArrayAdapter(this, android.R.layout.simple_spinner_item,usbdevicelist);
+            usbAdaptor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            usbDevices.setAdapter(usbAdaptor);
+            usbDevices.setSelection(selectedindedusbdevice);
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -82,6 +111,42 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+    public UsbDevice GetUSBDevice(String searchName){
+        UsbManager usbManager = (UsbManager) SettingsActivity.this.getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
+        Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
+        UsbDevice mDevice = null;
+        while (mDeviceIterator.hasNext()) {
+            mDevice = mDeviceIterator.next();
+            if(mDevice!=null){
+                String prName = mDevice.getProductName();
+                if(searchName.equals("PRINTER") && prName==null){
+                    break;
+                }
+                else if(prName!=null && prName.equals(searchName)){
+                    break;
+                }
+            }
+        }
+        return mDevice;
+    }
+    public ArrayList<String> GetUSBDevice(){
+        ArrayList<String> deviceList = new ArrayList<>();
+        UsbManager usbManager = (UsbManager) SettingsActivity.this.getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
+        Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
+        UsbDevice mDevice = null;
+        while (mDeviceIterator.hasNext()) {
+            mDevice = mDeviceIterator.next();
+            if(mDevice!=null){
+                String manfuac = mDevice.getManufacturerName()!=null ? mDevice.getManufacturerName():"DEFAULT";
+                String prName = mDevice.getProductName()!=null?mDevice.getProductName():"PRINTER";
+                String devicename = manfuac+"~"+prName;
+                deviceList.add(devicename);
+            }
+        }
+        return deviceList;
     }
     public void showCustomDialog(String title,String Message) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -112,6 +177,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 return;
             }
             else {
+                String usbselected = usbDevices.getSelectedItem().toString();
+                String[] sb = usbselected.split("~");
+                Common.usbDevice =  GetUSBDevice(sb[1]);
                 sharedpreferences.putString(PRNPATH,prnfile);
                 Integer nofc = Integer.parseInt(nofcolumns);
                 sharedpreferences.putInt(NOC,nofc);

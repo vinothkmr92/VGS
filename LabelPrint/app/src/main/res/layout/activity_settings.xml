@@ -49,7 +49,25 @@
                 android:id="@+id/noc">
             </EditText>
         </LinearLayout>
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="SELECT PRINTER"
+                android:textSize="20dp"
+                android:textStyle="bold"></TextView>
+            <Spinner
+                android:layout_height="wrap_content"
+                android:id="@+id/usbDevice"
+                android:layout_width="match_parent"
+                android:textAlignment="center"
+                android:focusableInTouchMode="true"
+                android:spinnerMode="dialog"></Spinner>
+        </LinearLayout>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
