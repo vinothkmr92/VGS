@@ -110,6 +110,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String NOC = "NOC";
     public static final String PRINTER = "PRINTER";
     public static final String MyPREFERENCES = "MyPrefs";
+    public static final String USBPORT = "USBPORT";
     private MySharedPreferences sharedpreferences;
     public String prn;
     public static final int requestcode = 1;
@@ -422,7 +423,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
             prn = sharedpreferences.getString(PRNPATH,"");
             NofColumns = sharedpreferences.getInt(NOC,0);
-            usbDevice = Common.usbDevice;
+            String usbport = sharedpreferences.getString(USBPORT,"");
+            usbDevice = GetUSBDevice(usbport);
             Date dt = new Date();
             Date yesterday = getYesterday();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -452,6 +454,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+    public UsbDevice GetUSBDevice(String searchName){
+        UsbManager usbManager = (UsbManager) HomeActivity.this.getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
+        Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
+        UsbDevice mDevice = null;
+        while (mDeviceIterator.hasNext()) {
+            mDevice = mDeviceIterator.next();
+            if(mDevice!=null){
+                String deviceName = mDevice.getDeviceName();
+                if(deviceName.equals(searchName)){
+                    break;
+                }
+            }
+        }
+        return mDevice;
     }
     private Date getYesterday(){
         return new Date(System.currentTimeMillis()-24*60*60*1000);

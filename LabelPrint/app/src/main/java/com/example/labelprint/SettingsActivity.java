@@ -48,6 +48,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     public static final String NOC = "NOC";
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String PRINTER = "PRINTER";
+    public static final String USBPORT = "USBPORT";
     public UsbDevice selectedUSBDevice;
     EditText prnpath;
     EditText noc;
@@ -143,6 +144,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 String manfuac = mDevice.getManufacturerName()!=null ? mDevice.getManufacturerName():"DEFAULT";
                 String prName = mDevice.getProductName()!=null?mDevice.getProductName():"PRINTER";
                 String devicename = manfuac+"~"+prName;
+                String mname = mDevice.getDeviceName();
                 deviceList.add(devicename);
             }
         }
@@ -179,7 +181,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             else {
                 String usbselected = usbDevices.getSelectedItem().toString();
                 String[] sb = usbselected.split("~");
-                Common.usbDevice =  GetUSBDevice(sb[1]);
+                UsbDevice device =  GetUSBDevice(sb[1]);
+                sharedpreferences.putString(PRINTER,sb[1]);
+                sharedpreferences.putString(USBPORT,device.getDeviceName());
                 sharedpreferences.putString(PRNPATH,prnfile);
                 Integer nofc = Integer.parseInt(nofcolumns);
                 sharedpreferences.putInt(NOC,nofc);
