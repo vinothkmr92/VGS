@@ -239,8 +239,15 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
         }
+        MenuItem newSale = menu.findItem(R.id.salesnew);
+        MenuItem kot = menu.findItem(R.id.kot);
+        newSale.setVisible(CommonUtil.loggedinUserRoleID!=2);
+        kot.setVisible(CommonUtil.loggedinUserRoleID!=2);
+        kot.getIcon().setAlpha(CommonUtil.loggedinUserRoleID!=2 ? 255:130);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
