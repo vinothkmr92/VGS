@@ -683,7 +683,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    public class SaveNewBill extends AsyncTask<BillDetails,String, Integer>
+    public class SaveNewBill extends AsyncTask<BillDetails,String, String>
     {
         Boolean isSuccess = false;
         String error = "";
@@ -706,15 +706,16 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         }
 
         @Override
-        protected void onPostExecute(Integer billNo) {
+        protected void onPostExecute(String billDtl) {
             if(isSuccess){
                 String msg = "";
-                if(billNo>0){
-                    msg ="Bill No - "+billNo+" is saved Successfully.";
-                    CommonUtil.cartItems = new ArrayList<>();
+                if(billDtl.isEmpty()){
+                    msg = "Failed to Save new Bill. Contact support Team.";
                 }
                 else {
-                    msg = "Failed to Save new Bill. Contact support Team.";
+                    String[] bd = billDtl.split("~");
+                    msg ="Bill No -     "+bd[0]+"\nBill Amount - "+bd[1]+".";
+                    CommonUtil.cartItems = new ArrayList<>();
                 }
                 RefreshKotPage("Status",msg,false,null);
             }
@@ -775,8 +776,9 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         }
 
         @Override
-        protected Integer doInBackground(BillDetails... params) {
+        protected String doInBackground(BillDetails... params) {
             Integer billNo = 0;
+            String retValue = "";
             billDetails = params[0];
             try {
                 if (con == null) {
@@ -841,7 +843,16 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                 isSuccess = false;
                 error = "Exceptions"+ex.getMessage();
             }
-            return billNo;
+            finally {
+                if(isSuccess){
+                    NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+                    formatter.setMaximumFractionDigits(0);
+                    String symbol = formatter.getCurrency().getSymbol();
+                    String billamount = formatter.format(billDetails.BillAmount).replace(symbol,symbol+" ");
+                    retValue  =String.valueOf(billNo)+"~"+billamount;
+                }
+            }
+            return retValue;
         }
     }
 }

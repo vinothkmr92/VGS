@@ -329,8 +329,6 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
                 }
                 else
                 {
-                    coll.frmDate = format.parse(frmDate);
-                    coll.toDate = format.parse(toDate);
                     String query = String.format("SELECT SUM(AMOUNT) AS AMT,COUNT(*) AS CN FROM PAYMENTS WHERE IS_FIELD_COLLECTION=1 AND CAST(PAYMENT_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     query = query+String.format(" AND UPPER(RECEIVED_BY)='%s'",selectedUser);
                     Statement stmt = con.createStatement();
@@ -368,6 +366,14 @@ public class CollectionReportActivity extends AppCompatActivity implements View.
                         cols.add(col);
                     }
                     CommonUtil.collections = cols;
+                    if(frmDate.contains("Sep")){
+                        frmDate = frmDate.replace("Sep","Sept");
+                    }
+                    if(toDate.contains("Sep")){
+                        toDate = toDate.replace("Sep","Sept");
+                    }
+                    coll.frmDate = format.parse(frmDate);
+                    coll.toDate = format.parse(toDate);
                 }
             }
             catch (Exception ex)

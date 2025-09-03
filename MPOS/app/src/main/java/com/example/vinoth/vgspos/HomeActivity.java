@@ -121,6 +121,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private EditText discountperEditText;
     private EditText discountAmtEditText;
     private EditText advanceAmtEditText;
+    private EditText mrpEditText;
     private MySharedPreferences sharedpreferences;
 
     public static HomeActivity getInstance() {
@@ -145,6 +146,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             tItem = (TextView) findViewById(R.id.ttItem);
             estAmt = (TextView)findViewById(R.id.estimateAmt);
             priceTxt = (EditText)findViewById(R.id.itemPrice);
+            mrpEditText = findViewById(R.id.itemMRP);
             searchTxtView = (TextView)findViewById(R.id.customerInfoTxtView);
             billnoTxtView = (TextView)findViewById(R.id.billnoTxt);
             isAcPrice = (CheckBox) findViewById(R.id.isAC);
@@ -218,6 +220,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         return true;
                     }
                     return false;
+                }
+            });
+            mrpEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    String txt = mrpEditText.getText().toString();
+                    if(hasFocus){
+                        closeKeyboard();
+                        if(hasFocus && !txt.isEmpty()){
+                            ((EditText)v).selectAll();
+                        }
+                    }
                 }
             });
             priceTxt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -576,7 +590,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     DecimalFormat formater = new DecimalFormat("#.###");
                     String price = formater.format((isAcPrice.isChecked()?item.getAcPrice():item.getPrice()));
                     //String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
+                    String mrp = formater.format(item.getAcPrice());
                     priceTxt.setText(price);
+                    mrpEditText.setText(mrp);
                     Quantity.setText("1");
                     Quantity.selectAll();
                     Quantity.requestFocus();
@@ -807,6 +823,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     DecimalFormat formater = new DecimalFormat("#.###");
                     String price = formater.format(isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
                     //String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
+                    String mrp = formater.format(item.getAcPrice());
+                    mrpEditText.setText(mrp);
                     priceTxt.setText(price);
                     Quantity.setText("1");
                     Quantity.selectAll();
@@ -839,6 +857,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 itemNo.setText("");
                 itemName.setText("");
                 Quantity.setText("");
+                mrpEditText.setText("");
                 priceTxt.setText("");
                 progressBar.hide();
                 itemNo.requestFocus();
@@ -900,6 +919,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                               sr = sr.substring(0,sr.length()-1);
                               Quantity.setText(sr);
                           }
+                      }
+                  }
+                  else if (mrpEditText.isFocused()){
+                      String sr = mrpEditText.getText().toString();
+                      if(sr.length()>0){
+                          sr = sr.substring(0,sr.length()-1);
+                          mrpEditText.setText(sr);
                       }
                   }
                   else if(priceTxt.isFocused()){
@@ -981,11 +1007,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                GetPaymentMode();
                break;
            case  R.id.enter:
+               
                if(priceTxt.isFocused()){
                    Quantity.requestFocus();
                }
-               else  if(itemName.isFocused()){
+               else if(mrpEditText.isFocused()){
                    priceTxt.requestFocus();
+               }
+               else  if(itemName.isFocused()){
+                   mrpEditText.requestFocus();
                }
                else if(discountperEditText.isFocused()){
                    CalculateDiscountAmt();
@@ -1074,10 +1104,31 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                        }
 
                    }
+                   else if(mrpEditText.isFocused()){
+                       int startSelection=mrpEditText.getSelectionStart();
+                       int endSelection=mrpEditText.getSelectionEnd();
+                       String selectedText = mrpEditText.getText().toString().substring(startSelection, endSelection);
+                       if(!selectedText.isEmpty()){
+                           mrpEditText.setText(addstr);
+                       }
+                       else{
+                           String sr = mrpEditText.getText().toString();
+                           sr+=addstr;
+                           mrpEditText.setText(sr);
+                       }
+                   }
                    else if(priceTxt.isFocused()){
-                       String sr = priceTxt.getText().toString();
-                       sr+=addstr;
-                       priceTxt.setText(sr);
+                       int startSelection=priceTxt.getSelectionStart();
+                       int endSelection=priceTxt.getSelectionEnd();
+                       String selectedText = priceTxt.getText().toString().substring(startSelection, endSelection);
+                       if(!selectedText.isEmpty()){
+                           priceTxt.setText(addstr);
+                       }
+                       else{
+                           String sr = priceTxt.getText().toString();
+                           sr+=addstr;
+                           priceTxt.setText(sr);
+                       }
                    }
                    break;
        }
@@ -1113,10 +1164,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         itc.setItem_Name(itemName.getText().toString());
         itc.setQty(Double.valueOf(Quantity.getText().toString()));
         itc.setPrice(Double.valueOf(priceTxt.getText().toString()));
-        Item item = dbHelper.GetItem(itemNo.getText().toString());
-        if(item!=null){
-            itc.setMRP(item.getAcPrice());
-        }
+        itc.setMRP(Double.valueOf(mrpEditText.getText().toString()));
         if(itemsCarts == null){
             itemsCarts = new ArrayList<ItemsCart>();
         }
