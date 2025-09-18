@@ -145,7 +145,7 @@ public class CartViewActivity extends AppCompatActivity implements View.OnClickL
             public void onClick(DialogInterface dialog, int whichButton) {
                 if(print){
                     try{
-                        PrinterUtil printerUtil = new PrinterUtil(CartViewActivity.this);
+                        PrinterUtil printerUtil = new PrinterUtil(CartViewActivity.this,CartViewActivity.this,false);
                         printerUtil.billDetail = billDetails;
                         printerUtil.Print();
                     }

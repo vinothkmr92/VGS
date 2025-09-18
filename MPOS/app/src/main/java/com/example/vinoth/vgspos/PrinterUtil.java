@@ -120,6 +120,7 @@ public class PrinterUtil {
             if(wifiPort != null){
                 wifiPort.disconnect();
             }
+
         }
         catch (IOException e)
         {
@@ -813,7 +814,6 @@ public class PrinterUtil {
         try{
             if(isUsbport){
                 ConnectUSB();
-
             }
             else if(isWifi){
                 new ConnectPrinter().execute(Common.printerIP);

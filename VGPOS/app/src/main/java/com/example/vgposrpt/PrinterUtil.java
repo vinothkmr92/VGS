@@ -1,15 +1,22 @@
 package com.example.vgposrpt;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -26,6 +33,8 @@ import androidx.core.content.res.ResourcesCompat;
 import com.sewoo.jpos.command.ESCPOS;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
 import com.sewoo.port.android.BluetoothPort;
+import com.sewoo.port.android.USBPort;
+import com.sewoo.port.android.USBPortConnection;
 import com.sewoo.port.android.WiFiPort;
 import com.sewoo.request.android.RequestHandler;
 
@@ -36,6 +45,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
@@ -60,14 +71,48 @@ public class PrinterUtil {
     private boolean isWifi;
     public BillDetails billDetail;
     public ArrayList<KotDetails> kotDetails;
-    public PrinterUtil(Context cntx) {
-        posPtr=new ESCPOSPrinter();
-        isWifi = CommonUtil.PrintOption.equalsIgnoreCase("WIFI");
-        if(isWifi){
-            wifiPort = WiFiPort.getInstance();
+    private USBPort usbPort;
+    private boolean isUsbport;
+    private UsbDevice usbDevice;
+    private UsbManager usbManager;
+    private boolean receivedBrodCast;
+    private Activity activity;
+    private boolean isKot;
+    private static final String ACTION_USB_PERMISSION = "com.example.vinoth.vgsposrpt.USB_PERMISSION";
+    private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                synchronized (this) {
+                    usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
+                    usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                        if (usbManager != null && usbDevice != null && !receivedBrodCast) {
+                            // YOUR PRINT CODE HERE
+                            receivedBrodCast = true;
+                            usbPort = new USBPort(usbManager);
+                            new ConnectUSBPrinter().execute();
+                        }
+                    }
+                }
+            }
         }
-        else {
-            bluetoothPort = BluetoothPort.getInstance();
+    };
+    public PrinterUtil(Context cntx,Activity act,boolean kot) {
+        posPtr=new ESCPOSPrinter();
+        activity = act;
+        isKot = kot;
+        switch (isKot ? CommonUtil.PrintOptionKot : CommonUtil.PrintOption){
+            case  "WiFi":
+                isWifi = true;
+                wifiPort = WiFiPort.getInstance();
+                break;
+            case "Bluetooth":
+                bluetoothPort = BluetoothPort.getInstance();
+                break;
+            case "USB":
+                isUsbport = true;
+                break;
         }
         context = cntx;
     }
@@ -125,14 +170,6 @@ public class PrinterUtil {
     private void PrintBillWithMRP() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(new Date());
-        /*Bitmap bitmapIcon = Common.shopLogo;
-        if(bitmapIcon!=null){
-            try {
-                posPtr.printBitmap(bitmapIcon,1,400);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+CommonUtil.ReceiptHeader+"\r\n");
         posPtr.printNormal(ESC+"|cA"+CommonUtil.ReceiptAddress+"\r\n");
         posPtr.printNormal("\n");
@@ -371,20 +408,6 @@ public class PrinterUtil {
     private void PrintBill() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(new Date());
-        /*Bitmap bitmapIcon = Common.shopLogo;
-        if(bitmapIcon!=null){
-            try {
-                if(Common.RptSize.equals("2")){
-                    posPtr.printBitmap(bitmapIcon,1,400);
-                }
-                else {
-                    posPtr.printBitmap(bitmapIcon,1,500);
-                }
-                posPtr.lineFeed(2);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
         DecimalFormat formater = new DecimalFormat("#.###");
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+CommonUtil.ReceiptHeader+"\r\n");
         posPtr.printNormal(ESC+"|cA"+CommonUtil.ReceiptAddress+"\r\n");
@@ -484,8 +507,11 @@ public class PrinterUtil {
 
     public void Print() throws Exception{
         try{
-            if(isWifi){
-                new ConnectPrinter().execute(CommonUtil.PrinterIP);
+            if(isUsbport){
+                ConnectUSB();
+            }
+            else if(isWifi){
+                new ConnectPrinter().execute(isKot ? CommonUtil.PrinterIPKot: CommonUtil.PrinterIP);
             }
             else {
                 BluetoothDevice btDevice = GetBluetoothDevice();
@@ -516,12 +542,11 @@ public class PrinterUtil {
         BluetoothDevice mydevice =null;
         for (BluetoothDevice device : pairedDevices) {
             // Add the name and address to an array adapter to show in a ListView
-            if (device.getName().contains(CommonUtil.printer)) {
+            if (device.getName().contains(isKot ?CommonUtil.printerKot: CommonUtil.printer)) {
                 mydevice = device;
                 break;
             }
         }
-
         return  mydevice;
     }
 
@@ -662,6 +687,99 @@ public class PrinterUtil {
                 Toast.makeText(context,"Failed to Connect Printer",Toast.LENGTH_LONG).show();
             }
             super.onPostExecute(result);
+        }
+    }
+    class ConnectUSBPrinter extends AsyncTask<String, Void, USBPortConnection>
+    {
+        private final ProgressDialog dialog = new ProgressDialog(context);
+        @Override
+        protected void onPreExecute()
+        {
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setMessage("Printing.....");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected USBPortConnection doInBackground(String... params)
+        {
+            USBPortConnection retVal = null;
+            try
+            {
+                // ip
+                retVal = usbPort.connect_device(usbDevice);
+            }
+            catch (Exception e)
+            {
+                retVal = null;
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(USBPortConnection usbconnection)
+        {
+            if(usbconnection!=null) {
+                RequestHandler rh = new RequestHandler();
+                hThread = new Thread(rh);
+                hThread.start();
+                try{
+                    posPtr = new ESCPOSPrinter(usbconnection);
+                    posPtr.setAsync(true);
+                    if(billDetail!=null){
+                        PrintBillData();
+                    }
+                    if(kotDetails!=null){
+                        PrintKot();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Toast.makeText(context,"Error: "+ex.getMessage(),Toast.LENGTH_LONG).show();
+                }
+                finally {
+                    if(dialog.isShowing())
+                        dialog.dismiss();
+                }
+            }
+            else{
+                if(dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(context,"Failed to Connect Printer",Toast.LENGTH_LONG).show();
+            }
+            super.onPostExecute(usbconnection);
+        }
+    }
+    public void ConnectUSB() {
+        usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
+        Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
+        UsbDevice mDevice = null;
+        while (mDeviceIterator.hasNext()) {
+            mDevice = mDeviceIterator.next();
+            if (mDevice == null) {
+                Toast.makeText(activity, "mDevice is null", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(activity, "USB Device found", Toast.LENGTH_SHORT).show();
+                if(mDevice.getProductName().equals(isKot ? CommonUtil.usbDeviceNameKot: CommonUtil.usbDeviceName)){
+                    break;
+                }
+            }
+        }
+        usbDevice = mDevice;
+        if (usbManager != null) {
+            PendingIntent permissionIntent = PendingIntent.getBroadcast(
+                    activity,
+                    0,
+                    new Intent(ACTION_USB_PERMISSION),
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
+            IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+            ContextCompat.registerReceiver(activity, this.usbReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
+            usbManager.requestPermission(mDevice, permissionIntent);
         }
     }
 }

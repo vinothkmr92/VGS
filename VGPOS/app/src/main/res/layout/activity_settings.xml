@@ -102,6 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 app:cardCornerRadius="15dp"
+
                 app:cardElevation="5dp"
                 >
                 <LinearLayout
@@ -113,7 +114,7 @@
                     <TextView android:layout_height="wrap_content"
                         android:layout_width="fill_parent"
                         android:textColor="@color/DarkBlue"
-                        android:text="Printing Options"
+                        android:text="Printing Options - SALE"
                         android:textSize="20dp"
                         android:fontFamily="@font/orienta"
                         android:textAlignment="center"
@@ -147,7 +148,179 @@
                             android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.radiobutton.MaterialRadioButton>
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/radioBtnUSBPrinter"
+                            android:fontFamily="@font/orienta"
+                            android:textColor="@color/colorAccent"
+                            android:text="USB"></com.google.android.material.radiobutton.MaterialRadioButton>
                     </LinearLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_columnSpan="3"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/orienta"
+                        android:id="@+id/wifiprinterlayout"
+                        android:hint="WiFi Printer IP">
+
+                        <!--this is the actual edit text which takes the input-->
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/printerip"
+                            android:maxLines="1"
+                            android:textColor="@color/DarkBlue"
+                            android:layout_width="match_parent"
+                            android:fontFamily="@font/orienta"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_columnSpan="3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:id="@+id/printer"
+                        android:hint="Bluetooth Printer"
+                        android:fontFamily="@font/orienta"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/printers"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orienta"
+                            android:inputType="none"></AutoCompleteTextView>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_columnSpan="3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:id="@+id/usbprinter"
+                        android:hint="USB Printer"
+                        android:fontFamily="@font/orienta"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/usbprinters"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orienta"
+                            android:inputType="none"></AutoCompleteTextView>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:id="@+id/kotprintoptions"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="5dp"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    >
+                    <TextView android:layout_height="wrap_content"
+                        android:layout_width="fill_parent"
+                        android:textColor="@color/DarkBlue"
+                        android:text="Printing Options - KOT"
+                        android:textSize="20dp"
+                        android:fontFamily="@font/orienta"
+                        android:textAlignment="center"
+                        android:textStyle="bold"
+                        ></TextView>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:id="@+id/radioBtnNoPrinterKot"
+                            android:text="None"
+                            android:fontFamily="@font/orienta"
+                            android:textColor="@color/colorAccent"
+                            ></com.google.android.material.radiobutton.MaterialRadioButton>
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:id="@+id/radioBtnWifiPrinterKot"
+                            android:text="WiFi"
+                            android:fontFamily="@font/orienta"
+                            android:textColor="@color/colorAccent"
+                            ></com.google.android.material.radiobutton.MaterialRadioButton>
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:id="@+id/radioBtnBlueToothPrinterKot"
+                            android:text="Bluetooth"
+                            android:fontFamily="@font/orienta"
+                            android:textColor="@color/colorAccent"
+                            ></com.google.android.material.radiobutton.MaterialRadioButton>
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/radioBtnUSBPrinterKot"
+                            android:fontFamily="@font/orienta"
+                            android:textColor="@color/colorAccent"
+                            android:text="USB"></com.google.android.material.radiobutton.MaterialRadioButton>
+                    </LinearLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_columnSpan="3"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/orienta"
+                        android:id="@+id/wifiprinterlayoutKot"
+                        android:hint="WiFi Printer IP">
+
+                        <!--this is the actual edit text which takes the input-->
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/printeripkot"
+                            android:maxLines="1"
+                            android:textColor="@color/DarkBlue"
+                            android:layout_width="match_parent"
+                            android:fontFamily="@font/orienta"
+                            android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_columnSpan="3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:id="@+id/printerkot"
+                        android:hint="Bluetooth Printer"
+                        android:fontFamily="@font/orienta"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/printerskot"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orienta"
+                            android:inputType="none"></AutoCompleteTextView>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_columnSpan="3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:id="@+id/usbprinterkot"
+                        android:hint="USB Printer"
+                        android:fontFamily="@font/orienta"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/usbprinterskot"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orienta"
+                            android:inputType="none"></AutoCompleteTextView>
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
                     <com.google.android.material.card.MaterialCardView
@@ -232,41 +405,6 @@
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_columnSpan="3"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/orienta"
-                        android:id="@+id/wifiprinterlayout"
-                        android:hint="WiFi Printer IP">
-
-                        <!--this is the actual edit text which takes the input-->
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/printerip"
-                            android:maxLines="1"
-                            android:textColor="@color/DarkBlue"
-                            android:layout_width="match_parent"
-                            android:fontFamily="@font/orienta"
-                            android:layout_height="wrap_content" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_columnSpan="3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:id="@+id/printer"
-                        android:hint="Bluetooth Printer"
-                        android:fontFamily="@font/orienta"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/printers"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/orienta"
-                            android:inputType="none"></AutoCompleteTextView>
-                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
@@ -319,6 +457,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/multilangswitch"
                 android:text="Multi Language for Printing"
+                android:textColor="@color/Crimson"
+                >
+            </com.google.android.material.switchmaterial.SwitchMaterial>
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/enableKot"
+                android:text="Enable KOT"
                 android:textColor="@color/Crimson"
                 >
             </com.google.android.material.switchmaterial.SwitchMaterial>

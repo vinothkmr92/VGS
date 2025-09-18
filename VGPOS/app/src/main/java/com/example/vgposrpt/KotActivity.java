@@ -441,7 +441,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    public void RefreshKotPage(String title,String Message,boolean print,ArrayList<KotDetails> kotDetails) {
+    public void RefreshKotPage(String title,String Message,boolean print,ArrayList<KotDetails> kotDetails,BillDetails billDetails) {
         AlertDialog.Builder dialog =  new AlertDialog.Builder(KotActivity.this);
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
@@ -449,7 +449,8 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             public void onClick(DialogInterface dialog, int whichButton) {
                 if(print){
                     try{
-                        PrinterUtil printerUtil = new PrinterUtil(KotActivity.this);
+                        PrinterUtil printerUtil = new PrinterUtil(KotActivity.this,KotActivity.this,kotDetails!=null);
+                        printerUtil.billDetail = billDetails;
                         printerUtil.kotDetails = kotDetails;
                         printerUtil.Print();
                     }
@@ -495,8 +496,8 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                 else {
                     msg = "Failed to Save KOT. Contact support Team.";
                 }
-                boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
-                RefreshKotPage("Status",msg,print,kotForPrint);
+                boolean print = !CommonUtil.PrintOptionKot.equalsIgnoreCase("NONE");
+                RefreshKotPage("Status",msg,print,kotForPrint,null);
             }
             else {
                 if(dialog.isShowing()){
@@ -683,7 +684,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    public class SaveNewBill extends AsyncTask<BillDetails,String, String>
+    public class SaveNewBill extends AsyncTask<BillDetails,String, Integer>
     {
         Boolean isSuccess = false;
         String error = "";
@@ -706,18 +707,18 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         }
 
         @Override
-        protected void onPostExecute(String billDtl) {
+        protected void onPostExecute(Integer billDtl) {
             if(isSuccess){
                 String msg = "";
-                if(billDtl.isEmpty()){
+                if(billDtl==0){
                     msg = "Failed to Save new Bill. Contact support Team.";
                 }
                 else {
-                    String[] bd = billDtl.split("~");
-                    msg ="Bill No -     "+bd[0]+"\nBill Amount - "+bd[1]+".";
+                    msg ="Saved Bill No - "+billDtl;
                     CommonUtil.cartItems = new ArrayList<>();
                 }
-                RefreshKotPage("Status",msg,false,null);
+                boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
+                RefreshKotPage("Status",msg,print,null,billDetails);
             }
             else {
                 if(dialog.isShowing()){
@@ -776,7 +777,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         }
 
         @Override
-        protected String doInBackground(BillDetails... params) {
+        protected Integer doInBackground(BillDetails... params) {
             Integer billNo = 0;
             String retValue = "";
             billDetails = params[0];
@@ -843,16 +844,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                 isSuccess = false;
                 error = "Exceptions"+ex.getMessage();
             }
-            finally {
-                if(isSuccess){
-                    NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
-                    formatter.setMaximumFractionDigits(0);
-                    String symbol = formatter.getCurrency().getSymbol();
-                    String billamount = formatter.format(billDetails.BillAmount).replace(symbol,symbol+" ");
-                    retValue  =String.valueOf(billNo)+"~"+billamount;
-                }
-            }
-            return retValue;
+            return billNo;
         }
     }
 }
