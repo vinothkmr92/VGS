@@ -86,10 +86,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             CommonUtil.printerKot = sharedpreferences.getString(PRINTER_KOT,"");
             String usbdevice = sharedpreferences.getString(USBDEVICENAME,"");
             String[] sb = usbdevice.split("~");
-            CommonUtil.usbDeviceName = sb[1];
+            if(sb.length>1){
+                CommonUtil.usbDeviceName = sb[1];
+            }
+
             String usbdeviceKot = sharedpreferences.getString(USBDEVICENAME_KOT,"");
             String[] sbKOT = usbdeviceKot.split("~");
-            CommonUtil.usbDeviceNameKot = sbKOT[1];
+            if(sbKOT.length>1){
+                CommonUtil.usbDeviceNameKot = sbKOT[1];
+            }
+
             CommonUtil.ReceiptSize = sharedpreferences.getString(RECEIPTSIZE,"3");
             CommonUtil.ReceiptHeader = sharedpreferences.getString(HEADER,"");
             CommonUtil.ReceiptFooter = sharedpreferences.getString(FOOTER,"");

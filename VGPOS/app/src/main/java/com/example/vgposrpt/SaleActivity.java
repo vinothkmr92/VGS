@@ -40,14 +40,17 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class SaleActivity extends AppCompatActivity implements View.OnClickListener {
+public class SaleActivity extends AppCompatActivity implements View.OnClickListener,GetPaymentModeDialog.PaymentDialogListener {
 
     TextView totalAmt;
     LinearLayout prView;
@@ -71,16 +74,9 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             btnViewCart = findViewById(R.id.btnViewCart);
             btnViewCart.setOnClickListener(this);
             productCart = new ArrayList<>();
+
             if(CommonUtil.cartItems.size()>0){
-                productCart = CommonUtil.cartItems;
-                for (Product p:productCart) {
-                    LoadPRView(p);
-                }
-                Double billAmt = productCart.size()>0 ? productCart.stream().mapToDouble(c->c.getAmount()).sum() :0d;
-                NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
-                formatter.setMaximumFractionDigits(0);
-                String symbol = formatter.getCurrency().getSymbol();
-                totalAmt.setText(formatter.format(billAmt).replace(symbol,symbol+" "));
+                CommonUtil.cartItems.clear();
             }
             GmsBarcodeScannerOptions options = new GmsBarcodeScannerOptions.Builder()
                     .setBarcodeFormats(Barcode.FORMAT_QR_CODE,Barcode.FORMAT_CODE_128)
@@ -162,7 +158,6 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                 Product pr  = CommonUtil.productsFull.stream().filter(c->c.getProductID().equals(prid)).findFirst().get();
                 if(pr!=null){
                     AddItemToCart(pr);
-                    LoadPRView(pr);
                 }
             }
         });
@@ -219,30 +214,32 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
 
     private int AddItemToCart(Product pr){
         int latestQty = 0;
-        Product alreadyExits = null;
-        for (Product p:productCart) {
-            if(p.getProductID()==pr.getProductID()){
-                alreadyExits = p;
-                break;
-            }
-        }
+        Product alreadyExits = productCart.stream().filter(c->c.getProductID().equals(pr.getProductID())).findFirst().orElse(null);
         if(alreadyExits!=null){
             Integer qty = alreadyExits.getQty();
             qty+=1;
-            pr.setQty(qty);
-            productCart.remove(alreadyExits);
+            alreadyExits.setQty(qty);
         }
-        productCart.add(pr);
+        else{
+            productCart.add(pr);
+        }
         Double billAmt = productCart.size()>0 ? productCart.stream().mapToDouble(c->c.getAmount()).sum() :0d;
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
         String symbol = formatter.getCurrency().getSymbol();
         totalAmt.setText(formatter.format(billAmt).replace(symbol,symbol+" "));
         latestQty = pr.getQty();
+        if(latestQty>0){
+            prView.removeAllViews();
+            for (Product p:
+                    productCart) {
+                LoadPRView(p);
+            }
+        }
         return  latestQty;
     }
 
-    private int RemoveItemToCart(Product pr){
+    private int RemoveItemToCart(Product pr,View v){
         int latestQty = 0;
         Product alreadyExits = null;
         for (Product p:productCart) {
@@ -270,6 +267,13 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         String symbol = formatter.getCurrency().getSymbol();
         totalAmt.setText(formatter.format(billAmt).replace(symbol,symbol+" "));
         latestQty = pr.getQty();
+        if(latestQty==0){
+            prView.removeAllViews();
+            for (Product p:
+                 productCart) {
+                LoadPRView(p);
+            }
+        }
         return latestQty;
     }
 
@@ -304,7 +308,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                     if(pn.getQty()==null){
                         pn.setQty(1);
                     }
-                    int qty = RemoveItemToCart(pn);
+                    int qty = RemoveItemToCart(pn,v);
                     prQty.setText(String.valueOf(qty));
                     btnRemove.setVisibility(qty>0 ? View.VISIBLE:View.INVISIBLE);
                 }
@@ -329,6 +333,9 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
     }
     @Override
     public void onBackPressed(){
+        if(CommonUtil.cartItems!=null){
+            CommonUtil.cartItems.clear();
+        }
         Intent rptPage = new Intent(this,SalesReportActivity.class);
         rptPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(rptPage);
@@ -357,20 +364,231 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         );
     }
 
+    public void GoToSalePage() {
+        Intent salePage = new Intent(SaleActivity.this,SaleActivity.class);
+        salePage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(salePage);
+    }
+    public void GetPaymentMode(){
+        try {
+            GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
+            addCustomer.show(getSupportFragmentManager(),"");
+        }catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage().toString());
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnViewCart:
-                if(productCart.size()>0){
-                    Intent cartPage = new Intent(this,CartViewActivity.class);
-                    cartPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    cartPage.putExtra("CART", (Serializable) productCart);
-                    startActivity(cartPage);
+                if(productCart.size()>0) {
+                    GetPaymentMode();
                 }
                 else {
-                    showCustomDialog("Warning","Please add products into cart.");
+                    showCustomDialog("Warning","No products in Cart to Sale");
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void getPaymentMode(String paymentMode) {
+        try{
+            BillDetails bd = new BillDetails();
+            bd.branchCode = CommonUtil.defBranch;
+            bd.billProducts = productCart;
+            Double billAmt = productCart.stream().mapToDouble(c->c.getAmount()).sum();
+            bd.BillAmount = (int) Math.round(billAmt);
+            bd.billUser = CommonUtil.loggedinUser;
+            switch (paymentMode){
+                case  "CASH":
+                    bd.CashAmt=bd.BillAmount;
+                    break;
+                case "CARD":
+                    bd.CardAmt = bd.BillAmount;
+                    break;
+                case "UPI":
+                    bd.UpiAmt = bd.BillAmount;
+            }
+            new SaveNewBill().execute(bd);
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
+        }
+    }
+
+    public class SaveNewBill extends AsyncTask<BillDetails,String, Integer>
+    {
+        Boolean isSuccess = false;
+        String error = "";
+        private final ProgressDialog dialog = new ProgressDialog(SaleActivity.this,R.style.CustomProgressStyle);
+        ConnectionClass connectionClass = null;
+        Connection con = null;
+        BillDetails billDetails;
+        @Override
+        protected void onPreExecute() {
+            connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+            con = connectionClass.CONN();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setIcon(R.mipmap.salesreport);
+            dialog.setMessage("New Sale Entry..");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer billNo) {
+            if(isSuccess){
+                String msg = "";
+                if(billNo>0){
+                    msg ="Bill No - "+billNo+" is saved Successfully.";
+                    CommonUtil.cartItems = new ArrayList<>();
+                    if(productCart!=null){
+                        productCart.clear();
+                    }
+                    boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
+                    if(print){
+                        try{
+                            PrinterUtil printerUtil = new PrinterUtil(SaleActivity.this,SaleActivity.this,false);
+                            printerUtil.billDetail = billDetails;
+                            printerUtil.Print();
+                        }
+                        catch (Exception ex){
+                            showCustomDialog("Error",ex.getMessage());
+                        }
+                        finally {
+                            Intent salePage = new Intent(SaleActivity.this,SaleActivity.class);
+                            salePage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(salePage);
+                        }
+                    }
+                }
+                else {
+                    msg = "Failed to Save new Bill. Contact support Team.";
+                    showCustomDialog("Status",msg);
+                }
+
+            }
+            else {
+                if(dialog.isShowing()){
+                    dialog.hide();
+                }
+                if(!error.isEmpty()){
+                    showCustomDialog("Status",error);
+                }
+            }
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+        }
+        private  Double GetAvailableQty(String productID,Integer branchCode) throws SQLException {
+            Double qty = 0d;
+            String query = "SELECT S.AVAILABLE_QUANTITY FROM Stocks S,(SELECT PRODUCT_ID,BRANCH_CODE,MAX(UPDATED_DATE) AS DT FROM STOCKS GROUP BY PRODUCT_ID,BRANCH_CODE) A WHERE S.PRODUCT_ID=A.PRODUCT_ID AND A.BRANCH_CODE=S.BRANCH_CODE AND S.UPDATED_DATE=A.DT and A.Product_ID='"+productID+"' AND A.BRANCH_CODE="+branchCode;
+            Statement stmt = con.createStatement();
+            ResultSet s = stmt.executeQuery(query);
+            if(s.next()){
+                qty = s.getDouble("AVAILABLE_QUANTITY");
+            }
+            return qty;
+        }
+        private boolean UpdateStocks(Product pr) throws SQLException {
+            boolean isDone = false;
+            Double avQty = GetAvailableQty(pr.getProductID(),pr.getBranchCode());
+            Double avNow = avQty-pr.getQty();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
+            Date date = new Date();
+            String upddt = format.format(date);
+            String query = "INSERT INTO STOCKS VALUES ('"+pr.getProductID()+"',"+avNow+","+pr.getQty()+",0,'"+upddt+"',"+pr.getBranchCode()+")";
+            Statement stmt = con.createStatement();
+            Integer rowAff = stmt.executeUpdate(query);
+            isDone = rowAff>0;
+            if(!pr.getBatchNo().isEmpty()){
+                UpdateBatchDetails(pr);
+            }
+            return  isDone;
+        }
+        private Double GetBatchAvailableQty(String productID,String BatchNo,Integer branchCode) throws SQLException {
+            Double qty = 0d;
+            String query = "SELECT Available_Quantity FROM Product_Batch_Details WHERE Product_ID = '"+productID+"' AND BRANCH_CODE ="+branchCode+" AND Batch_No='"+BatchNo+"'";
+            Statement stmt = con.createStatement();
+            ResultSet s = stmt.executeQuery(query);
+            if(s.next()){
+                qty = s.getDouble("Available_Quantity");
+            }
+            return qty;
+        }
+        private void UpdateBatchDetails(Product pr) throws SQLException {
+            Double avQty = GetBatchAvailableQty(pr.getProductID(),pr.getBatchNo(),pr.getBranchCode());
+            Double avNow = avQty-pr.getQty();
+            String query = "UPDATE PRODUCT_BATCH_DETAILS SET AVAILABLE_QUANTITY="+avNow+" WHERE BATCH_NO='"+pr.getBatchNo()+"' AND PRODUCT_ID='"+pr.getProductID()+"' AND BRANCH_CODE="+pr.getBranchCode();
+            Statement stmt = con.createStatement();
+            stmt.executeUpdate(query);
+        }
+
+        @Override
+        protected Integer doInBackground(BillDetails... params) {
+            Integer billNo = 0;
+            billDetails = params[0];
+            try {
+                if (con == null) {
+                    error = "Database Connection Failed";
+                } else {
+                    String getBillNoQuery = "SELECT MAX(BILL_NO) AS BILL_NO FROM SALE WHERE BRANCH_CODE="+CommonUtil.defBranch+" AND COUNTER_ID='CD1' AND BILL_TYPE='Normal'";
+                    Statement stmt = con.createStatement();
+                    ResultSet billNoRs = stmt.executeQuery(getBillNoQuery);
+                    billNo = 0;
+                    if(billNoRs.next()){
+                        billNo = billNoRs.getInt("BILL_NO");
+                    }
+                    billNo++;
+                    billDetails.BillNo = billNo;
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    Date date = new Date();
+                    String expdt = format.format(date);
+                    int serialNo = 1;
+                    boolean billProductsSaved = false;
+                    for (Product p:billDetails.billProducts) {
+                        try{
+                            String billprodQuery = "INSERT INTO BILL_PRODUCTS VALUES ("+billNo+",'"+p.getProductID()+"',GETDATE(),'CD1',"+p.getQty()+",'"+p.getBatchNo()+"',"+p.getPrice()+","+p.getMRP()+",'"+p.getProductName()+"','"+p.getSupplierName()+"','"+expdt+"',0,"+p.getBranchCode()+","+serialNo+",'"+p.getCategory()+"','Normal',0,0)";
+                            Integer rowAff = stmt.executeUpdate(billprodQuery);
+                            billProductsSaved = rowAff>0;
+                            if(billProductsSaved){
+                                UpdateStocks(p);
+                            }
+                            else {
+                                break;
+                            }
+                            serialNo++;
+                        }
+                        catch(Exception ex){
+                            billProductsSaved = false;
+                            break;
+                        }
+                    }
+                    if(billProductsSaved){
+                        Double profit = billDetails.billProducts.stream().mapToDouble(c->(c.getPrice()-c.getPurchasedPrice())*c.getQty()).sum();
+                        String saleQuery = "INSERT INTO SALE VALUES ("+billNo+",GETDATE(),'CD1','"+billDetails.billUser+"',"+billDetails.BillAmount+","+billDetails.CashAmt+","+billDetails.CardAmt+","+billDetails.UpiAmt+",0,0,'',0,"+profit+",1,0,0,0,'Normal',0,0,0,'CLOSE','',0,"+billDetails.branchCode+")";
+                        Integer rowAff = stmt.executeUpdate(saleQuery);
+                        if(rowAff>0){
+                            isSuccess = true;
+                        }
+                    }
+                    else {
+                        isSuccess = false;
+                        String delBillQuery = "DELETE BILL_PRODUCTS WHERE BILL_NO="+billNo+" AND COUNTER_ID='CD1' AND BRANCH_CODE="+billDetails.branchCode;
+                        stmt.executeUpdate(delBillQuery);
+                        error="[Failed to Update Bill Products] Unable to Save Bill Details. Please Contact Support Team.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccess = false;
+                error = "Exceptions"+ex.getMessage();
+            }
+            return billNo;
         }
     }
 }

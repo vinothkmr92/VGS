@@ -546,6 +546,9 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                     SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
                     Date date = new Date();
                     String today = format.format(date);
+                    if(today.contains("Sept")){
+                        today = today.replace("Sept","Sep");
+                    }
                     String kotnoquery = "SELECT MAX(KOT_ID) AS KOTID FROM KOT WHERE CAST(KOT_DATE AS DATE)='"+today+"'";
                     Statement stmt = con.createStatement();
                     ResultSet kotnoRs = stmt.executeQuery(kotnoquery);
