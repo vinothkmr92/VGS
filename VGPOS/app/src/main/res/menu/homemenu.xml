@@ -4,7 +4,7 @@
     tools:context="com.example.vgposrpt.ItemWiseReportActivity">
     <item
         android:id="@+id/salesnew"
-        android:title="New Sale"
+        android:title="Sale"
         android:icon="@drawable/baseline_point_of_sale_24"/>
     <item
         android:id="@+id/kot"

@@ -13,8 +13,10 @@ import android.graphics.Typeface;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -32,6 +34,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
@@ -57,6 +60,8 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout categoryView;
     LinearLayout productsView;
     ArrayList<Product> productCart;
+    ArrayList<Product> fullProducts;
+    TextInputEditText searchprid;
     ImageButton btnViewCart;
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;
@@ -74,17 +79,42 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             btnViewCart = findViewById(R.id.btnViewCart);
             btnViewCart.setOnClickListener(this);
             productCart = new ArrayList<>();
-
+            fullProducts =  CommonUtil.productsFull;
+            fullProducts.forEach(i->i.setQty(1));
             if(CommonUtil.cartItems.size()>0){
                 CommonUtil.cartItems.clear();
             }
+            searchprid = findViewById(R.id.searchprid);
+            searchprid.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    // Perform your search operation here
+                    String searchText = v.getText().toString().toUpperCase();
+                    Product searchlist = fullProducts.stream().filter(c->c.getProductID().toUpperCase().contains(searchText) || c.getProductName().toUpperCase().contains(searchText) ).findFirst().orElse(null);
+                    if(searchlist!=null){
+                        AddItemToCart(searchlist);
+                        searchprid.setText("");
+                        searchprid.requestFocus();
+                    }
+                    if(searchlist==null){
+                        searchprid.selectAll();
+                        searchprid.requestFocus();
+                        Toast.makeText(SaleActivity.this,"No Products found for the Search.",Toast.LENGTH_LONG).show();
+                    }
+                    // Example: Log the search text
+                    Log.d("Search", "Searching for: " + searchText);
+                    // Return true to indicate that you have handled the action
+                    return true;
+                }
+                // Return false to let the system handle other actions
+                return false;
+            });
             GmsBarcodeScannerOptions options = new GmsBarcodeScannerOptions.Builder()
                     .setBarcodeFormats(Barcode.FORMAT_QR_CODE,Barcode.FORMAT_CODE_128)
                     .build();
             scanner = GmsBarcodeScanning.getClient(SaleActivity.this,options);
             if(CommonUtil.categories.size()>0){
                LoadCategoryMenu();
-               LoadProductsMenu(CommonUtil.categories.get(0));
+               LoadProductsMenu("ALL");
             }
         }
         catch (Exception ex){
@@ -97,6 +127,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
     private void LoadCategoryMenu(){
+        BuildCatButtons("ALL");
         for (String ct:
              CommonUtil.categories) {
             BuildCatButtons(ct);
@@ -104,9 +135,10 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void LoadProductsMenu(String catName){
         productsView.removeAllViews();
-
-
-        List<Product> products = CommonUtil.productsFull.stream().filter(c->c.getCategory().equals(catName)).collect(Collectors.toList());
+        List<Product> products = fullProducts.stream().collect(Collectors.toList());
+        if(!catName.equals("ALL")){
+            products = products.stream().filter(c->c.getCategory().equals(catName)).collect(Collectors.toList());
+        }
         int itemcount = products.size();
         while (itemcount>0){
             LinearLayout ln = new LinearLayout(this);
@@ -155,7 +187,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                 // Handle button click event here
                 // For example, change its color again or show a Toast
                 String prid = v.getTag().toString();
-                Product pr  = CommonUtil.productsFull.stream().filter(c->c.getProductID().equals(prid)).findFirst().get();
+                Product pr  = fullProducts.stream().filter(c->c.getProductID().equals(prid)).findFirst().get();
                 if(pr!=null){
                     AddItemToCart(pr);
                 }
@@ -303,7 +335,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 String prid = (String) v.getTag();
-                Product pn = CommonUtil.productsFull.stream().filter(c->c.getProductID().equals(prid)).findFirst().get();
+                Product pn = fullProducts.stream().filter(c->c.getProductID().equals(prid)).findFirst().get();
                 if(pn!=null){
                     if(pn.getQty()==null){
                         pn.setQty(1);
@@ -318,7 +350,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 String prid = (String) v.getTag();
-                Product pn = CommonUtil.productsFull.stream().filter(c->c.getProductID().equals(prid)).findFirst().get();
+                Product pn = fullProducts.stream().filter(c->c.getProductID().equals(prid)).findFirst().get();
                 if(pn!=null){
                     if(pn.getQty()==null || pn.getQty()==0){
                         pn.setQty(1);
@@ -445,9 +477,6 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                 if(billNo>0){
                     msg ="Bill No - "+billNo+" is saved Successfully.";
                     CommonUtil.cartItems = new ArrayList<>();
-                    if(productCart!=null){
-                        productCart.clear();
-                    }
                     boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
                     if(print){
                         try{
@@ -459,10 +488,14 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                             showCustomDialog("Error",ex.getMessage());
                         }
                         finally {
+                            finish();
                             Intent salePage = new Intent(SaleActivity.this,SaleActivity.class);
                             salePage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(salePage);
                         }
+                    }
+                    else{
+                        showCustomDialog("Status",msg);
                     }
                 }
                 else {

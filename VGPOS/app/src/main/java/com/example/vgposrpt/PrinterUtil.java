@@ -78,7 +78,7 @@ public class PrinterUtil {
     private boolean receivedBrodCast;
     private Activity activity;
     private boolean isKot;
-    private static final String ACTION_USB_PERMISSION = "com.example.vinoth.vgsposrpt.USB_PERMISSION";
+    private static final String ACTION_USB_PERMISSION = "com.example.vgposrpt.USB_PERMISSION";
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -90,6 +90,7 @@ public class PrinterUtil {
                         if (usbManager != null && usbDevice != null && !receivedBrodCast) {
                             // YOUR PRINT CODE HERE
                             receivedBrodCast = true;
+                            Toast.makeText(activity, "Connecting to USB Printer..", Toast.LENGTH_SHORT).show();
                             usbPort = new USBPort(usbManager);
                             new ConnectUSBPrinter().execute();
                         }
