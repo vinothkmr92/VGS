@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/DarkBlue"
+            android:text="PRODUCT DETAILS"
+            >
+        </TextView>
+        <EditText
+            android:id="@+id/prDtlProductID"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:editable="false"
+            android:focusable="false"
+            android:hint="Product ID"
+            android:textColor="@color/Blue"
+            android:inputType="text"></EditText>
+
+        <EditText
+            android:id="@+id/prDtlProductName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Product Name"
+            android:inputType="textCapCharacters"
+            android:textColor="@color/Blue"
+            android:textAllCaps="true"></EditText>
+
+        <EditText
+            android:id="@+id/ItemPriceadd"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/orienta"
+            android:hint="Price"
+            android:inputType="number"></EditText>
+
+        <EditText
+            android:id="@+id/ItemStockadd"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/orienta"
+            android:hint="Stock"
+            android:inputType="number"></EditText>
+
+        <EditText
+            android:id="@+id/ItemAcpriceadd"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/orienta"
+            android:hint="Special Price"
+            android:inputType="number"></EditText>
+    </LinearLayout>
+</RelativeLayout>

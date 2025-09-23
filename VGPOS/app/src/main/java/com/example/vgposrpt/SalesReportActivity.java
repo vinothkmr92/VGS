@@ -272,6 +272,11 @@ public class SalesReportActivity extends AppCompatActivity implements View.OnCli
                 dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(dcpage);
                 return  true;
+            case  R.id.action_upload:
+                Intent upPage = new Intent(this,UploadActivity.class);
+                upPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(upPage);
+                return true;
             case R.id.action_productrpt:
                 CommonUtil.selectedBarnch = GetSelectedBranch();
                 CommonUtil.frmDate = frmDateTextView.getText().toString();

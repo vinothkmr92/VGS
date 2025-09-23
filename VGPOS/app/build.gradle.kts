@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.example.vgposrpt"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.vgposrpt"
-        minSdk = 28
-        targetSdk = 34
+        minSdk = 30
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

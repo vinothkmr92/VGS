@@ -1,6 +1,7 @@
 package com.example.vgposrpt;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -90,7 +91,7 @@ public class PrinterUtil {
                         if (usbManager != null && usbDevice != null && !receivedBrodCast) {
                             // YOUR PRINT CODE HERE
                             receivedBrodCast = true;
-                            Toast.makeText(activity, "Connecting to USB Printer..", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(activity, "Connecting to USB Printer..", Toast.LENGTH_SHORT).show();
                             usbPort = new USBPort(usbManager);
                             new ConnectUSBPrinter().execute();
                         }
@@ -99,6 +100,18 @@ public class PrinterUtil {
             }
         }
     };
+
+    private void PassMsgToActivity(String title,String Msg){
+        String localClassName = activity.getLocalClassName();
+        switch (localClassName){
+            case "SaleActivity":
+                SaleActivity.getInstance().showCustomDialog(title,Msg);
+                break;
+            case "KotActivity":
+                KotActivity.getInstance().showCustomDialog(title,Msg);
+                break;
+        }
+    }
     public PrinterUtil(Context cntx,Activity act,boolean kot) {
         posPtr=new ESCPOSPrinter();
         activity = act;
@@ -602,18 +615,21 @@ public class PrinterUtil {
                 }
                 catch (Exception ex)
                 {
-                    Toast.makeText(context,"Error: "+ex.getMessage(),Toast.LENGTH_LONG).show();
+                    PassMsgToActivity("Error",ex.getMessage());
                 }
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
-
+                    String localClassName = activity.getLocalClassName();
+                    if(localClassName.equals("SaleActivity")){
+                        SaleActivity.getInstance().RefreshSaleScreen();
+                    }
                 }
             }
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                Toast.makeText(context,"Failed to Connect Printer",Toast.LENGTH_LONG).show();
+                PassMsgToActivity("Connection Failed","Failed to Connect Printer."+result+".\nPlease contact support team.");
             }
             super.onPostExecute(result);
         }
@@ -674,18 +690,21 @@ public class PrinterUtil {
                 }
                 catch (Exception ex)
                 {
-                    Toast.makeText(context,"Error: "+ex.getMessage(),Toast.LENGTH_LONG).show();
+                    PassMsgToActivity("Error",ex.getMessage());
                 }
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
-
+                    String localClassName = activity.getLocalClassName();
+                    if(localClassName.equals("SaleActivity")){
+                        SaleActivity.getInstance().RefreshSaleScreen();
+                    }
                 }
             }
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                Toast.makeText(context,"Failed to Connect Printer",Toast.LENGTH_LONG).show();
+                PassMsgToActivity("Connection Failed","Failed to Connect Printer."+result+"\nPlease contact support team.");
             }
             super.onPostExecute(result);
         }
@@ -739,23 +758,28 @@ public class PrinterUtil {
                 }
                 catch (Exception ex)
                 {
-                    Toast.makeText(context,"Error: "+ex.getMessage(),Toast.LENGTH_LONG).show();
+                    PassMsgToActivity("Error",ex.getMessage());
                 }
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
+                    String localClassName = activity.getLocalClassName();
+                    if(localClassName.equals("SaleActivity")){
+                        SaleActivity.getInstance().RefreshSaleScreen();
+                    }
                 }
             }
             else{
                 if(dialog.isShowing())
                     dialog.dismiss();
-                Toast.makeText(context,"Failed to Connect Printer",Toast.LENGTH_LONG).show();
+                PassMsgToActivity("Connection Failed","Failed to Connect Printer.\nPlease contact support team.");
             }
             super.onPostExecute(usbconnection);
         }
     }
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void ConnectUSB() {
-        usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
+        usbManager = (UsbManager) activity.getApplicationContext().getSystemService(Context.USB_SERVICE);
         HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
         Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
         UsbDevice mDevice = null;
@@ -775,12 +799,15 @@ public class PrinterUtil {
             PendingIntent permissionIntent = PendingIntent.getBroadcast(
                     activity,
                     0,
-                    new Intent(ACTION_USB_PERMISSION),
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    new Intent(ACTION_USB_PERMISSION).setPackage(context.getPackageName()),
+                    PendingIntent.FLAG_MUTABLE
             );
             IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-            ContextCompat.registerReceiver(activity, this.usbReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
+            activity.getApplicationContext().registerReceiver(this.usbReceiver,filter,Context.RECEIVER_EXPORTED);
+            //Intent in = ContextCompat.registerReceiver(context, this.usbReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
             usbManager.requestPermission(mDevice, permissionIntent);
+            //usbPort = new USBPort(usbManager);
+            //new ConnectUSBPrinter().execute();
         }
     }
 }

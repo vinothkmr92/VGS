@@ -62,6 +62,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
     Dialog itemSearchdialog;
     ArrayList<KotDetails> kotDetails;
     ArrayList<KotDetails> kotDetailsOld;
+    public static KotActivity kotInstance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +102,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             btnCloseTable.setOnClickListener(this);
             btnCancel.setOnClickListener(this);
             btnPrint.setOnClickListener(this);
+            kotInstance = this;
             tableNo.requestFocus();
         }
         catch (Exception ex){
@@ -111,6 +113,9 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+    public static KotActivity getInstance(){
+        return kotInstance;
     }
     private void OpenItemSearchDialog(boolean isCat){
         itemSearchdialog =new Dialog(KotActivity.this);

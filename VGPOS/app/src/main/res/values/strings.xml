@@ -6,4 +6,8 @@
     <string name="SQL_PASSWORD">1@Knowbut</string>
     <string name="SQL_DBNAME">VG_POS</string>
     <string name="action_settings">Settings</string>
+    <string name="nav_open">Open Navigation</string>
+    <string name="nav_close">Close Navigation</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
     private void LoadHome() {
         if(CommonUtil.loggedinUserRoleID>1){
-            Intent intent = new Intent(getApplicationContext(), SalesReportActivity.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
         }
         else {

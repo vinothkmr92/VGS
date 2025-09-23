@@ -66,6 +66,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;
     GmsBarcodeScanner scanner;
+    public static SaleActivity saleInstance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +117,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                LoadCategoryMenu();
                LoadProductsMenu("ALL");
             }
+            saleInstance = this;
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -125,6 +127,18 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+    public void RefreshSaleScreen(){
+        productCart.clear();
+        prView.removeAllViews();
+        totalAmt.setText("0");
+        if(CommonUtil.categories.size()>0){
+            LoadCategoryMenu();
+            LoadProductsMenu("ALL");
+        }
+    }
+    public  static SaleActivity getInstance(){
+        return saleInstance;
     }
     private void LoadCategoryMenu(){
         BuildCatButtons("ALL");
@@ -238,6 +252,22 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
+            }
+        });
+        dialog.setCancelable(false);
+        dialog.show();
+    }
+    public void showDialogClose(String title,String Message) {
+        AlertDialog.Builder dialog =  new AlertDialog.Builder(SaleActivity.this);
+        dialog.setTitle(title);
+        dialog.setMessage("\n"+Message);
+        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //do something with edt.getText().toString();
+                finish();
+                Intent salePage = new Intent(SaleActivity.this,SaleActivity.class);
+                salePage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(salePage);
             }
         });
         dialog.setCancelable(false);
@@ -487,15 +517,10 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                         catch (Exception ex){
                             showCustomDialog("Error",ex.getMessage());
                         }
-                        finally {
-                            finish();
-                            Intent salePage = new Intent(SaleActivity.this,SaleActivity.class);
-                            salePage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(salePage);
-                        }
                     }
                     else{
                         showCustomDialog("Status",msg);
+                        RefreshSaleScreen();
                     }
                 }
                 else {
