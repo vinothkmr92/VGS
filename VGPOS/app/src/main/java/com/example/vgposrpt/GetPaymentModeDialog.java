@@ -16,12 +16,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
-public class GetPaymentModeDialog extends AppCompatDialogFragment {
+public class GetPaymentModeDialog extends DialogFragment {
     ImageButton btnCash;
     ImageButton btnCard;
     ImageButton btnUpi;
-    private PaymentDialogListener listener;
+    //private PaymentDialogListener listener;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -45,45 +47,32 @@ public class GetPaymentModeDialog extends AppCompatDialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
-                listener.getPaymentMode("CASH");
+                SaleFragment dn = (SaleFragment)getParentFragment();
+                dn.getPaymentMode("CASH");
+                //listener.getPaymentMode("CASH");
             }
         });
         btnCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
-                listener.getPaymentMode("CARD");
+                SaleFragment dn = (SaleFragment)getParentFragment();
+                dn.getPaymentMode("CARD");
+                //listener.getPaymentMode("CARD");
             }
         });
         btnUpi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
-                listener.getPaymentMode("UPI");
+                SaleFragment dn = (SaleFragment)getParentFragment();
+                dn.getPaymentMode("UPI");
+                //listener.getPaymentMode("UPI");
             }
         });
         Dialog dialog = builder.create();
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         return dialog;
-    }
-
-
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try{
-            listener = (PaymentDialogListener) context;
-        }
-        catch (ClassCastException ex){
-            throw  new ClassCastException(context+" must implement PaymentDialogListener interface");
-        }
-
-    }
-
-
-    public interface PaymentDialogListener{
-        void getPaymentMode(String paymentMode);
     }
 }

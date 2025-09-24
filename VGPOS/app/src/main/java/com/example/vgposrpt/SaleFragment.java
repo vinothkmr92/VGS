@@ -13,7 +13,13 @@ import android.graphics.Typeface;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -21,18 +27,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.mlkit.vision.barcode.common.Barcode;
@@ -40,20 +36,23 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
-import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class SaleActivity extends AppCompatActivity implements View.OnClickListener {
+
+public class SaleFragment extends Fragment implements View.OnClickListener {
 
     TextView totalAmt;
     LinearLayout prView;
@@ -62,30 +61,34 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<Product> productCart;
     ArrayList<Product> fullProducts;
     TextInputEditText searchprid;
-    ImageButton btnViewCart;
+    Dictionary<Integer,Integer> fixedColors;
+    Button btnViewCart;
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;
     GmsBarcodeScanner scanner;
-    public static SaleActivity saleInstance;
+    public static SaleFragment saleInstance;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_sale);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        Context context = getContext();
+        View view = inflater.inflate(R.layout.fragment_sale, container, false);
         try{
-            categoryView = findViewById(R.id.catView);
-            productsView = findViewById(R.id.PdView);
-            totalAmt = findViewById(R.id.billAmt);
-            prView = findViewById(R.id.prView);
-            btnViewCart = findViewById(R.id.btnViewCart);
+            categoryView = view.findViewById(R.id.catView);
+            productsView = view.findViewById(R.id.PdView);
+            totalAmt = view.findViewById(R.id.billAmt);
+            prView = view.findViewById(R.id.prView);
+            btnViewCart = view.findViewById(R.id.btnViewCart);
             btnViewCart.setOnClickListener(this);
             productCart = new ArrayList<>();
+            LoadFixedColors();
             fullProducts =  CommonUtil.productsFull;
             fullProducts.forEach(i->i.setQty(1));
             if(CommonUtil.cartItems.size()>0){
                 CommonUtil.cartItems.clear();
             }
-            searchprid = findViewById(R.id.searchprid);
+            searchprid = view.findViewById(R.id.searchprid);
             searchprid.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     // Perform your search operation here
@@ -99,7 +102,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                     if(searchlist==null){
                         searchprid.selectAll();
                         searchprid.requestFocus();
-                        Toast.makeText(SaleActivity.this,"No Products found for the Search.",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(),"No Products found for the Search.",Toast.LENGTH_LONG).show();
                     }
                     // Example: Log the search text
                     Log.d("Search", "Searching for: " + searchText);
@@ -112,21 +115,17 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             GmsBarcodeScannerOptions options = new GmsBarcodeScannerOptions.Builder()
                     .setBarcodeFormats(Barcode.FORMAT_QR_CODE,Barcode.FORMAT_CODE_128)
                     .build();
-            scanner = GmsBarcodeScanning.getClient(SaleActivity.this,options);
+            scanner = GmsBarcodeScanning.getClient(getContext(),options);
             if(CommonUtil.categories.size()>0){
-               LoadCategoryMenu();
-               LoadProductsMenu("ALL");
+                LoadCategoryMenu();
+                LoadProductsMenu("ALL");
             }
             saleInstance = this;
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
         }
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        return view;
     }
     public void RefreshSaleScreen(){
         productCart.clear();
@@ -137,14 +136,16 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             LoadProductsMenu("ALL");
         }
     }
-    public  static SaleActivity getInstance(){
+    public  static SaleFragment getInstance(){
         return saleInstance;
     }
     private void LoadCategoryMenu(){
-        BuildCatButtons("ALL");
+        BuildCatButtons("ALL",1);
+        int index = 2;
         for (String ct:
-             CommonUtil.categories) {
-            BuildCatButtons(ct);
+                CommonUtil.categories) {
+            BuildCatButtons(ct,index);
+            index++;
         }
     }
     private void LoadProductsMenu(String catName){
@@ -154,43 +155,75 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             products = products.stream().filter(c->c.getCategory().equals(catName)).collect(Collectors.toList());
         }
         int itemcount = products.size();
+        int index = 1;
         while (itemcount>0){
-            LinearLayout ln = new LinearLayout(this);
+            LinearLayout ln = new LinearLayout(getContext());
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
             ln.setLayoutParams(layoutParams);
             ln.setOrientation(LinearLayout.HORIZONTAL);
             ln.setPadding(10,10,10,10);
             List<Product> splic = products.stream().limit(6).collect(Collectors.toList());
             for (Product ic:splic) {
-                Button btn = BuildProductsButtons(ic.getProductName(),ic.getProductID());
+                Button btn = BuildProductsButtons(ic.getProductName(),ic.getProductID(),index);
                 ln.addView(btn);
                 products.remove(ic);
+                index++;
             }
             itemcount = products.size();
             if(splic.size()>0){
                 productsView.addView(ln);
             }
         }
-       // productsView.setStretchAllColumns(true);
+        // productsView.setStretchAllColumns(true);
     }
-    private Button BuildProductsButtons(String prName,String prID){
+    private void LoadFixedColors(){
+        fixedColors = new Hashtable<>();
+        fixedColors.put(1,getResources().getColor(R.color.IndianRed));
+        fixedColors.put(2,getResources().getColor(R.color.Gray));
+        fixedColors.put(3,getResources().getColor(R.color.RosyBrown));
+        fixedColors.put(4,getResources().getColor(R.color.Brown));
+        fixedColors.put(5,getResources().getColor(R.color.Tomato));
+        fixedColors.put(6,getResources().getColor(R.color.SandyBrown));
+        fixedColors.put(7,getResources().getColor(R.color.Peru));
+        fixedColors.put(8,getResources().getColor(R.color.DarkOrange));
+        fixedColors.put(9,getResources().getColor(R.color.DarkGoldenrod));
+        fixedColors.put(10,getResources().getColor(R.color.DarkKhaki));
+        fixedColors.put(11,getResources().getColor(R.color.OliveDrab));
+        fixedColors.put(12,getResources().getColor(R.color.Green));
+        fixedColors.put(13,getResources().getColor(R.color.LightSeaGreen));
+        fixedColors.put(14,getResources().getColor(R.color.DarkSlateGray));
+        fixedColors.put(15,getResources().getColor(R.color.SteelBlue));
+        fixedColors.put(16,getResources().getColor(R.color.DarkViolet));
+        fixedColors.put(17,getResources().getColor(R.color.DeepPink));
+        fixedColors.put(18,getResources().getColor(R.color.Crimson));
+        fixedColors.put(19,getResources().getColor(R.color.MediumVioletRed));
+        fixedColors.put(20,getResources().getColor(R.color.Purple));
+    }
+    private int GetButtonBackColor(int index)
+    {
+        index = index > 20 ? index % 20 : index;
+        index = index == 0 ? 1 : index;
+        int colorint = fixedColors.get(index);
+        return colorint;
+    }
+    private Button BuildProductsButtons(String prName,String prID,Integer index){
         // Create a new Button
-        Button dynamicButton = new Button(this);
+        Button dynamicButton = new Button(getContext());
         dynamicButton.setText(prName); // Set button text
         dynamicButton.setTag(prID);
         dynamicButton.setTextColor(Color.WHITE);
         dynamicButton.setTypeface(null, Typeface.BOLD);
         // Generate a random color
-        Random random = new Random();
-        int color = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
-        dynamicButton.setBackgroundColor(color);
+        int backColor = GetButtonBackColor(index);
+        dynamicButton.setBackgroundColor(backColor);
 
         // Optional: Set layout parameters for the button
         //LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(120,120);
         layoutParams.setMargins(10, 0, 0, 0); // Add some margin if desired
         dynamicButton.setLayoutParams(layoutParams);
-
+        dynamicButton.setMinHeight(120);
+        dynamicButton.setMinWidth(120);
         // Add the button to the LinearLayout
 
 
@@ -209,16 +242,16 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         });
         return  dynamicButton;
     }
-    private void BuildCatButtons(String cat) {
+    private void BuildCatButtons(String cat,Integer index) {
         // Create a new Button
-        Button dynamicButton = new Button(this);
+        Button dynamicButton = new Button(getContext());
         dynamicButton.setText(cat); // Set button text
         dynamicButton.setTag(cat);
         dynamicButton.setTextColor(Color.WHITE);
         dynamicButton.setTypeface(null, Typeface.BOLD);
         // Generate a random color
-        Random random = new Random();
-        int color = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
+
+        int color = GetButtonBackColor(index);
         dynamicButton.setBackgroundColor(color);
 
         // Optional: Set layout parameters for the button
@@ -246,7 +279,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void showCustomDialog(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(SaleActivity.this);
+        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -258,16 +291,13 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         dialog.show();
     }
     public void showDialogClose(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(SaleActivity.this);
+        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //do something with edt.getText().toString();
-                finish();
-                Intent salePage = new Intent(SaleActivity.this,SaleActivity.class);
-                salePage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(salePage);
+                RefreshSaleScreen();
             }
         });
         dialog.setCancelable(false);
@@ -332,7 +362,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         if(latestQty==0){
             prView.removeAllViews();
             for (Product p:
-                 productCart) {
+                    productCart) {
                 LoadPRView(p);
             }
         }
@@ -393,16 +423,6 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         });
         prView.addView(view);
     }
-    @Override
-    public void onBackPressed(){
-        if(CommonUtil.cartItems!=null){
-            CommonUtil.cartItems.clear();
-        }
-        Intent rptPage = new Intent(this,SalesReportActivity.class);
-        rptPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(rptPage);
-        super.onBackPressed();
-    }
     public static void hideKeyboard(Activity activity) {
         View view = activity.findViewById(android.R.id.content);
         if (view != null) {
@@ -411,30 +431,12 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private boolean hasCameraPermission() {
-        return ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED;
-    }
 
-    private void requestCameraPermission() {
-        ActivityCompat.requestPermissions(
-                this,
-                CAMERA_PERMISSION,
-                CAMERA_REQUEST_CODE
-        );
-    }
 
-    public void GoToSalePage() {
-        Intent salePage = new Intent(SaleActivity.this,SaleActivity.class);
-        salePage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(salePage);
-    }
     public void GetPaymentMode(){
         try {
             GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
-            addCustomer.show(getSupportFragmentManager(),"");
+            addCustomer.show(getChildFragmentManager(),"");
         }catch (Exception ex){
             showCustomDialog("Error",ex.getMessage().toString());
         }
@@ -483,7 +485,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
     {
         Boolean isSuccess = false;
         String error = "";
-        private final ProgressDialog dialog = new ProgressDialog(SaleActivity.this,R.style.CustomProgressStyle);
+        private final ProgressDialog dialog = new ProgressDialog(getContext(),R.style.CustomProgressStyle);
         ConnectionClass connectionClass = null;
         Connection con = null;
         BillDetails billDetails;
@@ -509,7 +511,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                     boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
                     if(print){
                         try{
-                            PrinterUtil printerUtil = new PrinterUtil(SaleActivity.this,SaleActivity.this,false);
+                            PrinterUtil printerUtil = new PrinterUtil(getContext(),getActivity(),false);
                             printerUtil.billDetail = billDetails;
                             printerUtil.Print();
                         }

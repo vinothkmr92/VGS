@@ -3,6 +3,7 @@ package com.example.vgposrpt;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -101,6 +102,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Context context = getContext();
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         try{
             chart = view.findViewById(R.id.salesChart);

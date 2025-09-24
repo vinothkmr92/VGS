@@ -763,10 +763,11 @@ public class PrinterUtil {
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
-                    String localClassName = activity.getLocalClassName();
+                    SaleFragment.getInstance().RefreshSaleScreen();
+                    /*String localClassName = activity.getLocalClassName();
                     if(localClassName.equals("SaleActivity")){
                         SaleActivity.getInstance().RefreshSaleScreen();
-                    }
+                    }*/
                 }
             }
             else{
