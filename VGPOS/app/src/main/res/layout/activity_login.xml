@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Khaki"
+    android:background="@color/White"
     tools:context=".LoginActivity">
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,11 +26,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/orienta"
             android:text="Welcome"
             android:layout_marginBottom="50dp"
             android:textAlignment="center"
             android:textColor="@color/DarkViolet"
+            android:textStyle="bold"
             android:textSize="40dp">
         </TextView>
         <ImageView android:layout_gravity="center"
@@ -45,7 +45,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/orienta"
             android:inputType="text"
             android:id="@+id/userid"
             android:hint="User Name"
@@ -58,7 +57,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/orienta"
             android:inputType="textPassword"
             android:id="@+id/password"
             android:textAlignment="center"
@@ -73,10 +71,13 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/loginbtn"
             android:layout_width="wrap_content"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:foreground="?android:attr/selectableItemBackground"
-            android:background="@drawable/baseline_login_24"></com.google.android.material.button.MaterialButton>
+            android:text="Login"
+            android:textColor="@color/White"
+            android:backgroundTint="@color/MediumBlue"
+            android:drawableLeft="@drawable/baseline_login_24"></com.google.android.material.button.MaterialButton>
     </GridLayout>
 
     </LinearLayout>

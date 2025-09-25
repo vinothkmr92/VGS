@@ -3,15 +3,18 @@ package com.example.vgposrpt;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,19 +28,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,8 +41,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class KotActivity extends AppCompatActivity implements View.OnClickListener {
 
+public class KotFragment extends Fragment implements View.OnClickListener {
     TextView kotNoTextView;
     TextInputLayout tableNo;
     EditText catEditText;
@@ -62,26 +58,28 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
     Dialog itemSearchdialog;
     ArrayList<KotDetails> kotDetails;
     ArrayList<KotDetails> kotDetailsOld;
-    public static KotActivity kotInstance;
+    public static KotFragment kotInstance;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_kot);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        Context cn = getContext();
+        View view = inflater.inflate(R.layout.fragment_kot, container, false);
         try{
             kotDetails = new ArrayList<>();
-            kotCartlayout = findViewById(R.id.kotCartlayout);
-            kotNoTextView = findViewById(R.id.kotNoTxt);
+            kotCartlayout = view.findViewById(R.id.kotCartlayout);
+            kotNoTextView = view.findViewById(R.id.kotNoTxt);
             kotNoTextView.setText(String.valueOf(CommonUtil.kotNo));
-            tableNo = findViewById(R.id.kotTb);
-            catEditText = findViewById(R.id.catEditText);
-            prNameEditText = findViewById(R.id.prNameEditText);
-            btnAdd = findViewById(R.id.btnPrAdd);
-            btnCatSearch = findViewById(R.id.btnCatSearch);
-            btnPrSearch = findViewById(R.id.btnPrSearch);
-            tablesAutoComplete = findViewById(R.id.kotTables);
+            tableNo = view.findViewById(R.id.kotTb);
+            catEditText = view.findViewById(R.id.catEditText);
+            prNameEditText = view.findViewById(R.id.prNameEditText);
+            btnAdd = view.findViewById(R.id.btnPrAdd);
+            btnCatSearch = view.findViewById(R.id.btnCatSearch);
+            btnPrSearch = view.findViewById(R.id.btnPrSearch);
+            tablesAutoComplete = view.findViewById(R.id.kotTables);
             List<String> tableNames = CommonUtil.tablesList.stream().map(c->c.TableName).collect(Collectors.toList());
-            ArrayAdapter<String> tablesAdaptor = new ArrayAdapter<>(this,com.google.android.material.R.layout.support_simple_spinner_dropdown_item,tableNames);
+            ArrayAdapter<String> tablesAdaptor = new ArrayAdapter<>(getContext(),com.google.android.material.R.layout.support_simple_spinner_dropdown_item,tableNames);
             tablesAutoComplete.setAdapter(tablesAdaptor);
             tablesAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -93,9 +91,9 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                     }
                 }
             });
-            btnCloseTable = (Button) findViewById(R.id.closeTable);
-            btnCancel = (Button) findViewById(R.id.cancel);
-            btnPrint = (Button) findViewById(R.id.print);
+            btnCloseTable = view.findViewById(R.id.closeTable);
+            btnCancel = view.findViewById(R.id.cancel);
+            btnPrint = view.findViewById(R.id.print);
             btnPrSearch.setOnClickListener(this);
             btnCatSearch.setOnClickListener(this);
             btnAdd.setOnClickListener(this);
@@ -108,17 +106,13 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
         }
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        return  view;
     }
-    public static KotActivity getInstance(){
+    public static KotFragment getInstance(){
         return kotInstance;
     }
     private void OpenItemSearchDialog(boolean isCat){
-        itemSearchdialog =new Dialog(KotActivity.this);
+        itemSearchdialog =new Dialog(getContext());
 
         // set custom dialog
         itemSearchdialog.setContentView(R.layout.dialog_items_search);
@@ -148,7 +142,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             String cat = catEditText.getText().toString();
             listItems = CommonUtil.productsFull.stream().filter(c->c.getCategory().equals(cat)).map(c->c.getProductName()).collect(Collectors.toList());
         }
-        ArrayAdapter<String> adapter=new ArrayAdapter<>(KotActivity.this,  R.layout.products_list_view, R.id.list_content,listItems);
+        ArrayAdapter<String> adapter=new ArrayAdapter<>(getContext(),  R.layout.products_list_view, R.id.list_content,listItems);
 
         // set adapter
         listView.setAdapter(adapter);
@@ -188,7 +182,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
         });
     }
     public void showCustomDialog(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(KotActivity.this);
+        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -222,14 +216,14 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
             LoadKotCartView();
         }
         else {
-            Toast.makeText(this,"Not a valid Product.",Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(),"Not a valid Product.",Toast.LENGTH_LONG).show();
         }
 
     }
     private void LoadKotCartView(){
         kotCartlayout.removeAllViews();
         for (KotDetails pr:
-             kotDetails) {
+                kotDetails) {
             View view = getLayoutInflater().inflate(R.layout.cart_kot,null);
             TextView prName = view.findViewById(R.id.kotCartItemName);
             TextView prQty = view.findViewById(R.id.kotCartQty);
@@ -354,7 +348,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
     public ArrayList<Product> GetBillProductsFromKot(){
         ArrayList<Product> billProducts = new ArrayList<>();
         for (KotDetails kot:
-             kotDetails) {
+                kotDetails) {
             Product pr = CommonUtil.productsFull.stream().filter(c->c.getProductID().equals(kot.ProductId)).findFirst().orElse(null);
             if(pr!=null){
                 pr.setQty(kot.Qty);
@@ -385,7 +379,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
                         showCustomDialog("Warning","No Items Added to Close the Table.");
                     }
                 } catch (Exception e) {
-                    Toast.makeText(this,"Error:"+e.getMessage(), Toast.LENGTH_SHORT);
+                    Toast.makeText(getContext(),"Error:"+e.getMessage(), Toast.LENGTH_SHORT);
                 }
                 break;
             case R.id.cancel:
@@ -447,14 +441,14 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     public void RefreshKotPage(String title,String Message,boolean print,ArrayList<KotDetails> kotDetails,BillDetails billDetails) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(KotActivity.this);
+        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if(print){
                     try{
-                        PrinterUtil printerUtil = new PrinterUtil(KotActivity.this,KotActivity.this,kotDetails!=null);
+                        PrinterUtil printerUtil = new PrinterUtil(getContext(),getInstance(),kotDetails!=null);
                         printerUtil.billDetail = billDetails;
                         printerUtil.kotDetails = kotDetails;
                         printerUtil.Print();
@@ -474,7 +468,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
     {
         Boolean isSuccess = false;
         String error = "";
-        private final ProgressDialog dialog = new ProgressDialog(KotActivity.this);
+        private final ProgressDialog dialog = new ProgressDialog(getContext());
         ConnectionClass connectionClass = null;
         Connection con = null;
         ArrayList<KotDetails> kotlist;
@@ -618,7 +612,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
     {
         String z = "";
         Boolean isSuccess = false;
-        private final ProgressDialog dialog = new ProgressDialog(KotActivity.this);
+        private final ProgressDialog dialog = new ProgressDialog(getContext());
         ConnectionClass connectionClass = null;
         Connection con = null;
         @Override
@@ -696,7 +690,7 @@ public class KotActivity extends AppCompatActivity implements View.OnClickListen
     {
         Boolean isSuccess = false;
         String error = "";
-        private final ProgressDialog dialog = new ProgressDialog(KotActivity.this);
+        private final ProgressDialog dialog = new ProgressDialog(getContext());
         ConnectionClass connectionClass = null;
         Connection con = null;
         BillDetails billDetails;

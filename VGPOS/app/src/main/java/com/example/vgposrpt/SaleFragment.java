@@ -511,7 +511,7 @@ public class SaleFragment extends Fragment implements View.OnClickListener {
                     boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
                     if(print){
                         try{
-                            PrinterUtil printerUtil = new PrinterUtil(getContext(),getActivity(),false);
+                            PrinterUtil printerUtil = new PrinterUtil(getContext(),getInstance(),false);
                             printerUtil.billDetail = billDetails;
                             printerUtil.Print();
                         }

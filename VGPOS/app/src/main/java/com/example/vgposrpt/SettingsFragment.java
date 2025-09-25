@@ -409,7 +409,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     break;
             }
             headerfooterLayout.setVisibility(printerOptionNone.isChecked()?View.GONE:View.VISIBLE);
-            printerSettingsView.setVisibility(printerOptionNone.isChecked()?View.GONE:View.VISIBLE);
+            printerSettingsView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.GONE:View.VISIBLE);
+            rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.GONE:View.VISIBLE);
             printerIP.setVisibility(printerOptionWifi.isChecked() ? View.VISIBLE:View.GONE);
             printerIPKot.setVisibility(printerOptionWifiKot.isChecked()?View.VISIBLE:View.GONE);
             printer.setVisibility(printerOptionBluetooth.isChecked() ? View.VISIBLE:View.GONE);

@@ -33,8 +33,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
         if(savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomeFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_home);
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                int selectedMenuItemId = extras.getInt("settings", -1); // -1 if not found
+                if (selectedMenuItemId != -1) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new SettingsFragment()).commit();
+                    navigationView.setCheckedItem(R.id.action_settings);
+                }
+                int selectedMenuItemIdKot = extras.getInt("kot", -1); // -1 if not found
+                if (selectedMenuItemIdKot != -1) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new KotFragment()).commit();
+                    navigationView.setCheckedItem(R.id.kot);
+                }
+            }
+            else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomeFragment()).commit();
+                navigationView.setCheckedItem(R.id.nav_home);
+            }
+
         }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -57,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.salesnew:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new SaleFragment()).commit();
+                break;
+            case R.id.kot:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new KotFragment()).commit();
                 break;
             case R.id.exitmenu:
                 finish();

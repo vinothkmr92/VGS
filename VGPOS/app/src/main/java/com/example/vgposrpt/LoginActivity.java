@@ -138,7 +138,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             startActivity(intent);
         }
         else {
-            Intent intent = new Intent(getApplicationContext(), KotActivity.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("kot", R.id.kot);
             startActivity(intent);
         }
         finish();
@@ -165,9 +166,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 System.exit(0);
                 return true;
             case R.id.action_settings:
-                Intent dcpage = new Intent(this,SettingsActivity.class);
-                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(dcpage);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("settings", R.id.action_settings);
+                startActivity(intent);
                 return  true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -51,15 +51,6 @@
             android:name=".UploadActivity"
             android:exported="false" />
         <activity
-            android:name=".KotActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CartViewActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SaleActivity"
-            android:exported="true" />
-        <activity
             android:name=".ViewProductsActivity"
             android:exported="false" />
         <activity
@@ -67,12 +58,6 @@
             android:exported="false" />
         <activity
             android:name=".ViewBillsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SalesReportActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SettingsActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"

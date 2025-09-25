@@ -30,6 +30,7 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
 
 import com.sewoo.jpos.command.ESCPOS;
 import com.sewoo.jpos.printer.ESCPOSPrinter;
@@ -77,7 +78,7 @@ public class PrinterUtil {
     private UsbDevice usbDevice;
     private UsbManager usbManager;
     private boolean receivedBrodCast;
-    private Activity activity;
+    private Fragment activity;
     private boolean isKot;
     private static final String ACTION_USB_PERMISSION = "com.example.vgposrpt.USB_PERMISSION";
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
@@ -85,7 +86,7 @@ public class PrinterUtil {
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
-                    usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
+                    usbManager = (UsbManager) activity.getActivity().getSystemService(Context.USB_SERVICE);
                     usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if (usbManager != null && usbDevice != null && !receivedBrodCast) {
@@ -102,17 +103,17 @@ public class PrinterUtil {
     };
 
     private void PassMsgToActivity(String title,String Msg){
-        String localClassName = activity.getLocalClassName();
+        String localClassName = activity.getClass().getSimpleName();
         switch (localClassName){
-            case "SaleActivity":
-                SaleActivity.getInstance().showCustomDialog(title,Msg);
+            case "SaleFragment":
+                SaleFragment.getInstance().showCustomDialog(title,Msg);
                 break;
-            case "KotActivity":
-                KotActivity.getInstance().showCustomDialog(title,Msg);
+            case "KotFragment":
+                KotFragment.getInstance().showCustomDialog(title,Msg);
                 break;
         }
     }
-    public PrinterUtil(Context cntx,Activity act,boolean kot) {
+    public PrinterUtil(Context cntx,Fragment act,boolean kot) {
         posPtr=new ESCPOSPrinter();
         activity = act;
         isKot = kot;
@@ -620,9 +621,9 @@ public class PrinterUtil {
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
-                    String localClassName = activity.getLocalClassName();
-                    if(localClassName.equals("SaleActivity")){
-                        SaleActivity.getInstance().RefreshSaleScreen();
+                    String localClassName = activity.getClass().getSimpleName();
+                    if(localClassName.equals("SaleFragment")){
+                        SaleFragment.getInstance().RefreshSaleScreen();
                     }
                 }
             }
@@ -695,9 +696,9 @@ public class PrinterUtil {
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
-                    String localClassName = activity.getLocalClassName();
-                    if(localClassName.equals("SaleActivity")){
-                        SaleActivity.getInstance().RefreshSaleScreen();
+                    String localClassName = activity.getClass().getSimpleName();
+                    if(localClassName.equals("SaleFragment")){
+                        SaleFragment.getInstance().RefreshSaleScreen();
                     }
                 }
             }
@@ -780,16 +781,16 @@ public class PrinterUtil {
     }
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void ConnectUSB() {
-        usbManager = (UsbManager) activity.getApplicationContext().getSystemService(Context.USB_SERVICE);
+        usbManager = (UsbManager) activity.getActivity().getApplicationContext().getSystemService(Context.USB_SERVICE);
         HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
         Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
         UsbDevice mDevice = null;
         while (mDeviceIterator.hasNext()) {
             mDevice = mDeviceIterator.next();
             if (mDevice == null) {
-                Toast.makeText(activity, "mDevice is null", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity.getContext(), "mDevice is null", Toast.LENGTH_SHORT).show();
             }else{
-                Toast.makeText(activity, "USB Device found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
                 if(mDevice.getProductName().equals(isKot ? CommonUtil.usbDeviceNameKot: CommonUtil.usbDeviceName)){
                     break;
                 }
@@ -798,13 +799,13 @@ public class PrinterUtil {
         usbDevice = mDevice;
         if (usbManager != null) {
             PendingIntent permissionIntent = PendingIntent.getBroadcast(
-                    activity,
+                    activity.getActivity(),
                     0,
                     new Intent(ACTION_USB_PERMISSION).setPackage(context.getPackageName()),
                     PendingIntent.FLAG_MUTABLE
             );
             IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-            activity.getApplicationContext().registerReceiver(this.usbReceiver,filter,Context.RECEIVER_EXPORTED);
+            activity.getActivity().getApplicationContext().registerReceiver(this.usbReceiver,filter,Context.RECEIVER_EXPORTED);
             //Intent in = ContextCompat.registerReceiver(context, this.usbReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
             usbManager.requestPermission(mDevice, permissionIntent);
             //usbPort = new USBPort(usbManager);
