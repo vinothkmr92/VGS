@@ -3,26 +3,29 @@ package com.example.vgposrpt;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import androidx.activity.EdgeToEdge;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -31,7 +34,6 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +41,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,7 +49,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class ProductsReportActivity extends AppCompatActivity implements View.OnClickListener {
+
+public class ReportFragment extends Fragment implements View.OnClickListener {
+
 
     TextView frmDateTextView;
     TextView toDateTextView;
@@ -67,22 +70,23 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
     MaterialButton btnViewProducts;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        Context cnt = getContext();
+        View view = inflater.inflate(R.layout.fragment_report, container, false);
         try{
-            super.onCreate(savedInstanceState);
-            EdgeToEdge.enable(this);
-            setContentView(R.layout.activity_products_report);
-            frmDateTextView = findViewById(R.id.productsrptFrmDate);
-            toDateTextView = findViewById(R.id.productsrptToDate);
-            txtBranch = findViewById(R.id.productsbr);
-            chart = findViewById(R.id.chart1);
-            prodChart = findViewById(R.id.chart2);
-            btnViewProducts = findViewById(R.id.btnViewProducts);
+            frmDateTextView = view.findViewById(R.id.productsrptFrmDate);
+            toDateTextView = view.findViewById(R.id.productsrptToDate);
+            txtBranch = view.findViewById(R.id.productsbr);
+            chart = view.findViewById(R.id.chart1);
+            prodChart = view.findViewById(R.id.chart2);
+            btnViewProducts = view.findViewById(R.id.btnViewProducts);
             btnViewProducts.setOnClickListener(this);
             frmDateTextView.setOnClickListener(this);
             toDateTextView.setOnClickListener(this);
-            txtUser = findViewById(R.id.productUser);
-            autoCompleteUsersView = findViewById(R.id.productUsers);
+            txtUser = view.findViewById(R.id.productUser);
+            autoCompleteUsersView = view.findViewById(R.id.productUsers);
             txtBranch.setEnabled(CommonUtil.loggedinUserRoleID>1);
             txtUser.setEnabled(CommonUtil.loggedinUserRoleID>1);
             SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
@@ -101,8 +105,8 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
             }
             txtUser.getEditText().setText(defaultUser);
             GetDefaultDate();
-            datePickerDialog = new DatePickerDialog(ProductsReportActivity.this,myDateListener,year,month,day);
-            todatePickerDialog = new DatePickerDialog(ProductsReportActivity.this,mytoDateListener,year,month,day);
+            datePickerDialog = new DatePickerDialog(getContext(),myDateListener,year,month,day);
+            todatePickerDialog = new DatePickerDialog(getContext(),mytoDateListener,year,month,day);
             Branch defaultBranch = CommonUtil.branchList.get(0);
 
             if(CommonUtil.selectedBarnch!=null){
@@ -112,8 +116,8 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 defaultBranch = CommonUtil.branchList.get(1);
             }
             txtBranch.getEditText().setText(defaultBranch.getBranch_Name());
-            autoCompleteTextView = findViewById(R.id.prductsbranches);
-            ArrayAdapter<Branch> adapter = new ArrayAdapter<Branch>(this, com.google.android.material.R.layout.support_simple_spinner_dropdown_item,CommonUtil.branchList);
+            autoCompleteTextView = view.findViewById(R.id.prductsbranches);
+            ArrayAdapter<Branch> adapter = new ArrayAdapter<Branch>(getContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item,CommonUtil.branchList);
             autoCompleteTextView.setAdapter(adapter);
             autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -125,7 +129,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
             ArrayList<String> userlistforAdaptor = new ArrayList<>();
             userlistforAdaptor.add("ALL");
             userlistforAdaptor.addAll(CommonUtil.users);
-            ArrayAdapter<String> useradapter = new ArrayAdapter<>(this,com.google.android.material.R.layout.support_simple_spinner_dropdown_item,userlistforAdaptor);
+            ArrayAdapter<String> useradapter = new ArrayAdapter<>(getContext(),com.google.android.material.R.layout.support_simple_spinner_dropdown_item,userlistforAdaptor);
             autoCompleteUsersView.setAdapter(useradapter);
             autoCompleteUsersView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -134,38 +138,26 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 }
             });
             new GetCategorySummary().execute("");
-
-            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-                return insets;
-            });
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage(),true);
         }
+        return  view;
     }
-
     public void showCustomDialog(String title,String Message,Boolean close) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(ProductsReportActivity.this);
+        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if(close){
-                    finish();
+                    getActivity().finish();
                     System.exit(0);
                 }
             }
         });
         dialog.setCancelable(false);
         dialog.show();
-    }
-
-    @Override
-    public void onBackPressed(){
-        finish();
-        super.onBackPressed();
     }
 
     @Override
@@ -185,9 +177,8 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
                 CommonUtil.selectedBarnch = GetSelectedBranch();
                 CommonUtil.frmDate = frmDateTextView.getText().toString();
                 CommonUtil.toDate = toDateTextView.getText().toString();
-                Intent intent2 = new Intent(getApplicationContext(), ViewProductsActivity.class);
+                Intent intent2 = new Intent(getContext(), ViewProductsActivity.class);
                 startActivity(intent2);
-
         }
     }
     private  void GetDefaultDate(){
@@ -279,7 +270,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
         }
         PieDataSet dataSet = new PieDataSet(pieEntires,"");
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        Typeface typeface = ResourcesCompat.getFont(this, R.font.orienta);
+        Typeface typeface = ResourcesCompat.getFont(getContext(), R.font.orienta);
         dataSet.setValueTypeface(typeface);
         //dataSet.setDrawValues(false);
         dataSet.setValueTextSize(20);
@@ -317,7 +308,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
             pieEntires.add(new PieEntry(amt,cslist.get(i).getCategory()));
         }
         PieDataSet dataSet = new PieDataSet(pieEntires,"");
-        Typeface typeface = ResourcesCompat.getFont(this, R.font.orienta);
+        Typeface typeface = ResourcesCompat.getFont(getContext(), R.font.orienta);
         dataSet.setValueTypeface(typeface);
         dataSet.setValueFormatter(new IndianRuppeFormatter());
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
@@ -360,7 +351,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
         Boolean isSuccess = false;
         String error = "";
         String selectedUser = "ALL";
-        private final ProgressDialog dialog = new ProgressDialog(ProductsReportActivity.this,R.style.CustomProgressStyle);
+        private final ProgressDialog dialog = new ProgressDialog(getContext(),R.style.CustomProgressStyle);
 
         @Override
         protected void onPreExecute() {
@@ -448,7 +439,7 @@ public class ProductsReportActivity extends AppCompatActivity implements View.On
         Boolean isSuccess = false;
         String error = "";
         String selectedUser = "ALL";
-        private final ProgressDialog dialog = new ProgressDialog(ProductsReportActivity.this,R.style.CustomProgressStyle);
+        private final ProgressDialog dialog = new ProgressDialog(getContext(),R.style.CustomProgressStyle);
 
         @Override
         protected void onPreExecute() {

@@ -4,14 +4,13 @@
     android:layout_height="150dp"
     android:gravity="bottom"
     android:padding="5dp"
-    android:background="@color/MintCream"
+    android:background="@color/white"
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/pos">
-
     </ImageView>
     <TextView
         android:layout_width="wrap_content"
@@ -24,19 +23,35 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content">
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/outline_public_24"></ImageView>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/Purple"
-            android:autoLink="web"
-            android:text="https://www.vgsolutionandtechnology.com/"
+            android:textColor="@color/Gray"
+            android:text="User Name: "
+            ></TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Magenta"
+            android:text=""
+            android:textStyle="bold"
+            android:id="@+id/loggedinuser"
             >
-
         </TextView>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_gravity="right"
+        android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/logout"
+        android:text="Logout"
+        android:textColor="@color/IndianRed"
+        android:textStyle="bold"
+        android:textAlignment="gravity"
+        android:clickable="true">
+    </TextView></LinearLayout>
 
 </LinearLayout>

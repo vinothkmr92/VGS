@@ -50,7 +50,7 @@
             android:hint="User Name"
             android:textSize="30dp"
             android:textAlignment="center"
-            android:textColorHint="@color/DarkBlue"
+            android:textColorHint="@color/LightBlue"
             android:textColor="@color/BlueViolet">
         </EditText>
         <EditText
@@ -60,7 +60,7 @@
             android:inputType="textPassword"
             android:id="@+id/password"
             android:textAlignment="center"
-            android:textColorHint="@color/DarkBlue"
+            android:textColorHint="@color/LightBlue"
             android:textSize="30dp"
             android:hint="Password"
             android:textColor="@color/BlueViolet"
