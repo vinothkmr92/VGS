@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.vgposrpt",
+  "applicationId": "com.example.vgtxtrpt",
   "variantName": "release",
   "elements": [
     {
@@ -13,7 +13,7 @@
       "attributes": [],
       "versionCode": 1,
       "versionName": "1.0",
-      "outputFile": "VGPOS.apk"
+      "outputFile": "VGTXTRPT.apk"
     }
   ],
   "elementType": "File",
@@ -22,14 +22,14 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/VGPOS.dm"
+        "baselineProfiles/1/VGTXTRPT.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/VGPOS.dm"
+        "baselineProfiles/0/VGTXTRPT.dm"
       ]
     }
   ],

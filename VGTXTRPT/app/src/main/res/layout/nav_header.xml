@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textColor="@color/DarkBlue"
-        android:text="VGPOS - Point Of Sale">
+        android:text="VGTXT - Point Of Sale">
     </TextView>
     <LinearLayout
         android:layout_width="match_parent"

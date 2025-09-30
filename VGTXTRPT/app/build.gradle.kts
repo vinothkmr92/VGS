@@ -1,16 +1,13 @@
-import java.text.SimpleDateFormat
-import java.util.Date
-
 plugins {
     alias(libs.plugins.android.application)
 }
 
 android {
-    namespace = "com.example.vgposrpt"
+    namespace = "com.example.vgtxtrpt"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.vgposrpt"
+        applicationId = "com.example.vgtxtrpt"
         minSdk = 30
         targetSdk = 35
         versionCode = 1
@@ -29,8 +26,7 @@ android {
         applicationVariants.all {
             outputs.all {
                 this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-                //val timestamp = SimpleDateFormat("ddMMyyyy_hhmm_aa").format(Date())
-                val apkName = "VGPOS.apk"
+                val apkName = "VGTXTRPT.apk"
                 outputFileName = apkName
             }
         }

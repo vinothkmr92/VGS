@@ -27,7 +27,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
                     android:id="@+id/salesbr"
-                    android:hint="Branch"
+                    android:hint="Location"
                     android:textColorHint="@color/colorAccent"
                     android:textStyle="bold"
                     android:padding="10dp"
@@ -41,27 +41,6 @@
                         android:fontFamily="@font/orienta"
                         android:inputType="none"></AutoCompleteTextView>
                 </com.google.android.material.textfield.TextInputLayout>
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_columnSpan="4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:id="@+id/salesUser"
-                    android:hint="Users"
-                    android:textColorHint="@color/colorAccent"
-                    android:textStyle="bold"
-                    android:padding="10dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/salesUsers"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/orienta"
-                        android:textColor="@color/DarkBlue"
-                        android:inputType="none"></AutoCompleteTextView>
-                </com.google.android.material.textfield.TextInputLayout>
-
                 <TextView
                     android:id="@+id/salesrptFrmDate"
                     android:layout_width="wrap_content"
