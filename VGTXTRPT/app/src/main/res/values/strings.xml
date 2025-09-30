@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">VGTXTRPT</string>
+    <string name="title_activity_item_wise_report">ItemWiseReportActivity</string>
+    <string name="SQL_SERVER">60.243.50.58:4277</string>
+    <string name="SQL_USERNAME">sa</string>
+    <string name="SQL_PASSWORD">1@Knowbut</string>
+    <string name="SQL_DBNAME">VG_POS_TXT</string>
+    <string name="action_settings">Settings</string>
+    <string name="nav_open">Open Navigation</string>
+    <string name="nav_close">Close Navigation</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

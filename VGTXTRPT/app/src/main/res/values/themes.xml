@@ -1,0 +1,27 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.VGPOSRPT" parent="Theme.MaterialComponents.Light.Bridge">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/MediumVioletRed</item>
+        <item name="colorPrimaryDark">@color/BlueViolet</item>
+        <item name="colorAccent">@color/BlueViolet</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Theme.VGPOSRPT" parent="Base.Theme.VGPOSRPT" />
+
+
+    <style name="Theme.VGPOSRPT.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.VGPOSRPT.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="CustomProgressStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/MediumVioletRed</item>
+        <item name="android:textColorPrimary">@color/DarkBlue</item>
+        <item name="android:background">@color/White</item>
+        <item name="android:icon">@drawable/vgpos</item>
+    </style>
+</resources>
