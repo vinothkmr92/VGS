@@ -800,7 +800,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> CreateCommandToPrint(){
         ArrayList<String> command = new ArrayList<>();
         ArrayList<ArrayList<String>> datatoPrint = new ArrayList<>();
-        for(int i=0;i<excelData.size();i++){
+        for(int i=1;i<excelData.size();i++){
             ArrayList<String> row = excelData.get(i);
             String n = row.get(row.size()-1);
             Double noc = Double.parseDouble(n);
@@ -952,6 +952,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     class ConnectLabelPrinter extends AsyncTask<String, Void, ArrayList<String>>
     {
         private final ProgressDialog dialog = new ProgressDialog(HomeActivity.this);
+        String errorMsg = "";
         @Override
         protected void onPreExecute()
         {
@@ -979,7 +980,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 if(dialog.isShowing()){
                     dialog.cancel();
                 }
-                showCustomDialog("Error",e.getMessage());
+                errorMsg = e.getMessage();
             }
             return cmd;
         }
@@ -987,9 +988,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(ArrayList<String> res)
         {
-            Print(res);
-            if(dialog.isShowing()){
-                dialog.cancel();
+            if(errorMsg.isEmpty()){
+                Print(res);
+                if(dialog.isShowing()){
+                    dialog.cancel();
+                }
+            }
+            else {
+                showCustomDialog("Exception",errorMsg);
             }
             super.onPostExecute(res);
         }

@@ -66,7 +66,6 @@ public class ViewProductsActivity extends AppCompatActivity {
         TextView billAmt = view.findViewById(R.id.itemcard_amt);
         DecimalFormat formater = new DecimalFormat("#.###");
         String qtyStr = formater.format(sr.getSoldQty());
-        qtyStr = "QTY: "+qtyStr;
         qty.setText(qtyStr);
         prname.setText(sr.getProductName());
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
