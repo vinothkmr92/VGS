@@ -293,7 +293,7 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
                 if (con == null) {
                     error = "Database Connection Failed.";
                 } else {
-                    String query = String.format("SELECT Bill_No,cast(concat(SUBSTRING(CONVERT(VARCHAR(10), bILL_DATE, 120),0,11),' ',SUBSTRING(convert(varchar(30),time,121),11,13)) as datetime) as Bill_Date, BILL_AMMOUNT-(BILL_AMMOUNT*(DISCOUNT/100)) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT Bill_No,cast(concat(SUBSTRING(CONVERT(VARCHAR(10), bILL_DATE, 120),0,11),' ',SUBSTRING(convert(varchar(30),time,121),11,13)) as datetime) as Bill_Date, (Cash_Received+Card_Received+Coupon_Received) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(!counterID.equalsIgnoreCase("0")){
                         query = query+String.format(" AND COUNTER_ID='%s'",counterID);
                     }

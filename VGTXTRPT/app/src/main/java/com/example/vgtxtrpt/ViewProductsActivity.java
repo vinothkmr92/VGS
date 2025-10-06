@@ -145,7 +145,7 @@ public class ViewProductsActivity extends AppCompatActivity {
                 if (con == null) {
                     error = "Database Connection Failed.";
                 } else {
-                    String query = String.format("SELECT ROUND(SUM(BP.QUANTITY*BP.PRICE),0) AS PRICE,BP.PRODUCT_NAME,SUM(BP.QUANTITY) AS QA FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND CAST(S.Bill_Date AS DATE)=CAST(BP.Bill_Date AS DATE) AND S.Counter_ID = BP.Counter_Id  AND  CAST(S.BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT ROUND(SUM(BP.QUANTITY*(BP.PRICE-(BP.PRICE*(BP.DISCOUNT/100)))),0) AS PRICE,BP.PRODUCT_NAME,SUM(BP.QUANTITY) AS QA FROM BILL_PRODUCTS BP,SALE S WHERE S.BILL_NO=BP.Bill_No AND CAST(S.Bill_Date AS DATE)=CAST(BP.Bill_Date AS DATE) AND S.Counter_ID = BP.Counter_Id  AND  CAST(S.BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(!counterid.equalsIgnoreCase("0")){
                         query = query+String.format(" AND BP.COUNTER_ID='%s' ",counterid);
                     }
