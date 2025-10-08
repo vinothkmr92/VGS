@@ -23,6 +23,7 @@
     <item
         android:id="@+id/newSale"
         android:icon="@drawable/baseline_screenshot_monitor_24"
+        android:visible="false"
         android:title="New Home"/>
     <item android:id="@+id/exit"
         android:icon="@drawable/baseline_exit_to_app_24"

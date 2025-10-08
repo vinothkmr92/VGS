@@ -371,6 +371,7 @@ public class PrinterUtil {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(rcptData.billDate);
         Bitmap bitmapIcon = Common.shopLogo;
+        //posPtr.printNormal(ESC+" F");
         if(bitmapIcon!=null){
             try {
                 if(Common.RptSize.equals("2")){
@@ -399,26 +400,26 @@ public class PrinterUtil {
             posPtr.printBitmap(header,0);
         }
         else {
-            posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
         }
 
-        posPtr.printNormal(ESC+"|cA"+Common.addressline+"\r\n");
+        posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
-        posPtr.printNormal(ESC+"|lABILL NO  : "+ rcptData.billno+"\n");
+        posPtr.printNormal(ESC+"|bC"+ESC+"|lABILL NO  : "+ rcptData.billno+"\n");
         if(!rcptData.waiter.isEmpty() && !rcptData.waiter.equals("NONE")){
-            posPtr.printNormal(ESC+"|lANAME     : "+ rcptData.waiter);
+            posPtr.printNormal(ESC+"|bC"+ESC+"|lANAME     : "+ rcptData.waiter);
             posPtr.printNormal("\n");
         }
-        posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
+        posPtr.printNormal(ESC+"|bC"+ESC+"|lADATE     : "+dateStr+"\n\n");
         if(Common.RptSize.equals("2")){
-            posPtr.printNormal("--------------------------------");
+            posPtr.printNormal(ESC+"|bC"+"--------------------------------");
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM        QTY    RATE   AMOUNT\n");
-            posPtr.printNormal("--------------------------------");
+            posPtr.printNormal(ESC+"|bC"+"--------------------------------");
         }
         else {
-            posPtr.printNormal("----------------------------------------------\n");
+            posPtr.printNormal(ESC+"|bC"+"----------------------------------------------\n");
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME             QTY      PRICE    AMOUNT\n");
-            posPtr.printNormal("----------------------------------------------\n");
+            posPtr.printNormal(ESC+"|bC"+"----------------------------------------------\n");
         }
 
         double totalAmt = 0d;
@@ -465,10 +466,10 @@ public class PrinterUtil {
             posPtr.printNormal(line);
         }
         if(Common.RptSize.equals("2")){
-            posPtr.printNormal("--------------------------------");
+            posPtr.printNormal(ESC+"|bC"+"--------------------------------");
         }
         else {
-            posPtr.printNormal("----------------------------------------------\n");
+            posPtr.printNormal(ESC+"|bC"+"----------------------------------------------\n");
         }
         Integer totalItems = rcptData.itemsCarts.size();
         Double totalQty = rcptData.itemsCarts.stream().mapToDouble(c->c.getQty()).sum();
@@ -490,10 +491,10 @@ public class PrinterUtil {
             advancestring= StringUtils.leftPad(advancestring,padleft);
             posPtr.printNormal(ttstring+tt+"\n");
             if(rcptData.discount>0){
-                posPtr.printNormal(discstring+discount+"\n");
+                posPtr.printNormal(ESC+"|bC"+discstring+discount+"\n");
             }
             if(rcptData.advance>0){
-                posPtr.printNormal(advancestring+advance+"\n");
+                posPtr.printNormal(ESC+"|bC"+advancestring+advance+"\n");
             }
         }
         totalAmt = billAmt-rcptData.discount-rcptData.advance;
@@ -509,14 +510,14 @@ public class PrinterUtil {
         }
         else {
             if(Common.RptSize.equals("2")){
-                posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|1C"+txttotal+"\n");
+                posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|bC"+ESC+"|1C"+txttotal+"\n");
             }
             else {
-                posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+                posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
             }
         }
         posPtr.lineFeed(1);
-        posPtr.printNormal(ESC+"|cA"+Common.footerMsg+"\n");
+        posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+Common.footerMsg+"\n");
         posPtr.lineFeed(4);
         posPtr.cutPaper();
     }
