@@ -105,22 +105,26 @@
             android:hint="Select Customer"
             android:textColor="@android:color/black" />
 
-        <ImageButton
+        <Button
             android:id="@+id/btnsalerptprint"
-            android:layout_width="100px"
-            android:layout_height="100px"
-            android:layout_gravity="right"
-            android:background="@drawable/ic_baseline_print_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/White"
+            android:drawableLeft="@drawable/ic_baseline_print_24"
+            android:text="Print"
+            android:textColor="@color/iconColor"
             android:foreground="?android:attr/selectableItemBackground">
-        </ImageButton>
-        <ImageButton
+        </Button>
+        <Button
             android:id="@+id/btnshareExcel"
-            android:layout_width="100px"
-            android:layout_height="100px"
-            android:background="@drawable/baseline_share_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/White"
+            android:drawableLeft="@drawable/baseline_share_24"
+            android:text="Export"
             android:foreground="?android:attr/selectableItemBackground"
-            android:text="Print">
-        </ImageButton>
+            android:textColor="@color/iconColor">
+        </Button>
     </GridLayout>
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"

@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -23,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -37,14 +37,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.core.content.res.ResourcesCompat;
-
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -63,9 +55,10 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
@@ -81,7 +74,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     private static String billDateToDelete;
     TextView frmDateTextView;
     TextView toDateTextView;
-    ImageButton btnPrintReport;
+    public  static ArrayList<String> itemNames;
     DatePickerDialog datePickerDialog;
     DatePickerDialog todatePickerDialog;
     String selectedDate;
@@ -92,9 +85,11 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     TextView txtViewTotalQty;
     TextView searchTxtView;
     Dialog dialog;
-    ImageButton btnExportExcel;
+    public static Integer headCount;
     ImageButton btnDeletAllSale;
     LinearLayout saleRptContainer;
+    Button btnPrintReport;
+    Button btnExportExcel;
     private DatePicker datePicker;
     private Calendar calendar;
     private int year, month, day;
@@ -163,10 +158,14 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
 
         // Creating a New Sheet and Setting width for each column
         sheet = workbook.createSheet(EXCEL_SHEET_NAME);
-        sheet.setColumnWidth(0, (15 * 300));
+        sheet.setColumnWidth(0, (15 * 200));
         sheet.setColumnWidth(1, (15 * 200));
         sheet.setColumnWidth(2, (15 * 200));
-
+        int prlist = itemNames.size();
+        for(int i=0;i<prlist;i++){
+            int k=i+3;
+            sheet.setColumnWidth(k,(15*200));
+        }
         setHeaderRow();
         fillDataIntoExcel(dataList);
         isWorkbookWrittenIntoStorage = storeExcelInStorage(context, fileName);
@@ -210,16 +209,25 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         Row row = sheet.createRow(0);
 
         cell = row.createCell(0);
-        cell.setCellValue("Bill Date");
+        cell.setCellValue("Ward");
         cell.setCellStyle(headerCellStyle);
 
         cell = row.createCell(1);
-        cell.setCellValue("Bill No");
+        cell.setCellValue("Supplier");
         cell.setCellStyle(headerCellStyle);
 
         cell = row.createCell(2);
-        cell.setCellValue("Bill Amount");
+        cell.setCellValue("Supplier ID");
         cell.setCellStyle(headerCellStyle);
+        int k=3;
+        for(int i=0;i<itemNames.size();i++){
+            cell = row.createCell(k);
+            cell.setCellValue(itemNames.get(i));
+            cell.setCellStyle(headerCellStyle);
+            k++;
+        }
+
+
     }
 
     /**
@@ -230,23 +238,70 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
      * @param dataList - List containing data to be filled into excel
      */
     private static void fillDataIntoExcel(ArrayList<SaleReport> dataList) {
+        DecimalFormat amtFormat = new DecimalFormat("#.###");
         for (int i = 0; i < dataList.size(); i++) {
             // Create a New Row for every new entry in list
             Row rowData = sheet.createRow(i + 1);
 
             // Create Cells for each row
             cell = rowData.createCell(0);
-            Date bt = dataList.get(i).getBillDt();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm aa", Locale.getDefault());
-            String d = format.format(bt);
-            cell.setCellValue(d);
+            cell.setCellValue(dataList.get(i).ward);
 
             cell = rowData.createCell(1);
-            cell.setCellValue(dataList.get(i).getBillNo());
+            cell.setCellValue(dataList.get(i).CustomerName);
 
             cell = rowData.createCell(2);
-            cell.setCellValue(dataList.get(i).getBillAmount());
+            cell.setCellValue(dataList.get(i).CustomerID);
+
+            Map<String,Double> itemwiseqty = dataList.get(i).itemwiseqty;
+
+            int k=3;
+            for (String name:
+                 itemwiseqty.keySet()) {
+                cell = rowData.createCell(k);
+                String q = amtFormat.format(itemwiseqty.get(name));
+                cell.setCellValue(q);
+                k++;
+            }
+            cell = rowData.createCell(k);
+            String ttwt = amtFormat.format(dataList.get(i).totalWt);
+            cell.setCellValue(ttwt+"/0");
         }
+        Collection<Map<String,Double>> myCol = dataList.stream().map(d->d.itemwiseqty).collect(Collectors.toList());
+        Map<String,Double> itemconsolidated = myCol.stream().flatMap(m->m.entrySet().stream()).collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,Double::sum));
+        int newrowindex = dataList.size()+2;
+        Row rowData = sheet.createRow(newrowindex);
+        cell = rowData.createCell(0);
+        cell.setCellValue(" ");
+
+        cell = rowData.createCell(1);
+        cell.setCellValue(" ");
+
+        cell = rowData.createCell(2);
+        cell.setCellValue(" ");
+        int k=3;
+        for (String name:
+                itemconsolidated.keySet()) {
+            cell = rowData.createCell(k);
+            String q = amtFormat.format(itemconsolidated.get(name));
+            cell.setCellValue(q);
+            k++;
+        }
+        newrowindex++;
+        Row newRow = sheet.createRow(newrowindex);
+        cell = newRow.createCell(0);
+        cell.setCellValue("-----------------------");
+        newrowindex++;
+        newRow = sheet.createRow(newrowindex);
+        cell = newRow.createCell(0);
+        Double totalSum = dataList.stream().mapToDouble(m->m.totalWt).sum();
+        String ttwt = amtFormat.format(totalSum);
+        cell.setCellValue("TOTAL QTY: KGS/NOS: "+ttwt+"/0");
+        newrowindex++;
+        newRow = sheet.createRow(newrowindex);
+        cell = newRow.createCell(0);
+        String headcount = amtFormat.format(headCount);
+        cell.setCellValue("HEAD COUNT: "+ttwt);
     }
 
     /**
@@ -305,8 +360,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         progressBar.setTitle("Loading...");
         frmDateTextView = (TextView) findViewById(R.id.salerptFrmDate);
         toDateTextView = (TextView) findViewById(R.id.salerptToDate);
-        btnPrintReport = (ImageButton) findViewById(R.id.btnsalerptprint);
-        btnExportExcel = (ImageButton)findViewById(R.id.btnshareExcel);
+        btnPrintReport =  findViewById(R.id.btnsalerptprint);
+        btnExportExcel = findViewById(R.id.btnshareExcel);
         btnDeletAllSale = findViewById(R.id.btnDeleteAllSale);
         saleRptContainer = (LinearLayout) findViewById(R.id.saleprtContainer);
         txtViewTotalSaleAmt = (TextView)findViewById(R.id.totalSaleAmt);
@@ -328,6 +383,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         Date date = new Date();
         frmDateTextView.setText(format.format(date));
         toDateTextView.setText(format.format(date));
+        itemNames = dbHelper.GetItemNames();
         LoadSaleReport();
         searchTxtView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -490,6 +546,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         String todt = toDateTextView.getText().toString();
         String waiter  = searchTxtView.getText().toString();
         ArrayList<SaleReport> sal = dbHelper.GetSalesReport(frmdt,todt,waiter);
+        headCount = dbHelper.GetHeadCount(frmdt,todt);
         return sal;
     }
     public static Float convertToFloat(double doubleValue) {

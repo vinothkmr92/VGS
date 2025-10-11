@@ -1,6 +1,7 @@
 package com.example.vinoth.vgsposbt;
 
 import java.util.Date;
+import java.util.Map;
 
 public class SaleReport {
     private String BillDate;
@@ -11,7 +12,8 @@ public class SaleReport {
     public String CustomerName;
     public String CustomerID;
     public Double totalWt;
-
+    public String ward;
+    public Map<String,Double> itemwiseqty;
     public Double getSaleAmount() {
         return SaleAmount;
     }

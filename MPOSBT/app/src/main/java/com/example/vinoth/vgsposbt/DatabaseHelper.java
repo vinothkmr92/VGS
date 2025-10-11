@@ -13,7 +13,9 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -269,6 +271,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return  ttqt;
     }
+    public Integer GetHeadCount(String frmDate,String toDate){
+        Integer headcount = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT COUNT(*) FROM BILLS  WHERE DATE(BILL_DATE)>='"+frmDate+"' AND DATE(BILL_DATE)<='"+toDate+"'";
+
+        Cursor cur = db.rawQuery(query,null);
+        if(cur.getCount()>0) {
+            while (cur.moveToNext()) {
+                headcount = cur.getInt(0);
+            }
+        }
+        return  headcount;
+    }
     public  ArrayList<SaleReport> GetSalesReport(String frmDate,String toDate,String waiter){
         ArrayList<SaleReport> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
@@ -276,8 +291,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(!waiter.equals("ALL")){
             query = query+" AND WAITER='"+waiter+"'";
         }
-
         Cursor cur = db.rawQuery(query,null);
+        ArrayList<String> items = GetItemNames();
         if(cur.getCount()>0){
             while (cur.moveToNext()){
                 SaleReport r = new SaleReport();
@@ -291,10 +306,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 if(cn!=null){
                     r.CustomerID = cn.getMobileNumber();
                     r.CustomerName = cn.getCustomerName();
+                    r.ward = cn.getAddress();
                 }
                 else {
                     r.CustomerID = "10001";
                     r.CustomerName = "UNKNOWN";
+                    r.ward = "0";
                 }
                 double billAmt = saleAmt;
                 r.setBillAmount(billAmt);
@@ -304,12 +321,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 SimpleDateFormat formats = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 r.totalWt = GetTotalQtyperSale(r.getBillNo(),formats.format(bd));
                 r.setBillDt(bd);
+                Map<String,Double> itemwiseqty = new HashMap<>();
+                for (String item:
+                     items) {
+                    Double itemqty = GetItemQty(frmDate,toDate,wt,item);
+                    itemwiseqty.put(item,itemqty);
+                }
+                r.itemwiseqty = itemwiseqty;
                 report.add(r);
             }
         }
         return  report;
     }
 
+    public double GetItemQty(String frmDt,String toDt,String waiter,String ItemName){
+        double qty= 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT SUM(QUANTITY-BINWT-DED) FROM " +
+                "BILLS_ITEM WHERE DATE(BILL_DATE)>='"+frmDt+"' AND DATE(BILL_DATE)<='"+toDt+"' AND WAITER='"+waiter+"' AND ITEM_NAME='"+ItemName+"'";
+        Cursor cur = db.rawQuery(query,null);
+
+        if(cur.getCount()>0){
+            while (cur.moveToNext()) {
+                qty = cur.getDouble(0);
+            }
+        }
+        return 0;
+    }
     public ArrayList<ItemsRpt> GetReports(String frmDt,String toDt,String waiter){
        ArrayList<ItemsRpt> report = new ArrayList<>();
         ArrayList<Item> items = GetItems();

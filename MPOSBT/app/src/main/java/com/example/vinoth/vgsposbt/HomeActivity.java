@@ -53,8 +53,6 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 
-import org.apache.poi.ss.formula.functions.T;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -275,7 +273,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             });
-
+            if(waiters.size()>0){
+                searchTxtView.setText(waiters.get(0));
+            }
             searchTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
