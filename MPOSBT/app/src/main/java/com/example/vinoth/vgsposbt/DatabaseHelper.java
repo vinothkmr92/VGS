@@ -346,7 +346,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 qty = cur.getDouble(0);
             }
         }
-        return 0;
+        return qty;
     }
     public ArrayList<ItemsRpt> GetReports(String frmDt,String toDt,String waiter){
        ArrayList<ItemsRpt> report = new ArrayList<>();

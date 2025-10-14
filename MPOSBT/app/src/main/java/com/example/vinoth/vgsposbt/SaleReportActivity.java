@@ -162,10 +162,12 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         sheet.setColumnWidth(1, (15 * 200));
         sheet.setColumnWidth(2, (15 * 200));
         int prlist = itemNames.size();
+        int k=3;
         for(int i=0;i<prlist;i++){
-            int k=i+3;
             sheet.setColumnWidth(k,(15*200));
+            k++;
         }
+        sheet.setColumnWidth(k,(15*300));
         setHeaderRow();
         fillDataIntoExcel(dataList);
         isWorkbookWrittenIntoStorage = storeExcelInStorage(context, fileName);
@@ -226,8 +228,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
             cell.setCellStyle(headerCellStyle);
             k++;
         }
-
-
+        cell = row.createCell(k);
+        cell.setCellValue("TOTAL QTY: KGS/NOS: ");
+        cell.setCellStyle(headerCellStyle);
     }
 
     /**
@@ -272,7 +275,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         int newrowindex = dataList.size()+2;
         Row rowData = sheet.createRow(newrowindex);
         cell = rowData.createCell(0);
-        cell.setCellValue(" ");
+        cell.setCellValue("TOTAL QTY: ");
 
         cell = rowData.createCell(1);
         cell.setCellValue(" ");
@@ -301,7 +304,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         newRow = sheet.createRow(newrowindex);
         cell = newRow.createCell(0);
         String headcount = amtFormat.format(headCount);
-        cell.setCellValue("HEAD COUNT: "+ttwt);
+        cell.setCellValue("HEAD COUNT: "+headcount);
     }
 
     /**
@@ -490,7 +493,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
 
     private void ExportExcel(){
         ArrayList<SaleReport> sal = GetSaleReport();
-        String fileName = "SaleReport.xls";
+        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa", Locale.getDefault());
+        Date date = new Date();
+        String fileName = "SaleReport_"+format.format(date)+".xls";
         if(exportDataIntoWorkbook(getApplicationContext(),fileName,sal)){
             try{
                 File file = new File(getApplicationContext().getExternalFilesDir(DOWNLOAD_SERVICE), fileName);

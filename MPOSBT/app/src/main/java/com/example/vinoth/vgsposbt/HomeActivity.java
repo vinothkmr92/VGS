@@ -273,8 +273,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             });
-            if(waiters.size()>0){
-                searchTxtView.setText(waiters.get(0));
+            if(waiters.size()>1){
+                searchTxtView.setText(waiters.get(1));
             }
             searchTxtView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1156,7 +1156,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         estAmt.setText(GetCurrency(0d));
         int newbillno = dbHelper.GetNextBillNo();
         billnoTxtView.setText(String.valueOf(newbillno));
-        searchTxtView.setText("NONE");
+        if(waiters.size()>1){
+            searchTxtView.setText(waiters.get(1));
+        }
         binRedSwitch.setChecked(false);
         progressBar.hide();
         itemNo.requestFocus();
