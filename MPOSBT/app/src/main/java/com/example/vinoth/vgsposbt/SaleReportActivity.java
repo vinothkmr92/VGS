@@ -628,6 +628,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                         Common.saleReportToDate = toDateTextView.getText().toString();
                         PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this,this,false);
                         printerUtil.saleReports = items;
+                        printerUtil.headCount = headCount;
                         printerUtil.Print();
                     }
                     else {

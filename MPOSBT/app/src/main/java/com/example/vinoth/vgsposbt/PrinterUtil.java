@@ -82,6 +82,7 @@ public class PrinterUtil {
     private Activity activity;
     public boolean isItemWiseRptBill;
     private boolean receivedBrodCast;
+    public Integer headCount;
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -139,6 +140,7 @@ public class PrinterUtil {
     public  PrinterUtil(Context cntx,Activity act,boolean prtSale){
         activity = act;
         posPtr=new ESCPOSPrinter();
+        headCount = 0;
         switch (Common.printType){
             case "WIFI":
                 isWifi = true;
@@ -750,6 +752,14 @@ public class PrinterUtil {
             }
             else {
                 posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|2CTOTAL WEIGHTS: "+decimalFormat.format(totalQty)+" Kg\n");
+            }
+            String headCnt = "HEAD COUNT: "+headCount;
+            Bitmap bph = getTextAsImage(headCnt,splitpaymentSize,Layout.Alignment.ALIGN_NORMAL,typeface);
+            if(bph!=null){
+                posPtr.printBitmap(bph,0);
+            }
+            else {
+                posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|2CHEAD COUNT: "+headCount+"\n");
             }
             posPtr.lineFeed(3);
             posPtr.cutPaper();
