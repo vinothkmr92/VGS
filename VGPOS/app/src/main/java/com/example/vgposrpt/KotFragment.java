@@ -440,7 +440,7 @@ public class KotFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void RefreshKotPage(String title,String Message,boolean print,ArrayList<KotDetails> kotDetails,BillDetails billDetails) {
+    public void RefreshKotPage(String title,String Message,boolean print,ArrayList<KotDetails> kot,BillDetails billDetails) {
         AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
         dialog.setTitle(title);
         dialog.setMessage("\n"+Message);
@@ -448,16 +448,17 @@ public class KotFragment extends Fragment implements View.OnClickListener {
             public void onClick(DialogInterface dialog, int whichButton) {
                 if(print){
                     try{
-                        PrinterUtil printerUtil = new PrinterUtil(getContext(),getInstance(),kotDetails!=null);
-                        printerUtil.billDetail = billDetails;
-                        printerUtil.kotDetails = kotDetails;
-                        printerUtil.Print();
+                        if(kot.size()>0){
+                            PrinterUtilKot kotPrint = new PrinterUtilKot(getContext(),getInstance(),kot);
+                            kotPrint.billDetails = billDetails;
+                            kotPrint.printBill = true;
+                            kotPrint.Print();
+                        }
                     }
                     catch (Exception ex){
                         showCustomDialog("Error",ex.getMessage());
                     }
                 }
-                Cancel();
             }
         });
         dialog.setCancelable(false);
@@ -720,7 +721,7 @@ public class KotFragment extends Fragment implements View.OnClickListener {
                     CommonUtil.cartItems = new ArrayList<>();
                 }
                 boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
-                RefreshKotPage("Status",msg,print,null,billDetails);
+                RefreshKotPage("Status",msg,print,kotlist,billDetails);
             }
             else {
                 if(dialog.isShowing()){

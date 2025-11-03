@@ -1,5 +1,4 @@
 package com.example.vgposrpt;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -52,8 +51,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-
-public class PrinterUtil {
+public class PrinterUtilKot {
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
@@ -61,20 +59,25 @@ public class PrinterUtil {
             Manifest.permission.BLUETOOTH_SCAN
     };
     private final char ESC = ESCPOS.ESC;
+    private final char ESC2 = ESCPOS.SP;
     public ESCPOSPrinter posPtr;
+    public boolean onlyBill;
     private Context context;
     private Thread hThread;
     private WiFiPort wifiPort;
     private int rtn;
+    private boolean printSale;
     private BluetoothPort bluetoothPort;
     private boolean isWifi;
-    private BillDetails billDetail;
+    private ArrayList<KotDetails> kotDetails;
     private USBPort usbPort;
     private boolean isUsbport;
     private UsbDevice usbDevice;
     private UsbManager usbManager;
     private boolean receivedBrodCast;
     private Fragment activity;
+    public BillDetails billDetails;
+    public boolean printBill;
     private static final String ACTION_USB_PERMISSION = "com.example.vgposrpt.USB_PERMISSION";
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -89,7 +92,7 @@ public class PrinterUtil {
                             receivedBrodCast = true;
                             //Toast.makeText(activity, "Connecting to USB Printer..", Toast.LENGTH_SHORT).show();
                             usbPort = new USBPort(usbManager);
-                            new ConnectUSBPrinter().execute();
+                            new PrinterUtilKot.ConnectUSBPrinter().execute();
                         }
                     }
                 }
@@ -108,11 +111,11 @@ public class PrinterUtil {
                 break;
         }
     }
-    public PrinterUtil(Context cntx,Fragment act,BillDetails bd) {
+    public PrinterUtilKot(Context cntx,Fragment act,ArrayList<KotDetails> kot) {
         posPtr=new ESCPOSPrinter();
         activity = act;
-        billDetail = bd;
-        switch (CommonUtil.PrintOption){
+        kotDetails = kot;
+        switch (CommonUtil.PrintOptionKot){
             case  "WiFi":
                 isWifi = true;
                 wifiPort = WiFiPort.getInstance();
@@ -151,121 +154,6 @@ public class PrinterUtil {
             hThread = null;
         }
         super.finalize();
-    }
-    public int PrintBillData() throws InterruptedException
-    {
-        try
-        {
-            if(CommonUtil.includeMRP){
-                PrintBillWithMRP();
-            }
-            else{
-                PrintBill();
-            }
-            if(bluetoothPort!=null){
-                bluetoothPort.disconnect();
-            }
-            if(wifiPort != null){
-                wifiPort.disconnect();
-            }
-            return 1;
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-            Toast.makeText(context,"Error: "+e.getMessage(),Toast.LENGTH_LONG).show();
-        }
-        return 0;
-    }
-    private void PrintBillWithMRP() throws IOException {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
-        String dateStr = format.format(new Date());
-        posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+CommonUtil.ReceiptHeader+"\r\n");
-        posPtr.printNormal(ESC+"|cA"+CommonUtil.ReceiptAddress+"\r\n");
-        posPtr.printNormal("\n");
-        posPtr.printNormal(ESC+"|lABILL NO  : "+ billDetail.BillNo+"\n");
-        if(!billDetail.billUser.isEmpty()){
-            posPtr.printNormal(ESC+"|lAUSER     : "+billDetail.billUser);
-            posPtr.printNormal("\n");
-        }
-        posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
-        posPtr.printNormal("----------------------------------------------\n");
-        posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME       QTY    MRP     PRICE    AMOUNT\n");
-        posPtr.printNormal("----------------------------------------------\n");
-        double totalAmt = 0d;
-        double mrpTotalAmt = 0d;
-        double discountAmt = 0d;
-        DecimalFormat formater = new DecimalFormat("#.###");
-        for(int k=0;k<billDetail.billProducts.size();k++){
-            String name = billDetail.billProducts.get(k).getProductName();
-            String qty = formater.format(billDetail.billProducts.get(k).getQty());
-            String price = formater.format(billDetail.billProducts.get(k).getPrice());
-            String mrp = formater.format(billDetail.billProducts.get(k).getMRP());
-            double mrpd = billDetail.billProducts.get(k).getMRP();
-            Double amt = billDetail.billProducts.get(k).getAmount();
-            totalAmt+=amt;
-            double mrpamt = mrpd*billDetail.billProducts.get(k).getQty();
-            mrpTotalAmt+=mrpamt;
-            String amts=String.format("%.0f",amt);
-            qty = StringUtils.leftPad(qty,19);
-            mrp = StringUtils.leftPad(mrp,7);
-            price = StringUtils.leftPad(price,10);
-            amts = StringUtils.leftPad(amts,10);
-            String line = qty+mrp+price+amts+"\n";
-            if(CommonUtil.MultiLang){
-                Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
-                if(xb!=null){
-                    posPtr.printBitmap(xb,0);
-                }
-                else {
-                    posPtr.printNormal(name+"\n");
-                }
-            }
-            else {
-                posPtr.printNormal(name+"\n");
-            }
-            posPtr.printNormal(line);
-        }
-        posPtr.printNormal("----------------------------------------------\n");
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
-        formatter.setMaximumFractionDigits(0);
-        String symbol = formatter.getCurrency().getSymbol();
-        String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
-        String mrptotalStr = formatter.format(mrpTotalAmt).replace(symbol,symbol+" ");
-        discountAmt = mrpTotalAmt-totalAmt;
-        String discountAmtStr = formatter.format(discountAmt).replace(symbol,symbol+" ");
-        String txttotal = "Grand Total  "+totalamt+"/-";
-        String mrptxt = "MRP Total  "+mrptotalStr;
-        String discountTxt = "Discount Amt  "+discountAmtStr;
-        posPtr.lineFeed(1);
-        Bitmap mbp = getMultiLangTextAsImage(mrptxt,25, Typeface.DEFAULT);
-        if(mbp!=null){
-            posPtr.printBitmap(mbp,0);
-        }
-        else {
-            posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+mrptxt+"\n");
-        }
-        if(discountAmt>0){
-            Bitmap dbp = getMultiLangTextAsImage(discountTxt,25, Typeface.DEFAULT);
-            if(dbp!=null){
-                posPtr.printBitmap(dbp,0);
-            }
-            else {
-                posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|1C"+discountTxt+"\n");
-            }
-        }
-        posPtr.lineFeed(1);
-        Bitmap bp = getMultiLangTextAsImage(txttotal,30, Typeface.DEFAULT);
-        if(bp!=null){
-            posPtr.printBitmap(bp,1);
-        }
-        else {
-            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
-        }
-        posPtr.lineFeed(1);
-        posPtr.printNormal(ESC+"|cA"+CommonUtil.ReceiptFooter+"\n");
-        posPtr.lineFeed(5);
-        posPtr.cutPaper();
     }
 
     Bitmap getMultiLangTextAsImage(String text, float textSize, Typeface typeface)  {
@@ -329,60 +217,54 @@ public class PrinterUtil {
         }
         return sts;
     }
-
-    private void PrintBill() throws IOException {
+    private void PrintKot() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
         String dateStr = format.format(new Date());
         DecimalFormat formater = new DecimalFormat("#.###");
-        posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+CommonUtil.ReceiptHeader+"\r\n");
-        posPtr.printNormal(ESC+"|cA"+CommonUtil.ReceiptAddress+"\r\n");
+        KotDetails firstitme = kotDetails.stream().findFirst().orElse(null);
+
+        posPtr.printNormal(ESC+"|cA"+ESC+"|2CKOT - "+firstitme.KotID+"\r\n");
         posPtr.printNormal("\n");
-        posPtr.printNormal(ESC+"|lABILL NO  : "+billDetail.BillNo+"\n");
-        if(!billDetail.billUser.isEmpty()){
-            posPtr.printNormal(ESC+"|lAUSER     : "+billDetail.billUser);
+        if(!firstitme.KotUser.isEmpty()){
+            posPtr.printNormal(ESC+"|lAUSER     : "+firstitme.KotUser);
             posPtr.printNormal("\n");
         }
-        posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
+        Tables tb = CommonUtil.tablesList.stream().filter(c->c.TableID==firstitme.TableID).findFirst().orElse(null);
+        posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n");
+        if(tb!=null){
+            posPtr.printNormal(ESC+"|lATABLE    : "+tb.TableName+"\n\n");
+        }
         if(CommonUtil.ReceiptSize.equals("2")){
             posPtr.printNormal("--------------------------------");
-            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM        QTY    RATE   AMOUNT\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME               QUANTITY\n");
             posPtr.printNormal("--------------------------------");
         }
         else {
             posPtr.printNormal("----------------------------------------------\n");
-            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME             QTY      PRICE    AMOUNT\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                             QUANTITY\n");
             posPtr.printNormal("----------------------------------------------\n");
         }
 
-        double totalAmt = 0d;
-        double billAmt = 0d;
         posPtr.setAlignment(0);
-        for(int k=0;k<billDetail.billProducts.size();k++){
-            Product pr = billDetail.billProducts.get(k);
-            String name = pr.getProductName();
-            String qty = formater.format(pr.getQty());
-            String price = formater.format(pr.getPrice());
-            Double amt = pr.getAmount();
-            billAmt+=amt;
-            String amts=String.format("%.0f",amt);
+
+        for(int k=0;k<kotDetails.size();k++){
+            KotDetails pr = kotDetails.get(k);
+            String name = pr.ProductName;
+            String qty = String.valueOf(pr.Qty);
             String line = "";
             if(CommonUtil.ReceiptSize.equals("2")){
                 if(name.length()>33){
                     name = name.substring(0,32);
                 }
-                qty = StringUtils.leftPad(qty,15);
-                price = StringUtils.leftPad(price,8);
-                amts = StringUtils.leftPad(amts,9);
-                line = qty+price+amts+"\n";
+                qty = StringUtils.leftPad(qty,27);
+                line = qty+"\n";
             }
             else {
                 if(name.length()>47){
                     name = name.substring(0,46);
                 }
-                qty = StringUtils.leftPad(qty,25);
-                price = StringUtils.leftPad(price,11);
-                amts = StringUtils.leftPad(amts,10);
-                line = qty+price+amts+"\n";
+                qty = StringUtils.leftPad(qty,41);
+                line = qty+"\n";
             }
             if(CommonUtil.MultiLang){
                 Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
@@ -402,45 +284,36 @@ public class PrinterUtil {
             posPtr.printNormal("--------------------------------");
         }
         else {
-            posPtr.printNormal("----------------------------------------------\n");
+            posPtr.printNormal("----------------------------------------------\n\n\n");
         }
-
-        totalAmt = billAmt;
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
-        formatter.setMaximumFractionDigits(0);
-        String symbol = formatter.getCurrency().getSymbol();
-        String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
-        String txttotal = "Grand Total  "+totalamt+"/-";
-        posPtr.lineFeed(1);
-        Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER);
-        if(bp!=null){
-            posPtr.printBitmap(bp,0);
-        }
-        else {
-            if(CommonUtil.ReceiptSize.equals("2")){
-                posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|1C"+txttotal+"\n");
-            }
-            else {
-                posPtr.printNormal(ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
-            }
-        }
-        posPtr.lineFeed(1);
-        posPtr.printNormal(ESC+"|cA"+CommonUtil.ReceiptFooter+"\n");
         posPtr.lineFeed(4);
         posPtr.cutPaper();
+        if(bluetoothPort!=null){
+            try {
+                bluetoothPort.disconnect();
+            } catch (InterruptedException e) {
+                //
+            }
+        }
+        if(wifiPort != null){
+            try {
+                wifiPort.disconnect();
+            } catch (InterruptedException e) {
+                //
+            }
+        }
     }
-
     public void Print() throws Exception{
         try{
             if(isUsbport){
                 ConnectUSB();
             }
             else if(isWifi){
-                new ConnectPrinter().execute(CommonUtil.PrinterIP);
+                new PrinterUtilKot.ConnectPrinter().execute(CommonUtil.PrinterIPKot);
             }
             else {
                 BluetoothDevice btDevice = GetBluetoothDevice();
-                new ConnectToBluetoothPrinter().execute(btDevice);
+                new PrinterUtilKot.ConnectToBluetoothPrinter().execute(btDevice);
             }
         }
         catch (Exception ex){
@@ -467,7 +340,7 @@ public class PrinterUtil {
         BluetoothDevice mydevice =null;
         for (BluetoothDevice device : pairedDevices) {
             // Add the name and address to an array adapter to show in a ListView
-            if (device.getName().contains(CommonUtil.printer)) {
+            if (device.getName().contains(CommonUtil.printerKot)) {
                 mydevice = device;
                 break;
             }
@@ -517,8 +390,12 @@ public class PrinterUtil {
                 posPtr = new ESCPOSPrinter();
                 posPtr.setAsync(true);
                 try{
-                    if(billDetail!=null){
-                        PrintBillData();
+                    if(kotDetails!=null){
+                        PrintKot();
+                    }
+                    if(printBill){
+                        PrinterUtil printerUtil = new PrinterUtil(context,activity,billDetails);
+                        printerUtil.Print();
                     }
                 }
                 catch (Exception ex)
@@ -531,6 +408,9 @@ public class PrinterUtil {
                     String localClassName = activity.getClass().getSimpleName();
                     if(localClassName.equals("SaleFragment")){
                         SaleFragment.getInstance().RefreshSaleScreen();
+                    }
+                    if(localClassName.equals("KotFragment")){
+                        KotFragment.getInstance().Cancel();
                     }
                 }
             }
@@ -589,8 +469,12 @@ public class PrinterUtil {
                 posPtr = new ESCPOSPrinter();
                 posPtr.setAsync(true);
                 try{
-                    if(billDetail!=null){
-                        PrintBillData();
+                    if(kotDetails!=null){
+                        PrintKot();
+                    }
+                    if(printBill){
+                        PrinterUtil printerUtil = new PrinterUtil(context,activity,billDetails);
+                        printerUtil.Print();
                     }
                 }
                 catch (Exception ex)
@@ -603,6 +487,9 @@ public class PrinterUtil {
                     String localClassName = activity.getClass().getSimpleName();
                     if(localClassName.equals("SaleFragment")){
                         SaleFragment.getInstance().RefreshSaleScreen();
+                    }
+                    if(localClassName.equals("KotFragment")){
+                        KotFragment.getInstance().Cancel();
                     }
                 }
             }
@@ -654,8 +541,12 @@ public class PrinterUtil {
                 try{
                     posPtr = new ESCPOSPrinter(usbconnection);
                     posPtr.setAsync(true);
-                    if(billDetail!=null){
-                        PrintBillData();
+                    if(kotDetails!=null){
+                        PrintKot();
+                    }
+                    if(printBill){
+                        PrinterUtil printerUtil = new PrinterUtil(context,activity,billDetails);
+                        printerUtil.Print();
                     }
                 }
                 catch (Exception ex)
@@ -668,6 +559,9 @@ public class PrinterUtil {
                     String localClassName = activity.getClass().getSimpleName();
                     if(localClassName.equals("SaleFragment")){
                         SaleFragment.getInstance().RefreshSaleScreen();
+                    }
+                    if(localClassName.equals("KotFragment")){
+                        KotFragment.getInstance().Cancel();
                     }
                 }
             }
@@ -691,7 +585,7 @@ public class PrinterUtil {
                 Toast.makeText(activity.getContext(), "mDevice is null", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(activity.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
-                if(mDevice.getProductName().equals(CommonUtil.usbDeviceName)){
+                if(mDevice.getProductName().equals(CommonUtil.usbDeviceNameKot)){
                     break;
                 }
             }
