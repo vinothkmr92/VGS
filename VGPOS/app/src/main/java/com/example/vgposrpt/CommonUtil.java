@@ -38,4 +38,5 @@ public class CommonUtil {
     public static Integer kotNo=1;
     public static String usbDeviceName = "";
     public static String usbDeviceNameKot = "";
+    public static boolean isMobileDevice = true;
 }

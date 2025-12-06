@@ -82,6 +82,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public static final String USBDEVICENAME = "USBDEVICE";
     public static final String USBDEVICENAME_KOT = "USBDEVICE_KOT";
     public static final String ENABLEKOT = "ENABLEKOT";
+    public static final String ISMOBILE = "ISMOBILE";
     ArrayList<String> bluethootnamelist;
     ArrayList<String> bluethootnamelistKot;
     ArrayList<String> usbDeviceList;
@@ -130,6 +131,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     SwitchMaterial multiLang;
     SwitchMaterial enableKot;
     MaterialCardView kotprinteroptions;
+    SwitchMaterial isMobile;
 
 
     @Override
@@ -178,6 +180,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             multiLang = view.findViewById(R.id.multilangswitch);
             enableKot = view.findViewById(R.id.enableKot);
             printerSettingsView = view.findViewById(R.id.printerSettingsCard);
+            isMobile = view.findViewById(R.id.isMobile);
             sharedpreferences = MySharedPreferences.getInstance(getContext(),MyPREFERENCES);
             String sqlserver = getContext().getApplicationContext().getString(R.string.SQL_SERVER);
             String dbnamestr = getContext().getApplicationContext().getString(R.string.SQL_DBNAME);
@@ -208,6 +211,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             header.setText(sharedpreferences.getString(HEADER,""));
             footer.setText(sharedpreferences.getString(FOOTER,"Thank you visit again."));
             address.setText(sharedpreferences.getString(ADDRESS,""));
+            isMobile.setChecked(sharedpreferences.getString(ISMOBILE,"Y").equalsIgnoreCase("Y"));
             includeMRP.setChecked(sharedpreferences.getString(INCLUDE_MRP,"N").equalsIgnoreCase("Y"));
             multiLang.setChecked(sharedpreferences.getString(MULTI_LANG,"Y").equalsIgnoreCase("Y"));
             enableKot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -628,6 +632,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             sharedpreferences.putString(FOOTER,footerMsg);
             sharedpreferences.putString(INCLUDE_MRP,includeMRP.isChecked()?"Y":"N");
             sharedpreferences.putString(MULTI_LANG,multiLang.isChecked()?"Y":"N");
+            sharedpreferences.putString(ISMOBILE,isMobile.isChecked()?"Y":"N");
             CommonUtil.printer = printer;
             sharedpreferences.commit();
             showCustomDialog("Saved","Settings Saved Successfully",true);

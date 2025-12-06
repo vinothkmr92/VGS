@@ -47,8 +47,14 @@ public class GetPaymentModeDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
-                SaleFragment dn = (SaleFragment)getParentFragment();
-                dn.getPaymentMode("CASH");
+                if(CommonUtil.isMobileDevice){
+                    QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
+                    dn.getPaymentMode("CASH");
+                }
+                else {
+                    SaleFragment dn = (SaleFragment)getParentFragment();
+                    dn.getPaymentMode("CASH");
+                }
                 //listener.getPaymentMode("CASH");
             }
         });
@@ -56,8 +62,14 @@ public class GetPaymentModeDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
-                SaleFragment dn = (SaleFragment)getParentFragment();
-                dn.getPaymentMode("CARD");
+                if(CommonUtil.isMobileDevice){
+                    QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
+                    dn.getPaymentMode("CARD");
+                }
+                else {
+                    SaleFragment dn = (SaleFragment)getParentFragment();
+                    dn.getPaymentMode("CARD");
+                }
                 //listener.getPaymentMode("CARD");
             }
         });
@@ -65,8 +77,14 @@ public class GetPaymentModeDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
-                SaleFragment dn = (SaleFragment)getParentFragment();
-                dn.getPaymentMode("UPI");
+                if(CommonUtil.isMobileDevice){
+                    QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
+                    dn.getPaymentMode("UPI");
+                }
+                else {
+                    SaleFragment dn = (SaleFragment)getParentFragment();
+                    dn.getPaymentMode("UPI");
+                }
                 //listener.getPaymentMode("UPI");
             }
         });

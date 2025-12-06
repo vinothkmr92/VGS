@@ -164,7 +164,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new SettingsFragment()).commit();
                 break;
             case R.id.salesnew:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new SaleFragment()).commit();
+                if(CommonUtil.isMobileDevice){
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new QuickSaleFragment()).commit();
+                }
+                else {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new SaleFragment()).commit();
+                }
                 break;
             case R.id.kot:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new KotFragment()).commit();

@@ -532,6 +532,9 @@ public class PrinterUtil {
                     if(localClassName.equals("SaleFragment")){
                         SaleFragment.getInstance().RefreshSaleScreen();
                     }
+                    else {
+                        QuickSaleFragment.getInstance().Cancel();
+                    }
                 }
             }
             else{
@@ -604,6 +607,9 @@ public class PrinterUtil {
                     if(localClassName.equals("SaleFragment")){
                         SaleFragment.getInstance().RefreshSaleScreen();
                     }
+                    else {
+                        QuickSaleFragment.getInstance().Cancel();
+                    }
                 }
             }
             else{
@@ -668,6 +674,9 @@ public class PrinterUtil {
                     String localClassName = activity.getClass().getSimpleName();
                     if(localClassName.equals("SaleFragment")){
                         SaleFragment.getInstance().RefreshSaleScreen();
+                    }
+                    else {
+                        QuickSaleFragment.getInstance().Cancel();
                     }
                 }
             }

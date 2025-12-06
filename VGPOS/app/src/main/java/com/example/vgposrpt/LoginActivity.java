@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static final String USBDEVICENAME_KOT = "USBDEVICE_KOT";
     public static final String ENABLEKOT = "ENABLEKOT";
     public static final String PRINTER_KOT = "PRINTER";
+    public static final String ISMOBILE = "ISMOBILE";
     String sqlServer ;
     String sqlUserName;
     String sqlPassword;
@@ -84,6 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             CommonUtil.PrinterIPKot = sharedpreferences.getString(PRINTER_IP_KOT,"");
             CommonUtil.printer = sharedpreferences.getString(PRINTER,"");
             CommonUtil.printerKot = sharedpreferences.getString(PRINTER_KOT,"");
+            CommonUtil.isMobileDevice = sharedpreferences.getString(ISMOBILE,"Y").equals("Y");
             String usbdevice = sharedpreferences.getString(USBDEVICENAME,"");
             String[] sb = usbdevice.split("~");
             if(sb.length>1){
