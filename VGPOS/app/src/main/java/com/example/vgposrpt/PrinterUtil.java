@@ -578,7 +578,7 @@ public class PrinterUtil {
                 Log.e("Bluetooth-connection:",e.getMessage(),e);
                 retVal = "ERROR:"+e.getMessage();
             }
-            return retVal;
+             return retVal;
         }
 
         @Override

@@ -37,9 +37,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/vgpos"
+        android:icon="@drawable/pos"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/vgpos"
+        android:roundIcon="@drawable/pos"
         android:supportsRtl="true"
         android:theme="@style/Theme.VGPOSRPT"
         tools:targetApi="31">

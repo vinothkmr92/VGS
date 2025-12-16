@@ -141,7 +141,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         else {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.putExtra("kot", R.id.kot);
+            if(CommonUtil.isMobileDevice){
+                intent.putExtra("kot", R.id.salesnew);
+            }
+            else {
+                intent.putExtra("kot", R.id.kot);
+            }
             startActivity(intent);
         }
         finish();

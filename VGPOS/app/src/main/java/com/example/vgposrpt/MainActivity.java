@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        ShoworHideMenu(navigationView.getMenu());
         navigationView.setNavigationItemSelectedListener(this);
         View headerView = navigationView.getHeaderView(0);
         TextView logout = headerView.findViewById(R.id.logout);
@@ -84,8 +86,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 int selectedMenuItemIdKot = extras.getInt("kot", -1); // -1 if not found
                 if (selectedMenuItemIdKot != -1) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new KotFragment()).commit();
-                    navigationView.setCheckedItem(R.id.kot);
+                    switch (selectedMenuItemIdKot){
+                        case  R.id.kot:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new KotFragment()).commit();
+                            navigationView.setCheckedItem(R.id.kot);
+                            break;
+                        case R.id.salesnew:
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new QuickSaleFragment()).commit();
+                            navigationView.setCheckedItem(R.id.salesnew);
+                            break;
+                    }
+
                 }
             }
             else {
@@ -189,12 +200,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    public boolean ShoworHideMenu(Menu menu)
+    {
+        MenuItem homemenu = menu.findItem(R.id.nav_home);
+        homemenu.setVisible(CommonUtil.loggedinUserRoleID>1);
+
+        MenuItem salemenu = menu.findItem(R.id.salesnew);
+        salemenu.setVisible(CommonUtil.loggedinUserRoleID>1 || CommonUtil.isMobileDevice);
+
+        MenuItem kotmenu = menu.findItem(R.id.kot);
+        kotmenu.setVisible(CommonUtil.loggedinUserRoleID>1 || !CommonUtil.isMobileDevice);
+
+        MenuItem prdreport = menu.findItem(R.id.action_productrpt);
+        prdreport.setVisible(CommonUtil.loggedinUserRoleID>1);
+
+        MenuItem uploadmenu = menu.findItem(R.id.action_upload);
+        uploadmenu.setVisible(CommonUtil.loggedinUserRoleID>1);
+
+        return true;
+    }
+
     @Override
     public void onBackPressed(){
         if(drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START);
         }
         else {
+
             super.onBackPressed();
         }
     }
