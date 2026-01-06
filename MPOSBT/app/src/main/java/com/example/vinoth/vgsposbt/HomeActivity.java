@@ -424,8 +424,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     else {
                         try {
                             closeBT();
-                        } catch (IOException e) {
-                            //
+                        } catch (Exception e)
+                        {
+                            Toast.makeText(getApplicationContext(),"Error:"+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         finally {
                             Quantity.setText("");
@@ -1406,7 +1407,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             mmSocket = null;
         }
         if(workerThread!=null){
-            workerThread.stop();
+            workerThread.currentThread().interrupt();
         }
     }
 
