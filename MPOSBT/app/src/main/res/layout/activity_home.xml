@@ -38,8 +38,8 @@
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:textColor="@color/Black"
-                 android:textSize="20dp"
-                 android:padding="8dp"
+                 android:padding="5dp"
+                 android:textSize="15dp"
                  android:textStyle="bold"
                  android:text="BILL NO: "
                  android:typeface="monospace">
@@ -50,9 +50,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/billnoTxt"
                 android:text="1"
-                android:padding="8dp"
+                android:padding="5dp"
                 android:textColor="@color/colorRed"
-                android:textSize="20dp"
+                android:textSize="15dp"
                 android:textStyle="bold"
                 android:typeface="monospace" />
          </LinearLayout>
@@ -84,7 +84,20 @@
          <LinearLayout
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:padding="10dp">
+             android:padding="3dp">
+             <Switch
+                 android:id="@+id/ReadWt"
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:text="Read Weight"
+                 android:textColor="@color/DarkGreen"
+                 >
+             </Switch>
+         </LinearLayout>
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:padding="3dp">
              <Switch
                  android:layout_width="fill_parent"
                  android:layout_height="wrap_content"
@@ -111,14 +124,13 @@
                   android:layout_gravity="fill"
                   android:columnCount="3"
                   android:orientation="horizontal"
-                  android:padding="10dp">
+                  android:padding="5dp">
                   <TextView
-                      android:fontFamily="@font/orienta"
                       android:text="ITEM NO"
                       android:textAlignment="center"
                       android:textAppearance="@style/TextAppearance.AppCompat"
                       android:textColor="@android:color/background_dark"
-                      android:textSize="14sp" />
+                      android:textSize="12sp" />
 
                   <EditText
                       android:id="@+id/itemNo"
@@ -129,15 +141,15 @@
                       android:minWidth="700px"
                       android:textAppearance="@style/TextAppearance.AppCompat"
                       android:textColor="@color/DarkViolet"
-                      android:textSize="16sp"
+                      android:textSize="12sp"
                       android:textStyle="bold"
                       tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
 
                   <TextView
-                      android:fontFamily="@font/orienta"
                       android:text="ITEM NAME"
                       android:textAlignment="center"
+                      android:textSize="12sp"
                       android:textAppearance="@style/TextAppearance.AppCompat"
                       android:textColor="@android:color/background_dark" />
 
@@ -145,20 +157,19 @@
                       android:id="@+id/itemName"
                       android:layout_columnSpan="2"
                       android:layout_marginLeft="20dp"
-                      android:fontFamily="@font/orienta"
                       android:imeOptions="actionNext"
                       android:inputType="textCapCharacters"
                       android:minWidth="700px"
                       android:textAllCaps="true"
                       android:textAppearance="@style/TextAppearance.AppCompat"
                       android:textColor="@color/DarkViolet"
-                      android:textSize="16sp"
+                      android:textSize="12sp"
                       android:textStyle="bold" />
 
                   <TextView
-                      android:fontFamily="sans-serif"
                       android:text="PRICE"
                       android:textAlignment="center"
+                      android:textSize="12sp"
                       android:textAppearance="@style/TextAppearance.AppCompat"
                       android:textColor="@android:color/background_dark" />
 
@@ -168,18 +179,17 @@
                       android:layout_marginLeft="20dp"
                       android:editable="false"
                       android:focusable="true"
-                      android:fontFamily="@font/orienta"
                       android:minWidth="700px"
                       android:textAppearance="@style/TextAppearance.AppCompat"
                       android:textColor="@color/DarkViolet"
-                      android:textSize="16sp"
+                      android:textSize="12sp"
                       android:textStyle="bold"
                       tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
                   <TextView
-                      android:fontFamily="sans-serif"
                       android:text="ACT. WT"
                       android:textAlignment="center"
+                      android:textSize="12sp"
                       android:textAppearance="@style/TextAppearance.AppCompat"
                       android:textColor="@android:color/background_dark" />
 
@@ -189,11 +199,10 @@
                       android:layout_marginLeft="20dp"
                       android:editable="false"
                       android:focusable="true"
-                      android:fontFamily="@font/orienta"
                       android:minWidth="700px"
                       android:textAppearance="@style/TextAppearance.AppCompat"
                       android:textColor="@color/DarkViolet"
-                      android:textSize="16sp"
+                      android:textSize="12sp"
                       android:textStyle="bold"
                       tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
                   <LinearLayout
@@ -201,7 +210,7 @@
                       android:layout_height="wrap_content"
                       android:layout_columnSpan="2"
                       android:gravity="center"
-                      android:padding="15dp"
+                      android:padding="5dp"
                       android:orientation="vertical">
                       <LinearLayout
                           android:layout_width="match_parent"
@@ -215,10 +224,9 @@
                               <TextView
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
-                                  android:fontFamily="@font/orienta"
                                   android:text="IMPURITIES  (%)"
                                   android:textColor="@android:color/holo_red_dark"
-                                  android:textSize="15dp"
+                                  android:textSize="12dp"
                                   android:textStyle="bold"/>
 
                               <EditText
@@ -228,12 +236,11 @@
                                   android:editable="false"
                                   android:focusable="true"
                                   android:minWidth="60dp"
-                                  android:fontFamily="@font/orienta"
                                   android:hint="0"
                                   android:text="0"
                                   android:textStyle="bold"
                                   android:textColor="@android:color/black"
-                                  android:textSize="18dp"/>
+                                  android:textSize="12dp"/>
                           </LinearLayout>
                           <LinearLayout
                               android:layout_width="match_parent"
@@ -243,10 +250,9 @@
                               <TextView
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
-                                  android:fontFamily="@font/orienta"
                                   android:text="(WT)"
                                   android:textColor="@android:color/holo_red_dark"
-                                  android:textSize="15dp"
+                                  android:textSize="12dp"
                                   android:textStyle="bold"/>
                               <EditText
                                   android:id="@+id/deductionWt"
@@ -255,30 +261,27 @@
                                   android:editable="false"
                                   android:focusable="true"
                                   android:minWidth="60dp"
-                                  android:fontFamily="@font/orienta"
                                   android:hint="0"
                                   android:text="0"
                                   android:textStyle="bold"
                                   android:textColor="@android:color/black"
-                                  android:textSize="18dp"/>
+                                  android:textSize="12dp"/>
                           </LinearLayout>
                       </LinearLayout>
 
                       <LinearLayout
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
-                          android:padding="20dp"
+                          android:padding="5dp"
                           android:gravity="center">
                           <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:fontFamily="@font/orienta"
                               android:text="NET WEIGHT (Kg): "
                               android:textColor="@color/DarkViolet"
                               android:textStyle="bold"
-                              android:textSize="18dp"></TextView>
+                              android:textSize="15dp"></TextView>
                           <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
-                              android:fontFamily="@font/orienta"
                               android:id="@+id/netWt"
                               android:textStyle="bold"
                               android:text="0"
@@ -292,7 +295,7 @@
                           android:layout_height="wrap_content"
                           android:gravity="center"
                           android:orientation="vertical"
-                          android:padding="10dp">
+                          android:padding="5dp">
                           <LinearLayout
                               android:layout_width="match_parent"
                               android:layout_height="wrap_content"
@@ -300,37 +303,33 @@
                               <TextView
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
-                                  android:fontFamily="@font/orienta"
                                   android:text="TOTAL QTY:  "
                                   android:textColor="@color/DarkBlue"
-                                  android:textSize="16dp"
+                                  android:textSize="15dp"
                                   />
                               <TextView
                                   android:id="@+id/ttQty"
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
-                                  android:fontFamily="@font/orienta"
                                   android:text="000"
                                   android:textColor="@color/Black"
-                                  android:textSize="16dp"
+                                  android:textSize="15dp"
                                   android:textStyle="bold" />
 
                               <TextView
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
-                                  android:fontFamily="@font/orienta"
                                   android:text="     TOTAL ITEMS:  "
                                   android:textColor="@color/DarkBlue"
-                                  android:textSize="16dp" />
+                                  android:textSize="15dp" />
 
                               <TextView
                                   android:id="@+id/ttItem"
                                   android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
-                                  android:fontFamily="@font/orienta"
                                   android:text="000"
                                   android:textColor="@color/Black"
-                                  android:textSize="16dp"
+                                  android:textSize="15dp"
                                   android:textStyle="bold" />
                           </LinearLayout>
                       </LinearLayout>

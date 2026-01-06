@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GATEPASS_SUNMI_V2.iml" filepath="$PROJECT_DIR$/.idea/modules/GATEPASS_SUNMI_V2.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GATEPASS_SUNMI_V2.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GATEPASS_SUNMI_V2.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GATEPASS_SUNMI_V2.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GATEPASS_SUNMI_V2.app.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GATEPASS_SUNMI_V2.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GATEPASS_SUNMI_V2.app.main.iml" />

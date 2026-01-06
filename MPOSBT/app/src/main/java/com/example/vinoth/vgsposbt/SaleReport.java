@@ -13,6 +13,7 @@ public class SaleReport {
     public String CustomerID;
     public Double totalWt;
     public String ward;
+    public String zone;
     public Map<String,Double> itemwiseqty;
     public Double getSaleAmount() {
         return SaleAmount;

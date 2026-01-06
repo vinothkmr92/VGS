@@ -466,11 +466,11 @@ public class PrinterUtil {
             posPtr.printNormal("----------------------------------------------\n");
         }
         Integer totalItems = rcptData.itemsCarts.size();
-        Double totalQty = rcptData.itemsCarts.stream().mapToDouble(c->c.getQty()).sum();
+        Double totalQty = rcptData.itemsCarts.stream().mapToDouble(c->c.NetWeight()).sum();
         //posPtr.printNormal(ESC+"|bC"+"Total Items: "+totalItems+"\n");
         //posPtr.printNormal(ESC+"|bC"+"Total Qty  : "+decimalFormat.format(totalQty)+" Kg\n");
         posPtr.printText("Total Items : "+totalItems+"\n",0,1,1);
-        posPtr.printText("Total Qty   : "+totalItems+decimalFormat.format(totalQty)+" Kg\n",0,1,1);
+        posPtr.printText("Total Qty   : "+decimalFormat.format(totalQty)+" Kg\n",0,1,1);
         if(rcptData.discount>0 || rcptData.advance>0){
             String tt = String.format("%.0f",billAmt);
             tt = StringUtils.leftPad(tt,6);
@@ -659,7 +659,7 @@ public class PrinterUtil {
             else {
                 posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|2C"+ttAmt+"\n");
             }
-            String ttWtstr = "TOTAL WEIGHTS: "+decimalFormat.format(totalQty)+" Kg";
+            String ttWtstr = "TOTAL WT: "+decimalFormat.format(totalQty)+" Kg";
             Bitmap bps = getTextAsImage(ttWtstr,splitpaymentSize, Layout.Alignment.ALIGN_NORMAL,typeface);
             if(bps!=null){
                 posPtr.printBitmap(bps,0);
@@ -745,7 +745,7 @@ public class PrinterUtil {
             else {
                 posPtr.printNormal(ESC+"|lA"+ESC+"|bC"+ESC+"|2C"+ttAmt+"\n");
             }
-            String ttWtstr = "TOTAL WEIGHTS: "+decimalFormat.format(totalQty)+" Kg";
+            String ttWtstr = "TOTAL WT: "+decimalFormat.format(totalQty)+" Kg";
             Bitmap bps = getTextAsImage(ttWtstr,splitpaymentSize, Layout.Alignment.ALIGN_NORMAL,typeface);
             if(bps!=null){
                 posPtr.printBitmap(bps,0);

@@ -36,6 +36,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -153,6 +154,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ProgressDialog progressDialog;
     String weightFrmScale = "";
     Switch binRedSwitch;
+    Switch readWt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,6 +201,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             btnPrint = (Button) findViewById(R.id.print);
             btnEnter = (Button) findViewById(R.id.enter);
             btnAddCustomer = (ImageButton) findViewById(R.id.btnAddMember);
+            readWt = findViewById(R.id.ReadWt);
             btnAddCustomer.setOnClickListener(this);
             btn1.setOnClickListener(this);
             btn2.setOnClickListener(this);
@@ -404,17 +407,40 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     SaveAndPrintBill(false);
                 }
             });
+            readWt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        if(!blutName.isEmpty()){
+                            if (findBT()) {
+                                try {
+                                    openBT();
+                                } catch (IOException e) {
+                                    showCustomDialog("Error",e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        try {
+                            closeBT();
+                        } catch (IOException e) {
+                            //
+                        }
+                        finally {
+                            Quantity.setText("");
+                            netwtText.setText("");
+                        }
+                    }
+                }
+            });
             GmsBarcodeScannerOptions options = new GmsBarcodeScannerOptions.Builder()
                     .setBarcodeFormats(Barcode.FORMAT_QR_CODE, Barcode.FORMAT_CODE_128)
                     .build();
             scanner = GmsBarcodeScanning.getClient(HomeActivity.this, options);
             builder.setCancelable(true);
             itemNo.requestFocus();
-            if(!blutName.isEmpty()){
-                if (findBT()) {
-                    openBT();
-                }
-            }
+
         } catch (Exception ex) {
             showCustomDialog("Error", ex.getMessage());
         }
@@ -575,6 +601,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 Item item = dbHelper.GetItem(selectredName);
                 if (item != null) {
                     itemNo.setText(String.valueOf(item.getItem_No()));
+                    boolean focusQty = item.getItem_Name().toUpperCase().startsWith("PHONE");
+                    Quantity.setFocusable(focusQty);
                     itemName.setText(item.getItem_Name());
                     DecimalFormat formater = new DecimalFormat("0.000");
                     String price = formater.format(item.getPrice());
@@ -590,8 +618,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(HomeActivity.this, "Unable to read Weight. Please contact support.", Toast.LENGTH_LONG);
                     }
                     priceTxt.setText(price);
-                    deductionWtEditText.selectAll();
-                    deductionWtEditText.requestFocus();
+                    if(focusQty){
+                        Quantity.setText("1");
+                        netwtText.setText("1");
+                        Quantity.selectAll();
+                        Quantity.requestFocus();
+                    }
+                    else {
+                        deductionWtEditText.selectAll();
+                        deductionWtEditText.requestFocus();
+                    }
                 }
             }
         });
@@ -798,23 +834,35 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 if (!itemnostr.isEmpty()) {
                     Item item = dbHelper.GetItem(itemnostr);
                     if (item != null) {
+                        boolean focusQty = item.getItem_Name().toUpperCase().startsWith("PHONE");
+                        Quantity.setFocusable(focusQty);
                         itemName.setText(item.getItem_Name());
                         DecimalFormat formater = new DecimalFormat("0.000");
                         String price = formater.format(item.getPrice());
                         //String price =String.format("%.0f", isAcPrice.isChecked()?item.getAcPrice():item.getPrice());
+
                         Double tr = 0d;
                         try {
                             tr = Double.valueOf(Quantity.getText().toString());
                         } catch (Exception ex) {
                             //showCustomDialog("EXCEPTION",ex.getMessage());
-                            Toast.makeText(this, "ERROR: " + ex.getMessage(), Toast.LENGTH_SHORT);
+                            //Toast.makeText(this, "ERROR: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        if(tr<=0){
-                            Toast.makeText(this,"Unable to read Weight. Please contact support.",Toast.LENGTH_LONG);
+                        if(!focusQty && tr<=0){
+                            Toast.makeText(this,"Unable to read Weight. Please contact support.",Toast.LENGTH_LONG).show();
                         }
                         priceTxt.setText(price);
-                        deductionWtEditText.selectAll();
-                        deductionWtEditText.requestFocus();
+                        if(focusQty){
+                            Quantity.setText("1");
+                            netwtText.setText("1");
+                            Quantity.selectAll();
+                            Quantity.requestFocus();
+                        }
+                        else {
+                            deductionWtEditText.selectAll();
+                            deductionWtEditText.requestFocus();
+                        }
+
                     } else {
                         itemName.requestFocus();
                         Toast.makeText(getApplicationContext(), "Invalid Item Number.", Toast.LENGTH_LONG);
@@ -843,7 +891,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 progressDialog.cancel();
             }
         }
-
     }
 
     public void CancelBt() {
@@ -856,7 +903,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         estAmt.setText(GetCurrency(0d));
         deductionperEditText.setText("0");
         deductionWtEditText.setText("0");
-        //showCustomDialog("Info","Items Cleared.");
         itemNo.requestFocus();
     }
 
@@ -892,7 +938,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         sr = sr.substring(0, sr.length() - 1);
                         itemNo.setText(sr);
                     }
-                } else if (priceTxt.isFocused()) {
+                }
+                else if(Quantity.isFocused()){
+                    String sr = Quantity.getText().toString();
+                    if(sr.length()>0){
+                        sr = sr.substring(0,sr.length()-1);
+                        Quantity.setText(sr);
+                        netwtText.setText(sr);
+                    }
+                }
+                else if (priceTxt.isFocused()) {
                     String sr = priceTxt.getText().toString();
                     if (sr.length() > 0) {
                         sr = sr.substring(0, sr.length() - 1);
@@ -978,7 +1033,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     priceTxt.requestFocus();
                 } else if (deductionperEditText.isFocused()) {
                     CalculateDiscountAmt();
-                } else if (deductionWtEditText.isFocused()) {
+                } else if ( deductionWtEditText.isFocused() || Quantity.isFocused()) {
                     CalculateDiscountPer();
                     progressBar.show();
                     UpdateCarts();
@@ -991,7 +1046,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     netwtText.setText("0");
                     progressBar.hide();
                     itemNo.requestFocus();
-                } else {
+                }
+                else {
                     LoadProductNameandPrice();
                 }
                 break;
@@ -1013,7 +1069,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     String sr = itemNo.getText().toString();
                     sr += addstr;
                     itemNo.setText(sr);
-                } else if (deductionperEditText.isFocused()) {
+                }
+                else if(Quantity.isFocused()){
+                    int startSelection = Quantity.getSelectionStart();
+                    int endSelection = Quantity.getSelectionEnd();
+                    String selectedText = Quantity.getText().toString().substring(startSelection, endSelection);
+                    if (!selectedText.isEmpty()) {
+                        Quantity.setText(addstr);
+                    } else {
+                        String sr = Quantity.getText().toString();
+                        sr += addstr;
+                        Quantity.setText(sr);
+                    }
+                    netwtText.setText(Quantity.getText().toString());
+                }
+                else if (deductionperEditText.isFocused()) {
                     int startSelection = deductionperEditText.getSelectionStart();
                     int endSelection = deductionperEditText.getSelectionEnd();
                     String selectedText = deductionperEditText.getText().toString().substring(startSelection, endSelection);
@@ -1132,6 +1202,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         bills.setBill_Date(format.format(date));
         bills.setSale_Amt(saleAmt);
         bills.setUser(waiter);
+        bills.zone = Common.zoneSelected;
         dbHelper.Insert_Bills(bills);
         int nextBillNo = dbHelper.GetNextBillNo();
         billnoTxtView.setText(String.valueOf(nextBillNo));
@@ -1242,6 +1313,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if(mmSocket.isConnected()){
                 showCustomDialog("Message","Connected to Bluetooth Device");
             }
+            if(!mmSocket.isConnected()){
+                mmSocket.connect();
+            }
+            mmOutputStream = mmSocket.getOutputStream();
+            mmInputStream = mmSocket.getInputStream();
+            beginListenForData();
         }
 
     }
@@ -1326,6 +1403,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         if(mmSocket!=null){
             mmSocket.close();
+            mmSocket = null;
+        }
+        if(workerThread!=null){
+            workerThread.stop();
         }
     }
 

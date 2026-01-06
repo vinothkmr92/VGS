@@ -59,6 +59,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
@@ -74,8 +75,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     private static String billDateToDelete;
     TextView frmDateTextView;
     TextView toDateTextView;
-    public  static ArrayList<String> itemNames;
     DatePickerDialog datePickerDialog;
+    public  static ArrayList<String> itemNames;
     DatePickerDialog todatePickerDialog;
     String selectedDate;
     DatabaseHelper dbHelper;
@@ -161,8 +162,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         sheet.setColumnWidth(0, (15 * 200));
         sheet.setColumnWidth(1, (15 * 200));
         sheet.setColumnWidth(2, (15 * 200));
+        sheet.setColumnWidth(3, (15 * 200));
         int prlist = itemNames.size();
-        int k=3;
+        int k=4;
         for(int i=0;i<prlist;i++){
             sheet.setColumnWidth(k,(15*200));
             k++;
@@ -211,17 +213,21 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         Row row = sheet.createRow(0);
 
         cell = row.createCell(0);
-        cell.setCellValue("Ward");
+        cell.setCellValue("Zone");
         cell.setCellStyle(headerCellStyle);
 
         cell = row.createCell(1);
-        cell.setCellValue("Supplier");
+        cell.setCellValue("Ward");
         cell.setCellStyle(headerCellStyle);
 
         cell = row.createCell(2);
+        cell.setCellValue("Supplier");
+        cell.setCellStyle(headerCellStyle);
+
+        cell = row.createCell(3);
         cell.setCellValue("Supplier ID");
         cell.setCellStyle(headerCellStyle);
-        int k=3;
+        int k=4;
         for(int i=0;i<itemNames.size();i++){
             cell = row.createCell(k);
             cell.setCellValue(itemNames.get(i));
@@ -246,19 +252,21 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
             // Create a New Row for every new entry in list
             Row rowData = sheet.createRow(i + 1);
 
-            // Create Cells for each row
             cell = rowData.createCell(0);
+            cell.setCellValue(dataList.get(i).zone);
+            // Create Cells for each row
+            cell = rowData.createCell(1);
             cell.setCellValue(dataList.get(i).ward);
 
-            cell = rowData.createCell(1);
+            cell = rowData.createCell(2);
             cell.setCellValue(dataList.get(i).CustomerName);
 
-            cell = rowData.createCell(2);
+            cell = rowData.createCell(3);
             cell.setCellValue(dataList.get(i).CustomerID);
 
             Map<String,Double> itemwiseqty = dataList.get(i).itemwiseqty;
 
-            int k=3;
+            int k=4;
             for (String name:
                  itemwiseqty.keySet()) {
                 cell = rowData.createCell(k);
@@ -272,6 +280,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         }
         Collection<Map<String,Double>> myCol = dataList.stream().map(d->d.itemwiseqty).collect(Collectors.toList());
         Map<String,Double> itemconsolidated = myCol.stream().flatMap(m->m.entrySet().stream()).collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue,Double::sum));
+        TreeMap<String,Double> sortedmap = new TreeMap<>(itemconsolidated);
         int newrowindex = dataList.size()+2;
         Row rowData = sheet.createRow(newrowindex);
         cell = rowData.createCell(0);
@@ -284,9 +293,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         cell.setCellValue(" ");
         int k=3;
         for (String name:
-                itemconsolidated.keySet()) {
+                sortedmap.keySet()) {
             cell = rowData.createCell(k);
-            String q = amtFormat.format(itemconsolidated.get(name));
+            String q = amtFormat.format(sortedmap.get(name));
             cell.setCellValue(q);
             k++;
         }
