@@ -66,7 +66,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public static final String SQLPASSWORD = "SQLPASSWORD";
     public static final String SQLDB = "SQLDB";
     public static final String PRINTER = "PRINTER";
-    public static final String PRINTER_KOT = "PRINTER";
+    public static final String PRINTER_KOT = "PRINTER_KOT";
     public static final String BRANCH = "BRANCH";
     public static final String BRANCHES = "BRANCHES";
     public static final String PRINTOPTION = "PRINTOPTION";

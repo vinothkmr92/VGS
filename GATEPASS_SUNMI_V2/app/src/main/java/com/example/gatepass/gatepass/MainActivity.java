@@ -230,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void  PrintPass(){
-
         String req = "";
         String trNumber = this.truckNumber.getText().toString();
         String othr = other.getText().toString();
@@ -263,7 +262,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private  void PrintSummiGatePass(){
         int sl = 0;
-
         try {
             String Securityno = this.securityid.getText().toString();
             String trNumber = this.truckNumber.getText().toString();

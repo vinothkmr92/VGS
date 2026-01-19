@@ -87,17 +87,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public static final String SQLPASSWORD = "SQLPASSWORD";
     public static final String SQLDB = "SQLDB";
     public static final String PRINTER = "PRINTER";
+    public static final String PRINTER_KOT = "PRINTER_KOT";
     public static final String BRANCH = "BRANCH";
     public static final String BRANCHES = "BRANCHES";
     public static final String USERS = "USERS";
     public static final String PRINTOPTION = "PRINTOPTION";
+    public static final String PRINTOPTION_KOT = "PRINTOPTIONKOT";
     public static final String RECEIPTSIZE = "RECEIPTSIZE";
     public static final String PRINTER_IP = "PRINTER_IP";
+    public static final String PRINTER_IP_KOT = "PRINTER_IP_KOT";
     public static final String HEADER = "HEADER";
     public static final String FOOTER = "FOOTER";
     public static final String ADDRESS = "ADDRESS";
     public static final String INCLUDE_MRP = "INCLUDE_MRP";
     public static final String MULTI_LANG = "MULTI_LANG";
+    public static final String USBDEVICENAME = "USBDEVICE";
+    public static final String USBDEVICENAME_KOT = "USBDEVICE_KOT";
+    public static final String ENABLEKOT = "ENABLEKOT";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -142,8 +148,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             CommonUtil.PASSWORD = sqlPassword;
             CommonUtil.defBranch = defBranch;
             CommonUtil.PrintOption = sharedpreferences.getString(PRINTOPTION,"None");
+            CommonUtil.PrintOptionKot = sharedpreferences.getString(PRINTOPTION_KOT,"None");
             CommonUtil.ReceiptSize = sharedpreferences.getString(RECEIPTSIZE,"3");
+            CommonUtil.printer = sharedpreferences.getString(PRINTER,"");
+            CommonUtil.printerKot = sharedpreferences.getString(PRINTER_KOT,"");
             CommonUtil.PrinterIP = sharedpreferences.getString(PRINTER_IP,"");
+            CommonUtil.PrinterIPKot = sharedpreferences.getString(PRINTER_IP_KOT,"");
+            CommonUtil.usbDeviceName = sharedpreferences.getString(USBDEVICENAME,"");
+            CommonUtil.usbDeviceNameKot = sharedpreferences.getString(USBDEVICENAME_KOT,"");
             CommonUtil.ReceiptHeader = sharedpreferences.getString(HEADER,"");
             CommonUtil.ReceiptFooter = sharedpreferences.getString(FOOTER,"");
             CommonUtil.ReceiptAddress = sharedpreferences.getString(ADDRESS,"");

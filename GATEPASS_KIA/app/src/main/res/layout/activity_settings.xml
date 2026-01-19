@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Settings">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="5dp"
+        android:layout_gravity="center"
+        >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/White"
+            android:padding="5dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="App Settings"
+                android:paddingBottom="50dp"
+                android:textColor="@color/Black"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal">
+            </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="API URL"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+
+            <EditText
+                android:id="@+id/apiURL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@color/Black"
+                android:padding="20px"></EditText>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bluetooth Printer"
+                android:textColor="@color/DarkBlue"
+                android:textStyle="bold"></TextView>
+            <Spinner
+                android:layout_height="wrap_content"
+                android:id="@+id/bltDevice"
+                android:layout_width="match_parent"
+                android:textAlignment="center"
+                android:focusableInTouchMode="true"
+                android:spinnerMode="dialog"></Spinner>
+            <Button
+                android:id="@+id/btnSave"
+                android:text="Save"
+                android:backgroundTint="@color/Chocolate"
+                android:textColor="@color/White"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:drawableLeft="@drawable/baseline_save_24"></Button>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
