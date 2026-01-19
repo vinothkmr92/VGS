@@ -20,7 +20,7 @@
             android:layout_gravity="center">
             <CheckBox
                 android:layout_width="wrap_content"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/Chocolate"
                 android:textStyle="bold"
                 android:id="@+id/byPassCheckbox"
                 android:textSize="20dp"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:text="SECURITY ID"
             android:textSize="13dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/Chocolate"
             android:textStyle="bold"></TextView>
 
         <EditText
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:text="EMPTY TROLLYS"
             android:textSize="13dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/Chocolate"
             android:textStyle="bold"></TextView>
 
         <EditText
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:text="EMPTY BINS"
             android:textSize="13dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/Chocolate"
             android:textStyle="bold"></TextView>
 
         <EditText
@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:text="OTHERS"
             android:textSize="13dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/Chocolate"
             android:textStyle="bold"></TextView>
 
         <EditText
@@ -97,7 +97,7 @@
             android:text="TRUCK NUMBER"
             android:textSize="13dp"
             android:nextFocusDown="@id/emptyTrollys"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/Chocolate"
             android:textStyle="bold"></TextView>
         <EditText
             android:layout_width="match_parent"
@@ -115,7 +115,7 @@
             android:layout_height="wrap_content"
             android:text="VENDOR NAME"
             android:textSize="13dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/Chocolate"
             android:textStyle="bold"></TextView>
         <EditText
             android:layout_width="match_parent"
@@ -128,7 +128,7 @@
             android:layout_height="wrap_content"
             android:text="SHOP NAME"
             android:textSize="13dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/Chocolate"
             android:textStyle="bold"/>
         <EditText
             android:layout_width="match_parent"
@@ -141,7 +141,7 @@
             android:layout_height="wrap_content"
             android:text="GATE NO"
             android:textSize="13dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/Chocolate"
             android:textStyle="bold"/>
         <EditText
             android:layout_width="match_parent"
@@ -177,7 +177,7 @@
             android:drawableLeft="@drawable/outline_document_scanner_24"
             android:text="SCAN QR CODE"
             android:textColor="@color/White"
-            android:backgroundTint="@color/DarkSalmon"
+            android:backgroundTint="@color/DarkTurquoise"
             android:textStyle="bold" />
     </LinearLayout>
 </RelativeLayout>

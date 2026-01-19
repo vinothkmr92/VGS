@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GATEPASS</string>
+    <string name="ActivationAPIHost">60.243.50.58:9092</string>
 </resources>
