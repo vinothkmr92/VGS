@@ -446,19 +446,25 @@ public class KotFragment extends Fragment implements View.OnClickListener {
         dialog.setMessage("\n"+Message);
         dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                if(print){
                     try{
-                        if(kot.size()>0){
+                        if(print && kot.size()>0){
                             PrinterUtilKot kotPrint = new PrinterUtilKot(getContext(),getInstance(),kot);
                             kotPrint.billDetails = billDetails;
-                            kotPrint.printBill = true;
+                            kotPrint.printBill = !CommonUtil.PrintOption.equalsIgnoreCase("NONE") & billDetails!=null;
+                            //kotPrint.printBill = true;
                             kotPrint.Print();
+                        }
+                        else if(billDetails!=null && !CommonUtil.PrintOption.equalsIgnoreCase("NONE")){
+                            PrinterUtil billPrint = new PrinterUtil(getContext(),getInstance(),billDetails);
+                            billPrint.Print();
+                        }
+                        else{
+                            Cancel();
                         }
                     }
                     catch (Exception ex){
                         showCustomDialog("Error",ex.getMessage());
                     }
-                }
             }
         });
         dialog.setCancelable(false);
@@ -633,7 +639,11 @@ public class KotFragment extends Fragment implements View.OnClickListener {
                 dialog.hide();
             }
             if(isSuccess){
-                kotDetailsOld = r;
+                kotDetailsOld = new ArrayList<>();
+                for (KotDetails k:
+                     r) {
+                    kotDetailsOld.add(k);
+                }
                 kotDetails = r;
                 if(r.size()>0){
                     KotDetails first = kotDetails.get(0);
@@ -720,8 +730,23 @@ public class KotFragment extends Fragment implements View.OnClickListener {
                     msg ="Saved Bill No - "+billDtl;
                     CommonUtil.cartItems = new ArrayList<>();
                 }
-                boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
-                RefreshKotPage("Status",msg,print,kotlist,billDetails);
+                ArrayList<KotDetails> newKot = new ArrayList<>();
+                for (KotDetails k:
+                        kotlist) {
+                    KotDetails old = kotDetailsOld.stream().filter(c->c.ProductId.equals(k.ProductId)).findFirst().orElse(null);
+                    if(old!=null){
+                        int newQty = k.Qty-old.Qty;
+                        if(newQty>0){
+                            k.Qty = newQty;
+                            newKot.add(k);
+                        }
+                    }
+                    else {
+                        newKot.add(k);
+                    }
+                }
+                boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE") || !CommonUtil.PrintOptionKot.equalsIgnoreCase("NONE");
+                RefreshKotPage("Status",msg,print,newKot,billDetails);
             }
             else {
                 if(dialog.isShowing()){

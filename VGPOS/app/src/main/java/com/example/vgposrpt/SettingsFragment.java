@@ -231,11 +231,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         printerIP.setVisibility(View.GONE);
                         printer.setVisibility(View.GONE);
                         printeriplayout.setVisibility(View.GONE);
-                        rptSizeLayout.setVisibility(View.GONE);
-                        rptSizeTextView.setVisibility(View.GONE);
                         headerfooterLayout.setVisibility(View.GONE);
                         printerSettingsView.setVisibility(View.GONE);
                     }
+                    rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
+                    rptSizeTextView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
                 }
             });
             printerOptionNoneKot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -249,11 +249,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         printerIPKot.setVisibility(View.GONE);
                         printerkot.setVisibility(View.GONE);
                         printeriplayoutkot.setVisibility(View.GONE);
-                        rptSizeLayout.setVisibility(View.GONE);
-                        rptSizeTextView.setVisibility(View.GONE);
                         headerfooterLayout.setVisibility(View.GONE);
                         printerSettingsView.setVisibility(View.GONE);
                     }
+                    rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
+                    rptSizeTextView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
                 }
             });
 
@@ -265,15 +265,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         printerOptionBluetooth.setChecked(false);
                         printerOptionUsb.setChecked(false);
                         usbprinter.setVisibility(View.GONE);
-                        rptSizeLayout.setVisibility(View.VISIBLE);
-                        rptSizeTextView.setVisibility(View.VISIBLE);
                         printer.setVisibility(View.GONE);
                         headerfooterLayout.setVisibility(View.VISIBLE);
                         printerSettingsView.setVisibility(View.VISIBLE);
                     }
                     printerIP.setVisibility(isChecked ? View.VISIBLE:View.GONE);
                     printeriplayout.setVisibility(isChecked?View.VISIBLE:View.GONE);
-
+                    rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
+                    rptSizeTextView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
                 }
             });
             printerOptionWifiKot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -284,15 +283,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         printerOptionBluetoothKot.setChecked(false);
                         printerOptionUsbkot.setChecked(false);
                         usbprinterkot.setVisibility(View.GONE);
-                        rptSizeLayout.setVisibility(View.VISIBLE);
-                        rptSizeTextView.setVisibility(View.VISIBLE);
                         printerkot.setVisibility(View.GONE);
                         headerfooterLayout.setVisibility(View.VISIBLE);
                         printerSettingsView.setVisibility(View.VISIBLE);
                     }
                     printerIPKot.setVisibility(isChecked ? View.VISIBLE:View.GONE);
                     printeriplayoutkot.setVisibility(isChecked?View.VISIBLE:View.GONE);
-
+                    rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
+                    rptSizeTextView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
                 }
             });
             printerOptionBluetooth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -303,14 +301,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         printerOptionNone.setChecked(false);
                         printerOptionUsb.setChecked(false);
                         usbprinter.setVisibility(View.GONE);
-                        rptSizeLayout.setVisibility(View.VISIBLE);
-                        rptSizeTextView.setVisibility(View.VISIBLE);
                         printerIP.setVisibility(View.GONE);
                         printeriplayout.setVisibility(View.GONE);
                         headerfooterLayout.setVisibility(View.VISIBLE);
                         printerSettingsView.setVisibility(View.VISIBLE);
                     }
                     printer.setVisibility(isChecked ? View.VISIBLE:View.GONE);
+                    rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
+                    rptSizeTextView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
                 }
             });
             printerOptionBluetoothKot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -321,14 +319,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         printerOptionNoneKot.setChecked(false);
                         printerOptionUsbkot.setChecked(false);
                         usbprinterkot.setVisibility(View.GONE);
-                        rptSizeLayout.setVisibility(View.VISIBLE);
-                        rptSizeTextView.setVisibility(View.VISIBLE);
                         printerIPKot.setVisibility(View.GONE);
                         printeriplayoutkot.setVisibility(View.GONE);
                         headerfooterLayout.setVisibility(View.VISIBLE);
                         printerSettingsView.setVisibility(View.VISIBLE);
                     }
                     printerkot.setVisibility(isChecked ? View.VISIBLE:View.GONE);
+                    rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
+                    rptSizeTextView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
                 }
             });
             printerOptionUsb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -339,14 +337,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         printerOptionNone.setChecked(false);
                         printerOptionBluetooth.setChecked(false);
                         printer.setVisibility(View.GONE);
-                        rptSizeLayout.setVisibility(View.VISIBLE);
-                        rptSizeTextView.setVisibility(View.VISIBLE);
                         printerIP.setVisibility(View.GONE);
                         printeriplayout.setVisibility(View.GONE);
                         headerfooterLayout.setVisibility(View.VISIBLE);
                         printerSettingsView.setVisibility(View.VISIBLE);
                     }
                     usbprinter.setVisibility(isChecked ? View.VISIBLE:View.GONE);
+                    rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
+                    rptSizeTextView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
                 }
             });
             printerOptionUsbkot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -357,14 +355,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         printerOptionNoneKot.setChecked(false);
                         printerOptionBluetoothKot.setChecked(false);
                         printerkot.setVisibility(View.GONE);
-                        rptSizeLayout.setVisibility(View.VISIBLE);
-                        rptSizeTextView.setVisibility(View.VISIBLE);
                         printerIPKot.setVisibility(View.GONE);
                         printeriplayoutkot.setVisibility(View.GONE);
                         headerfooterLayout.setVisibility(View.VISIBLE);
                         printerSettingsView.setVisibility(View.VISIBLE);
                     }
                     usbprinterkot.setVisibility(isChecked ? View.VISIBLE:View.GONE);
+                    rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
+                    rptSizeTextView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
                 }
             });
             rpt2Inch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -414,7 +412,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             }
             headerfooterLayout.setVisibility(printerOptionNone.isChecked()?View.GONE:View.VISIBLE);
             printerSettingsView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.GONE:View.VISIBLE);
-            rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.GONE:View.VISIBLE);
+            rptSizeLayout.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
+            rptSizeTextView.setVisibility((printerOptionNone.isChecked() || printerOptionNoneKot.isChecked())?View.VISIBLE:View.GONE);
             printerIP.setVisibility(printerOptionWifi.isChecked() ? View.VISIBLE:View.GONE);
             printerIPKot.setVisibility(printerOptionWifiKot.isChecked()?View.VISIBLE:View.GONE);
             printer.setVisibility(printerOptionBluetooth.isChecked() ? View.VISIBLE:View.GONE);

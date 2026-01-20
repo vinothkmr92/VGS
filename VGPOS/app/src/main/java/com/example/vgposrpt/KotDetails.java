@@ -2,7 +2,7 @@ package com.example.vgposrpt;
 
 import java.util.Date;
 
-public class KotDetails {
+public class KotDetails implements  Cloneable{
     public Integer KotID;
     public Date KotDate;
     public Integer TableID;
