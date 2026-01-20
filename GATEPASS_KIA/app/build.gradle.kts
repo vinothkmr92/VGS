@@ -26,6 +26,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+        applicationVariants.all {
+            outputs.all {
+                this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+                //val timestamp = SimpleDateFormat("ddMMyyyy_hhmm_aa").format(Date())
+                val apkName = "KIA_GATEPASS.apk"
+                outputFileName = apkName
+            }
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
