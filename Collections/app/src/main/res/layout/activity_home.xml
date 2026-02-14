@@ -132,13 +132,31 @@
                         android:fontFamily="@font/orienta"
                         android:textStyle="bold"></com.google.android.material.textview.MaterialTextView>
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/dueAmt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text="0"
+                        android:textColor="@color/Red"
+                        android:textSize="30dp"
+                        ></com.google.android.material.textview.MaterialTextView>
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/loandays"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text="0"
+                        android:textColor="@color/Purple"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        ></com.google.android.material.textview.MaterialTextView>
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/outstanding"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
                         android:text="0"
                         android:textColor="@color/Red"
-                        android:fontFamily="@font/orienta"
                         android:textSize="35dp"
                         android:textStyle="bold"></com.google.android.material.textview.MaterialTextView>
                 </GridLayout>

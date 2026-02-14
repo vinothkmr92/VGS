@@ -1,5 +1,10 @@
 package com.example.collections;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.Date;
 
 public class Loan {
@@ -11,8 +16,18 @@ public class Loan {
     private double PaidAmt;
     private double BalanceAmt;
     private Integer Term;
-
+    public Date StartDate;
     public Date EndDate;
+    public long GetLoanDays(){
+        Instant stin = StartDate.toInstant();
+        ZoneId defaultZone = ZoneId.systemDefault();
+        LocalDate startDate = stin.atZone(defaultZone).toLocalDate();
+        Date today = new Date();
+        LocalDate todayDate = today.toInstant().atZone(defaultZone).toLocalDate();
+        long days = ChronoUnit.DAYS.between(startDate, todayDate);
+        days++;
+        return days;
+    }
     public double PenaltyAmt;
     public Integer getTerm() {
         return Term;

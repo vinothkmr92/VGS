@@ -53,6 +53,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
     TextView outstanding;
     TextView mobileNumber;
     TextView address;
+    TextView dueAmt;
+    TextView loandays;
     LinearLayout viewLoans;
     public static HomeActivity instance;
     AlertDialog.Builder confrimDialog;
@@ -73,6 +75,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
         outstanding = findViewById(R.id.outstanding);
         mobileNumber = findViewById(R.id.mobileNumber);
         address = findViewById(R.id.address);
+        dueAmt = findViewById(R.id.dueAmt);
+        loandays = findViewById(R.id.loandays);
         viewLoans = findViewById(R.id.viewLoans);
         usernameView.setText(CommonUtil.loggedinUser);
         btnRefresh = findViewById(R.id.btnRefresh);
@@ -307,6 +311,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
             for(int i=0;i<CommonUtil.loans.size();i++){
                 Loan loan = CommonUtil.loans.get(i);
                 addCard(loan);
+                loandays.setText(loan.GetLoanDays()+" Days");
             }
         }
         catch (Exception ex){
@@ -328,6 +333,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 memberView.setVisibility(View.GONE);
                 memberName.setText("");
                 outstanding.setText("");
+                dueAmt.setText("");
+                loandays.setText("");
                 mobileNumber.setVisibility(View.GONE);
                 mobileNumber.setText("");
                 address.setVisibility(View.GONE);
@@ -598,7 +605,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT END_DATE,PENALTY_AMOUNT,LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM,PAID_AMOUNT FROM LOANS WHERE (LOAN_AMOUNT+INTEREST_AMOUNT+PENALTY_AMOUNT-PAID_AMOUNT) > 0 AND MEMBER_ID="+memberid;
+                        String query = "SELECT ST_DATE,END_DATE,PENALTY_AMOUNT,LOAN_NO,LOAN_AMOUNT,INTEREST,LOAN_TYPE,TERM,PAID_AMOUNT FROM LOANS WHERE (LOAN_AMOUNT+INTEREST_AMOUNT+PENALTY_AMOUNT-PAID_AMOUNT) > 0 AND MEMBER_ID="+memberid;
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Loan> loans = new ArrayList<>();
@@ -613,6 +620,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             loan.setTerm(rs.getInt("TERM"));
                             loan.setPaidAmt(rs.getDouble("PAID_AMOUNT"));
                             loan.EndDate = rs.getDate("END_DATE");
+                            loan.StartDate = rs.getDate("ST_DATE");
                             loans.add(loan);
                             CommonUtil.loanDtl = loan;
                         }
@@ -661,6 +669,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 formatter.setMaximumFractionDigits(0);
                 String symbol = formatter.getCurrency().getSymbol();
                 outstanding.setText(formatter.format(CommonUtil.Outstanding).replace(symbol,symbol+" "));
+                dueAmt.setText(formatter.format(CommonUtil.DueAmount).replace(symbol,symbol+" "));
                 mobileNumber.setVisibility(View.VISIBLE);
                 mobileNumber.setText(CommonUtil.mobileNumber);
                 address.setVisibility(View.VISIBLE);
@@ -686,7 +695,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                     if (con == null) {
                         z = "Database Connection Failed";
                     } else {
-                        String query = "SELECT NAME_1,MOBILE_1,ADDRESS_1,OUTSTANDING_AMOUNT FROM MEMBERS WHERE MEMBER_ID="+memberid;
+                        String query = "SELECT NAME_1,MOBILE_1,ADDRESS_1,OUTSTANDING_AMOUNT,DUE_AMOUNT FROM MEMBERS WHERE MEMBER_ID="+memberid;
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         if(rs.next())
@@ -695,6 +704,7 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             CommonUtil.Outstanding = rs.getDouble("OUTSTANDING_AMOUNT");
                             CommonUtil.mobileNumber = rs.getString("MOBILE_1");
                             CommonUtil.address = rs.getString("ADDRESS_1");
+                            CommonUtil.DueAmount = rs.getDouble("DUE_AMOUNT");
                             z = "Member Found.";
                             isSuccess=true;
                         }
