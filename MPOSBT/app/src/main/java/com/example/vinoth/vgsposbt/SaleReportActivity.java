@@ -56,6 +56,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -143,7 +144,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     }
 
     public static boolean exportDataIntoWorkbook(Context context, String fileName,
-                                                 ArrayList<SaleReport> dataList) {
+                                                 ArrayList<SaleReport> dataList,String frmDt,String toDt) {
         boolean isWorkbookWrittenIntoStorage;
 
         // Check if available and not read only
@@ -171,7 +172,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         }
         sheet.setColumnWidth(k,(15*300));
         setHeaderRow();
-        fillDataIntoExcel(dataList);
+        fillDataIntoExcel(dataList,frmDt,toDt);
         isWorkbookWrittenIntoStorage = storeExcelInStorage(context, fileName);
 
         return isWorkbookWrittenIntoStorage;
@@ -246,7 +247,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
      *
      * @param dataList - List containing data to be filled into excel
      */
-    private static void fillDataIntoExcel(ArrayList<SaleReport> dataList) {
+    private static void fillDataIntoExcel(ArrayList<SaleReport> dataList,String frmDt,String toDt) {
         DecimalFormat amtFormat = new DecimalFormat("#.###");
         for (int i = 0; i < dataList.size(); i++) {
             // Create a New Row for every new entry in list
@@ -314,6 +315,14 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         cell = newRow.createCell(0);
         String headcount = amtFormat.format(headCount);
         cell.setCellValue("HEAD COUNT: "+headcount);
+        newrowindex++;
+        newRow = sheet.createRow(newrowindex);
+        cell = newRow.createCell(0);
+        cell.setCellValue("-----------------------");
+        newrowindex++;
+        newRow = sheet.createRow(newrowindex);
+        cell = newRow.createCell(0);
+        cell.setCellValue("From: "+frmDt+" To: "+toDt);
     }
 
     /**
@@ -505,7 +514,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa", Locale.getDefault());
         Date date = new Date();
         String fileName = "SaleReport_"+format.format(date)+".xls";
-        if(exportDataIntoWorkbook(getApplicationContext(),fileName,sal)){
+        String frmDt = frmDateTextView.getText().toString();
+        String toDt = toDateTextView.getText().toString();
+        if(exportDataIntoWorkbook(getApplicationContext(),fileName,sal,frmDt,toDt)){
             try{
                 File file = new File(getApplicationContext().getExternalFilesDir(DOWNLOAD_SERVICE), fileName);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -560,6 +571,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         String todt = toDateTextView.getText().toString();
         String waiter  = searchTxtView.getText().toString();
         ArrayList<SaleReport> sal = dbHelper.GetSalesReport(frmdt,todt,waiter);
+        sal.sort(Comparator.comparing(SaleReport::getWard));
         headCount = dbHelper.GetHeadCount(frmdt,todt);
         return sal;
     }

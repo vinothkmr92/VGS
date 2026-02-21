@@ -18,6 +18,9 @@ public class SaleReport {
     public Double getSaleAmount() {
         return SaleAmount;
     }
+    public String getWard(){
+        return ward;
+    }
 
     public void setSaleAmount(Double saleAmount) {
         SaleAmount = saleAmount;

@@ -308,10 +308,14 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
     public void LoadLoans(){
         try{
             viewLoans.removeAllViews();
-            for(int i=0;i<CommonUtil.loans.size();i++){
-                Loan loan = CommonUtil.loans.get(i);
+            if(CommonUtil.loanDtl!=null){
+                Loan loan = CommonUtil.loanDtl;
                 addCard(loan);
                 loandays.setText(loan.GetLoanDays()+" Days");
+                NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+                formatter.setMaximumFractionDigits(0);
+                String symbol = formatter.getCurrency().getSymbol();
+                outstanding.setText(formatter.format(loan.getLoanAmount()).replace(symbol,symbol+" "));
             }
         }
         catch (Exception ex){
@@ -609,7 +613,8 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
                         ArrayList<Loan> loans = new ArrayList<>();
-                        while (rs.next())
+                        CommonUtil.loanDtl = null;
+                        if (rs.next())
                         {
                             Loan loan = new Loan();
                             loan.PenaltyAmt = rs.getDouble("PENALTY_AMOUNT");
@@ -621,11 +626,9 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                             loan.setPaidAmt(rs.getDouble("PAID_AMOUNT"));
                             loan.EndDate = rs.getDate("END_DATE");
                             loan.StartDate = rs.getDate("ST_DATE");
-                            loans.add(loan);
                             CommonUtil.loanDtl = loan;
                         }
-                        CommonUtil.loans = loans;
-                        isSuccess= !CommonUtil.loans.isEmpty();
+                        isSuccess= CommonUtil.loanDtl!=null;
                         z =isSuccess ? "Loans Found.":"No Pending Loans.";
                     }
                 }
@@ -668,7 +671,6 @@ public class HomeActivity extends AppCompatActivity implements GetPaymentsDetail
                 NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
                 formatter.setMaximumFractionDigits(0);
                 String symbol = formatter.getCurrency().getSymbol();
-                outstanding.setText(formatter.format(CommonUtil.Outstanding).replace(symbol,symbol+" "));
                 dueAmt.setText(formatter.format(CommonUtil.DueAmount).replace(symbol,symbol+" "));
                 mobileNumber.setVisibility(View.VISIBLE);
                 mobileNumber.setText(CommonUtil.mobileNumber);

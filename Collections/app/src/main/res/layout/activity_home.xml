@@ -156,7 +156,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
                         android:text="0"
-                        android:textColor="@color/Red"
+                        android:textColor="@color/DarkBlue"
                         android:textSize="35dp"
                         android:textStyle="bold"></com.google.android.material.textview.MaterialTextView>
                 </GridLayout>

@@ -287,7 +287,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public  ArrayList<SaleReport> GetSalesReport(String frmDate,String toDate,String waiter){
         ArrayList<SaleReport> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT,WAITER,ZONE FROM BILLS  WHERE DATE(BILL_DATE)>='"+frmDate+"' AND DATE(BILL_DATE)<='"+toDate+"'";
+        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT,WAITER,ZONE FROM BILLS  WHERE DATE(BILL_DATE)>='"+frmDate+"' AND DATE(BILL_DATE)<='"+toDate+"' ORDER BY ZONE";
         if(!waiter.equals("ALL")){
             query = query+" AND WAITER='"+waiter+"'";
         }
