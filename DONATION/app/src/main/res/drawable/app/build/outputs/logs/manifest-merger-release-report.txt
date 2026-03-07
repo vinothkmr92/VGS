@@ -1,0 +1,531 @@
+-- Merging decision tree log ---
+provider#androidx.core.content.FileProvider
+INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:91:9-99:20
+	android:grantUriPermissions
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:95:13-47
+	android:authorities
+		INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:93:13-60
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:94:13-37
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:92:13-62
+manifest
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:2:1-109:12
+INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:2:1-109:12
+INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:2:1-109:12
+INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:2:1-109:12
+MERGED from [com.google.android.material:material:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c7b2384109013a8730087db0bd21c98d\transformed\material-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.biometric:biometric:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ac9437d1d9071ed777c2ecd5a6d7097d\transformed\biometric-1.1.0\AndroidManifest.xml:17:1-29:12
+MERGED from [androidx.appcompat:appcompat:1.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\181c9342b2faff26f5dbc305cb2363ec\transformed\appcompat-1.3.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.constraintlayout:constraintlayout:1.1.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d5714cc239f536674fa2f0152bdfba4\transformed\constraintlayout-1.1.3\AndroidManifest.xml:2:1-11:12
+MERGED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:2:1-23:12
+MERGED from [com.google.mlkit:barcode-scanning-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\8be9f710c0bfcbc6e7f784e66ac33c97\transformed\jetified-barcode-scanning-common-17.0.0\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:2:1-18:12
+MERGED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:2:1-26:12
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e40e94186900203149125266242ff5c\transformed\jetified-play-services-base-18.1.0\AndroidManifest.xml:16:1-24:12
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f4006eb9db4134372392243b6101d38e\transformed\jetified-play-services-tasks-18.0.2\AndroidManifest.xml:2:1-6:12
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b0a3a255cda7a2ca79aefff9d42fb1bd\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:16:1-26:12
+MERGED from [androidx.fragment:fragment:1.3.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\8962f4176119e1e46e424120af1fd6ad\transformed\fragment-1.3.6\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.activity:activity:1.4.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d898969d810b89458602c8b86ab3388\transformed\jetified-activity-1.4.0\AndroidManifest.xml:17:1-24:12
+MERGED from [com.github.PhilJay:MPAndroidChart:v3.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\852ccb526e76f62abde1261df00bb6ed\transformed\jetified-MPAndroidChart-v3.1.0\AndroidManifest.xml:2:1-20:12
+MERGED from [androidx.recyclerview:recyclerview:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d3b2aaac307b960293b51e730ad4d1b\transformed\recyclerview-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\90e7d275569233df4685ad4101b74e40\transformed\legacy-support-core-ui-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ddc516889f06040086bbb0d3dc3c1a9f\transformed\cursoradapter-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.appcompat:appcompat-resources:1.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c0ca4d7e7944821e7601c34efbec5c19\transformed\jetified-appcompat-resources-1.3.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\799133aa2aa2da77c6f1f683e191bf3f\transformed\drawerlayout-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\12be5292369382bece8b8a9199d84e44\transformed\jetified-lifecycle-viewmodel-savedstate-2.3.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.savedstate:savedstate:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\21c27ef59da2bdc1bd6fa62d06bac1ae\transformed\jetified-savedstate-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1749ec6ceec6b347a79aa001ea32be3e\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.transition:transition:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\0d961b05e5654ca72c7d981559ad82e0\transformed\transition-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a1250fe63f2253de8939b90199756a4f\transformed\viewpager-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a84a85a35c991ef1936e131bf7921d29\transformed\loader-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\581bab584d7027c3fc292902f970e6d5\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ca135bdf051c2c0e69d00516b9f2649d\transformed\vectordrawable-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\bafab497baddfed38205349bde82eae7\transformed\coordinatorlayout-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\674a6854397d734b1973716dc5d2790f\transformed\slidingpanelayout-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a85ac1825b9ae1d238f3c50072c9078b\transformed\customview-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\adb42a31f307916ac376d8ced1262dce\transformed\swiperefreshlayout-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\684162c96154e4921eb9e98b7c4efa3a\transformed\asynclayoutinflater-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.core:core:1.7.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\aede3cee7fc27d912e704c5d48249432\transformed\core-1.7.0\AndroidManifest.xml:17:1-26:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1c052d4c2a784b33515be21a2bfbe22a\transformed\lifecycle-runtime-2.3.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\5930b52e159215d78119aa7130ba12b1\transformed\lifecycle-viewmodel-2.3.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e74db8e8ad7f0b05f7ba79907b4e2eb\transformed\cardview-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c20ea3184967675eaedc1d85b94b6799\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:15:1-38:12
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:15:1-41:12
+MERGED from [com.google.android.datatransport:transport-api:2.2.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e40cf18778f3758d516a73313d7ac4ef\transformed\jetified-transport-api-2.2.1\AndroidManifest.xml:15:1-22:12
+MERGED from [com.google.firebase:firebase-components:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1a6c35a888ee12e90d779c8ce68df23f\transformed\jetified-firebase-components-16.1.0\AndroidManifest.xml:15:1-23:12
+MERGED from [com.google.firebase:firebase-encoders-json:17.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ddd2cef378cdbacca73c0328e2a7c89b\transformed\jetified-firebase-encoders-json-17.1.0\AndroidManifest.xml:15:1-23:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b06dff419e720e6dedcf341515ba970c\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f79d6289c9e29b967c14fa43c2212978\transformed\lifecycle-livedata-2.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\11b71880f060ae97921b21138e01fa69\transformed\lifecycle-livedata-core-2.3.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.arch.core:core-runtime:2.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f37b709c991a414544b21dc43825453f\transformed\core-runtime-2.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\547be896e42922d8cedd998375d3c148\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\5903d96b0f85d030d9fdf521d5d8b440\transformed\documentfile-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\064e57797d409c8596f0f58ce66d69d8\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.print:print:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1d325ffb69a2f88eec9a4cc34ebee4f1\transformed\print-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.exifinterface:exifinterface:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\eaa23ba7ea71c9280072173b5764c151\transformed\exifinterface-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.annotation:annotation-experimental:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1d176ada9e85ee0e125ef8fcec4fe600\transformed\jetified-annotation-experimental-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.android.odml:image:1.0.0-beta1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\812f49017d9c8b161426f93078c797d1\transformed\jetified-image-1.0.0-beta1\AndroidManifest.xml:2:1-9:12
+	package
+		INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml
+	xmlns:tools
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:3:5-51
+	android:versionCode
+		INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.BLUETOOTH_CONNECT
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:5:5-76
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:5:22-73
+uses-permission#android.permission.BLUETOOTH_SCAN
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:6:5-73
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:6:22-70
+uses-permission#android.permission.GET_ACCOUNTS
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:7:5-71
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:7:22-68
+uses-permission#android.permission.READ_PRIVILEGED_PHONE_STATE
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:8:5-10:47
+	tools:ignore
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:10:9-44
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:9:9-70
+uses-permission#android.permission.READ_PROFILE
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:11:5-71
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:11:22-68
+uses-permission#android.permission.READ_PHONE_STATE
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:12:5-75
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:12:22-72
+uses-permission#android.permission.READ_CONTACTS
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:13:5-72
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:13:22-69
+uses-permission#android.permission.INTERNET
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:14:5-67
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:26:5-67
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:26:5-67
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:14:22-64
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:15:5-80
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:15:22-77
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:16:5-81
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:16:22-78
+uses-permission#android.permission.ACCESS_MEDIA_LOCATION
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:17:5-80
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:17:22-77
+uses-permission#android.permission.MANAGE_EXTERNAL_STORAGE
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:18:5-82
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:18:22-79
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:19:5-79
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:25:5-79
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:25:5-79
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:22:5-79
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:22:5-79
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:19:22-76
+uses-feature#android.hardware.usb.host
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:21:5-85
+	android:required
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:21:60-83
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:21:19-59
+uses-permission#android.permission.BLUETOOTH
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:23:5-25:48
+	tools:remove
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:25:9-45
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:24:9-52
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:26:5-28:48
+	tools:remove
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:28:9-45
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:27:9-58
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:29:5-79
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:29:22-76
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:30:5-81
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:30:22-78
+uses-permission#android.permission.CAMERA
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:31:5-65
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:31:22-62
+uses-feature#android.hardware.camera
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:33:5-60
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:33:19-57
+uses-feature#android.hardware.camera.autofocus
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:34:5-70
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:34:19-67
+application
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:36:5-107:19
+INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:36:5-107:19
+MERGED from [com.google.android.material:material:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c7b2384109013a8730087db0bd21c98d\transformed\material-1.0.0\AndroidManifest.xml:22:5-20
+MERGED from [com.google.android.material:material:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c7b2384109013a8730087db0bd21c98d\transformed\material-1.0.0\AndroidManifest.xml:22:5-20
+MERGED from [androidx.constraintlayout:constraintlayout:1.1.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d5714cc239f536674fa2f0152bdfba4\transformed\constraintlayout-1.1.3\AndroidManifest.xml:9:5-20
+MERGED from [androidx.constraintlayout:constraintlayout:1.1.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d5714cc239f536674fa2f0152bdfba4\transformed\constraintlayout-1.1.3\AndroidManifest.xml:9:5-20
+MERGED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:8:5-21:19
+MERGED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:8:5-21:19
+MERGED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:8:5-24:19
+MERGED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:8:5-24:19
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e40e94186900203149125266242ff5c\transformed\jetified-play-services-base-18.1.0\AndroidManifest.xml:19:5-23:19
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e40e94186900203149125266242ff5c\transformed\jetified-play-services-base-18.1.0\AndroidManifest.xml:19:5-23:19
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f4006eb9db4134372392243b6101d38e\transformed\jetified-play-services-tasks-18.0.2\AndroidManifest.xml:5:5-20
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f4006eb9db4134372392243b6101d38e\transformed\jetified-play-services-tasks-18.0.2\AndroidManifest.xml:5:5-20
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b0a3a255cda7a2ca79aefff9d42fb1bd\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:20:5-24:19
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b0a3a255cda7a2ca79aefff9d42fb1bd\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:20:5-24:19
+MERGED from [androidx.core:core:1.7.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\aede3cee7fc27d912e704c5d48249432\transformed\core-1.7.0\AndroidManifest.xml:24:5-89
+MERGED from [androidx.core:core:1.7.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\aede3cee7fc27d912e704c5d48249432\transformed\core-1.7.0\AndroidManifest.xml:24:5-89
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:28:5-36:19
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:28:5-36:19
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:25:5-39:19
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:25:5-39:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b06dff419e720e6dedcf341515ba970c\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b06dff419e720e6dedcf341515ba970c\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [com.google.android.odml:image:1.0.0-beta1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\812f49017d9c8b161426f93078c797d1\transformed\jetified-image-1.0.0-beta1\AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.odml:image:1.0.0-beta1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\812f49017d9c8b161426f93078c797d1\transformed\jetified-image-1.0.0-beta1\AndroidManifest.xml:7:5-20
+	android:extractNativeLibs
+		INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml
+	android:requestRawExternalStorageAccess
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:43:9-55
+	android:requestLegacyExternalStorage
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:42:9-52
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.7.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\aede3cee7fc27d912e704c5d48249432\transformed\core-1.7.0\AndroidManifest.xml:24:18-86
+	android:supportsRtl
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:45:9-35
+	android:label
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:39:9-41
+	android:roundIcon
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:44:9-48
+	android:icon
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:38:9-43
+	android:allowBackup
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:37:9-35
+	android:theme
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:46:9-40
+	android:networkSecurityConfig
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:41:9-69
+	android:logo
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:40:9-43
+	android:usesCleartextTraffic
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:47:9-44
+activity#com.example.vinoth.vgspos.HomePage
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:48:9-50:40
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:50:13-37
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:49:13-37
+activity#com.example.vinoth.vgspos.PasscodeActivity
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:51:9-54:58
+	android:windowSoftInputMode
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:54:13-55
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:53:13-37
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:52:13-45
+activity#com.example.vinoth.vgspos.ItemsMasterActivity
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:55:9-61:20
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:57:13-37
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:56:13-48
+meta-data#android.app.lib_name
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:58:13-60:36
+	android:value
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:60:17-33
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:59:17-52
+activity#com.example.vinoth.vgspos.SaleReportActivity
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:62:9-68:20
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:64:13-37
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:63:13-47
+activity#com.example.vinoth.vgspos.Settings
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:69:9-71:40
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:71:13-37
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:70:13-37
+activity#com.example.vinoth.vgspos.ViewItemActivity
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:72:9-74:40
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:74:13-37
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:73:13-45
+activity#com.example.vinoth.vgspos.ItemReport
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:75:9-77:40
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:77:13-37
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:76:13-39
+activity#com.example.vinoth.vgspos.UploadActivity
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:78:9-80:40
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:80:13-37
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:79:13-43
+activity#com.example.vinoth.vgspos.HomeActivity
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:81:9-89:20
+	android:exported
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:83:13-36
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:82:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:84:13-88:29
+action#android.intent.action.MAIN
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:85:17-69
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:85:25-66
+category#android.intent.category.LAUNCHER
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:87:17-77
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:87:27-74
+meta-data#android.support.PARENT_ACTIVITY
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:101:9-103:45
+	android:value
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:103:13-42
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:102:13-59
+meta-data#preloaded_fonts
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:104:9-106:57
+	android:resource
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:106:13-54
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:105:13-43
+meta-data#android.support.FILE_PROVIDER_PATHS
+ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:96:13-98:58
+	android:resource
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:98:17-55
+	android:name
+		ADDED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml:97:17-67
+uses-sdk
+INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml
+INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml
+MERGED from [com.google.android.material:material:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c7b2384109013a8730087db0bd21c98d\transformed\material-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.material:material:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c7b2384109013a8730087db0bd21c98d\transformed\material-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.biometric:biometric:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ac9437d1d9071ed777c2ecd5a6d7097d\transformed\biometric-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.biometric:biometric:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ac9437d1d9071ed777c2ecd5a6d7097d\transformed\biometric-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat:1.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\181c9342b2faff26f5dbc305cb2363ec\transformed\appcompat-1.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat:1.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\181c9342b2faff26f5dbc305cb2363ec\transformed\appcompat-1.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.constraintlayout:constraintlayout:1.1.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d5714cc239f536674fa2f0152bdfba4\transformed\constraintlayout-1.1.3\AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.constraintlayout:constraintlayout:1.1.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d5714cc239f536674fa2f0152bdfba4\transformed\constraintlayout-1.1.3\AndroidManifest.xml:5:5-7:41
+MERGED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:6:5-44
+MERGED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:barcode-scanning-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\8be9f710c0bfcbc6e7f784e66ac33c97\transformed\jetified-barcode-scanning-common-17.0.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:barcode-scanning-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\8be9f710c0bfcbc6e7f784e66ac33c97\transformed\jetified-barcode-scanning-common-17.0.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:6:5-44
+MERGED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:6:5-44
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e40e94186900203149125266242ff5c\transformed\jetified-play-services-base-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e40e94186900203149125266242ff5c\transformed\jetified-play-services-base-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f4006eb9db4134372392243b6101d38e\transformed\jetified-play-services-tasks-18.0.2\AndroidManifest.xml:4:5-43
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f4006eb9db4134372392243b6101d38e\transformed\jetified-play-services-tasks-18.0.2\AndroidManifest.xml:4:5-43
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b0a3a255cda7a2ca79aefff9d42fb1bd\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b0a3a255cda7a2ca79aefff9d42fb1bd\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [androidx.fragment:fragment:1.3.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\8962f4176119e1e46e424120af1fd6ad\transformed\fragment-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.3.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\8962f4176119e1e46e424120af1fd6ad\transformed\fragment-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.4.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d898969d810b89458602c8b86ab3388\transformed\jetified-activity-1.4.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.4.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d898969d810b89458602c8b86ab3388\transformed\jetified-activity-1.4.0\AndroidManifest.xml:20:5-22:41
+MERGED from [com.github.PhilJay:MPAndroidChart:v3.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\852ccb526e76f62abde1261df00bb6ed\transformed\jetified-MPAndroidChart-v3.1.0\AndroidManifest.xml:16:5-18:41
+MERGED from [com.github.PhilJay:MPAndroidChart:v3.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\852ccb526e76f62abde1261df00bb6ed\transformed\jetified-MPAndroidChart-v3.1.0\AndroidManifest.xml:16:5-18:41
+MERGED from [androidx.recyclerview:recyclerview:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d3b2aaac307b960293b51e730ad4d1b\transformed\recyclerview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.recyclerview:recyclerview:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\7d3b2aaac307b960293b51e730ad4d1b\transformed\recyclerview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\90e7d275569233df4685ad4101b74e40\transformed\legacy-support-core-ui-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\90e7d275569233df4685ad4101b74e40\transformed\legacy-support-core-ui-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ddc516889f06040086bbb0d3dc3c1a9f\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ddc516889f06040086bbb0d3dc3c1a9f\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c0ca4d7e7944821e7601c34efbec5c19\transformed\jetified-appcompat-resources-1.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat-resources:1.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c0ca4d7e7944821e7601c34efbec5c19\transformed\jetified-appcompat-resources-1.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\799133aa2aa2da77c6f1f683e191bf3f\transformed\drawerlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\799133aa2aa2da77c6f1f683e191bf3f\transformed\drawerlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\12be5292369382bece8b8a9199d84e44\transformed\jetified-lifecycle-viewmodel-savedstate-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\12be5292369382bece8b8a9199d84e44\transformed\jetified-lifecycle-viewmodel-savedstate-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.savedstate:savedstate:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\21c27ef59da2bdc1bd6fa62d06bac1ae\transformed\jetified-savedstate-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.savedstate:savedstate:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\21c27ef59da2bdc1bd6fa62d06bac1ae\transformed\jetified-savedstate-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1749ec6ceec6b347a79aa001ea32be3e\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1749ec6ceec6b347a79aa001ea32be3e\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.transition:transition:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\0d961b05e5654ca72c7d981559ad82e0\transformed\transition-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.transition:transition:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\0d961b05e5654ca72c7d981559ad82e0\transformed\transition-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a1250fe63f2253de8939b90199756a4f\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a1250fe63f2253de8939b90199756a4f\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a84a85a35c991ef1936e131bf7921d29\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a84a85a35c991ef1936e131bf7921d29\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\581bab584d7027c3fc292902f970e6d5\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\581bab584d7027c3fc292902f970e6d5\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ca135bdf051c2c0e69d00516b9f2649d\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ca135bdf051c2c0e69d00516b9f2649d\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\bafab497baddfed38205349bde82eae7\transformed\coordinatorlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\bafab497baddfed38205349bde82eae7\transformed\coordinatorlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\674a6854397d734b1973716dc5d2790f\transformed\slidingpanelayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\674a6854397d734b1973716dc5d2790f\transformed\slidingpanelayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a85ac1825b9ae1d238f3c50072c9078b\transformed\customview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a85ac1825b9ae1d238f3c50072c9078b\transformed\customview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\adb42a31f307916ac376d8ced1262dce\transformed\swiperefreshlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\adb42a31f307916ac376d8ced1262dce\transformed\swiperefreshlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\684162c96154e4921eb9e98b7c4efa3a\transformed\asynclayoutinflater-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\684162c96154e4921eb9e98b7c4efa3a\transformed\asynclayoutinflater-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.7.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\aede3cee7fc27d912e704c5d48249432\transformed\core-1.7.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.core:core:1.7.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\aede3cee7fc27d912e704c5d48249432\transformed\core-1.7.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1c052d4c2a784b33515be21a2bfbe22a\transformed\lifecycle-runtime-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1c052d4c2a784b33515be21a2bfbe22a\transformed\lifecycle-runtime-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\5930b52e159215d78119aa7130ba12b1\transformed\lifecycle-viewmodel-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\5930b52e159215d78119aa7130ba12b1\transformed\lifecycle-viewmodel-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e74db8e8ad7f0b05f7ba79907b4e2eb\transformed\cardview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e74db8e8ad7f0b05f7ba79907b4e2eb\transformed\cardview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c20ea3184967675eaedc1d85b94b6799\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\c20ea3184967675eaedc1d85b94b6799\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.android.datatransport:transport-api:2.2.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e40cf18778f3758d516a73313d7ac4ef\transformed\jetified-transport-api-2.2.1\AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.android.datatransport:transport-api:2.2.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e40cf18778f3758d516a73313d7ac4ef\transformed\jetified-transport-api-2.2.1\AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.firebase:firebase-components:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1a6c35a888ee12e90d779c8ce68df23f\transformed\jetified-firebase-components-16.1.0\AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.firebase:firebase-components:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1a6c35a888ee12e90d779c8ce68df23f\transformed\jetified-firebase-components-16.1.0\AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.firebase:firebase-encoders-json:17.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ddd2cef378cdbacca73c0328e2a7c89b\transformed\jetified-firebase-encoders-json-17.1.0\AndroidManifest.xml:19:5-21:41
+MERGED from [com.google.firebase:firebase-encoders-json:17.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ddd2cef378cdbacca73c0328e2a7c89b\transformed\jetified-firebase-encoders-json-17.1.0\AndroidManifest.xml:19:5-21:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b06dff419e720e6dedcf341515ba970c\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b06dff419e720e6dedcf341515ba970c\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f79d6289c9e29b967c14fa43c2212978\transformed\lifecycle-livedata-2.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f79d6289c9e29b967c14fa43c2212978\transformed\lifecycle-livedata-2.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\11b71880f060ae97921b21138e01fa69\transformed\lifecycle-livedata-core-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.3.1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\11b71880f060ae97921b21138e01fa69\transformed\lifecycle-livedata-core-2.3.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f37b709c991a414544b21dc43825453f\transformed\core-runtime-2.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\f37b709c991a414544b21dc43825453f\transformed\core-runtime-2.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\547be896e42922d8cedd998375d3c148\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\547be896e42922d8cedd998375d3c148\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\5903d96b0f85d030d9fdf521d5d8b440\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\5903d96b0f85d030d9fdf521d5d8b440\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\064e57797d409c8596f0f58ce66d69d8\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\064e57797d409c8596f0f58ce66d69d8\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1d325ffb69a2f88eec9a4cc34ebee4f1\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1d325ffb69a2f88eec9a4cc34ebee4f1\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.exifinterface:exifinterface:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\eaa23ba7ea71c9280072173b5764c151\transformed\exifinterface-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.exifinterface:exifinterface:1.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\eaa23ba7ea71c9280072173b5764c151\transformed\exifinterface-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1d176ada9e85ee0e125ef8fcec4fe600\transformed\jetified-annotation-experimental-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.annotation:annotation-experimental:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1d176ada9e85ee0e125ef8fcec4fe600\transformed\jetified-annotation-experimental-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.odml:image:1.0.0-beta1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\812f49017d9c8b161426f93078c797d1\transformed\jetified-image-1.0.0-beta1\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.odml:image:1.0.0-beta1] C:\Users\vinot\.gradle\caches\8.14.3\transforms\812f49017d9c8b161426f93078c797d1\transformed\jetified-image-1.0.0-beta1\AndroidManifest.xml:5:5-44
+	android:targetSdkVersion
+		INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\AndroidProjects\VGS\MPOS\app\src\main\AndroidManifest.xml
+uses-permission#android.permission.USE_BIOMETRIC
+ADDED from [androidx.biometric:biometric:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ac9437d1d9071ed777c2ecd5a6d7097d\transformed\biometric-1.1.0\AndroidManifest.xml:24:5-72
+	android:name
+		ADDED from [androidx.biometric:biometric:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ac9437d1d9071ed777c2ecd5a6d7097d\transformed\biometric-1.1.0\AndroidManifest.xml:24:22-69
+uses-permission#android.permission.USE_FINGERPRINT
+ADDED from [androidx.biometric:biometric:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ac9437d1d9071ed777c2ecd5a6d7097d\transformed\biometric-1.1.0\AndroidManifest.xml:27:5-74
+	android:name
+		ADDED from [androidx.biometric:biometric:1.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\ac9437d1d9071ed777c2ecd5a6d7097d\transformed\biometric-1.1.0\AndroidManifest.xml:27:22-71
+activity#com.google.mlkit.vision.codescanner.internal.GmsBarcodeScanningDelegateActivity
+ADDED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:15:9-20:20
+	android:screenOrientation
+		ADDED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:18:13-49
+	android:exported
+		ADDED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:17:13-37
+	tools:ignore
+		ADDED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:19:13-42
+	android:name
+		ADDED from [com.google.android.gms:play-services-code-scanner:16.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\e37e5e3b9dcf8e802e83a1239b65c265\transformed\jetified-play-services-code-scanner-16.1.0\AndroidManifest.xml:16:13-107
+service#com.google.mlkit.common.internal.MlKitComponentDiscoveryService
+ADDED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:9:9-15:19
+MERGED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:15:9-23:19
+MERGED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:15:9-23:19
+	android:exported
+		ADDED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:11:13-37
+	tools:targetApi
+		ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:19:13-32
+	android:directBootAware
+		ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:17:13-43
+	android:name
+		ADDED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:10:13-91
+meta-data#com.google.firebase.components:com.google.mlkit.vision.common.internal.VisionCommonRegistrar
+ADDED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:12:13-14:85
+	android:value
+		ADDED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:14:17-82
+	android:name
+		ADDED from [com.google.mlkit:vision-common:17.0.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\a3c5be9f425c667157812157053cd902\transformed\jetified-vision-common-17.0.0\AndroidManifest.xml:13:17-124
+provider#com.google.mlkit.common.internal.MlKitInitProvider
+ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:9:9-13:38
+	android:authorities
+		ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:11:13-69
+	android:exported
+		ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:12:13-37
+	android:initOrder
+		ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:13:13-35
+	android:name
+		ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:10:13-78
+meta-data#com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar
+ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:20:13-22:85
+	android:value
+		ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:22:17-82
+	android:name
+		ADDED from [com.google.mlkit:common:18.9.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\d51db11b4c6876e064ce6b2f71fa7bc7\transformed\jetified-common-18.9.0\AndroidManifest.xml:21:17-120
+activity#com.google.android.gms.common.api.GoogleApiActivity
+ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e40e94186900203149125266242ff5c\transformed\jetified-play-services-base-18.1.0\AndroidManifest.xml:20:9-22:45
+	android:exported
+		ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e40e94186900203149125266242ff5c\transformed\jetified-play-services-base-18.1.0\AndroidManifest.xml:22:19-43
+	android:theme
+		ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e40e94186900203149125266242ff5c\transformed\jetified-play-services-base-18.1.0\AndroidManifest.xml:21:19-78
+	android:name
+		ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\2e40e94186900203149125266242ff5c\transformed\jetified-play-services-base-18.1.0\AndroidManifest.xml:20:19-85
+meta-data#com.google.android.gms.version
+ADDED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b0a3a255cda7a2ca79aefff9d42fb1bd\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:21:9-23:69
+	android:value
+		ADDED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b0a3a255cda7a2ca79aefff9d42fb1bd\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:23:13-66
+	android:name
+		ADDED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\vinot\.gradle\caches\8.14.3\transforms\b0a3a255cda7a2ca79aefff9d42fb1bd\transformed\jetified-play-services-basement-18.1.0\AndroidManifest.xml:22:13-58
+service#com.google.android.datatransport.runtime.backends.TransportBackendDiscovery
+ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:29:9-35:19
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:36:9-38:40
+MERGED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:36:9-38:40
+	android:exported
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:31:13-37
+	android:name
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:30:13-103
+meta-data#backend:com.google.android.datatransport.cct.CctBackendFactory
+ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:32:13-34:39
+	android:value
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:34:17-36
+	android:name
+		ADDED from [com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vinot\.gradle\caches\8.14.3\transforms\1b745b1ad28a85ab2a07742892651702\transformed\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:33:17-94
+service#com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService
+ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:26:9-30:19
+	android:exported
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:28:13-37
+	android:permission
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:29:13-69
+	android:name
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:27:13-117
+receiver#com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver
+ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:32:9-34:40
+	android:exported
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:34:13-37
+	android:name
+		ADDED from [com.google.android.datatransport:transport-runtime:2.2.6] C:\Users\vinot\.gradle\caches\8.14.3\transforms\54b5b20d067fc392bb9d78f4cf558d81\transformed\jetified-transport-runtime-2.2.6\AndroidManifest.xml:33:13-132
