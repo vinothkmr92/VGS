@@ -18,6 +18,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.InputFilter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,8 @@ import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.Ref;
@@ -164,8 +168,10 @@ public class SaleFragment extends Fragment implements View.OnClickListener {
             ln.setPadding(10,10,10,10);
             List<Product> splic = products.stream().limit(6).collect(Collectors.toList());
             for (Product ic:splic) {
-                Button btn = BuildProductsButtons(ic.getProductName(),ic.getProductID(),index);
-                ln.addView(btn);
+                //Button btn = BuildProductsButtons(ic.getProductName(),ic.getProductID(),index);
+                //ln.addView(btn);
+                View v = BuildProductsViewLayout(ic.getProductName(),ic.getProductID(),index);
+                ln.addView(v);
                 products.remove(ic);
                 index++;
             }
@@ -206,13 +212,23 @@ public class SaleFragment extends Fragment implements View.OnClickListener {
         int colorint = fixedColors.get(index);
         return colorint;
     }
+
     private Button BuildProductsButtons(String prName,String prID,Integer index){
         // Create a new Button
         Button dynamicButton = new Button(getContext());
+        int maxLength = 10;
+        //prName = prName.length()>maxLength ? prName.substring(0,maxLength-3)+"..." : StringUtils.rightPad(prName,maxLength);
         dynamicButton.setText(prName); // Set button text
         dynamicButton.setTag(prID);
         dynamicButton.setTextColor(Color.WHITE);
         dynamicButton.setTypeface(null, Typeface.BOLD);
+        dynamicButton.setTextSize(12f);
+
+        dynamicButton.setFilters(new InputFilter[] { new InputFilter.LengthFilter(maxLength) });
+        dynamicButton.setEllipsize(TextUtils.TruncateAt.END);
+        //dynamicButton.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+        dynamicButton.setMaxLines(1);
+        //dynamicButton.setAutoSizeTextTypeUniformWithConfiguration(10,12,1,1);
         // Generate a random color
         int backColor = GetButtonBackColor(index);
         dynamicButton.setBackgroundColor(backColor);
@@ -241,6 +257,31 @@ public class SaleFragment extends Fragment implements View.OnClickListener {
             }
         });
         return  dynamicButton;
+    }
+    private View BuildProductsViewLayout(String prName,String prID,Integer index){
+        // Create a new Button
+        View view = getLayoutInflater().inflate(R.layout.prview,null);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(120,120);
+        layoutParams.setMargins(10, 0, 0, 0); // Add some margin if desired
+        view.setLayoutParams(layoutParams);
+        TextView prnameview = view.findViewById(R.id.prnameview);
+        TextView pridview = view.findViewById(R.id.pridview);
+        prnameview.setText(prName);
+        pridview.setText(prID);
+        int backColor = GetButtonBackColor(index);
+        view.setBackgroundColor(backColor);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView prid = view.findViewById(R.id.pridview);
+                String pridd = prid.getText().toString();
+                Product pr  = fullProducts.stream().filter(c->c.getProductID().equals(pridd)).findFirst().get();
+                if(pr!=null){
+                    AddItemToCart(pr);
+                }
+            }
+        });
+        return view;
     }
     private void BuildCatButtons(String cat,Integer index) {
         // Create a new Button

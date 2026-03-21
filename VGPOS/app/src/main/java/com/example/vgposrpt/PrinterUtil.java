@@ -89,7 +89,7 @@ public class PrinterUtil {
                             receivedBrodCast = true;
                             //Toast.makeText(activity, "Connecting to USB Printer..", Toast.LENGTH_SHORT).show();
                             usbPort = new USBPort(usbManager);
-                            new ConnectUSBPrinter().execute();
+                            new PrinterUtil.ConnectUSBPrinter().execute();
                         }
                     }
                 }
@@ -167,6 +167,9 @@ public class PrinterUtil {
             }
             if(wifiPort != null){
                 wifiPort.disconnect();
+            }
+            if(usbPort!=null){
+                activity.getActivity().getApplicationContext().unregisterReceiver(this.usbReceiver);
             }
             return 1;
         }
@@ -675,8 +678,11 @@ public class PrinterUtil {
                     if(localClassName.equals("SaleFragment")){
                         SaleFragment.getInstance().RefreshSaleScreen();
                     }
-                    else {
+                    else if(localClassName.equals("QuickSaleFragment")) {
                         QuickSaleFragment.getInstance().Cancel();
+                    }
+                    else{
+                        KotFragment.getInstance().Cancel();
                     }
                 }
             }
@@ -694,13 +700,16 @@ public class PrinterUtil {
         HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
         Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
         UsbDevice mDevice = null;
+        String nametoCheck = "";
         while (mDeviceIterator.hasNext()) {
             mDevice = mDeviceIterator.next();
+            nametoCheck = mDevice.getManufacturerName()+"~"+mDevice.getProductName();
             if (mDevice == null) {
                 Toast.makeText(activity.getContext(), "mDevice is null", Toast.LENGTH_SHORT).show();
             }else{
-                Toast.makeText(activity.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
-                if(mDevice.getProductName().equals(CommonUtil.usbDeviceName)){
+                //Toast.makeText(activity.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
+                if(nametoCheck.equals(CommonUtil.usbDeviceName)){
+                    Toast.makeText(activity.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
                     break;
                 }
             }

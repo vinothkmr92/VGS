@@ -302,6 +302,10 @@ public class PrinterUtilKot {
                 //
             }
         }
+        if(usbPort!=null){
+            activity.getActivity().getApplicationContext().unregisterReceiver(this.usbReceiver);
+        }
+
     }
     public void Print() throws Exception{
         try{
@@ -579,13 +583,16 @@ public class PrinterUtilKot {
         HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
         Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
         UsbDevice mDevice = null;
+        String nametocheck = "";
         while (mDeviceIterator.hasNext()) {
             mDevice = mDeviceIterator.next();
+            nametocheck = mDevice.getManufacturerName()+"~"+mDevice.getProductName();
             if (mDevice == null) {
                 Toast.makeText(activity.getContext(), "mDevice is null", Toast.LENGTH_SHORT).show();
             }else{
-                Toast.makeText(activity.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
-                if(mDevice.getProductName().equals(CommonUtil.usbDeviceNameKot)){
+
+                if(nametocheck.equals(CommonUtil.usbDeviceNameKot)){
+                    Toast.makeText(activity.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
                     break;
                 }
             }
