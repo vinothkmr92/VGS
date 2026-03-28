@@ -292,7 +292,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
 
         cell = rowData.createCell(2);
         cell.setCellValue(" ");
-        int k=3;
+        cell = rowData.createCell(3);
+        cell.setCellValue(" ");
+        int k=4;
         for (String name:
                 sortedmap.keySet()) {
             cell = rowData.createCell(k);
