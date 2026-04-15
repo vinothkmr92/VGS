@@ -67,6 +67,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"></CheckBox>
+         <CheckBox
+             android:id="@+id/isGST"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center"
+             android:text="GST Bill"
+             android:textColor="@color/Blue"
+             android:textStyle="bold"></CheckBox>
         </LinearLayout>
 
        </com.google.android.material.card.MaterialCardView>

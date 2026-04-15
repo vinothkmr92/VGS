@@ -32,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -100,6 +101,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private TextView estAmt;
     private TextView billnoTxtView;
     private CheckBox isAcPrice;
+    private CheckBox isGSTBill;
     private Button btn1;
     private Button btn2;
     private Button btn3;
@@ -150,6 +152,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             searchTxtView = (TextView)findViewById(R.id.customerInfoTxtView);
             billnoTxtView = (TextView)findViewById(R.id.billnoTxt);
             isAcPrice = (CheckBox) findViewById(R.id.isAC);
+            isGSTBill = findViewById(R.id.isGST);
             int newbillno = dbHelper.GetNextBillNo();
             billnoTxtView.setText(String.valueOf(newbillno));
             btn1 = (Button) findViewById(R.id._1);
@@ -271,6 +274,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     if(hasFocus && !txt.isEmpty()){
                         ((EditText)v).selectAll();
                     }
+                }
+            });
+            isGSTBill.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    discountAmtEditText.setVisibility(isChecked?View.GONE:View.VISIBLE);
+                    discountperEditText.setVisibility(isChecked?View.GONE:View.VISIBLE);
                 }
             });
             advanceAmtEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -481,6 +491,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         receiptData.billDate = new Date();
         receiptData.waiter = searchTxtView.getText().toString();
         receiptData.itemsCarts = Common.itemsCarts;
+        receiptData.isGST = isGSTBill.isChecked();
         if(print){
             Print(receiptData);
         }
@@ -968,6 +979,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                        discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
                    }
                    totalAmt = totalAmt-discountAmt;
+                   Double d = (totalAmt*(5d/100d));
+                   if(!isGSTBill.isChecked()){
+                       d = 0d;
+                   }
+                   totalAmt+=d;
+                   totalAmt = Math.round(totalAmt);
                    estAmt.setText(GetCurrency(totalAmt));
                }
                catch (Exception ex){
@@ -1153,6 +1170,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             DecimalFormat formater = new DecimalFormat("#.###");
             tQty.setText(formater.format(ttq));
+            Double d = (amt*(5d/100d));
+            if(!isGSTBill.isChecked()){
+                d = 0d;
+            }
+            amt+=d;
+            amt = Math.round(amt);
             estAmt.setText(GetCurrency(amt));
         }
     }
@@ -1242,6 +1265,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         billnoTxtView.setText(String.valueOf(newbillno));
         searchTxtView.setText("NONE");
         isAcPrice.setChecked(false);
+        isGSTBill.setChecked(false);
         progressBar.hide();
         itemNo.requestFocus();
     }

@@ -99,12 +99,6 @@ public class PrinterUtil {
                             new ConnectUSBPrinter().execute();
                         }
                     }
-                    /*if (usbManager != null && usbDevice != null && !receivedBrodCast) {
-                        // YOUR PRINT CODE HERE
-                        receivedBrodCast = true;
-                        usbPort = new USBPort(usbManager);
-                        new ConnectUSBPrinter().execute();
-                    }*/
                 }
             }
         }
@@ -328,7 +322,17 @@ public class PrinterUtil {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
         String symbol = formatter.getCurrency().getSymbol();
-        String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
+        Double gst = totalAmt*(2.5/100);
+        NumberFormat gstformater = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        gstformater.setMaximumFractionDigits(2);
+        gstformater.setMinimumFractionDigits(2);
+        String subTotal = "Sub Total :"+ gstformater.format(totalAmt).replace(symbol,"");
+        String sgst = "SGST (2.5%) :"+ gstformater.format(gst).replace(symbol,"");
+        String cgst = "CGST (2.5%) :"+ gstformater.format(gst).replace(symbol,"");
+        if(!rcptData.isGST){
+            gst = 0d;
+        }
+        String totalamt = formatter.format(totalAmt+gst+gst).replace(symbol,symbol+" ");
         String mrptotalStr = formatter.format(mrpTotalAmt).replace(symbol,symbol+" ");
         discountAmt = mrpTotalAmt-totalAmt;
         String discountAmtStr = formatter.format(discountAmt).replace(symbol,symbol+" ");
@@ -354,6 +358,12 @@ public class PrinterUtil {
             }
         }
         posPtr.lineFeed(1);
+        if(rcptData.isGST){
+            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|1C"+subTotal+"\n");
+            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|1C"+sgst+"\n");
+            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|1C"+cgst+"\n");
+        }
+
         Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER,null);
         if(bp!=null){
             posPtr.printBitmap(bp,0);
@@ -501,8 +511,26 @@ public class PrinterUtil {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
         String symbol = formatter.getCurrency().getSymbol();
-        String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
+
+        Double gst = totalAmt*(2.5/100);
+        NumberFormat gstformater = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        gstformater.setMaximumFractionDigits(2);
+        gstformater.setMinimumFractionDigits(2);
+        String subTotal = "Sub Total :"+ gstformater.format(totalAmt).replace(symbol,"");
+        String sgst = "SGST (2.5%) :"+ gstformater.format(gst).replace(symbol,"");
+        String cgst = "CGST (2.5%) :"+ gstformater.format(gst).replace(symbol,"");
+        if(!rcptData.isGST){
+            gst = 0d;
+        }
+        String totalamt = formatter.format(totalAmt+gst+gst).replace(symbol,symbol+" ");
         String txttotal = "Grand Total  "+totalamt+"/-";
+        posPtr.lineFeed(1);
+        if(rcptData.isGST){
+            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|1C"+subTotal+"\n");
+            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|1C"+sgst+"\n");
+            posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|1C"+cgst+"\n");
+
+        }
         posPtr.lineFeed(1);
         Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER,null);
         if(bp!=null){
