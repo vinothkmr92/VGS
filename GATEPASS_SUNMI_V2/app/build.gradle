@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace "com.example.gatepass.gatepass"
     compileSdkVersion 33
     defaultConfig {
         applicationId "com.example.gatepass.gatepass"
@@ -46,5 +47,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.journeyapps:zxing-android-embedded:3.5.0'
-    implementation files('libs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
+    implementation files('libs/ksoap2-android-assembly-3.6.4.jar')
 }

@@ -373,7 +373,7 @@ public class PrinterUtil {
         }
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|cA"+Common.footerMsg+"\n");
-        posPtr.lineFeed(5);
+        posPtr.lineFeed(6);
         posPtr.cutPaper();
     }
 
@@ -405,13 +405,7 @@ public class PrinterUtil {
             }
         }
         DecimalFormat formater = new DecimalFormat("#.###");
-        Bitmap header = getTextAsImage(Common.headerMeg,30, Layout.Alignment.ALIGN_CENTER,null);
-        if(header!=null){
-            posPtr.printBitmap(header,0);
-        }
-        else {
-            posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
-        }
+        posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
 
         posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+Common.addressline+"\r\n");
         posPtr.printNormal("\n");
@@ -546,7 +540,7 @@ public class PrinterUtil {
         }
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+Common.footerMsg+"\n");
-        posPtr.lineFeed(4);
+        posPtr.lineFeed(6);
         posPtr.cutPaper();
     }
 

@@ -188,7 +188,7 @@ public class PrinterUtil {
         Date date = new Date();
         Bitmap hyndaiLogo = BitmapFactory.decodeResource(activity.getResources(),R.drawable.hyundai_logo);
         //Bitmap kialog = BitmapFactory.decodeResource(activity.getResources(),R.drawable.kialogo);
-        posPtr.printBitmap(kialog,1);
+        posPtr.printBitmap(hyndaiLogo,1);
         posPtr.setAlignment(1);
        // posPtr.setText(2,1);
         posPtr.printNormal(ESC + "|cA" + ESC + "|1CHYUNDAI MOTOR INDIA LIMITED\n");

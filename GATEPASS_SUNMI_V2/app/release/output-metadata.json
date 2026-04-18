@@ -16,5 +16,6 @@
       "outputFile": "GatePassHyndai.apk"
     }
   ],
-  "elementType": "File"
+  "elementType": "File",
+  "minSdkVersionForDexing": 26
 }

@@ -3,6 +3,7 @@ package com.example.gatepass.gatepass;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -220,12 +221,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //do something with edt.getText().toString();
             }
         });
-        //dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-           // public void onClick(DialogInterface dialog, int whichButton) {
-             //   //pass
-            //}
-        //});
         AlertDialog b = dialogBuilder.create();
+        b.setCancelable(false);
         b.show();
     }
 
@@ -484,17 +481,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         protected String doInBackground(String... params){
-
-
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-
-
-
             /*
              * Set the category to be the argument of the web service method
              *
              * */
-
             Request.addProperty("request",params[0]);
 
             /*
@@ -515,37 +506,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String res="";
             try
             {
-
                 androidHttpTransport.call(SOAP_ACTION, envelope);
                 SoapPrimitive results = (SoapPrimitive)envelope.getResponse();
                 res = results.toString();
-
             }
             catch(Exception e)
             {
-
                 e.printStackTrace();
                 res = "EXCEPTION:" + e.getMessage().toString();
-
             }
             return  res;
         }
     }
 
     class CallWebService extends AsyncTask<String,Void,String>{
-      public  static final String NAMESPACE = "http://tempuri.org/";
+        private final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+        public  static final String NAMESPACE = "http://tempuri.org/";
         public  static final   String METHOD_NAME = "GetSAPResponse";
         public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/GetSAPResponse";
         public  static final  String URL = "http://10.54.203.155:1001/GATEPASS_WCF.svc";
-        //public  static final  String URL = "http://192.168.1.3:5200/GATEPASS_WCF.svc";
+        //public  static final  String URL = "http://192.168.1.10:9093/GATEPASS_WCF.svc";
         public  int Timeout = 30000;
-          String response;
+        String response;
         @Override
         protected void onPostExecute(String res){
-               //  super.onPostExecute(res);
-            progressBar.cancel();
+               //  super.onPostExecute(res);[][-
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
             //showCustomDialog("RESPONSE",res);
-            if(!res.isEmpty()){
+            if(!res.isEmpty() && res.contains("~")){
                 try{
                     GatePassResponse gatePassResponse = new GatePassResponse();
                     String[] response = res.split("~");
@@ -562,6 +552,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     else {
                         gatePassResponse.isResponseOK = false;
                         isWebCallDone = false;
+                        gatePassResponse.exception = s;
+                        String error = gatePassResponse.exception.trim();
+                        if(!error.isEmpty()){
+                            showCustomDialog("SAP CALL Error",gatePassResponse.exception);
+                            truckNumber.setText("");
+                            return;
+                        }
                     }
                     if(response.length>8){
                         gatePassResponse.exception = response[8].toString();
@@ -570,7 +567,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             showCustomDialog("SAP CALL Error",gatePassResponse.exception);
                             truckNumber.setText("");
                             return;
-                            //Toast.makeText(MainActivity.this,gatePassResponse.exception,Toast.LENGTH_LONG).show();
                         }
                     }
                     if(gatePassResponse.vendorName.isEmpty() || gatePassResponse.shopName.isEmpty()){
@@ -586,19 +582,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     showCustomDialog("SAP CALL Error",ex.getMessage());
                     ex.printStackTrace();
                 }
-
-
             }
             else {
-                showCustomDialog("SAP CALL Error","Unable to get Response from SAP. Please Contact IT team.");
-               // Toast.makeText(MainActivity.this,"Error in WCF CAll",Toast.LENGTH_LONG).show();
+                showCustomDialog("SAP Failed","Response: "+res+"\nPlease Contact IT team.");
             }
         }
 
         @Override
         protected void onPreExecute() {
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setTitle("Calling SAP");
+            dialog.setMessage("Please wait...");
+            dialog.show();
             super.onPreExecute();
-            progressBar.show();
         }
 
         protected String doInBackground(String... params){
@@ -618,6 +615,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             //envelope.addMapping(NAMESPACE, "GatePassResponse",new GatePassResponse().getClass());
             HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+
            // AndroidHttpTransport androidHttpTransport = new AndroidHttpTransport(URL);
         /*
          * Call the web service and retrieve result ... how luvly <3
