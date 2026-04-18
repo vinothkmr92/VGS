@@ -524,9 +524,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public  static final String NAMESPACE = "http://tempuri.org/";
         public  static final   String METHOD_NAME = "GetSAPResponse";
         public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/GetSAPResponse";
-        public  static final  String URL = "http://10.54.203.155:1001/GATEPASS_WCF.svc";
-        //public  static final  String URL = "http://192.168.1.10:9093/GATEPASS_WCF.svc";
-        public  int Timeout = 30000;
+        //public  static final  String URL = "http://10.54.203.155:1001/GATEPASS_WCF.svc";
+        public  static final  String URL = "http://192.168.1.10:9093/GATEPASS_WCF.svc";
+        public  int Timeout = 20000;
         String response;
         @Override
         protected void onPostExecute(String res){
@@ -614,7 +614,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             envelope.setOutputSoapObject(Request);
 
             //envelope.addMapping(NAMESPACE, "GatePassResponse",new GatePassResponse().getClass());
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL,Timeout);
 
            // AndroidHttpTransport androidHttpTransport = new AndroidHttpTransport(URL);
         /*

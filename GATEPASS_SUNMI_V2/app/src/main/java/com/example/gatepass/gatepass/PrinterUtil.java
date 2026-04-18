@@ -270,10 +270,10 @@ public class PrinterUtil {
         protected void onPreExecute()
         {
             _receiptData = receiptData;
-            dialog.setTitle("Printing");
+            dialog.setTitle("Printing GatePass");
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
-            dialog.setMessage("Connecting to Printer.....");
+            dialog.setMessage("Please Wait...");
             dialog.show();
             super.onPreExecute();
         }
