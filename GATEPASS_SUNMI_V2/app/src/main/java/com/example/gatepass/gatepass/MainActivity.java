@@ -526,15 +526,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public  static final  String SOAP_ACTION = "http://tempuri.org/IGATEPASS_WCF/GetSAPResponse";
         //public  static final  String URL = "http://10.54.203.155:1001/GATEPASS_WCF.svc";
         public  static final  String URL = "http://192.168.1.10:9093/GATEPASS_WCF.svc";
-        public  int Timeout = 20000;
+        public  int Timeout = 15000;
         String response;
         @Override
         protected void onPostExecute(String res){
-               //  super.onPostExecute(res);[][-
             if(dialog.isShowing()){
                 dialog.hide();
             }
-            //showCustomDialog("RESPONSE",res);
             if(!res.isEmpty() && res.contains("~")){
                 try{
                     GatePassResponse gatePassResponse = new GatePassResponse();
@@ -586,6 +584,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else {
                 showCustomDialog("SAP Failed","Response: "+res+"\nPlease Contact IT team.");
             }
+            super.onPostExecute(res);
         }
 
         @Override

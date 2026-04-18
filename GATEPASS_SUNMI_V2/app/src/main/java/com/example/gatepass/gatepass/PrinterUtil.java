@@ -327,6 +327,8 @@ public class PrinterUtil {
                     dialog.dismiss();
                 PassMsgToActivity("Connection Failed","Failed to Connect Printer."+result+"\nPlease contact support team.");
             }
+            if(dialog.isShowing())
+                dialog.dismiss();
             super.onPostExecute(result);
         }
     }
