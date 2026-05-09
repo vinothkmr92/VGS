@@ -9,6 +9,7 @@ public class Product implements Serializable {
     private  Double Price;
     private  Integer Qty;
     private  String ProductID;
+    private  String trackingID;
     private  Integer BranchCode;
     private  Double Amount;
     private String BatchNo="";
@@ -18,6 +19,14 @@ public class Product implements Serializable {
     private Integer SNo;
     private Double Stocks=0d;
     private Double PurchasedPrice;
+
+    public String getTrackingID() {
+        return trackingID;
+    }
+
+    public void setTrackingID(String trackingID) {
+        this.trackingID = trackingID;
+    }
 
     public Double getStocks() {
         return Stocks;

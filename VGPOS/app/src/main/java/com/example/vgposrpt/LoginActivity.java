@@ -60,6 +60,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static final String ENABLEKOT = "ENABLEKOT";
     public static final String PRINTER_KOT = "PRINTER";
     public static final String ISMOBILE = "ISMOBILE";
+    public static final String LOGEDINUSER = "LOGEDINUSER";
+    public static final String USERROLEID = "USERROLEID";
     String sqlServer ;
     String sqlUserName;
     String sqlPassword;
@@ -104,6 +106,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             CommonUtil.ReceiptAddress = sharedpreferences.getString(ADDRESS,"");
             CommonUtil.includeMRP = sharedpreferences.getString(INCLUDE_MRP,"N").equalsIgnoreCase("Y");
             CommonUtil.MultiLang = sharedpreferences.getString(MULTI_LANG,"Y").equalsIgnoreCase("Y");
+            String loggedinUser = sharedpreferences.getString(LOGEDINUSER,"");
+            Integer userRole = sharedpreferences.getInt(USERROLEID,-1);
+            if(!loggedinUser.isEmpty() && userRole>=0){
+                CommonUtil.loggedinUser = loggedinUser;
+                CommonUtil.loggedinUserRoleID = userRole;
+                new LoadBranches().execute("");
+            }
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -203,7 +212,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             else if(password.isEmpty()){
                 showCustomDialog("Warning","Please enter password.");
             }
-            else new DoLogin().execute("");
+            sharedpreferences.putString(LOGEDINUSER,"");
+            sharedpreferences.putInt(USERROLEID,-1);
+            sharedpreferences.commit();
+            new DoLogin().execute("");
 
         }
         catch (Exception ex){
@@ -282,6 +294,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             roleid = rs.getInt("ROLE_ID");
                             CommonUtil.loggedinUser = userid;
                             CommonUtil.loggedinUserRoleID = roleid;
+                            sharedpreferences.putString(LOGEDINUSER,userid);
+                            sharedpreferences.putInt(USERROLEID,roleid);
+                            sharedpreferences.commit();
                             z = "Login Successful";
                             isSuccess=true;
                         }

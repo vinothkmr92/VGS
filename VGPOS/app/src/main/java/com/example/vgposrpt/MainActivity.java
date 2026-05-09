@@ -35,6 +35,10 @@ import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private MySharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String LOGEDINUSER = "LOGEDINUSER";
+    public static final String USERROLEID = "USERROLEID";
     private DrawerLayout drawerLayout;
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
@@ -57,10 +61,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView logout = headerView.findViewById(R.id.logout);
         TextView username = headerView.findViewById(R.id.loggedinuser);
         username.setText(CommonUtil.loggedinUser);
+        sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CommonUtil.loggedinUser = "";
+                sharedpreferences.putString(LOGEDINUSER,"");
+                sharedpreferences.putInt(USERROLEID,-1);
+                sharedpreferences.commit();
                 Toast.makeText(getApplicationContext(),"Successfully Logged-Out. Please Log-in again.",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);

@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
     EditText prIDEditText;
     EditText prNameEditText;
     EditText prPriceEditText;
-    EditText prQtyEditText;
+    EditText prTrackingIDEditText;
     LinearLayout saleCartlayout;
     Button btnScanQR;
     Button btnAdd;
@@ -72,18 +73,9 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             btnCancel = view.findViewById(R.id.quickSaleCancelBtn);
             btnPrint = view.findViewById(R.id.quickSalePrintBtn);
             prPriceEditText = view.findViewById(R.id.quickSalePrice);
-            prQtyEditText = view.findViewById(R.id.quickSaleQty);
             totalAmt = view.findViewById(R.id.quickSaleBillAmt);
+            prTrackingIDEditText = view.findViewById(R.id.quickSaleTrackingID);
             productCart = new ArrayList<>();
-            prQtyEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    String txt = prQtyEditText.getText().toString();
-                    if(hasFocus && !txt.isEmpty()){
-                            ((EditText)v).selectAll();
-                    }
-                }
-            });
             prPriceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -119,13 +111,38 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             scanner.startScan().addOnSuccessListener(
                             barcode -> {
                                 String rawValue = barcode.getRawValue();
-                                Product pr = fullProducts.stream().filter(c->c.getProductID().equals(rawValue)).findFirst().orElse(null);
+                                String[] res = rawValue.split("~");
+                                Product pr = null;
+                                String trackingid = "";
+                                if(res.length>1) {
+                                    String prid = res[0];
+                                    trackingid = rawValue;
+                                    pr = fullProducts.stream().filter(c->c.getProductID().equals(prid)).findFirst().orElse(null);
+                                }
+                                else{
+                                    pr = fullProducts.stream().filter(c->c.getProductID().equals(rawValue)).findFirst().orElse(null);
+                                }
+
                                 if(pr!=null){
-                                    prIDEditText.setText(pr.getProductID());
-                                    prNameEditText.setText(pr.getProductName());
-                                    prPriceEditText.setText(pr.getPrice().toString());
-                                    prQtyEditText.setText("1");
-                                    prQtyEditText.requestFocus();
+                                    pr.setTrackingID(trackingid);
+                                    if(trackingid.isEmpty()){
+                                        prTrackingIDEditText.setText(trackingid);
+                                        prIDEditText.setText(pr.getProductID());
+                                        prNameEditText.setText(pr.getProductName());
+                                        prPriceEditText.setText(pr.getPrice().toString());
+                                        prPriceEditText.selectAll();
+                                        prPriceEditText.requestFocus();
+                                    }
+                                    else {
+                                        String trid = pr.getTrackingID();
+                                        Product p = (productCart!=null && productCart.size()>0) ? productCart.stream().filter(c->c.getTrackingID().equals(trid)).findFirst().orElse(null):null;
+                                        if(p!=null){
+                                            showCustomDialog("Warning","Tracking ID already in Cart. Please Verify Tracking ID");
+                                        }
+                                        else{
+                                            new CheckTrackingID().execute(pr);
+                                        }
+                                    }
                                 }
                                 else {
                                     showCustomDialog("Warning","Invalid Product ID. Please Scan Valid Product");
@@ -170,6 +187,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
         prQty.setText(String.valueOf(qty));
         ImageButton btnRemove = view.findViewById(R.id.btnRemoveItem);
         ImageButton btnAdd = view.findViewById(R.id.btnAddItem);
+        btnAdd.setVisibility(View.GONE);
         btnAdd.setTag(pr.getProductID());
         btnRemove.setTag(pr.getProductID());
         if(qty>0){
@@ -276,9 +294,9 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
     public void Cancel() {
         productCart.clear();
         saleCartlayout.removeAllViews();
-        prQtyEditText.setText("");
         prNameEditText.setText("");
         prPriceEditText.setText("");
+        prTrackingIDEditText.setText("");
         prIDEditText.setText("");
         totalAmt.setText("0");
     }
@@ -337,17 +355,97 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                 if(pr!=null){
                     String price = prPriceEditText.getText().toString();
                     pr.setPrice(Double.valueOf(price));
-                    String qty = prQtyEditText.getText().toString();
+                    String qty = "1";
                     pr.setQty(Integer.valueOf(qty));
+                    pr.setTrackingID(prTrackingIDEditText.getText().toString());
                     AddItemToCart(pr);
-                    prQtyEditText.setText("");
                     prNameEditText.setText("");
                     prPriceEditText.setText("");
                     prIDEditText.setText("");
+                    prTrackingIDEditText.setText("");
                 }
                 else {
                     showCustomDialog("Warning","No valid product to add to Cart.");
                 }
+        }
+    }
+    public class CheckTrackingID extends  AsyncTask<Product,String,String>{
+        Boolean isSuccess = false;
+        String error = "";
+        Product pr;
+        private final ProgressDialog dialog = new ProgressDialog(getContext(),R.style.CustomProgressStyle);
+        ConnectionClass connectionClass = null;
+        Connection con = null;
+        @Override
+        protected void onPreExecute() {
+            connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+            con = connectionClass.CONN();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setIcon(R.mipmap.salesreport);
+            dialog.setMessage("Checking Tracking ID..");
+            dialog.show();
+            super.onPreExecute();
+        }
+        @Override
+        protected void onPostExecute(String res) {
+            if(isSuccess){
+                if(dialog.isShowing()){
+                    dialog.hide();
+                }
+                if(res.equals("1")){
+                    showCustomDialog("Status","Product Already Sold. Please validate the Tracking ID.");
+                    prNameEditText.setText("");
+                    prPriceEditText.setText("");
+                    prIDEditText.setText("");
+                    prTrackingIDEditText.setText("");
+                }
+                else {
+                    prTrackingIDEditText.setText(pr.getTrackingID());
+                    prIDEditText.setText(pr.getProductID());
+                    prNameEditText.setText(pr.getProductName());
+                    prPriceEditText.setText(pr.getPrice().toString());
+                    prPriceEditText.selectAll();
+                    prPriceEditText.requestFocus();
+                }
+            }
+            else {
+                if(dialog.isShowing()){
+                    dialog.hide();
+                }
+                if(!error.isEmpty()){
+                    showCustomDialog("Status",error);
+                }
+            }
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+        }
+        @Override
+        protected String doInBackground(Product... strings) {
+            String res="0";
+            pr = strings[0];
+            String trackingid = pr.getTrackingID();
+            try {
+                if (con == null) {
+                    error = "Database Connection Failed";
+                } else {
+                    String query = String.format("SELECT SOLD FROM Products_Tracking WHERE TRACKING_ID='%s' " +
+                            "AND BRANCH_CODE=1",trackingid);
+                    Statement stmt = con.createStatement();
+                    ResultSet billNoRs = stmt.executeQuery(query);
+                    if(billNoRs.next()){
+                        res = billNoRs.getString("SOLD");
+                    }
+                    isSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccess = false;
+                error = "Exceptions"+ex.getMessage();
+            }
+            return res;
         }
     }
     public class SaveNewBill extends AsyncTask<BillDetails,String, Integer>
@@ -500,6 +598,16 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                         Integer rowAff = stmt.executeUpdate(saleQuery);
                         if(rowAff>0){
                             isSuccess = true;
+                        }
+                        for (Product p:billDetails.billProducts) {
+                            try{
+                                String trackingQuery = String.format("UPDATE Products_Tracking SET SOLD = 1 WHERE PRODUCT_ID='%s' AND BRANCH_CODE=%d AND TRACKING_ID='%s'",p.getProductID(),p.getBranchCode(),p.getTrackingID());
+                                stmt.executeUpdate(trackingQuery);
+                            }
+                            catch(Exception ex)
+                            {
+                                Log.e("Error",ex.getMessage());
+                            }
                         }
                     }
                     else {
