@@ -102,6 +102,13 @@
         android:textColor="@color/DarkBlue"
         android:textSize="20dp"
         android:textStyle="bold"></TextView>
+    <ImageButton
+        android:id="@+id/salecart_share"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right"
+        android:background="@drawable/baseline_share_24"
+        android:foreground="?android:attr/selectableItemBackground"></ImageButton>
     <TextView
         android:id="@+id/salecart_saleAmt"
         android:layout_width="fill_parent"

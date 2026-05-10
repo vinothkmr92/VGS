@@ -62,6 +62,7 @@ public class DynamicViewSaleReport implements View.OnClickListener {
         btnView.setLayoutParams(new LinearLayout.LayoutParams(70, 70));
         return btnView;
     }
+
     public Button deleteButton(Context context,String billno){
         final ViewGroup.LayoutParams lparam = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         final Button btnDelete = new Button(context);

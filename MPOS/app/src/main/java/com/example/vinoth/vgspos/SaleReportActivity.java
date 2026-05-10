@@ -427,7 +427,26 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 .build();
 
     }
-
+    public void OpenPDF(String fileName){
+        try{
+            File file = new File(getApplicationContext().getExternalFilesDir(DOWNLOAD_SERVICE), fileName);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri uri = FileProvider.getUriForFile(SaleReportActivity.this, BuildConfig.APPLICATION_ID + ".provider",file);
+            intent.setDataAndType(uri,"application/pdf");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+        }
+        catch (Exception ex){
+            String msg = ex.getMessage();
+            if(msg.startsWith("No Activity found to handle Intent")){
+                showCustomDialog("Warning","No app found to Open PDF. Please install a PDF reader.");
+            }
+            else {
+                showCustomDialog("Exception",ex.getMessage());
+            }
+            //showCustomDialog("Exception",ex.getMessage());
+        }
+    }
     private void ExportExcel(){
         ArrayList<SaleReport> sal = GetSaleReport();
         String fileName = "SaleReport.xls";
@@ -458,6 +477,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         TextView paymentMode = view.findViewById(R.id.salecart_paymentMode);
         ImageButton printbtn = view.findViewById(R.id.salecart_print);
         ImageButton deletebtn = view.findViewById(R.id.salecart_delete);
+        ImageButton shareBillBtn = view.findViewById(R.id.salecart_share);
         paymentMode.setText(sr.getPaymentMode());
         billno.setText(sr.getBillNo());
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm aa",Locale.getDefault());
@@ -470,6 +490,14 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         String btnTag =  sr.getBillNo()+"~"+sr.getBillDate();
         printbtn.setTag(btnTag);
         deletebtn.setTag(btnTag);
+        shareBillBtn.setTag(btnTag);
+        shareBillBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String billdetail = (String)v.getTag();
+                ShareBill(billdetail);
+            }
+        });
         printbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -659,6 +687,52 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     DeleteBill();
                 }
                 break;
+        }
+    }
+    public void ShareBill(String billdetail){
+        try{
+            String[] bd = billdetail.split("~");
+            if(bd.length>1){
+                ReceiptData receiptData = new ReceiptData();
+                int billno = 0;
+                String user = "";
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+                SimpleDateFormat formatwithtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
+                Date billds = format.parse(bd[1]);
+                Date billdt = formatwithtime.parse(bd[1]);
+                receiptData.discount = dbHelper.GetDiscountOnBill(format.format(billds),bd[0]);
+                ArrayList<Bills_Item> bills = dbHelper.GetBills_Item(format.format(billds),bd[0]);
+                ArrayList<ItemsCart> itemsCarts = new ArrayList<>();
+                for (Bills_Item bi:
+                        bills) {
+                    ItemsCart ic = new ItemsCart();
+                    ic.setItem_No(bi.getItem_No());
+                    ic.setItem_Name(bi.getItem_Name());
+                    ic.setPrice(bi.getPrice());
+                    ic.setQty(bi.getQty());
+                    Item it = dbHelper.GetItem(bi.getItem_No());
+                    if(it!=null){
+                        ic.setMRP(it.getAcPrice());
+                    }
+                    user = bi.getWaiter();
+                    billno = bi.getBill_No();
+                    billdt = bi.getBill_Date();
+                    itemsCarts.add(ic);
+                }
+                receiptData.billDate = billdt;
+                receiptData.billno = billno;
+                receiptData.itemsCarts = itemsCarts;
+                receiptData.waiter = user;
+                PDFUtil pdfUtil = new PDFUtil();
+                pdfUtil.rptData = receiptData;
+                pdfUtil.pdfFileName = "Receipt_"+receiptData.billno+".pdf";
+                pdfUtil.activity = this;
+                pdfUtil.context = SaleReportActivity.this;
+                pdfUtil.CreatePDF();
+            }
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
         }
     }
     public void PrintBill(String billdetail){
