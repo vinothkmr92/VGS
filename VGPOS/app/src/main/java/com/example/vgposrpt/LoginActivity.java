@@ -101,9 +101,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
             CommonUtil.ReceiptSize = sharedpreferences.getString(RECEIPTSIZE,"3");
-            CommonUtil.ReceiptHeader = sharedpreferences.getString(HEADER,"");
             CommonUtil.ReceiptFooter = sharedpreferences.getString(FOOTER,"");
-            CommonUtil.ReceiptAddress = sharedpreferences.getString(ADDRESS,"");
             CommonUtil.includeMRP = sharedpreferences.getString(INCLUDE_MRP,"N").equalsIgnoreCase("Y");
             CommonUtil.MultiLang = sharedpreferences.getString(MULTI_LANG,"Y").equalsIgnoreCase("Y");
             String loggedinUser = sharedpreferences.getString(LOGEDINUSER,"");
@@ -349,7 +347,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (con == null) {
                     z = "Error in connection with SQL server";
                 } else {
-                    String query = "SELECT ID,COMPANY_NAME FROM COMPANY_DETAILS";
+                    String query = "SELECT * FROM COMPANY_DETAILS";
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
                     ArrayList<Branch> branches = new ArrayList<>();
@@ -358,6 +356,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     brall.setBranch_Name("ALL");
                     branches.add(brall);
                     ArrayList<Branch> branchesforDef = new ArrayList<>();
+                    String header = "";
+                    String add = "";
                     while (rs.next())
                     {
                         Branch br = new Branch();
@@ -366,7 +366,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         branches.add(br);
                         branchesforDef.add(br);
                         isSuccess = true;
+                        header = br.getBranch_Name();
+                        add = rs.getString("Address_Line1");
                     }
+                    CommonUtil.ReceiptHeader = header;
+                    CommonUtil.ReceiptAddress = add;
                     CommonUtil.branchList = branches;
                     sharedpreferences.setList(BRANCHES,branchesforDef);
 

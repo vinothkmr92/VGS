@@ -19,7 +19,24 @@ public class Product implements Serializable {
     private Integer SNo;
     private Double Stocks=0d;
     private Double PurchasedPrice;
+    public Product(Product p){
+        this.ProductID = p.ProductID;
+        this.ProductName = p.ProductName;
+        this.Price = p.Price;
+        this.Qty = p.Qty;
+        this.trackingID = p.trackingID;
+        this.BranchCode = p.BranchCode;
+        this.BatchNo = p.BatchNo;
+        this.SupplierName = p.SupplierName;
+        this.Category = p.Category;
+        this.MRP = p.MRP;
+        this.SNo = p.SNo;
+        this.Stocks = p.Stocks;
+        this.PurchasedPrice = p.PurchasedPrice;
+    }
+    public Product(){
 
+    }
     public String getTrackingID() {
         return trackingID;
     }

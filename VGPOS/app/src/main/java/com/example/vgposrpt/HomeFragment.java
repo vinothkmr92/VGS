@@ -156,9 +156,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             CommonUtil.PrinterIPKot = sharedpreferences.getString(PRINTER_IP_KOT,"");
             CommonUtil.usbDeviceName = sharedpreferences.getString(USBDEVICENAME,"");
             CommonUtil.usbDeviceNameKot = sharedpreferences.getString(USBDEVICENAME_KOT,"");
-            CommonUtil.ReceiptHeader = sharedpreferences.getString(HEADER,"");
             CommonUtil.ReceiptFooter = sharedpreferences.getString(FOOTER,"");
-            CommonUtil.ReceiptAddress = sharedpreferences.getString(ADDRESS,"");
             CommonUtil.includeMRP = sharedpreferences.getString(INCLUDE_MRP,"N").equalsIgnoreCase("Y");
             CommonUtil.MultiLang = sharedpreferences.getString(MULTI_LANG,"Y").equalsIgnoreCase("Y");
             String defaultUser = "ALL";

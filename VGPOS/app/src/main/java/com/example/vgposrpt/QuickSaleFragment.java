@@ -112,35 +112,36 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                             barcode -> {
                                 String rawValue = barcode.getRawValue();
                                 String[] res = rawValue.split("~");
-                                Product pr = null;
+                                Product prcheck = null;
                                 String trackingid = "";
                                 if(res.length>1) {
                                     String prid = res[0];
                                     trackingid = rawValue;
-                                    pr = fullProducts.stream().filter(c->c.getProductID().equals(prid)).findFirst().orElse(null);
+                                    prcheck = fullProducts.stream().filter(c->c.getProductID().equals(prid)).findFirst().orElse(null);
                                 }
                                 else{
-                                    pr = fullProducts.stream().filter(c->c.getProductID().equals(rawValue)).findFirst().orElse(null);
+                                    prcheck = fullProducts.stream().filter(c->c.getProductID().equals(rawValue)).findFirst().orElse(null);
                                 }
 
-                                if(pr!=null){
-                                    pr.setTrackingID(trackingid);
+                                if(prcheck!=null){
+                                    //pr.setTrackingID(trackingid);
                                     if(trackingid.isEmpty()){
                                         prTrackingIDEditText.setText(trackingid);
-                                        prIDEditText.setText(pr.getProductID());
-                                        prNameEditText.setText(pr.getProductName());
-                                        prPriceEditText.setText(pr.getPrice().toString());
+                                        prIDEditText.setText(prcheck.getProductID());
+                                        prNameEditText.setText(prcheck.getProductName());
+                                        prPriceEditText.setText(prcheck.getPrice().toString());
                                         prPriceEditText.selectAll();
                                         prPriceEditText.requestFocus();
                                     }
                                     else {
-                                        String trid = pr.getTrackingID();
+                                        String trid = trackingid;
                                         Product p = (productCart!=null && productCart.size()>0) ? productCart.stream().filter(c->c.getTrackingID().equals(trid)).findFirst().orElse(null):null;
                                         if(p!=null){
                                             showCustomDialog("Warning","Tracking ID already in Cart. Please Verify Tracking ID");
                                         }
                                         else{
-                                            new CheckTrackingID().execute(pr);
+                                            prcheck.setTrackingID(trackingid);
+                                            new CheckTrackingID().execute(prcheck);
                                         }
                                     }
                                 }
@@ -247,7 +248,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                 qty-=1;
                 pr.setQty(qty);
                 productCart.remove(alreadyExits);
-                productCart.add(pr);
+                productCart.add(new Product(pr));
             }
         }
         Double billAmt = productCart.size()>0 ? productCart.stream().mapToDouble(c->c.getAmount()).sum() :0d;
@@ -267,14 +268,14 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
     }
     private int AddItemToCart(Product pr){
         int latestQty = 0;
-        Product alreadyExits = productCart.stream().filter(c->c.getProductID().equals(pr.getProductID())).findFirst().orElse(null);
+        Product alreadyExits = productCart.stream().filter(c->c.getTrackingID().equals(pr.getTrackingID()) && c.getProductID().equals(pr.getProductID())).findFirst().orElse(null);
         if(alreadyExits!=null){
             Integer qty = alreadyExits.getQty();
             qty+=1;
             alreadyExits.setQty(qty);
         }
         else{
-            productCart.add(pr);
+            productCart.add(new Product(pr));
         }
         Double billAmt = productCart.size()>0 ? productCart.stream().mapToDouble(c->c.getAmount()).sum() :0d;
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
