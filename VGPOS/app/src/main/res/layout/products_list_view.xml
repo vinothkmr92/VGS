@@ -9,9 +9,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:fontFamily="@font/orienta"
         android:text="sample"
-        android:textColor="@color/Indigo"
-        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/Black"
+        android:textSize="15dp"
         />
 </LinearLayout>

@@ -1,5 +1,7 @@
 package com.example.vgposrpt;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
 import kotlin.jvm.internal.PropertyReference0Impl;
@@ -147,5 +149,10 @@ public class Product implements Serializable {
 
     public void setPrice(Double price) {
         Price = price;
+    }
+    @NonNull
+    @Override
+    public String toString() {
+        return ProductName;
     }
 }

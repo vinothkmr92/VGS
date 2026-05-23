@@ -90,6 +90,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public static final String PRINTER_KOT = "PRINTER_KOT";
     public static final String BRANCH = "BRANCH";
     public static final String BRANCHES = "BRANCHES";
+    public static final String CUSTOMERS = "CUSTOMERS";
     public static final String USERS = "USERS";
     public static final String PRINTOPTION = "PRINTOPTION";
     public static final String PRINTOPTION_KOT = "PRINTOPTIONKOT";
@@ -208,6 +209,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
         return view;
     }
+    private Integer GetMemberID(String memberName,String mobileNumber){
+        Customer cn = CommonUtil.customers.stream().filter(c->c.MobileNumber.equals(mobileNumber) && c.MemberName.equals(memberName)).findFirst().orElse(null);
+        Integer memid = cn!=null ? cn.MemberID:0;
+        return memid;
+    }
     private String GetBranchName (Integer code){
         String branchName = "";
         for (Branch b:CommonUtil.branches) {
@@ -217,6 +223,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
         }
         return branchName;
+    }
+    private ArrayList<Customer> getCustomersList(){
+        ArrayList<Customer> arrayItems = new ArrayList<>();
+        String serializedObject = sharedpreferences.getString(CUSTOMERS, null);
+        if (serializedObject != null) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Customer>>(){}.getType();
+            arrayItems = gson.fromJson(serializedObject, type);
+        }
+        return  arrayItems;
     }
     private ArrayList<Branch> getBranchList(){
         ArrayList<Branch> arrayItems = new ArrayList<>();

@@ -5,16 +5,22 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -22,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +42,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,11 +53,15 @@ import java.util.stream.Collectors;
 
 public class QuickSaleFragment extends Fragment implements View.OnClickListener {
 
+    Dialog itemSearchdialog;
+    Dialog dialog;
+    TextView searchCustomer;
     TextView totalAmt;
     EditText prIDEditText;
     EditText prNameEditText;
     EditText prPriceEditText;
     EditText prTrackingIDEditText;
+    EditText prQtyEditText;
     LinearLayout saleCartlayout;
     Button btnScanQR;
     Button btnAdd;
@@ -65,6 +77,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
         Context cn = getContext();
         View view = inflater.inflate(R.layout.fragment_quick_sale, container, false);
         try{
+            searchCustomer = view.findViewById(R.id.quickSaleCustomer);
             saleCartlayout = view.findViewById(R.id.quickSaleCartLayout);
             prIDEditText = view.findViewById(R.id.quickSaleprID);
             prNameEditText = view.findViewById(R.id.quickSalePrName);
@@ -75,7 +88,41 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             prPriceEditText = view.findViewById(R.id.quickSalePrice);
             totalAmt = view.findViewById(R.id.quickSaleBillAmt);
             prTrackingIDEditText = view.findViewById(R.id.quickSaleTrackingID);
+            prQtyEditText = view.findViewById(R.id.quickSaleQty);
             productCart = new ArrayList<>();
+            prIDEditText.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String search = prIDEditText.getText().toString();
+                    if(search.isEmpty()){
+                        OpenItemSearchDialog();
+                        return  true;
+                    }
+                    else {
+                        Product prcheck = fullProducts.stream().filter(c->c.getProductID().equals(search)).findFirst().orElse(null);
+                        if(prcheck!=null){
+                            prTrackingIDEditText.setText("");
+                            prIDEditText.setText(prcheck.getProductID());
+                            prNameEditText.setText(prcheck.getProductName());
+                            prPriceEditText.setText(prcheck.getPrice().toString());
+                            prQtyEditText.setText("1");
+                            prQtyEditText.selectAll();
+                            prQtyEditText.requestFocus();
+                            return true;
+                        }
+                        else {
+                            showCustomDialog("Warning","Invalid Product ID.");
+                            prTrackingIDEditText.setText("");
+                            prIDEditText.setText("");
+                            prNameEditText.setText("");
+                            prPriceEditText.setText("");
+                            prQtyEditText.setText("");
+                            return false;
+                        }
+                    }
+
+                }
+                return false;
+            });
             prPriceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -99,12 +146,129 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     .setBarcodeFormats(Barcode.FORMAT_QR_CODE,Barcode.FORMAT_CODE_128)
                     .build();
             scanner = GmsBarcodeScanning.getClient(cn,options);
+            searchCustomer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Initialize dialog
+                    dialog=new Dialog(QuickSaleFragment.getInstance().getContext());
+
+                    // set custom dialog
+                    dialog.setContentView(R.layout.dialog_searchable_spinner);
+
+                    // set custom height and width
+                    dialog.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT);
+
+                    // set transparent background
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                    // show dialog
+                    dialog.show();
+
+                    // Initialize and assign variable
+                    EditText editText=dialog.findViewById(R.id.edit_text);
+                    ListView listView=dialog.findViewById(R.id.list_view);
+
+                    // Initialize array adapter
+                    ArrayAdapter<Customer> adapter=new ArrayAdapter<>(QuickSaleFragment.getInstance().getContext(), android.R.layout.simple_list_item_1,CommonUtil.customers);
+
+                    // set adapter
+                    listView.setAdapter(adapter);
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            adapter.getFilter().filter(s);
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
+
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            // when item selected from list
+                            // set selected item on textView
+                            searchCustomer.setText(adapter.getItem(position).toString());
+
+                            // Dismiss dialog
+                            dialog.dismiss();
+                        }
+                    });
+                }
+            });
 
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
         }
         return  view;
+    }
+    private void OpenItemSearchDialog(){
+        itemSearchdialog =new Dialog(QuickSaleFragment.getInstance().getContext());
+
+        // set custom dialog
+        itemSearchdialog.setContentView(R.layout.dialog_items_search);
+
+        // set custom height and width
+        itemSearchdialog.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT);
+
+        // set transparent background
+        itemSearchdialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        // show dialog
+        itemSearchdialog.show();
+
+        // Initialize and assign variable
+        EditText editText=itemSearchdialog.findViewById(R.id.edit_textItem);
+        ListView listView=itemSearchdialog.findViewById(R.id.list_viewItem);
+
+        // Initialize array adapter
+        ArrayAdapter<Product> adapter=new ArrayAdapter<>(QuickSaleFragment.getInstance().getContext(),  R.layout.products_list_view, R.id.list_content,fullProducts);
+
+        // set adapter
+        listView.setAdapter(adapter);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // when item selected from list
+                // set selected item on textView
+                Product prcheck = adapter.getItem(position);
+                if(prcheck!=null){
+                    prTrackingIDEditText.setText("");
+                    prIDEditText.setText(prcheck.getProductID());
+                    prNameEditText.setText(prcheck.getProductName());
+                    prPriceEditText.setText(prcheck.getPrice().toString());
+                    prQtyEditText.setText("1");
+                    prQtyEditText.selectAll();
+                    prQtyEditText.requestFocus();
+                }
+                itemSearchdialog.dismiss();
+            }
+        });
     }
     private void ScanQRCode(){
         if(scanner!=null){
@@ -124,14 +288,16 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                                 }
 
                                 if(prcheck!=null){
+                                    prQtyEditText.setEnabled(trackingid.isEmpty());
                                     //pr.setTrackingID(trackingid);
                                     if(trackingid.isEmpty()){
                                         prTrackingIDEditText.setText(trackingid);
                                         prIDEditText.setText(prcheck.getProductID());
                                         prNameEditText.setText(prcheck.getProductName());
                                         prPriceEditText.setText(prcheck.getPrice().toString());
-                                        prPriceEditText.selectAll();
-                                        prPriceEditText.requestFocus();
+                                        prQtyEditText.setText("1");
+                                        prQtyEditText.selectAll();
+                                        prQtyEditText.requestFocus();
                                     }
                                     else {
                                         String trid = trackingid;
@@ -188,7 +354,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
         prQty.setText(String.valueOf(qty));
         ImageButton btnRemove = view.findViewById(R.id.btnRemoveItem);
         ImageButton btnAdd = view.findViewById(R.id.btnAddItem);
-        btnAdd.setVisibility(View.GONE);
+        btnAdd.setVisibility(pr.getTrackingID().isEmpty()?View.VISIBLE:View.GONE);
         btnAdd.setTag(pr.getProductID());
         btnRemove.setTag(pr.getProductID());
         if(qty>0){
@@ -299,6 +465,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
         prPriceEditText.setText("");
         prTrackingIDEditText.setText("");
         prIDEditText.setText("");
+        prQtyEditText.setText("");
         totalAmt.setText("0");
     }
     public void GetPaymentMode(){
@@ -309,6 +476,11 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             showCustomDialog("Error",ex.getMessage().toString());
         }
     }
+    private Integer GetMemberID(String memberName,String mobileNumber){
+        Customer cn = CommonUtil.customers.stream().filter(c->c.MobileNumber.equals(mobileNumber) && c.MemberName.equals(memberName)).findFirst().orElse(null);
+        Integer memid = cn!=null ? cn.MemberID:0;
+        return memid;
+    }
     public void getPaymentMode(String paymentMode) {
         try{
             BillDetails bd = new BillDetails();
@@ -317,6 +489,11 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             Double billAmt = productCart.stream().mapToDouble(c->c.getAmount()).sum();
             bd.BillAmount = (int) Math.round(billAmt);
             bd.billUser = CommonUtil.loggedinUser;
+            String member = searchCustomer.getText().toString();
+            if(!member.equals("Select Customer")){
+                String[] mc = member.split("-");
+                bd.MemberID = GetMemberID(mc[0],mc[1]);
+            }
             switch (paymentMode){
                 case  "CASH":
                     bd.CashAmt=bd.BillAmount;
@@ -356,7 +533,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                 if(pr!=null){
                     String price = prPriceEditText.getText().toString();
                     pr.setPrice(Double.valueOf(price));
-                    String qty = "1";
+                    String qty = prQtyEditText.getText().toString();
                     pr.setQty(Integer.valueOf(qty));
                     pr.setTrackingID(prTrackingIDEditText.getText().toString());
                     AddItemToCart(pr);
@@ -364,6 +541,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     prPriceEditText.setText("");
                     prIDEditText.setText("");
                     prTrackingIDEditText.setText("");
+                    prQtyEditText.setText("");
                 }
                 else {
                     showCustomDialog("Warning","No valid product to add to Cart.");
@@ -399,6 +577,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     prNameEditText.setText("");
                     prPriceEditText.setText("");
                     prIDEditText.setText("");
+                    prQtyEditText.setText("");
                     prTrackingIDEditText.setText("");
                 }
                 else {
@@ -406,6 +585,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     prIDEditText.setText(pr.getProductID());
                     prNameEditText.setText(pr.getProductName());
                     prPriceEditText.setText(pr.getPrice().toString());
+                    prQtyEditText.setText("1");
                     prPriceEditText.selectAll();
                     prPriceEditText.requestFocus();
                 }
@@ -517,6 +697,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             if(s.next()){
                 qty = s.getDouble("AVAILABLE_QUANTITY");
             }
+            s.close();
             return qty;
         }
         private boolean UpdateStocks(Product pr) throws SQLException {
@@ -543,6 +724,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             if(s.next()){
                 qty = s.getDouble("Available_Quantity");
             }
+            s.close();
             return qty;
         }
         private void UpdateBatchDetails(Product pr) throws SQLException {
@@ -568,6 +750,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     if(billNoRs.next()){
                         billNo = billNoRs.getInt("BILL_NO");
                     }
+                    billNoRs.close();
                     billNo++;
                     billDetails.BillNo = billNo;
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -595,7 +778,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     }
                     if(billProductsSaved){
                         Double profit = billDetails.billProducts.stream().mapToDouble(c->(c.getPrice()-c.getPurchasedPrice())*c.getQty()).sum();
-                        String saleQuery = "INSERT INTO SALE VALUES ("+billNo+",GETDATE(),'CD1','"+billDetails.billUser+"',"+billDetails.BillAmount+","+billDetails.CashAmt+","+billDetails.CardAmt+","+billDetails.UpiAmt+",0,0,'',0,"+profit+",1,0,0,0,'Normal',0,0,0,'CLOSE','',0,"+billDetails.branchCode+")";
+                        String saleQuery = "INSERT INTO SALE VALUES ("+billNo+",GETDATE(),'CD1','"+billDetails.billUser+"',"+billDetails.BillAmount+","+billDetails.CashAmt+","+billDetails.CardAmt+","+billDetails.UpiAmt+",0,0,'',"+billDetails.MemberID+","+profit+",1,0,0,0,'Normal',0,0,0,'CLOSE','',0,"+billDetails.branchCode+")";
                         Integer rowAff = stmt.executeUpdate(saleQuery);
                         if(rowAff>0){
                             isSuccess = true;

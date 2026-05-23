@@ -41,6 +41,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static final String SQLPASSWORD = "SQLPASSWORD";
     public static final String SQLDB = "SQLDB";
     public static final String BRANCHES = "BRANCHES";
+    public static final String CUSTOMERS = "CUSTOMERS";
     public static final String USERS = "USERS";
     public static final String COUNTERS = "COUNTERS";
     public static final String TABLES = "TABLES";
@@ -398,6 +399,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     sharedpreferences.commit();
                     CommonUtil.countersList = counters;
                     c.close();
+                    String customerQuery = "SELECT FIRSTNAME,MOBILE_NUMBER,MEMBER_ID FROM MEMBERS";
+                    ResultSet cq = stmt.executeQuery(customerQuery);
+                    ArrayList<Customer> customers = new ArrayList<>();
+                    while (cq.next()){
+                        Customer customer = new Customer();
+                        customer.MemberID = cq.getInt("MEMBER_ID");
+                        customer.MemberName = cq.getString("FIRSTNAME");
+                        customer.MobileNumber = cq.getString("MOBILE_NUMBER");
+                        customers.add(customer);
+                    }
+                    sharedpreferences.setList(CUSTOMERS,customers);
+                    sharedpreferences.commit();
+                    CommonUtil.customers = customers;
+                    cq.close();
                     String tableQuery = "SELECT * FROM DiningTables";
                     ResultSet tb = stmt.executeQuery(tableQuery);
                     ArrayList<Tables> tables = new ArrayList<>();
