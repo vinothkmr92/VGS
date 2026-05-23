@@ -13,4 +13,5 @@ public class BillDetails {
     public Integer UpiAmt=0;
     public Integer BillNo=0;
     public Integer MemberID = 0;
+    public String MemberName="";
 }

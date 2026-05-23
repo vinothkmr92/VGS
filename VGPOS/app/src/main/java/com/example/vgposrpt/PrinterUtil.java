@@ -345,6 +345,10 @@ public class PrinterUtil {
             posPtr.printNormal(ESC+"|lAUSER     : "+billDetail.billUser);
             posPtr.printNormal("\n");
         }
+        if(!billDetail.MemberName.isEmpty()){
+            posPtr.printNormal(ESC+"|lACUSTOMER : "+billDetail.MemberName);
+            posPtr.printNormal("\n");
+        }
         posPtr.printNormal(ESC+"|lADATE     : "+dateStr+"\n\n");
         if(CommonUtil.ReceiptSize.equals("2")){
             posPtr.printNormal("--------------------------------");

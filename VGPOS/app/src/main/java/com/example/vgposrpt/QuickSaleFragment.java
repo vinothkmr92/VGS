@@ -493,6 +493,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             if(!member.equals("Select Customer")){
                 String[] mc = member.split("-");
                 bd.MemberID = GetMemberID(mc[0],mc[1]);
+                bd.MemberName = mc[0];
             }
             switch (paymentMode){
                 case  "CASH":
