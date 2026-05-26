@@ -512,7 +512,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 if (con == null) {
                     error = "Database Connection Failed";
                 } else {
-                    String query = String.format("SELECT Bill_No,cast(BILL_DATE as datetime) as Bill_Date, BILL_AMMOUNT-(BILL_AMMOUNT*(DISCOUNT/100)) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT Bill_No,cast(BILL_DATE as datetime) as Bill_Date, BILL_AMMOUNT-(BILL_AMMOUNT*(DISCOUNT/100)) AS AMT,Cash_Received,Card_Received,Coupon_Received,Member_ID,User_Name FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){
                         query = query+String.format(" AND BRANCH_CODE=%s",branchCode);
                     }
@@ -531,9 +531,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         sale.Cash_Amount = rs.getDouble("Cash_Received");
                         sale.Card_Amount = rs.getDouble("Card_Received");
                         sale.Upi_Amount = rs.getDouble("Coupon_Received");
+                        BillDetails bd = new BillDetails();
+                        bd.CashAmt = sale.Cash_Amount.intValue();
+                        bd.CardAmt = sale.Card_Amount.intValue();
+                        bd.UpiAmt = sale.Upi_Amount.intValue();
+                        bd.BillAmount = sale.Bill_Amount.intValue();
+                        bd.BillNo = sale.Bill_No;
+                        bd.branchCode = 1;
+                        bd.MemberID = rs.getInt("Member_ID");
+                        bd.billUser = rs.getString("User_Name");
                         sales.add(sale);
                         isSuccess = true;
                     }
+
                 }
             }
             catch (Exception ex)

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
@@ -54,6 +56,7 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
     private int year, month, day;
     DatePickerDialog datePickerDialog;
     DatePickerDialog todatePickerDialog;
+    Fragment instance;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -236,6 +239,23 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
         TextView billno = view.findViewById(R.id.billsCard_billNo);
         TextView billDate = view.findViewById(R.id.billsCard_billDate);
         TextView billAmt = view.findViewById(R.id.billsCard_billAmt);
+        boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
+        Button reprintBtn = view.findViewById(R.id.reprintBill);
+        reprintBtn.setTag(sr);
+        reprintBtn.setVisibility(print?View.VISIBLE:View.INVISIBLE);
+        reprintBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Sale s = (Sale) reprintBtn.getTag();
+                try{
+                    PrinterUtil printerUtil = new PrinterUtil(ViewBillsActivity.this,instance,s.billDetails);
+                    printerUtil.Print();
+                }
+                catch (Exception ex){
+                    showCustomDialog("Error",ex.getMessage(),false);
+                }
+            }
+        });
         billno.setText(String.valueOf(sr.Bill_No));
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa",Locale.getDefault());
         billDate.setText(format.format(sr.Bill_Date));

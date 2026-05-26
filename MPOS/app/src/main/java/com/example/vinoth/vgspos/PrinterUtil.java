@@ -461,13 +461,13 @@ public class PrinterUtil {
                     posPtr.printBitmap(xb,0);
                 }
                 else {
-                    posPtr.printNormal(name+"\n");
+                    posPtr.printNormal(ESC+"|bC"+name+"\n");
                 }
             }
             else {
-                posPtr.printNormal(name+"\n");
+                posPtr.printNormal(ESC+"|bC"+name+"\n");
             }
-            posPtr.printNormal(line);
+            posPtr.printNormal(ESC+"|bC"+line);
         }
         if(Common.RptSize.equals("2")){
             posPtr.printNormal(ESC+"|bC"+"--------------------------------");
@@ -477,8 +477,8 @@ public class PrinterUtil {
         }
         Integer totalItems = rcptData.itemsCarts.size();
         Double totalQty = rcptData.itemsCarts.stream().mapToDouble(c->c.getQty()).sum();
-        posPtr.printNormal("Total Items: "+totalItems+"\n");
-        posPtr.printNormal("Total Qty  : "+formater.format(totalQty)+"\n");
+        posPtr.printNormal(ESC+"|bC"+"Total Items: "+totalItems+"\n");
+        posPtr.printNormal(ESC+"|bC"+"Total Qty  : "+formater.format(totalQty)+"\n");
         if(rcptData.discount>0 || rcptData.advance>0){
             String tt = String.format("%.0f",billAmt);
             tt = StringUtils.leftPad(tt,6);
@@ -619,11 +619,12 @@ public class PrinterUtil {
 
         try
         {
+            posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
             DecimalFormat formater = new DecimalFormat("#.###");
-            posPtr.printNormal(ESC+"|cA"+ESC+"|2CITEM WISE REPORT\r\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|2CITEM WISE REPORT\r\n");
             posPtr.printNormal("\n");
-            posPtr.printNormal(ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
-            posPtr.printNormal(ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
             if(Common.RptSize.equals("2")){
                 posPtr.printNormal("--------------------------------");
                 posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                    QTY\n");
@@ -653,13 +654,13 @@ public class PrinterUtil {
                         posPtr.printBitmap(xb,0);
                     }
                     else {
-                        posPtr.printNormal(itemname+"\n");
+                        posPtr.printNormal(ESC+"|bC"+itemname+"\n");
                     }
                 }
                 else {
-                    posPtr.printNormal(itemname+"\n");
+                    posPtr.printNormal(ESC+"|bC"+itemname+"\n");
                 }
-                posPtr.printNormal(line);
+                posPtr.printNormal(ESC+"|bC"+line);
             }
             posPtr.lineFeed(5);
             posPtr.cutPaper();
@@ -683,6 +684,7 @@ public class PrinterUtil {
     {
         try
         {
+            posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mmaaa", Locale.getDefault());
             Bitmap header = getTextAsImage("SALE REPORT",30, Layout.Alignment.ALIGN_CENTER,null);
             if(header!=null){
@@ -692,8 +694,8 @@ public class PrinterUtil {
                 posPtr.printNormal(ESC+"|cA"+ESC+"|2CSALE REPORT\r\n");
             }
             posPtr.printNormal("\n");
-            posPtr.printNormal(ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
-            posPtr.printNormal(ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|lAFROM DATE: "+Common.saleReportFrmDate+"\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
             if(Common.RptSize.equals("2")){
                 posPtr.printNormal("--------------------------------");
                 posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"BILL NO     BILL_DATE     AMOUNT\n");
@@ -724,7 +726,7 @@ public class PrinterUtil {
                     amts = StringUtils.leftPad(amts,21);
                 }
                 String line = billno+billDate+amts+"\n";
-                posPtr.printNormal(line);
+                posPtr.printNormal(ESC+"|bC"+line);
             }
             NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
             formatter.setMaximumFractionDigits(0);

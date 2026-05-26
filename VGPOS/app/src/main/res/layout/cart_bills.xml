@@ -30,7 +30,6 @@
                     android:id="@+id/billsCard_billDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_columnSpan="2"
                     android:layout_gravity="left"
                     android:fontFamily="@font/orienta"
                     android:text="16-Aug-2024 02:45 PM"
@@ -38,6 +37,15 @@
                     android:textSize="20dp"
                     android:textStyle="bold"></TextView>
 
+                <Button android:id="@+id/reprintBill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:background="@color/Blue"
+                    android:text="Reprint"
+                    android:textColor="@color/BlanchedAlmond"
+                    android:drawableLeft="@drawable/baseline_print_24"
+                    android:foreground="?android:attr/selectableItemBackground"></Button>
                 <TextView
                     android:id="@+id/billsCard_billNo"
                     android:layout_width="wrap_content"

@@ -12,4 +12,5 @@ public class Sale {
     public Double Cash_Amount;
     public Double Card_Amount;
     public Double Upi_Amount;
+    public BillDetails billDetails;
 }

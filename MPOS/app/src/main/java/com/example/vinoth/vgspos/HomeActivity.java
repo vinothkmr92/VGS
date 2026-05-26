@@ -72,12 +72,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public static final String INCLUDEMRP = "INCLUDEMRP";
     public static final String MULTILANG = "MULTILANG";
     public static final String USBDEVICENAME = "USBDEVICE";
+    public static final String QUICKPRINT = "QUICKPRINT";
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;
     public static HomeActivity instance;
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH,Manifest.permission.BLUETOOTH_SCAN
     };
+    public  boolean quickprint;
     public  EditText priceTxt;
     DatabaseHelper dbHelper;
     String headerMsg ;
@@ -374,6 +376,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             String addressline = sharedpreferences.getString(ADDRESSLINE,"");
             String includeMRP = sharedpreferences.getString(INCLUDEMRP,"NO");
             String isMultilang = sharedpreferences.getString(MULTILANG,"NO");
+            quickprint = sharedpreferences.getBoolean(QUICKPRINT,false);
             Common.MultiLang = isMultilang.equalsIgnoreCase("YES");
             Common.printKOT = printkot.equalsIgnoreCase("YES");
             Common.includeMRPinReceipt = includeMRP.equalsIgnoreCase("YES");
@@ -890,9 +893,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void GetPaymentMode(){
         try {
-            Common.paymentMode = "";
-            GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
-            addCustomer.show(getSupportFragmentManager(),"");
+            if(quickprint){
+                Common.paymentMode = "CASH";
+                SaveAndPrintBill(true);
+            }
+            else {
+                Common.paymentMode = "";
+                GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
+                addCustomer.show(getSupportFragmentManager(),"");
+            }
         }catch (Exception ex){
             showCustomDialog("Error",ex.getMessage().toString());
         }

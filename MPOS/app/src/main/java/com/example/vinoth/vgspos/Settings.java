@@ -20,7 +20,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -63,6 +62,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     public static final String MULTILANG = "MULTILANG";
     public static final String PRINTTYPE = "WIFI";
     public static final String USBDEVICENAME = "USBDEVICE";
+    public static final String QUICKPRINT = "QUICKPRINT";
     private static int RESULT_LOAD_IMAGE = 1;
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
@@ -104,6 +104,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     Spinner spinnerUsbDevice;
     Button saveBtn;
     Switch checkBoxIncludeMRP;
+    Switch quickprintswitch;
     Button loadPictureBtn;
     ImageView imageView;
     EditText editTextaddressline;
@@ -139,6 +140,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         spinnerUsbDevice = findViewById(R.id.usbDevice);
         txtviewkotprinter = (TextView)findViewById(R.id.txtViewIPAddressKOT);
         editTextkotprinterip = (EditText) findViewById(R.id.KOTprinterIP);
+        quickprintswitch = findViewById(R.id.quickPrint);
         enablekot = findViewById(R.id.enableKOT);
         editTextbillcopies = (EditText)findViewById(R.id.billcopies);
         editTextaddressline = (EditText)findViewById(R.id.addressMsg);
@@ -171,6 +173,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         String includeMRP = sharedpreferences.getString(INCLUDEMRP,"NO");
         String isMultiLang = sharedpreferences.getString(MULTILANG,"NO");
         String usbDevice = sharedpreferences.getString(USBDEVICENAME,"");
+        quickprintswitch.setChecked(sharedpreferences.getBoolean(QUICKPRINT,false));
         enablekot.setChecked(printkot.equalsIgnoreCase("YES"));
         multilang.setChecked(isMultiLang.equalsIgnoreCase("YES"));
         editTextkotprinterip.setText(kotprinterip);
@@ -523,6 +526,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             sharedpreferences.putString(BILLCOPIES,nocopies);
             sharedpreferences.putString(ADDRESSLINE,addressline);
             sharedpreferences.putString(INCLUDEMRP,includeMRP);
+            sharedpreferences.putBoolean(QUICKPRINT,quickprintswitch.isChecked());
             sharedpreferences.commit();
             BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
             if(drawable!=null){
