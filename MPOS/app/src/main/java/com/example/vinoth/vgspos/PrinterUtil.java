@@ -80,6 +80,7 @@ public class PrinterUtil {
     private UsbDevice usbDevice;
     private UsbManager usbManager;
     private Activity activity;
+    public boolean isDeleteSaleRpt;
     public boolean isItemWiseRptBill;
     private boolean receivedBrodCast;
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
@@ -627,27 +628,32 @@ public class PrinterUtil {
             posPtr.printNormal(ESC+"|bC"+ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
             if(Common.RptSize.equals("2")){
                 posPtr.printNormal("--------------------------------");
-                posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                    QTY\n");
+                posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME      QTY           AMT\n");
                 posPtr.printNormal("--------------------------------");
             }
             else {
                 posPtr.printNormal("----------------------------------------------\n");
-                posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME                                  QTY\n");
+                posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME             QTY                  AMT\n");
                 posPtr.printNormal("----------------------------------------------\n");
             }
 
             for(int k=0;k<items.size();k++){
                 ItemsRpt itemsRpt = items.get(k);
                 String itemname = itemsRpt.getItemName();
+                String amtstr = formater.format(itemsRpt.getAmount());
                 Double qty = itemsRpt.getQuantity();
                 String qtystr=formater.format(qty);
                 if(Common.RptSize.equals("2")){
-                    qtystr = StringUtils.leftPad(qtystr,32);
+                    qtystr = StringUtils.rightPad(qtystr,5);
+                    qtystr = StringUtils.leftPad(qtystr,20);
+                    amtstr = StringUtils.leftPad(amtstr,12);
                 }
                 else {
-                    qtystr = StringUtils.leftPad(qtystr,46);
+                    qtystr = StringUtils.rightPad(qtystr,5);
+                    qtystr = StringUtils.leftPad(qtystr,28);
+                    amtstr = StringUtils.leftPad(amtstr,19);
                 }
-                String line = qtystr+"\n";
+                String line = qtystr+amtstr+"\n";
                 if(Common.MultiLang){
                     Bitmap xb = getMultiLangTextAsImage(itemname, 24, Typeface.DEFAULT);
                     if(xb!=null){
@@ -662,7 +668,32 @@ public class PrinterUtil {
                 }
                 posPtr.printNormal(ESC+"|bC"+line);
             }
-            posPtr.lineFeed(5);
+            if(Common.RptSize.equals("2")){
+                posPtr.printNormal("--------------------------------");
+            }
+            else {
+                posPtr.printNormal("----------------------------------------------\n");
+            }
+            posPtr.lineFeed(2);
+            Double tAmt = itemsRpts.stream().mapToDouble(c->c.getAmount()).sum();
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+            formatter.setMaximumFractionDigits(0);
+            String symbol = formatter.getCurrency().getSymbol();
+            String totalamt = formatter.format(tAmt).replace(symbol,symbol+" ");
+            String txttotal = "Total Amount  "+totalamt+"/-";
+            Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER,null);
+            if(bp!=null){
+                posPtr.printBitmap(bp,0);
+            }
+            else {
+                if(Common.RptSize.equals("2")){
+                    posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|bC"+ESC+"|1C"+txttotal+"\n");
+                }
+                else {
+                    posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+                }
+            }
+            posPtr.lineFeed(4);
             posPtr.cutPaper();
             if(bluetoothPort!=null){
                 bluetoothPort.disconnect();
@@ -680,13 +711,13 @@ public class PrinterUtil {
         return 0;
     }
 
-    public int PrintSaleReport(ArrayList<SaleReport> sales) throws InterruptedException
+    public int PrintSaleReport(ArrayList<SaleReport> sales,boolean isDelRpt) throws InterruptedException
     {
         try
         {
             posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mmaaa", Locale.getDefault());
-            Bitmap header = getTextAsImage("SALE REPORT",30, Layout.Alignment.ALIGN_CENTER,null);
+            Bitmap header = getTextAsImage(isDelRpt?"DELETED SALES":"SALES REPORT",30, Layout.Alignment.ALIGN_CENTER,null);
             if(header!=null){
                 posPtr.printBitmap(header,0);
             }
@@ -779,9 +810,9 @@ public class PrinterUtil {
             posPtr.lineFeed(1);
 
             String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
-            String txttotal = "TOTAL AMOUNT: "+totalamt+"/-";
+            String txttotal = "Total Amount "+totalamt+"/-";
 
-            Bitmap bp = getTextAsImage(txttotal,28, Layout.Alignment.ALIGN_CENTER,null);
+            Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER,null);
             if(bp!=null){
                 posPtr.printBitmap(bp,0);
             }
@@ -1035,6 +1066,7 @@ public class PrinterUtil {
         private ArrayList<ItemsRpt> _itemsRpts;
         private ArrayList<SaleReport> _saleReports;
         private boolean _isItemWiseRptBill;
+        private boolean _isDeleteSaleRpt;
         @Override
         protected void onPreExecute()
         {
@@ -1042,6 +1074,7 @@ public class PrinterUtil {
             _itemsRpts = itemsRpts;
             _saleReports = saleReports;
             _isItemWiseRptBill = isItemWiseRptBill;
+            _isDeleteSaleRpt = isDeleteSaleRpt;
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
             dialog.setMessage("Printing.....");
@@ -1085,7 +1118,7 @@ public class PrinterUtil {
                             PrintBillData(_receiptData);
                         }
                         else{
-                            PrintSaleReport(_saleReports);
+                            PrintSaleReport(_saleReports,_isDeleteSaleRpt);
                         }
                 }
                 catch (Exception ex)
@@ -1121,6 +1154,7 @@ public class PrinterUtil {
         private ReceiptData _receiptData;
         private ArrayList<ItemsRpt> _itemsRpts;
         private ArrayList<SaleReport> _saleReports;
+        private boolean _isDeleteSaleRpt;
         private boolean _isItemWiseRptBill;
         @Override
         protected void onPreExecute()
@@ -1129,6 +1163,7 @@ public class PrinterUtil {
             _itemsRpts = itemsRpts;
             _saleReports = saleReports;
             _isItemWiseRptBill = isItemWiseRptBill;
+            _isDeleteSaleRpt = isDeleteSaleRpt;
             dialog.setTitle("Printing");
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
@@ -1176,7 +1211,7 @@ public class PrinterUtil {
                         PrintBillData(_receiptData);
                     }
                     else{
-                        PrintSaleReport(_saleReports);
+                        PrintSaleReport(_saleReports,_isDeleteSaleRpt);
                     }
                 }
                 catch (Exception ex)
@@ -1212,6 +1247,7 @@ public class PrinterUtil {
         private ArrayList<ItemsRpt> _itemsRpts;
         private ArrayList<SaleReport> _saleReports;
         private boolean _isItemWiseRptBill;
+        private boolean _isDeleteSaleRpt;
         @Override
         protected void onPreExecute()
         {
@@ -1219,6 +1255,7 @@ public class PrinterUtil {
             _itemsRpts = itemsRpts;
             _saleReports = saleReports;
             _isItemWiseRptBill = isItemWiseRptBill;
+            _isDeleteSaleRpt = isDeleteSaleRpt;
             dialog.setCanceledOnTouchOutside(false);
             dialog.setCancelable(false);
             dialog.setMessage("Printing.....");
@@ -1258,7 +1295,7 @@ public class PrinterUtil {
                     } else if (printSale) {
                         PrintBillData(_receiptData);
                     } else {
-                        PrintSaleReport(_saleReports);
+                        PrintSaleReport(_saleReports,_isDeleteSaleRpt);
                     }
                 } catch (Exception ex) {
                     PassMsgToActivity("Error",ex.getMessage());

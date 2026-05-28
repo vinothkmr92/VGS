@@ -26,6 +26,7 @@
         android:padding="20px">
 
         <TextView
+            android:id="@+id/heading"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_columnSpan="2"
@@ -90,7 +91,14 @@
             android:fontFamily="@font/orienta"
             android:hint="Select Customer"
             android:textColor="@android:color/black" />
-
+        <CheckBox
+            android:id="@+id/delReport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/DarkBlue"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:text="Deleted Reports"
+            android:textColor="@color/DarkBlue"></CheckBox>
         <ImageButton
             android:id="@+id/btnsalerptprint"
             android:layout_width="100px"

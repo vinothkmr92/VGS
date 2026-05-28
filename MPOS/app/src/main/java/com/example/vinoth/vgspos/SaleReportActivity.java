@@ -23,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridLayout;
@@ -78,6 +80,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     private static CellStyle headerCellStyle=null;
     private static SaleReportActivity instance;
     private static String billDateToDelete;
+    CheckBox delReportCheckBox;
     TextView frmDateTextView;
     TextView toDateTextView;
     ImageButton btnPrintReport;
@@ -93,6 +96,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     ImageButton btnExportExcel;
     LinearLayout saleRptContainer;
     PieChart chart;
+    TextView heading;
     private DatePicker datePicker;
     private Calendar calendar;
     private int year, month, day;
@@ -307,6 +311,8 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         btnExportExcel = (ImageButton)findViewById(R.id.btnshareExcel);
         saleRptContainer = (LinearLayout) findViewById(R.id.saleprtContainer);
         txtViewTotalSaleAmt = (TextView)findViewById(R.id.totalSaleAmt);
+        delReportCheckBox = findViewById(R.id.delReport);
+        heading = findViewById(R.id.heading);
         frmDateTextView.setOnClickListener(this);
         toDateTextView.setOnClickListener(this);
         btnPrintReport.setOnClickListener(this);
@@ -325,6 +331,14 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         frmDateTextView.setText(format.format(date));
         toDateTextView.setText(format.format(date));
         LoadSaleReport();
+        delReportCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //
+                heading.setText(isChecked?"DELETED SALES":"SALES REPORT");
+                LoadSaleReport();
+            }
+        });
         searchTxtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -491,6 +505,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         printbtn.setTag(btnTag);
         deletebtn.setTag(btnTag);
         shareBillBtn.setTag(btnTag);
+        printbtn.setVisibility(delReportCheckBox.isChecked()?View.GONE:View.VISIBLE);
+        deletebtn.setVisibility(delReportCheckBox.isChecked()?View.GONE:View.VISIBLE);
+        shareBillBtn.setVisibility(delReportCheckBox.isChecked()?View.GONE:View.VISIBLE);
         shareBillBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -518,7 +535,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         String frmdt = frmDateTextView.getText().toString();
         String todt = toDateTextView.getText().toString();
         String waiter  = searchTxtView.getText().toString();
-        ArrayList<SaleReport> sal = dbHelper.GetSalesReport(frmdt,todt,waiter);
+        ArrayList<SaleReport> sal = dbHelper.GetSalesReport(frmdt,todt,waiter,delReportCheckBox.isChecked());
         return sal;
     }
     public static Float convertToFloat(double doubleValue) {
@@ -639,6 +656,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                         Common.saleReportToDate = toDateTextView.getText().toString();
                         PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this,this,false);
                         printerUtil.saleReports = items;
+                        printerUtil.isDeleteSaleRpt = delReportCheckBox.isChecked();
                         printerUtil.Print();
                     }
                     else {

@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 15);
+        super(context, DATABASE_NAME, null, 20);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -31,6 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("CREATE TABLE TAX (TAX_ID INTEGER PRIMARY KEY,TAX_VALUE NUMERIC)");
       db.execSQL("CREATE TABLE ITEMS (ITEM_NO TEXT PRIMARY KEY,ITEM_NAME TEXT,PRICE NUMERIC,AC_PRICE NUMERIC,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
+      db.execSQL("CREATE TABLE BILLS_DELETED (BILL_NO INTEGER,BILL_DATE TEXT,DELETE_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,DISCOUNT NUMERIC,PAYMENT_MODE TEXT,PRIMARY KEY (BILL_NO,BILL_DATE,DELETE_DATE))");
       db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,DISCOUNT NUMERIC,PAYMENT_MODE TEXT,PRIMARY KEY (BILL_NO,BILL_DATE))");
       db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT,PRICE DOUBLE)");
       db.execSQL("CREATE TABLE CUSTOMERS (NAME TEXT,MOBILE_NUMBER TEXT,ADDRESS TEXT,PRIMARY KEY (MOBILE_NUMBER))");
@@ -121,6 +122,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return nameList;
     }
+    public Bills GetBill(String billdt,String billno){
+        Bills bills = null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT,DISCOUNT,WAITER,PAYMENT_MODE FROM BILLS WHERE DATE(BILL_DATE)='"+billdt+"' AND BILL_NO='"+billno+"'";
+        Cursor cur = db.rawQuery(query,null);
+        if(cur.getCount()>0){
+            while (cur.moveToNext()){
+                bills = new Bills();
+                bills.setBill_No(cur.getInt(0));
+                bills.setBill_Date(cur.getString(1));
+                bills.setSale_Amt(cur.getDouble(2));
+                bills.setDiscount(cur.getDouble(3));
+                bills.setUser(cur.getString(4));
+                bills.setPaymentMode(cur.getString(5));
+            }
+        }
+        return bills;
+    }
     public void DeleteBill(String billdt,String billno){
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<Bills_Item> billsItems = GetBills_Item(billdt,billno);
@@ -128,8 +147,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Bills_Item bi = billsItems.get(i);
             AddStock(bi.getItem_No(),bi.getQty());
         }
+        Bills bill = GetBill(billdt,billno);
         db.delete("BILLS_ITEM","DATE(BILL_DATE)='"+billdt+"' AND BILL_NO="+billno,null);
         db.delete("BILLS","DATE(BILL_DATE)='"+billdt+"' AND BILL_NO="+billno,null);
+        Insert_Deleted_Bills(bill);
     }
     public double GetDiscountOnBill(String billdt,String billno){
         double discount = 0;
@@ -228,10 +249,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         id++;
         return  id;
     }
-    public  ArrayList<SaleReport> GetSalesReport(String frmDate,String toDate,String waiter){
+    public  ArrayList<SaleReport> GetSalesReport(String frmDate,String toDate,String waiter,boolean isDeleteRpt){
         ArrayList<SaleReport> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT,DISCOUNT,PAYMENT_MODE FROM BILLS WHERE DATE(BILL_DATE)>='"+frmDate+"' AND DATE(BILL_DATE)<='"+toDate+"'";
+        String tableName = isDeleteRpt ? "BILLS_DELETED":"BILLS";
+        String billDateColumn = isDeleteRpt ? "DELETE_DATE":"BILL_DATE";
+        String query = "SELECT BILL_NO,BILL_DATE,SALE_AMT,DISCOUNT,PAYMENT_MODE FROM "+tableName+" WHERE DATE("+billDateColumn+")>='"+frmDate+"' AND DATE("+billDateColumn+")<='"+toDate+"'";
         if(!waiter.equals("ALL")){
             query = query+" AND WAITER='"+waiter+"'";
         }
@@ -388,6 +411,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void AddStock(String itemno,double qty){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("UPDATE ITEMS SET STOCK=STOCK+"+qty+" WHERE ITEM_NO='"+itemno+"'");
+    }
+    public void Insert_Deleted_Bills(Bills bills){
+        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        Date date = new Date();
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cnt = new ContentValues();
+        cnt.put("BILL_NO",bills.getBill_No());
+        cnt.put("BILL_DATE",bills.getBill_Date());
+        cnt.put("DELETE_DATE",formater.format(date));
+        cnt.put("SALE_AMT",bills.getSale_Amt());
+        cnt.put("WAITER",bills.getUser());
+        cnt.put("DISCOUNT",bills.getDiscount());
+        cnt.put("PAYMENT_MODE",bills.getPaymentMode());
+        long s =db.insert("BILLS_DELETED",null,cnt);
+        if(s>0){
+            Log.println(Log.ASSERT,"","Successfully inserted deleted bills");
+        }
+        else {
+            Log.println(Log.ASSERT,"","Failed to insert deleted bill no: "+bills.getBill_No());
+        }
     }
     public void Insert_Bills(Bills bills){
         SQLiteDatabase db = this.getWritableDatabase();
