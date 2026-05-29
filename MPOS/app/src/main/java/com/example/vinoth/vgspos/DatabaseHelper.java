@@ -293,7 +293,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                rpt.setItemID(String.valueOf(item.getItem_No()));
                rpt.setItemName(item.getItem_Name());
                rpt.setQuantity(item.getStocks());
-               rpt.setAmount(item.getPrice()*item.getStocks());
+               rpt.setRate(item.getPrice());
                report.add(rpt);
            }
        }
@@ -323,7 +323,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                    }
                    r.setItemName(name);
                    r.setQuantity(cur.getDouble(1));
-                   r.setAmount(cur.getDouble(2));
+                   Item it = GetItem(r.getItemName());
+                   if(it!=null){
+                       r.setRate(it.getPrice());
+                   }
+                   else {
+                       double ttamt = cur.getDouble(2);
+                       double rate = ttamt/r.getQuantity();
+                       r.setRate(rate);
+                   }
                    report.add(r);
                }
            }   

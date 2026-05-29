@@ -628,7 +628,7 @@ public class PrinterUtil {
             posPtr.printNormal(ESC+"|bC"+ESC+"|lATO   DATE: "+Common.saleReportToDate+"\n\n");
             if(Common.RptSize.equals("2")){
                 posPtr.printNormal("--------------------------------");
-                posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME      QTY           AMT\n");
+                posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME  RATE    QTY       AMT\n");
                 posPtr.printNormal("--------------------------------");
             }
             else {
@@ -641,19 +641,22 @@ public class PrinterUtil {
                 ItemsRpt itemsRpt = items.get(k);
                 String itemname = itemsRpt.getItemName();
                 String amtstr = formater.format(itemsRpt.getAmount());
+                String ratestr = formater.format(itemsRpt.getRate());
                 Double qty = itemsRpt.getQuantity();
                 String qtystr=formater.format(qty);
                 if(Common.RptSize.equals("2")){
+                    ratestr = StringUtils.rightPad(ratestr,5);
+                    ratestr = StringUtils.leftPad(ratestr,16);
                     qtystr = StringUtils.rightPad(qtystr,5);
-                    qtystr = StringUtils.leftPad(qtystr,20);
-                    amtstr = StringUtils.leftPad(amtstr,12);
+                    qtystr = StringUtils.leftPad(qtystr,8);
+                    amtstr = StringUtils.leftPad(amtstr,8);
                 }
                 else {
                     qtystr = StringUtils.rightPad(qtystr,5);
                     qtystr = StringUtils.leftPad(qtystr,28);
                     amtstr = StringUtils.leftPad(amtstr,19);
                 }
-                String line = qtystr+amtstr+"\n";
+                String line = ratestr+qtystr+amtstr+"\n";
                 if(Common.MultiLang){
                     Bitmap xb = getMultiLangTextAsImage(itemname, 24, Typeface.DEFAULT);
                     if(xb!=null){

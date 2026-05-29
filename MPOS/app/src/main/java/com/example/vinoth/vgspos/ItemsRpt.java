@@ -5,9 +5,18 @@ import java.util.Date;
 public class ItemsRpt {
     private String ItemID;
     private double Amount;
+    private double Rate;
     private String ItemName;
     private double Quantity;
     private Date billDate;
+
+    public double getRate() {
+        return Rate;
+    }
+
+    public void setRate(double rate) {
+        Rate = rate;
+    }
 
     public String getItemID() {
         return ItemID;
@@ -18,13 +27,8 @@ public class ItemsRpt {
     }
 
     public double getAmount() {
-        return Amount;
+        return Rate*Quantity;
     }
-
-    public void setAmount(double amount) {
-        Amount = amount;
-    }
-
     public Date getBillDate() {
         return billDate;
     }
