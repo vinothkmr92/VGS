@@ -11,4 +11,5 @@ public class ReceiptData {
     public Double discount=0d;
     public Double advance=0d;
     public boolean isGST = false;
+    public boolean isSeperate = false;
 }

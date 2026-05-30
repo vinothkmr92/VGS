@@ -35,7 +35,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +96,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<String> waiters;
     String android_id;
     AlertDialog.Builder builder;
+    LinearLayout discountLayout;
+    LinearLayout advanceLayout;
+    Switch seperateBill;
     private Dialog progressBar;
     private EditText itemNo;
     private EditText itemName;
@@ -175,6 +180,20 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             btnCancel = (Button) findViewById(R.id.cancel);
             btnPrint = (Button) findViewById(R.id.print);
             btnEnter = (Button) findViewById(R.id.enter);
+            discountLayout = findViewById(R.id.discountlayout);
+            advanceLayout = findViewById(R.id.advancelayout);
+            seperateBill = findViewById(R.id.seperateBills);
+            seperateBill.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    discountLayout.setVisibility(isChecked?View.GONE:View.VISIBLE);
+                    advanceLayout.setVisibility(isChecked?View.GONE:View.VISIBLE);
+                    if(isChecked){
+                        isGSTBill.setChecked(false);
+                    }
+                    isGSTBill.setEnabled(!isChecked);
+                }
+            });
             btnAddCustomer = (ImageButton)findViewById(R.id.btnAddMember);
             btnAddCustomer.setOnClickListener(this);
             btnScanQr.setOnClickListener(this);
@@ -495,6 +514,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         receiptData.waiter = searchTxtView.getText().toString();
         receiptData.itemsCarts = Common.itemsCarts;
         receiptData.isGST = isGSTBill.isChecked();
+        receiptData.isSeperate = seperateBill.isChecked();
         if(print){
             Print(receiptData);
         }
@@ -1275,6 +1295,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         searchTxtView.setText("NONE");
         isAcPrice.setChecked(false);
         isGSTBill.setChecked(false);
+        seperateBill.setChecked(false);
         progressBar.hide();
         itemNo.requestFocus();
     }

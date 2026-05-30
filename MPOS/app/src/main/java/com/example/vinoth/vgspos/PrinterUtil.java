@@ -160,7 +160,16 @@ public class PrinterUtil {
                     PrintBillWithMRP(rcptData);
                 }
                 else{
-                    PrintBill(rcptData);
+                    if(rcptData.isSeperate){
+                        ArrayList<ItemsCart> prds = rcptData.itemsCarts;
+                        for (ItemsCart ic:
+                                prds) {
+                            PrintBillSeperate(rcptData,ic);
+                        }
+                    }
+                    else {
+                        PrintBill(rcptData);
+                    }
                 }
 
             }
@@ -171,7 +180,16 @@ public class PrinterUtil {
                         PrintBillWithMRP(rcptData);
                     }
                     else{
-                        PrintBill(rcptData);
+                        if(rcptData.isSeperate){
+                            ArrayList<ItemsCart> prds = rcptData.itemsCarts;
+                            for (ItemsCart ic:
+                                    prds) {
+                                PrintBillSeperate(rcptData,ic);
+                            }
+                        }
+                        else {
+                            PrintBill(rcptData);
+                        }
                     }
                     copiesprinted--;
                 }
@@ -542,6 +560,130 @@ public class PrinterUtil {
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+Common.footerMsg+"\n");
         posPtr.lineFeed(6);
+        posPtr.cutPaper();
+    }
+    private void PrintBillSeperate(ReceiptData rcptData,ItemsCart ic) throws IOException {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
+        String dateStr = format.format(rcptData.billDate);
+        Bitmap bitmapIcon = Common.shopLogo;
+        //posPtr.printNormal(ESC+" F");
+        if(bitmapIcon!=null){
+            try {
+                if(Common.RptSize.equals("2")){
+                    posPtr.printBitmap(bitmapIcon,1,400);
+                }
+                else {
+                    posPtr.printBitmap(bitmapIcon,1,500);
+                }
+                posPtr.lineFeed(2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(onlyBill){
+            Bitmap header = getTextAsImage("BILL-COPY",30, Layout.Alignment.ALIGN_CENTER,null);
+            if(header!=null){
+                posPtr.printBitmap(header,0);
+            }
+            else {
+                posPtr.printNormal(ESC + "|cA" + ESC + "|2CCOPY BILL\r\n");
+            }
+        }
+        DecimalFormat formater = new DecimalFormat("#.###");
+        posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|2C"+Common.headerMeg+"\r\n");
+
+        posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+Common.addressline+"\r\n");
+        posPtr.printNormal("\n");
+        posPtr.printNormal(ESC+"|bC"+ESC+"|lABILL NO  : "+ rcptData.billno+"\n");
+        if(!rcptData.waiter.isEmpty() && !rcptData.waiter.equals("NONE")){
+            posPtr.printNormal(ESC+"|bC"+ESC+"|lANAME     : "+ rcptData.waiter);
+            posPtr.printNormal("\n");
+        }
+        posPtr.printNormal(ESC+"|bC"+ESC+"|lADATE     : "+dateStr+"\n\n");
+        if(Common.RptSize.equals("2")){
+            posPtr.printNormal(ESC+"|bC"+"--------------------------------");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM        QTY    RATE   AMOUNT\n");
+            posPtr.printNormal(ESC+"|bC"+"--------------------------------");
+        }
+        else {
+            posPtr.printNormal(ESC+"|bC"+"----------------------------------------------\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM NAME             QTY      PRICE    AMOUNT\n");
+            posPtr.printNormal(ESC+"|bC"+"----------------------------------------------\n");
+        }
+
+        double totalAmt = 0d;
+        double billAmt = 0d;
+        posPtr.setAlignment(0);
+
+            String name = ic.getItem_Name();
+            String qty = formater.format(ic.getQty());
+            String price = formater.format(ic.getPrice());
+            Double amt = ic.getPrice()*ic.getQty();
+            billAmt+=amt;
+            String amts=String.format("%.0f",amt);
+            String line = "";
+            if(Common.RptSize.equals("2")){
+                if(name.length()>33){
+                    name = name.substring(0,32);
+                }
+                qty = StringUtils.leftPad(qty,15);
+                price = StringUtils.leftPad(price,8);
+                amts = StringUtils.leftPad(amts,9);
+                line = qty+price+amts+"\n";
+            }
+            else {
+                if(name.length()>47){
+                    name = name.substring(0,46);
+                }
+                qty = StringUtils.leftPad(qty,25);
+                price = StringUtils.leftPad(price,11);
+                amts = StringUtils.leftPad(amts,10);
+                line = qty+price+amts+"\n";
+            }
+            if(Common.MultiLang){
+                Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
+                if(xb!=null){
+                    posPtr.printBitmap(xb,0);
+                }
+                else {
+                    posPtr.printNormal(ESC+"|bC"+name+"\n");
+                }
+            }
+            else {
+                posPtr.printNormal(ESC+"|bC"+name+"\n");
+            }
+            posPtr.printNormal(ESC+"|bC"+line);
+
+        if(Common.RptSize.equals("2")){
+            posPtr.printNormal(ESC+"|bC"+"--------------------------------");
+        }
+        else {
+            posPtr.printNormal(ESC+"|bC"+"----------------------------------------------\n");
+        }
+
+        totalAmt = billAmt-rcptData.discount-rcptData.advance;
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        formatter.setMaximumFractionDigits(0);
+        String symbol = formatter.getCurrency().getSymbol();
+
+        String totalamt = formatter.format(totalAmt).replace(symbol,symbol+" ");
+        String txttotal = "Grand Total  "+totalamt+"/-";
+        posPtr.lineFeed(1);
+        Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER,null);
+        if(bp!=null){
+            posPtr.printBitmap(bp,0);
+        }
+        else {
+            if(Common.RptSize.equals("2")){
+                posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|bC"+ESC+"|1C"+txttotal+"\n");
+            }
+            else {
+                posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|bC"+ESC+"|2C"+txttotal+"\n");
+            }
+        }
+        posPtr.lineFeed(1);
+        posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+Common.footerMsg+"\n");
+        posPtr.lineFeed(4);
         posPtr.cutPaper();
     }
 
