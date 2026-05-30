@@ -74,14 +74,22 @@ public class PrinterUtil {
     private UsbDevice usbDevice;
     private UsbManager usbManager;
     private boolean receivedBrodCast;
-    private Fragment activity;
+    private Fragment fragment;
+    public Activity activity;
+    public boolean isActivity;
     private static final String ACTION_USB_PERMISSION = "com.example.vgposrpt.USB_PERMISSION";
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
-                    usbManager = (UsbManager) activity.getActivity().getSystemService(Context.USB_SERVICE);
+                    if(isActivity){
+                        usbManager = (UsbManager) activity.getSystemService(Context.USB_SERVICE);
+                    }
+                    else {
+                        usbManager = (UsbManager) fragment.getActivity().getSystemService(Context.USB_SERVICE);
+                    }
+
                     usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         if (usbManager != null && usbDevice != null && !receivedBrodCast) {
@@ -98,7 +106,7 @@ public class PrinterUtil {
     };
 
     private void PassMsgToActivity(String title,String Msg){
-        String localClassName = activity.getClass().getSimpleName();
+        String localClassName = isActivity ? activity.getClass().getSimpleName():fragment.getClass().getSimpleName();
         switch (localClassName){
             case "SaleFragment":
                 SaleFragment.getInstance().showCustomDialog(title,Msg);
@@ -106,11 +114,14 @@ public class PrinterUtil {
             case "KotFragment":
                 KotFragment.getInstance().showCustomDialog(title,Msg);
                 break;
+            case "ViewBillsActivity":
+                ViewBillsActivity.getInstance().showCustomDialog(title,Msg,false);
+                break;
         }
     }
     public PrinterUtil(Context cntx,Fragment act,BillDetails bd) {
         posPtr=new ESCPOSPrinter();
-        activity = act;
+        fragment = act;
         billDetail = bd;
         switch (CommonUtil.PrintOption){
             case  "WiFi":
@@ -169,7 +180,13 @@ public class PrinterUtil {
                 wifiPort.disconnect();
             }
             if(usbPort!=null){
-                activity.getActivity().getApplicationContext().unregisterReceiver(this.usbReceiver);
+                if(isActivity){
+                    activity.getApplicationContext().unregisterReceiver(this.usbReceiver);
+                }
+                else {
+                    fragment.getActivity().getApplicationContext().unregisterReceiver(this.usbReceiver);
+                }
+
             }
             return 1;
         }
@@ -535,12 +552,17 @@ public class PrinterUtil {
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
-                    String localClassName = activity.getClass().getSimpleName();
-                    if(localClassName.equals("SaleFragment")){
-                        SaleFragment.getInstance().RefreshSaleScreen();
-                    }
-                    else {
-                        QuickSaleFragment.getInstance().Cancel();
+                    if(!isActivity){
+                        String localClassName = fragment.getClass().getSimpleName();
+                        if(localClassName.equals("SaleFragment")){
+                            SaleFragment.getInstance().RefreshSaleScreen();
+                        }
+                        else if(localClassName.equals("QuickSaleFragment")) {
+                            QuickSaleFragment.getInstance().Cancel();
+                        }
+                        else{
+                            KotFragment.getInstance().Cancel();
+                        }
                     }
                 }
             }
@@ -610,13 +632,19 @@ public class PrinterUtil {
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
-                    String localClassName = activity.getClass().getSimpleName();
-                    if(localClassName.equals("SaleFragment")){
-                        SaleFragment.getInstance().RefreshSaleScreen();
+                    if(!isActivity){
+                        String localClassName = fragment.getClass().getSimpleName();
+                        if(localClassName.equals("SaleFragment")){
+                            SaleFragment.getInstance().RefreshSaleScreen();
+                        }
+                        else if(localClassName.equals("QuickSaleFragment")) {
+                            QuickSaleFragment.getInstance().Cancel();
+                        }
+                        else{
+                            KotFragment.getInstance().Cancel();
+                        }
                     }
-                    else {
-                        QuickSaleFragment.getInstance().Cancel();
-                    }
+
                 }
             }
             else{
@@ -678,15 +706,17 @@ public class PrinterUtil {
                 finally {
                     if(dialog.isShowing())
                         dialog.dismiss();
-                    String localClassName = activity.getClass().getSimpleName();
-                    if(localClassName.equals("SaleFragment")){
-                        SaleFragment.getInstance().RefreshSaleScreen();
-                    }
-                    else if(localClassName.equals("QuickSaleFragment")) {
-                        QuickSaleFragment.getInstance().Cancel();
-                    }
-                    else{
-                        KotFragment.getInstance().Cancel();
+                    if(!isActivity){
+                        String localClassName = fragment.getClass().getSimpleName();
+                        if(localClassName.equals("SaleFragment")){
+                            SaleFragment.getInstance().RefreshSaleScreen();
+                        }
+                        else if(localClassName.equals("QuickSaleFragment")) {
+                            QuickSaleFragment.getInstance().Cancel();
+                        }
+                        else{
+                            KotFragment.getInstance().Cancel();
+                        }
                     }
                 }
             }
@@ -700,7 +730,12 @@ public class PrinterUtil {
     }
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void ConnectUSB() {
-        usbManager = (UsbManager) activity.getActivity().getApplicationContext().getSystemService(Context.USB_SERVICE);
+        if(isActivity){
+            usbManager = (UsbManager) activity.getApplicationContext().getSystemService(Context.USB_SERVICE);
+        }
+        else {
+            usbManager = (UsbManager) fragment.getActivity().getApplicationContext().getSystemService(Context.USB_SERVICE);
+        }
         HashMap<String, UsbDevice> mDeviceList = usbManager.getDeviceList();
         Iterator<UsbDevice> mDeviceIterator = mDeviceList.values().iterator();
         UsbDevice mDevice = null;
@@ -709,11 +744,11 @@ public class PrinterUtil {
             mDevice = mDeviceIterator.next();
             nametoCheck = mDevice.getManufacturerName()+"~"+mDevice.getProductName();
             if (mDevice == null) {
-                Toast.makeText(activity.getContext(), "mDevice is null", Toast.LENGTH_SHORT).show();
+                Toast.makeText(isActivity?activity.getApplicationContext():fragment.getContext(), "mDevice is null", Toast.LENGTH_SHORT).show();
             }else{
                 //Toast.makeText(activity.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
                 if(nametoCheck.equals(CommonUtil.usbDeviceName)){
-                    Toast.makeText(activity.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(isActivity?activity.getApplicationContext():fragment.getContext(), "USB Device found", Toast.LENGTH_SHORT).show();
                     break;
                 }
             }
@@ -721,13 +756,18 @@ public class PrinterUtil {
         usbDevice = mDevice;
         if (usbManager != null) {
             PendingIntent permissionIntent = PendingIntent.getBroadcast(
-                    activity.getActivity(),
+                    isActivity?fragment.getActivity():activity,
                     0,
                     new Intent(ACTION_USB_PERMISSION).setPackage(context.getPackageName()),
                     PendingIntent.FLAG_MUTABLE
             );
             IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-            activity.getActivity().getApplicationContext().registerReceiver(this.usbReceiver,filter,Context.RECEIVER_EXPORTED);
+            if(isActivity){
+                activity.getApplicationContext().registerReceiver(this.usbReceiver,filter,Context.RECEIVER_EXPORTED);
+            }
+            else {
+                fragment.getActivity().getApplicationContext().registerReceiver(this.usbReceiver,filter,Context.RECEIVER_EXPORTED);
+            }
             //Intent in = ContextCompat.registerReceiver(context, this.usbReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
             usbManager.requestPermission(mDevice, permissionIntent);
             //usbPort = new USBPort(usbManager);

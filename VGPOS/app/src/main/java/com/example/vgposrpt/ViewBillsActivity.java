@@ -56,7 +56,7 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
     private int year, month, day;
     DatePickerDialog datePickerDialog;
     DatePickerDialog todatePickerDialog;
-    Fragment instance;
+    static ViewBillsActivity instance;
     public static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,12 +128,15 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
                 return insets;
             });
+            instance = this;
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage(),true);
         }
     }
-
+    public static ViewBillsActivity getInstance(){
+        return instance;
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -248,7 +251,9 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
             public void onClick(View view) {
                 Sale s = (Sale) reprintBtn.getTag();
                 try{
-                    PrinterUtil printerUtil = new PrinterUtil(ViewBillsActivity.this,instance,s.billDetails);
+                    PrinterUtil printerUtil = new PrinterUtil(ViewBillsActivity.this,null,s.billDetails);
+                    printerUtil.activity = instance;
+                    printerUtil.isActivity = true;
                     printerUtil.Print();
                 }
                 catch (Exception ex){
@@ -286,10 +291,14 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
         Boolean isSuccess = false;
         String error = "";
         String selectedUser = "ALL";
+        ConnectionClass connectionClass = null;
+        Connection con = null;
         private final ProgressDialog dialog = new ProgressDialog(ViewBillsActivity.this,R.style.CustomProgressStyle);
-
+        SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
         @Override
         protected void onPreExecute() {
+            connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+            con = connectionClass.CONN();
             selectedUser = txtUser.getEditText().getText().toString();
             if(frmDate.contains("Sept")){
                 frmDate = frmDate.replace("Sept","Sep");
@@ -320,17 +329,45 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
                 dialog.hide();
             }
         }
+        private ArrayList<Product> GetBillProducts(int BillNo,Date billDate,int BranchCode,String counter){
+            ArrayList<Product> prlist = new ArrayList<>();
+            String bddtae=dateFormater.format(billDate);
+            if(bddtae.contains("Sept")){
+                bddtae = bddtae.replace("Sept","Sep");
+            }
+            String query = String.format("SELECT BP.PRODUCT_NAME,BP.PRICE,BP.Quantity,BP.Product_ID,BP.BRANCH_CODE,BP.Batch_No,BP.MRP,BP.SNO FROM BILL_PRODUCTS BP,PRODUCTS P WHERE BP.PRODUCT_ID=P.Product_ID AND BP.BRANCH_CODE=P.BRANCH_CODE AND BP.BILL_NO = %d AND BP.BRANCH_CODE = %d AND BP.COUNTER_ID='%s' AND CAST(BP.BILL_DATE AS DATE)='%s' ORDER BY BP.SNO",BillNo,BranchCode,counter,bddtae);
+            try{
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(query);
+                while (rs.next()){
+                    Product pr = new Product();
+                    pr.setProductName(rs.getString("PRODUCT_NAME"));
+                    pr.setPrice(rs.getDouble("PRICE"));
+                    pr.setQty(rs.getInt("QUANTITY"));
+                    pr.setProductID(rs.getString("PRODUCT_ID"));
+                    pr.setBranchCode(rs.getInt("BRANCH_CODE"));
+                    pr.setBatchNo(rs.getString("BATCH_NO"));
+                    pr.setMRP(rs.getDouble("MRP"));
+                    pr.setSNo(rs.getInt("SNO"));
+                    prlist.add(pr);
+                }
+                rs.close();
+            }
+            catch(Exception ex){
+              //
+            }
+
+            return prlist;
+        }
 
         @Override
         protected ArrayList<Sale> doInBackground(String... params) {
             ArrayList<Sale> sales = new ArrayList<>();
             try {
-                ConnectionClass connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
-                Connection con = connectionClass.CONN();
                 if (con == null) {
                     error = "Database Connection Failed.";
                 } else {
-                    String query = String.format("SELECT Bill_No,cast(BILL_DATE as datetime) as Bill_Date, BILL_AMMOUNT-(BILL_AMMOUNT*(DISCOUNT/100)) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT Bill_No,cast(BILL_DATE as datetime) as Bill_Date, BILL_AMMOUNT-(BILL_AMMOUNT*(DISCOUNT/100)) AS AMT,Cash_Received,Card_Received,Coupon_Received,Member_ID,User_Name,Branch_Code,Counter_ID FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(branchCode>0){
                         query = query+String.format(" AND BRANCH_CODE=%s",branchCode);
                     }
@@ -350,9 +387,24 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
                         sale.Cash_Amount = rs.getDouble("Cash_Received");
                         sale.Card_Amount = rs.getDouble("Card_Received");
                         sale.Upi_Amount = rs.getDouble("Coupon_Received");
+                        BillDetails bd = new BillDetails();
+                        bd.MemberID = rs.getInt("Member_ID");
+                        bd.billUser = rs.getString("User_Name");
+                        bd.BillAmount = sale.Bill_Amount.intValue();
+                        bd.BillNo = sale.Bill_No;
+                        bd.CashAmt = sale.Cash_Amount.intValue();
+                        bd.CardAmt = sale.Card_Amount.intValue();
+                        bd.UpiAmt = sale.Upi_Amount.intValue();
+                        bd.branchCode = rs.getInt("Branch_Code");
+                        bd.counter = rs.getString("Counter_ID");
+                        Customer cn = CommonUtil.customers.stream().filter(c->c.MemberID==bd.MemberID).findFirst().orElse(null);
+                        bd.MemberName = cn!=null ? cn.MemberName:"";
+                        bd.billProducts = GetBillProducts(sale.Bill_No,sale.Bill_Date,bd.branchCode,bd.counter);
+                        sale.billDetails = bd;
                         sales.add(sale);
                         isSuccess = true;
                     }
+                    rs.close();
                 }
             }
             catch (Exception ex)
