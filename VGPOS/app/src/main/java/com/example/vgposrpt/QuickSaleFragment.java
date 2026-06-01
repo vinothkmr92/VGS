@@ -467,6 +467,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
         prIDEditText.setText("");
         prQtyEditText.setText("");
         totalAmt.setText("0");
+        searchCustomer.setText("");
     }
     public void GetPaymentMode(){
         try {
@@ -490,10 +491,14 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             bd.BillAmount = (int) Math.round(billAmt);
             bd.billUser = CommonUtil.loggedinUser;
             String member = searchCustomer.getText().toString();
-            if(!member.equals("Select Customer")){
+            if(!member.isEmpty()){
                 String[] mc = member.split("-");
                 bd.MemberID = GetMemberID(mc[0],mc[1]);
                 bd.MemberName = mc[0];
+            }
+            else {
+                bd.MemberName = "";
+                bd.MemberID=0;
             }
             switch (paymentMode){
                 case  "CASH":
