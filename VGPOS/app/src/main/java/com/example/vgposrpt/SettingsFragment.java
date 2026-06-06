@@ -69,6 +69,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public static final String PRINTER_KOT = "PRINTER_KOT";
     public static final String BRANCH = "BRANCH";
     public static final String BRANCHES = "BRANCHES";
+    public static final String SPLITPAYMENTS = "SPLITPAYMENTS";
     public static final String PRINTOPTION = "PRINTOPTION";
     public static final String PRINTOPTION_KOT = "PRINTOPTIONKOT";
     public static final String RECEIPTSIZE = "RECEIPTSIZE";
@@ -132,7 +133,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     SwitchMaterial enableKot;
     MaterialCardView kotprinteroptions;
     SwitchMaterial isMobile;
-
+    SwitchMaterial isSplitPayment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -181,6 +182,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             enableKot = view.findViewById(R.id.enableKot);
             printerSettingsView = view.findViewById(R.id.printerSettingsCard);
             isMobile = view.findViewById(R.id.isMobile);
+            isSplitPayment = view.findViewById(R.id.splitPayments);
             sharedpreferences = MySharedPreferences.getInstance(getContext(),MyPREFERENCES);
             String sqlserver = getContext().getApplicationContext().getString(R.string.SQL_SERVER);
             String dbnamestr = getContext().getApplicationContext().getString(R.string.SQL_DBNAME);
@@ -188,6 +190,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             String Databasename = sharedpreferences.getString(SQLDB,dbnamestr);
             enableKot.setChecked(sharedpreferences.getString(ENABLEKOT,"N").equalsIgnoreCase("Y"));
             kotprinteroptions.setVisibility(enableKot.isChecked()?View.VISIBLE:View.GONE);
+            isSplitPayment.setChecked(sharedpreferences.getBoolean(SPLITPAYMENTS,false));
             Integer defBranch = sharedpreferences.getInt(BRANCH,1);
             ArrayList<Branch> bransettings = getBranchList();
             branchArrayList = bransettings;
@@ -521,16 +524,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         }
         return branchName;
     }
-    private Integer GetBranchCode (String branchName){
-        Integer code = 1;
-        for (Branch b:branchArrayList) {
-            if(b.getBranch_Name() == branchName){
-                code = b.getBranch_Code();
-                break;
-            }
-        }
-        return code;
-    }
+
     private void checkPermission(){
 
     }
@@ -561,7 +555,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         String usbprinter = usbprinterselection.getText().toString();
         String usbprinterkot = usbprinterselectionkot.getText().toString();
         String brName = branches.getText().toString();
-        Integer brCode = GetBranchCode(brName);
+        Branch br = branchArrayList.stream().filter(i->i.getBranch_Name().equalsIgnoreCase(brName)).findFirst().orElse(null);
+        Integer brCode = br!=null ? br.getBranch_Code():1;
         String SQLUser = getContext().getApplicationContext().getString(R.string.SQL_USERNAME);
         String SQLPassword = getContext().getApplicationContext().getString(R.string.SQL_PASSWORD);
         String printerOption = "";
@@ -632,6 +627,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             sharedpreferences.putString(INCLUDE_MRP,includeMRP.isChecked()?"Y":"N");
             sharedpreferences.putString(MULTI_LANG,multiLang.isChecked()?"Y":"N");
             sharedpreferences.putString(ISMOBILE,isMobile.isChecked()?"Y":"N");
+            sharedpreferences.putBoolean(SPLITPAYMENTS,isSplitPayment.isChecked());
             CommonUtil.printer = printer;
             sharedpreferences.commit();
             showCustomDialog("Saved","Settings Saved Successfully",true);

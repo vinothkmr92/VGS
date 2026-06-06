@@ -476,8 +476,16 @@ public class SaleFragment extends Fragment implements View.OnClickListener {
 
     public void GetPaymentMode(){
         try {
-            GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
-            addCustomer.show(getChildFragmentManager(),"");
+            if(CommonUtil.splitPayments){
+                Double billAmt = productCart.stream().mapToDouble(c->c.getAmount()).sum();
+                GetSplitPaymentsDialog paymentsDialog = new GetSplitPaymentsDialog();
+                paymentsDialog.BillAmount = billAmt.intValue();
+                paymentsDialog.show(getChildFragmentManager(),"");
+            }
+            else {
+                GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
+                addCustomer.show(getChildFragmentManager(),"");
+            }
         }catch (Exception ex){
             showCustomDialog("Error",ex.getMessage().toString());
         }
@@ -496,7 +504,24 @@ public class SaleFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+    public void getSplitPayments(Integer cashAmt,Integer cardAmt,Integer upiAmt){
+        try{
+            BillDetails bd = new BillDetails();
+            bd.branchCode = CommonUtil.defBranch;
+            bd.billProducts = productCart;
+            Double billAmt = productCart.stream().mapToDouble(c->c.getAmount()).sum();
+            bd.BillAmount = (int) Math.round(billAmt);
+            bd.billUser = CommonUtil.loggedinUser;
 
+            bd.CashAmt = cashAmt;
+            bd.CardAmt = cardAmt;
+            bd.UpiAmt = upiAmt;
+            new SaveNewBill().execute(bd);
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
+        }
+    }
     public void getPaymentMode(String paymentMode) {
         try{
             BillDetails bd = new BillDetails();

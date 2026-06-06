@@ -471,8 +471,16 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
     }
     public void GetPaymentMode(){
         try {
-            GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
-            addCustomer.show(getChildFragmentManager(),"");
+            if(CommonUtil.splitPayments){
+                Double billAmt = productCart.stream().mapToDouble(c->c.getAmount()).sum();
+                GetSplitPaymentsDialog paymentsDialog = new GetSplitPaymentsDialog();
+                paymentsDialog.BillAmount = billAmt.intValue();
+                paymentsDialog.show(getChildFragmentManager(),"");
+            }
+            else {
+                GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
+                addCustomer.show(getChildFragmentManager(),"");
+            }
         }catch (Exception ex){
             showCustomDialog("Error",ex.getMessage().toString());
         }
@@ -481,6 +489,33 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
         Customer cn = CommonUtil.customers.stream().filter(c->c.MobileNumber.equals(mobileNumber) && c.MemberName.equals(memberName)).findFirst().orElse(null);
         Integer memid = cn!=null ? cn.MemberID:0;
         return memid;
+    }
+    public void getSplitPayments(Integer cashAmt,Integer cardAmt,Integer upiAmt){
+        try{
+            BillDetails bd = new BillDetails();
+            bd.branchCode = CommonUtil.defBranch;
+            bd.billProducts = productCart;
+            Double billAmt = productCart.stream().mapToDouble(c->c.getAmount()).sum();
+            bd.BillAmount = (int) Math.round(billAmt);
+            bd.billUser = CommonUtil.loggedinUser;
+            String member = searchCustomer.getText().toString();
+            if(!member.isEmpty()){
+                String[] mc = member.split("-");
+                bd.MemberID = GetMemberID(mc[0],mc[1]);
+                bd.MemberName = mc[0];
+            }
+            else {
+                bd.MemberName = "";
+                bd.MemberID=0;
+            }
+            bd.CashAmt = cashAmt;
+            bd.CardAmt = cardAmt;
+            bd.UpiAmt = upiAmt;
+            new SaveNewBill().execute(bd);
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
+        }
     }
     public void getPaymentMode(String paymentMode) {
         try{

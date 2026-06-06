@@ -39,5 +39,6 @@ public class CommonUtil {
     public static String usbDeviceName = "";
     public static String usbDeviceNameKot = "";
     public static boolean isMobileDevice = true;
+    public static boolean splitPayments = false;
     public static ArrayList<Customer> customers = new ArrayList<>();
 }
