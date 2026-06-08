@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener {
     EditText host;
@@ -69,6 +71,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public static final String PRINTER_KOT = "PRINTER_KOT";
     public static final String BRANCH = "BRANCH";
     public static final String BRANCHES = "BRANCHES";
+    public static final String DEFCOUNTER = "DEFCOUNTER";
+    public static final String COUNTERS = "COUNTERS";
     public static final String SPLITPAYMENTS = "SPLITPAYMENTS";
     public static final String PRINTOPTION = "PRINTOPTION";
     public static final String PRINTOPTION_KOT = "PRINTOPTIONKOT";
@@ -89,6 +93,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     ArrayList<String> usbDeviceList;
     ArrayList<String> usbDeviceListKot;
     ArrayList<Branch> branchArrayList;
+    ArrayList<Counters> counters;
     Set<BluetoothDevice> pairedDevices = null;
     private BluetoothAdapter mBluetoothAdapter = null;
     private static String[] PERMISSIONS_BLUETOOTH = {
@@ -106,6 +111,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     AutoCompleteTextView printerselectionkot;
     TextInputLayout branchCd;
     AutoCompleteTextView branches;
+    TextInputLayout counterCd;
+    AutoCompleteTextView countersAutoCmplte;
     MaterialRadioButton printerOptionNone;
     MaterialRadioButton printerOptionWifi;
     MaterialRadioButton printerOptionBluetooth;
@@ -133,7 +140,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     SwitchMaterial enableKot;
     MaterialCardView kotprinteroptions;
     SwitchMaterial isMobile;
-    SwitchMaterial isSplitPayment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -146,6 +152,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             dbname= view.findViewById(R.id.dbname);
             branchCd = view.findViewById(R.id.defaultBranch);
             branches = view.findViewById(R.id.branches);
+            counterCd = view.findViewById(R.id.defaultCounter);
+            countersAutoCmplte = view.findViewById(R.id.countersSettings);
             printerIP = view.findViewById(R.id.printerip);
             printerIPKot = view.findViewById(R.id.printeripkot);
             testConnection = view.findViewById(R.id.testButton);
@@ -182,7 +190,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             enableKot = view.findViewById(R.id.enableKot);
             printerSettingsView = view.findViewById(R.id.printerSettingsCard);
             isMobile = view.findViewById(R.id.isMobile);
-            isSplitPayment = view.findViewById(R.id.splitPayments);
             sharedpreferences = MySharedPreferences.getInstance(getContext(),MyPREFERENCES);
             String sqlserver = getContext().getApplicationContext().getString(R.string.SQL_SERVER);
             String dbnamestr = getContext().getApplicationContext().getString(R.string.SQL_DBNAME);
@@ -190,11 +197,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             String Databasename = sharedpreferences.getString(SQLDB,dbnamestr);
             enableKot.setChecked(sharedpreferences.getString(ENABLEKOT,"N").equalsIgnoreCase("Y"));
             kotprinteroptions.setVisibility(enableKot.isChecked()?View.VISIBLE:View.GONE);
-            isSplitPayment.setChecked(sharedpreferences.getBoolean(SPLITPAYMENTS,false));
             Integer defBranch = sharedpreferences.getInt(BRANCH,1);
             ArrayList<Branch> bransettings = getBranchList();
             branchArrayList = bransettings;
             branchCd.getEditText().setText(GetBranchName(defBranch));
+            counters = getCounters();
+            String defCounter = sharedpreferences.getString(DEFCOUNTER,"CD1");
+            Counters cn = counters.stream().filter(c->c.CounterID.equals(defCounter)).findFirst().orElse(null);
+            counterCd.getEditText().setText(cn!=null ? cn.CounterName:"Counter_1");
             host.setText(hostname);
             dbname.setText(Databasename);
             testConnection.setOnClickListener(this);
@@ -209,6 +219,19 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             ArrayAdapter branchadapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,branchArrayList);
             branchadapter.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
             branches.setAdapter(branchadapter);
+            branches.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    counters = getCounters();
+                    ArrayAdapter counterAdaptor = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,counters);
+                    counterAdaptor.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+                    countersAutoCmplte.setAdapter(counterAdaptor);
+                }
+            });
+            ArrayAdapter counterAdaptor = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,counters);
+            counterAdaptor.setDropDownViewResource(android.R.layout.select_dialog_singlechoice);
+            countersAutoCmplte.setAdapter(counterAdaptor);
+
             printerIP.setText(sharedpreferences.getString(PRINTER_IP,""));
             printerIPKot.setText(sharedpreferences.getString(PRINTER_IP_KOT,""));
             header.setText(sharedpreferences.getString(HEADER,""));
@@ -504,6 +527,20 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         }
         return deviceList;
     }
+    private ArrayList<Counters> getCounters(){
+        ArrayList<Counters> counters = new ArrayList<>();
+        String serializedObject = sharedpreferences.getString(COUNTERS,null);
+        if(serializedObject!=null){
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Counters>>(){}.getType();
+            counters = gson.fromJson(serializedObject,type);
+        }
+        String brName = branches.getText().toString();
+        Branch br = branchArrayList.stream().filter(i->i.getBranch_Name().equalsIgnoreCase(brName)).findFirst().orElse(null);
+        Integer brCode = br!=null ? br.getBranch_Code():1;
+        counters = counters.stream().filter(c->c.branchCode.equals(brCode)).collect(Collectors.toCollection(ArrayList::new));
+        return counters;
+    }
     private ArrayList<Branch> getBranchList(){
         ArrayList<Branch> arrayItems = new ArrayList<>();
         String serializedObject = sharedpreferences.getString(BRANCHES, null);
@@ -554,6 +591,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         String printerkot = printerselectionkot.getText().toString();
         String usbprinter = usbprinterselection.getText().toString();
         String usbprinterkot = usbprinterselectionkot.getText().toString();
+        String counterName = countersAutoCmplte.getText().toString();
+        Counters cn = counters.stream().filter(c->c.CounterName.equalsIgnoreCase(counterName)).findFirst().orElse(null);
+        String defCounter = cn!=null ? cn.CounterID:"CD1";
         String brName = branches.getText().toString();
         Branch br = branchArrayList.stream().filter(i->i.getBranch_Name().equalsIgnoreCase(brName)).findFirst().orElse(null);
         Integer brCode = br!=null ? br.getBranch_Code():1;
@@ -627,8 +667,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             sharedpreferences.putString(INCLUDE_MRP,includeMRP.isChecked()?"Y":"N");
             sharedpreferences.putString(MULTI_LANG,multiLang.isChecked()?"Y":"N");
             sharedpreferences.putString(ISMOBILE,isMobile.isChecked()?"Y":"N");
-            sharedpreferences.putBoolean(SPLITPAYMENTS,isSplitPayment.isChecked());
+            sharedpreferences.putString(DEFCOUNTER,defCounter);
             CommonUtil.printer = printer;
+            CommonUtil.defBranch = brCode;
             sharedpreferences.commit();
             showCustomDialog("Saved","Settings Saved Successfully",true);
         }

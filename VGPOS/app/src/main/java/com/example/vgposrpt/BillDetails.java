@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class BillDetails {
     public ArrayList<Product> billProducts;
     public Integer branchCode;
-    public String counter = "CD1";
+    public String counter = "";
     public String billUser;
     public Integer BillAmount;
     public Integer CashAmt=0;

@@ -21,7 +21,6 @@
                 android:gravity="center"
                 android:text="Application Settings"
                 android:textSize="30dp"
-                android:fontFamily="@font/orienta"
                 android:textStyle="bold"
                 ></TextView>
             <com.google.android.material.card.MaterialCardView
@@ -45,7 +44,6 @@
                         android:layout_width="match_parent"
                         android:layout_columnSpan="3"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/orienta"
                         android:hint="SQL Server Host">
 
                         <!--this is the actual edit text which takes the input-->
@@ -55,7 +53,6 @@
                             android:inputType="text"
                             android:textColor="@color/DarkBlue"
                             android:layout_width="match_parent"
-                            android:fontFamily="@font/orienta"
                             android:layout_height="wrap_content" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -64,7 +61,6 @@
                         android:layout_width="match_parent"
                         android:layout_columnSpan="3"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/orienta"
                         android:hint="Database Name">
 
                         <!--this is the actual edit text which takes the input-->
@@ -73,7 +69,6 @@
                             android:maxLines="1"
                             android:textColor="@color/DarkBlue"
                             android:layout_width="match_parent"
-                            android:fontFamily="@font/orienta"
                             android:layout_height="wrap_content" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -84,32 +79,39 @@
                         android:layout_gravity="left"
                         android:id="@+id/defaultBranch"
                         android:hint="Default Branch"
-                        android:fontFamily="@font/orienta"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                         <AutoCompleteTextView
                             android:id="@+id/branches"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/orienta"
+                            android:inputType="none"></AutoCompleteTextView>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_columnSpan="3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:id="@+id/defaultCounter"
+                        android:hint="Default Counter"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/countersSettings"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:inputType="none"></AutoCompleteTextView>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_columnSpan="3"
+                        android:padding="10dp"
                         android:id="@+id/isMobile"
                         android:text="Mobile"
                         android:textColor="@color/DarkViolet"
                         />
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_columnSpan="3"
-                        android:id="@+id/splitPayments"
-                        android:text="Enable Split Payments"
-                        android:textColor="@color/DarkViolet"
-                        />
+
                 </GridLayout>
             </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
@@ -132,7 +134,6 @@
                         android:textColor="@color/DarkBlue"
                         android:text="Printing Options - SALE"
                         android:textSize="20dp"
-                        android:fontFamily="@font/orienta"
                         android:textAlignment="center"
                         android:textStyle="bold"
                         ></TextView>
@@ -153,7 +154,6 @@
                             android:layout_width="wrap_content"
                             android:id="@+id/radioBtnNoPrinter"
                             android:text="None"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.radiobutton.MaterialRadioButton>
                         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -161,7 +161,6 @@
                             android:layout_width="wrap_content"
                             android:id="@+id/radioBtnWifiPrinter"
                             android:text="WiFi"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.radiobutton.MaterialRadioButton>
                         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -169,14 +168,12 @@
                             android:layout_width="wrap_content"
                             android:id="@+id/radioBtnBlueToothPrinter"
                             android:text="Bluetooth"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.radiobutton.MaterialRadioButton>
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/radioBtnUSBPrinter"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             android:text="USB"></com.google.android.material.radiobutton.MaterialRadioButton>
                     </LinearLayout>
@@ -185,7 +182,6 @@
                         android:layout_width="match_parent"
                         android:layout_columnSpan="3"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/orienta"
                         android:id="@+id/wifiprinterlayout"
                         android:hint="WiFi Printer IP">
 
@@ -195,7 +191,6 @@
                             android:maxLines="1"
                             android:textColor="@color/DarkBlue"
                             android:layout_width="match_parent"
-                            android:fontFamily="@font/orienta"
                             android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
@@ -205,14 +200,12 @@
                         android:layout_gravity="left"
                         android:id="@+id/printer"
                         android:hint="Bluetooth Printer"
-                        android:fontFamily="@font/orienta"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                         <AutoCompleteTextView
                             android:id="@+id/printers"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/orienta"
                             android:inputType="none"></AutoCompleteTextView>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
@@ -222,14 +215,12 @@
                         android:layout_gravity="left"
                         android:id="@+id/usbprinter"
                         android:hint="USB Printer"
-                        android:fontFamily="@font/orienta"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                         <AutoCompleteTextView
                             android:id="@+id/usbprinters"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/orienta"
                             android:inputType="none"></AutoCompleteTextView>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
@@ -253,7 +244,6 @@
                         android:textColor="@color/DarkBlue"
                         android:text="Printing Options - KOT"
                         android:textSize="20dp"
-                        android:fontFamily="@font/orienta"
                         android:textAlignment="center"
                         android:textStyle="bold"
                         ></TextView>
@@ -266,7 +256,6 @@
                             android:layout_width="wrap_content"
                             android:id="@+id/radioBtnNoPrinterKot"
                             android:text="None"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.radiobutton.MaterialRadioButton>
                         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -274,7 +263,6 @@
                             android:layout_width="wrap_content"
                             android:id="@+id/radioBtnWifiPrinterKot"
                             android:text="WiFi"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.radiobutton.MaterialRadioButton>
                         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -282,14 +270,12 @@
                             android:layout_width="wrap_content"
                             android:id="@+id/radioBtnBlueToothPrinterKot"
                             android:text="Bluetooth"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.radiobutton.MaterialRadioButton>
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/radioBtnUSBPrinterKot"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             android:text="USB"></com.google.android.material.radiobutton.MaterialRadioButton>
                     </LinearLayout>
@@ -298,7 +284,6 @@
                         android:layout_width="match_parent"
                         android:layout_columnSpan="3"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/orienta"
                         android:id="@+id/wifiprinterlayoutKot"
                         android:hint="WiFi Printer IP">
 
@@ -308,7 +293,6 @@
                             android:maxLines="1"
                             android:textColor="@color/DarkBlue"
                             android:layout_width="match_parent"
-                            android:fontFamily="@font/orienta"
                             android:layout_height="wrap_content" />
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
@@ -318,14 +302,12 @@
                         android:layout_gravity="left"
                         android:id="@+id/printerkot"
                         android:hint="Bluetooth Printer"
-                        android:fontFamily="@font/orienta"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                         <AutoCompleteTextView
                             android:id="@+id/printerskot"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/orienta"
                             android:inputType="none"></AutoCompleteTextView>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
@@ -335,14 +317,12 @@
                         android:layout_gravity="left"
                         android:id="@+id/usbprinterkot"
                         android:hint="USB Printer"
-                        android:fontFamily="@font/orienta"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                         <AutoCompleteTextView
                             android:id="@+id/usbprinterskot"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/orienta"
                             android:inputType="none"></AutoCompleteTextView>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
@@ -366,7 +346,6 @@
                         android:textColor="@color/Crimson"
                         android:text="Printer Settings"
                         android:textSize="15dp"
-                        android:fontFamily="@font/orienta"
                         android:textAlignment="center"
                         android:textStyle="bold|italic"
                         ></TextView>
@@ -381,7 +360,6 @@
                             android:layout_width="match_parent"
                             android:layout_columnSpan="3"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/orienta"
                             android:hint="Receipt Header">
 
                             <!--this is the actual edit text which takes the input-->
@@ -391,7 +369,6 @@
                                 android:inputType="text"
                                 android:textColor="@color/DarkBlue"
                                 android:layout_width="match_parent"
-                                android:fontFamily="@font/orienta"
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
                         <com.google.android.material.textfield.TextInputLayout
@@ -399,7 +376,6 @@
                             android:layout_width="match_parent"
                             android:layout_columnSpan="3"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/orienta"
                             android:hint="Address">
 
                             <!--this is the actual edit text which takes the input-->
@@ -407,7 +383,6 @@
                                 android:id="@+id/address"
                                 android:textColor="@color/DarkBlue"
                                 android:layout_width="match_parent"
-                                android:fontFamily="@font/orienta"
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
                         <com.google.android.material.textfield.TextInputLayout
@@ -415,7 +390,6 @@
                             android:layout_width="match_parent"
                             android:layout_columnSpan="3"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/orienta"
                             android:hint="Receipt Footer">
 
                             <!--this is the actual edit text which takes the input-->
@@ -425,7 +399,6 @@
                                 android:inputType="text"
                                 android:textColor="@color/DarkBlue"
                                 android:layout_width="match_parent"
-                                android:fontFamily="@font/orienta"
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
@@ -450,7 +423,6 @@
                         android:textColor="@color/DarkBlue"
                         android:text="Receipt Size"
                         android:textSize="20dp"
-                        android:fontFamily="@font/orienta"
                         android:id="@+id/rptsizeTxtView"
                         android:textAlignment="center"
                         android:textStyle="bold"
@@ -464,7 +436,6 @@
                             android:layout_width="wrap_content"
                             android:id="@+id/radioBtnrptSize2Inch"
                             android:text="2 - Inches"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.radiobutton.MaterialRadioButton>
                         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -472,7 +443,6 @@
                             android:layout_width="wrap_content"
                             android:id="@+id/radioBtnrptSize3Inch"
                             android:text="3 - Inches"
-                            android:fontFamily="@font/orienta"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.radiobutton.MaterialRadioButton>
                     </LinearLayout>
@@ -480,6 +450,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/multilangswitch"
+                        android:padding="10dp"
                         android:text="Multi Language for Printing"
                         android:textColor="@color/Crimson"
                         >
@@ -495,7 +466,7 @@
                             android:layout_width="fill_parent"
                             android:id="@+id/includeMRP"
                             android:text="Receipt with MRP"
-                            android:fontFamily="@font/orienta"
+                            android:padding="10dp"
                             android:textColor="@color/colorAccent"
                             ></com.google.android.material.switchmaterial.SwitchMaterial>
                     </LinearLayout>

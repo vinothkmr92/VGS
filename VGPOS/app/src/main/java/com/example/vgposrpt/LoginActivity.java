@@ -19,7 +19,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -29,6 +32,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -43,9 +47,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static final String BRANCHES = "BRANCHES";
     public static final String CUSTOMERS = "CUSTOMERS";
     public static final String USERS = "USERS";
+    public static final String DEFCOUNTER = "DEFCOUNTER";
     public static final String COUNTERS = "COUNTERS";
     public static final String TABLES = "TABLES";
-    public static final String SPLITPAYMENTS = "SPLITPAYMENTS";
     public static final String PRINTOPTION = "PRINTOPTION";
     public static final String RECEIPTSIZE = "RECEIPTSIZE";
     public static final String PRINTER_IP = "PRINTER_IP";
@@ -90,7 +94,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             CommonUtil.printer = sharedpreferences.getString(PRINTER,"");
             CommonUtil.printerKot = sharedpreferences.getString(PRINTER_KOT,"");
             CommonUtil.isMobileDevice = sharedpreferences.getString(ISMOBILE,"Y").equals("Y");
-            CommonUtil.splitPayments = sharedpreferences.getBoolean(SPLITPAYMENTS,false);
             String usbdevice = sharedpreferences.getString(USBDEVICENAME,"");
             String[] sb = usbdevice.split("~");
             if(sb.length>1){
@@ -102,7 +105,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if(sbKOT.length>1){
                 CommonUtil.usbDeviceNameKot = sbKOT[1];
             }
-
+            CommonUtil.countersList = getCounters();
+            ArrayList<Counters> cnlist = CommonUtil.countersList.stream().filter(c->c.branchCode.equals(CommonUtil.defBranch)).collect(Collectors.toCollection(ArrayList::new));
+            String defCn = sharedpreferences.getString(DEFCOUNTER,"CD1");
+            Counters defCounter = new Counters();
+            defCounter.CounterID="CD1";
+            defCounter.CounterName="Counter_1";
+            defCounter.branchCode = 1;
+            Counters cn = cnlist.stream().filter(c->c.CounterID.equalsIgnoreCase(defCn)).findFirst().orElse(defCounter);
+            CommonUtil.defCounter = cn;
             CommonUtil.ReceiptSize = sharedpreferences.getString(RECEIPTSIZE,"3");
             CommonUtil.ReceiptFooter = sharedpreferences.getString(FOOTER,"");
             CommonUtil.includeMRP = sharedpreferences.getString(INCLUDE_MRP,"N").equalsIgnoreCase("Y");
@@ -123,6 +134,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+    private ArrayList<Counters> getCounters(){
+        ArrayList<Counters> counters = new ArrayList<>();
+        String serializedObject = sharedpreferences.getString(COUNTERS,null);
+        if(serializedObject!=null){
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Counters>>(){}.getType();
+            counters = gson.fromJson(serializedObject,type);
+        }
+        return counters;
     }
     public void  CheckSQLSettings(){
         String sqlserver = this.getApplicationContext().getString(R.string.SQL_SERVER);
@@ -387,6 +408,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     sharedpreferences.setList(USERS,userList);
                     CommonUtil.users = userList;
                     u.close();
+                    int branchCode = CommonUtil.defBranch;
                     String counterQuery = "SELECT * FROM COUNTERS";
                     ResultSet c = stmt.executeQuery(counterQuery);
                     ArrayList<Counters> counters = new ArrayList<>();
@@ -415,7 +437,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     sharedpreferences.commit();
                     CommonUtil.customers = customers;
                     cq.close();
-                    String tableQuery = "SELECT * FROM DiningTables";
+                    String tableQuery = "SELECT * FROM DiningTables WHERE BRANCH_CODE="+branchCode;
                     ResultSet tb = stmt.executeQuery(tableQuery);
                     ArrayList<Tables> tables = new ArrayList<>();
                     while (tb.next()){
@@ -430,7 +452,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     CommonUtil.tablesList = tables;
                     tb.close();
                     ArrayList<Product> products = new ArrayList<>();
-                    int branchCode = CommonUtil.defBranch;
+
                     String productquery = "SELECT P.PPWT,P.MRP,P.BRANCH_CODE,P.PRODUCT_ID,P.PRODUCT_DESCRIPTION,P.SELLING_PRICE,C.Category_Name,s.Supplier_Name,st.available_quantity as av FROM PRODUCTS p,\n" +
                             "(SELECT S.AVAILABLE_QUANTITY,A.* FROM Stocks S,(SELECT PRODUCT_ID,BRANCH_CODE,MAX(UPDATED_DATE) AS DT FROM \n" +
                             "STOCKS GROUP BY PRODUCT_ID,BRANCH_CODE) A WHERE S.PRODUCT_ID=A.PRODUCT_ID AND A.BRANCH_CODE=S.BRANCH_CODE AND \n" +

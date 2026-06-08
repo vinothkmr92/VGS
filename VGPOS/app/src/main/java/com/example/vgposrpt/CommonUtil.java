@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommonUtil {
+    public static Counters defCounter;
     public static String SQL_SERVER = "";
     public static String DB = "";
     public static String PASSWORD = "";
@@ -39,6 +40,5 @@ public class CommonUtil {
     public static String usbDeviceName = "";
     public static String usbDeviceNameKot = "";
     public static boolean isMobileDevice = true;
-    public static boolean splitPayments = false;
     public static ArrayList<Customer> customers = new ArrayList<>();
 }

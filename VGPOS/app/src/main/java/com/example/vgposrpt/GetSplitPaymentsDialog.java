@@ -11,8 +11,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,6 +34,12 @@ public class GetSplitPaymentsDialog extends DialogFragment {
     TextView billAmt;
     Button btnPay;
     public Integer BillAmount;
+    Switch splitPayments;
+    LinearLayout layoutA;
+    LinearLayout layoutB;
+    ImageButton btnCash;
+    ImageButton btnCard;
+    ImageButton btnUpi;
     //private PaymentDialogListener listener;
     @NonNull
     @Override
@@ -39,7 +48,7 @@ public class GetSplitPaymentsDialog extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.getsplitpayments,null);
         TextView titleview = new TextView(getActivity());
-        titleview.setText("SPLIT PAYMENTS");
+        titleview.setText("PAYMENT DETAILS");
         titleview.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.SeaGreen, null));
         titleview.setPadding(10, 10, 10, 10);
         titleview.setGravity(Gravity.CENTER);
@@ -53,6 +62,65 @@ public class GetSplitPaymentsDialog extends DialogFragment {
         upiAmt = view.findViewById(R.id.splitpaymentUPIAmt);
         billAmt = view.findViewById(R.id.splitpaymentbillamt);
         btnPay = view.findViewById(R.id.splitpaymentPayBtn);
+        splitPayments = view.findViewById(R.id.switchSplitPayments);
+        layoutA = view.findViewById(R.id.layoutA);
+        layoutB = view.findViewById(R.id.layoutB);
+        layoutB.setVisibility(View.GONE);
+        splitPayments.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                layoutA.setVisibility(b?View.GONE:View.VISIBLE);
+                layoutB.setVisibility(b?View.VISIBLE:View.GONE);
+            }
+        });
+        btnCash = view.findViewById(R.id.btnCash);
+        btnCard = view.findViewById(R.id.btnCard);
+        btnUpi = view.findViewById(R.id.btnUpi);
+        btnCash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+                if(CommonUtil.isMobileDevice){
+                    QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
+                    dn.getPaymentMode("CASH");
+                }
+                else {
+                    SaleFragment dn = (SaleFragment)getParentFragment();
+                    dn.getPaymentMode("CASH");
+                }
+                //listener.getPaymentMode("CASH");
+            }
+        });
+        btnCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+                if(CommonUtil.isMobileDevice){
+                    QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
+                    dn.getPaymentMode("CARD");
+                }
+                else {
+                    SaleFragment dn = (SaleFragment)getParentFragment();
+                    dn.getPaymentMode("CARD");
+                }
+                //listener.getPaymentMode("CARD");
+            }
+        });
+        btnUpi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+                if(CommonUtil.isMobileDevice){
+                    QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
+                    dn.getPaymentMode("UPI");
+                }
+                else {
+                    SaleFragment dn = (SaleFragment)getParentFragment();
+                    dn.getPaymentMode("UPI");
+                }
+                //listener.getPaymentMode("UPI");
+            }
+        });
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
         String symbol = formatter.getCurrency().getSymbol();

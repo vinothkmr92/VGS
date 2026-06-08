@@ -2,20 +2,134 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/Wheat"
+    android:background="@color/WhiteSmoke"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="5dp"
-            android:layout_gravity="center"
-            >
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
             <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <Switch
+                    android:id="@+id/switchSplitPayments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="20dp"
+                    android:padding="10dp"
+                    android:text="Split Payments">
+                </Switch>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.33"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="5dp"
+                    android:layout_gravity="center"
+                    >
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CASH"
+                            android:textColor="@color/DarkGreen"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            >
+                        </TextView>
+                        <ImageButton android:layout_gravity="center"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:id="@+id/btnCash"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:background="@drawable/cash"></ImageButton>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.33"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="5dp"
+                    android:layout_gravity="center"
+                    >
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CARD"
+                            android:textColor="@color/DarkBlue"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            >
+                        </TextView>
+                        <ImageButton android:layout_gravity="center"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:id="@+id/btnCard"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:background="@drawable/card"></ImageButton>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.33"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="5dp"
+                    android:layout_gravity="center"
+                    >
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="UPI"
+                            android:textColor="@color/Purple"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            >
+                        </TextView>
+                        <ImageButton android:layout_gravity="center"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:id="@+id/btnUpi"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:background="@drawable/upi"></ImageButton>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutB"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="10dp"
@@ -106,7 +220,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
 </RelativeLayout>

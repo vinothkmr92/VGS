@@ -11,6 +11,8 @@ import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -107,6 +109,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                             prQtyEditText.setText("1");
                             prQtyEditText.selectAll();
                             prQtyEditText.requestFocus();
+                            WindowCompat.getInsetsController(getActivity().getWindow(), prQtyEditText).show(WindowInsetsCompat.Type.ime());
                             return true;
                         }
                         else {
@@ -203,7 +206,8 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     });
                 }
             });
-
+            prIDEditText.requestFocus();
+            WindowCompat.getInsetsController(getActivity().getWindow(), prIDEditText).show(WindowInsetsCompat.Type.ime());
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());
@@ -265,6 +269,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     prQtyEditText.setText("1");
                     prQtyEditText.selectAll();
                     prQtyEditText.requestFocus();
+                    WindowCompat.getInsetsController(getActivity().getWindow(), prQtyEditText).show(WindowInsetsCompat.Type.ime());
                 }
                 itemSearchdialog.dismiss();
             }
@@ -298,6 +303,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                                         prQtyEditText.setText("1");
                                         prQtyEditText.selectAll();
                                         prQtyEditText.requestFocus();
+                                        WindowCompat.getInsetsController(getActivity().getWindow(), prQtyEditText).show(WindowInsetsCompat.Type.ime());
                                     }
                                     else {
                                         String trid = trackingid;
@@ -471,16 +477,10 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
     }
     public void GetPaymentMode(){
         try {
-            if(CommonUtil.splitPayments){
-                Double billAmt = productCart.stream().mapToDouble(c->c.getAmount()).sum();
-                GetSplitPaymentsDialog paymentsDialog = new GetSplitPaymentsDialog();
-                paymentsDialog.BillAmount = billAmt.intValue();
-                paymentsDialog.show(getChildFragmentManager(),"");
-            }
-            else {
-                GetPaymentModeDialog addCustomer = new GetPaymentModeDialog();
-                addCustomer.show(getChildFragmentManager(),"");
-            }
+            Double billAmt = productCart.stream().mapToDouble(c->c.getAmount()).sum();
+            GetSplitPaymentsDialog paymentsDialog = new GetSplitPaymentsDialog();
+            paymentsDialog.BillAmount = billAmt.intValue();
+            paymentsDialog.show(getChildFragmentManager(),"");
         }catch (Exception ex){
             showCustomDialog("Error",ex.getMessage().toString());
         }
@@ -583,6 +583,8 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     prIDEditText.setText("");
                     prTrackingIDEditText.setText("");
                     prQtyEditText.setText("");
+                    prIDEditText.requestFocus();
+                    WindowCompat.getInsetsController(getActivity().getWindow(), prIDEditText).show(WindowInsetsCompat.Type.ime());
                 }
                 else {
                     showCustomDialog("Warning","No valid product to add to Cart.");
@@ -784,7 +786,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                 if (con == null) {
                     error = "Database Connection Failed";
                 } else {
-                    String getBillNoQuery = "SELECT MAX(BILL_NO) AS BILL_NO FROM SALE WHERE BRANCH_CODE="+CommonUtil.defBranch+" AND COUNTER_ID='CD1' AND BILL_TYPE='Normal'";
+                    String getBillNoQuery = "SELECT MAX(BILL_NO) AS BILL_NO FROM SALE WHERE BRANCH_CODE="+CommonUtil.defBranch+" AND COUNTER_ID='"+CommonUtil.defCounter.CounterID+"' AND BILL_TYPE='Normal'";
                     Statement stmt = con.createStatement();
                     ResultSet billNoRs = stmt.executeQuery(getBillNoQuery);
                     billNo = 0;
@@ -801,7 +803,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     boolean billProductsSaved = false;
                     for (Product p:billDetails.billProducts) {
                         try{
-                            String billprodQuery = "INSERT INTO BILL_PRODUCTS VALUES ("+billNo+",'"+p.getProductID()+"',GETDATE(),'CD1',"+p.getQty()+",'"+p.getBatchNo()+"',"+p.getPrice()+","+p.getMRP()+",'"+p.getProductName()+"','"+p.getSupplierName()+"','"+expdt+"',0,"+p.getBranchCode()+","+serialNo+",'"+p.getCategory()+"','Normal',0,0)";
+                            String billprodQuery = "INSERT INTO BILL_PRODUCTS VALUES ("+billNo+",'"+p.getProductID()+"',GETDATE(),'"+CommonUtil.defCounter.CounterID+"',"+p.getQty()+",'"+p.getBatchNo()+"',"+p.getPrice()+","+p.getMRP()+",'"+p.getProductName()+"','"+p.getSupplierName()+"','"+expdt+"',0,"+p.getBranchCode()+","+serialNo+",'"+p.getCategory()+"','Normal',0,0)";
                             Integer rowAff = stmt.executeUpdate(billprodQuery);
                             billProductsSaved = rowAff>0;
                             if(billProductsSaved){
@@ -819,7 +821,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     }
                     if(billProductsSaved){
                         Double profit = billDetails.billProducts.stream().mapToDouble(c->(c.getPrice()-c.getPurchasedPrice())*c.getQty()).sum();
-                        String saleQuery = "INSERT INTO SALE VALUES ("+billNo+",GETDATE(),'CD1','"+billDetails.billUser+"',"+billDetails.BillAmount+","+billDetails.CashAmt+","+billDetails.CardAmt+","+billDetails.UpiAmt+",0,0,'',"+billDetails.MemberID+","+profit+",1,0,0,0,'Normal',0,0,0,'CLOSE','',0,"+billDetails.branchCode+")";
+                        String saleQuery = "INSERT INTO SALE VALUES ("+billNo+",GETDATE(),'"+CommonUtil.defCounter.CounterID+"','"+billDetails.billUser+"',"+billDetails.BillAmount+","+billDetails.CashAmt+","+billDetails.CardAmt+","+billDetails.UpiAmt+",0,0,'',"+billDetails.MemberID+","+profit+",1,0,0,0,'Normal',0,0,0,'CLOSE','',0,"+billDetails.branchCode+")";
                         Integer rowAff = stmt.executeUpdate(saleQuery);
                         if(rowAff>0){
                             isSuccess = true;
@@ -837,7 +839,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     }
                     else {
                         isSuccess = false;
-                        String delBillQuery = "DELETE BILL_PRODUCTS WHERE BILL_NO="+billNo+" AND COUNTER_ID='CD1' AND BRANCH_CODE="+billDetails.branchCode;
+                        String delBillQuery = "DELETE BILL_PRODUCTS WHERE BILL_NO="+billNo+" AND COUNTER_ID='"+CommonUtil.defCounter.CounterID+"' AND BRANCH_CODE="+billDetails.branchCode;
                         stmt.executeUpdate(delBillQuery);
                         error="[Failed to Update Bill Products] Unable to Save Bill Details. Please Contact Support Team.";
                     }
