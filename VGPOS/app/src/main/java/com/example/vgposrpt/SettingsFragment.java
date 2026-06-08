@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
@@ -571,19 +572,17 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         startActivity(page);
     }
     public void showCustomDialog(String title,String Message,Boolean close) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
-                if(close){
-                    GoLogin();
-                }
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                    if(close){
+                        GoLogin();
+                    }
+                })
+                .show();
     }
     public  void  SaveSettings(){
         String hostname = host.getText().toString();

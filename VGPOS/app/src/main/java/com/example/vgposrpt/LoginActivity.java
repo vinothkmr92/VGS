@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -213,14 +214,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
     public void showCustomDialog(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(LoginActivity.this);
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("Ok", (dialog1, whichButton) -> {
-            //do something with edt.getText().toString();
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                })
+                .show();
     }
 
     @Override

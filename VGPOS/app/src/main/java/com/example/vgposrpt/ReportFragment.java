@@ -34,6 +34,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.apache.commons.lang3.StringUtils;
@@ -145,19 +146,18 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
         return  view;
     }
     public void showCustomDialog(String title,String Message,Boolean close) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                if(close){
-                    getActivity().finish();
-                    System.exit(0);
-                }
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                    if(close){
+                        getActivity().finish();
+                        System.exit(0);
+                    }
+                })
+                .show();
     }
 
     @Override

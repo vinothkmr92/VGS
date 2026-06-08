@@ -40,6 +40,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -138,16 +140,14 @@ public class UploadFragment extends Fragment implements View.OnClickListener {
     }
 
     public void showCustomDialog(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                })
+                .show();
     }
 
     private static boolean isExternalStorageReadOnly() {

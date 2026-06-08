@@ -41,6 +41,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -170,16 +172,14 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
     public void showCustomDialog(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(UploadActivity.this);
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                })
+                .show();
     }
 
     private final ActivityResultLauncher<Intent> storeageActivitytResultLanucher = registerForActivityResult(

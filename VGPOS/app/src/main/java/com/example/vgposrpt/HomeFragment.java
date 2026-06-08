@@ -38,6 +38,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
@@ -259,20 +260,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
 
     public void showCustomDialog(String title,String Message,Boolean close) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(requireContext());
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
-                if(close){
-                    requireActivity().finish();
-                    System.exit(0);
-                }
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                    if(close){
+                        requireActivity().finish();
+                        System.exit(0);
+                    }
+                })
+                .show();
     }
     private  void GetDefaultDate(){
         calendar = Calendar.getInstance();

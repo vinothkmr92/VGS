@@ -34,6 +34,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
@@ -335,16 +336,14 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
         return quickSaleInstance;
     }
     public void showCustomDialog(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                })
+                .show();
     }
     private void LoadPRView(Product pr){
         View view = getLayoutInflater().inflate(R.layout.items,null);
@@ -803,7 +802,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     boolean billProductsSaved = false;
                     for (Product p:billDetails.billProducts) {
                         try{
-                            String billprodQuery = "INSERT INTO BILL_PRODUCTS VALUES ("+billNo+",'"+p.getProductID()+"',GETDATE(),'"+CommonUtil.defCounter.CounterID+"',"+p.getQty()+",'"+p.getBatchNo()+"',"+p.getPrice()+","+p.getMRP()+",'"+p.getProductName()+"','"+p.getSupplierName()+"','"+expdt+"',0,"+p.getBranchCode()+","+serialNo+",'"+p.getCategory()+"','Normal',0,0)";
+                            String billprodQuery = "INSERT INTO BILL_PRODUCTS VALUES ("+billNo+",'"+p.getProductID()+"',GETDATE(),'"+CommonUtil.defCounter.CounterID+"',"+p.getQty()+",'"+p.getBatchNo()+"',"+p.getPrice()+","+p.getMRP()+",'"+p.getProductName()+"','"+p.getSupplierName()+"','"+expdt+"',0,"+p.getBranchCode()+","+serialNo+",'"+p.getCategory()+"','Normal',0,0,'"+p.getTrackingID()+"')";
                             Integer rowAff = stmt.executeUpdate(billprodQuery);
                             billProductsSaved = rowAff>0;
                             if(billProductsSaved){

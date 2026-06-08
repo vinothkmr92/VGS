@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
@@ -320,30 +321,16 @@ public class SaleFragment extends Fragment implements View.OnClickListener {
 
 
     public void showCustomDialog(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                })
+                .show();
     }
-    public void showDialogClose(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
-                RefreshSaleScreen();
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
-    }
+
 
     private int AddItemToCart(Product pr){
         int latestQty = 0;

@@ -153,19 +153,18 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
         }
     }
     public void showCustomDialog(String title,String Message,Boolean close) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(ViewBillsActivity.this);
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                if(close){
-                    finish();
-                    System.exit(0);
-                }
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                    if(close){
+                        finish();
+                        System.exit(0);
+                    }
+                })
+                .show();
     }
     private  void GetDefaultDate(){
         calendar = Calendar.getInstance();
