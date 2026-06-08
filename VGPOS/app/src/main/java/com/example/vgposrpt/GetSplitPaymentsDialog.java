@@ -20,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.Locale;
 
 public class GetSplitPaymentsDialog extends DialogFragment {
@@ -58,7 +60,6 @@ public class GetSplitPaymentsDialog extends DialogFragment {
         btnPay.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                dismiss();
                 String casAmtStr = cashAmt.getText().toString();
                 String cardAmtStr = cardAmt.getText().toString();
                 String upiAmtStr = upiAmt.getText().toString();
@@ -67,6 +68,7 @@ public class GetSplitPaymentsDialog extends DialogFragment {
                 Integer upiAmtI =upiAmtStr.isEmpty()?0: Integer.valueOf(upiAmtStr);
                 Integer totalReceived = cashAmtI+cardAmtI+upiAmtI;
                 if(totalReceived.equals(BillAmount)){
+                    dismiss();
                     if(CommonUtil.isMobileDevice){
                         QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
                         dn.getSplitPayments(cashAmtI,cardAmtI,upiAmtI);
@@ -88,16 +90,14 @@ public class GetSplitPaymentsDialog extends DialogFragment {
         return dialog;
     }
     public void showCustomDialog(String title,String Message) {
-        AlertDialog.Builder dialog =  new AlertDialog.Builder(getContext());
-        dialog.setTitle(title);
-        dialog.setMessage("\n"+Message);
-        dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                //do something with edt.getText().toString();
-            }
-        });
-        dialog.setCancelable(false);
-        dialog.show();
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle(title)
+                .setMessage(Message)
+                .setCancelable(false)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    // Positive action
+                })
+                .show();
     }
 }
 
