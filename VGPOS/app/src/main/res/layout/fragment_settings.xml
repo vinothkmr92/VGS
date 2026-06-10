@@ -111,6 +111,15 @@
                         android:text="Mobile"
                         android:textColor="@color/DarkViolet"
                         />
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_columnSpan="3"
+                        android:padding="10dp"
+                        android:id="@+id/isNumericPR"
+                        android:text="Numeric Product ID"
+                        android:textColor="@color/DarkViolet"
+                        />
 
                 </GridLayout>
             </com.google.android.material.card.MaterialCardView>

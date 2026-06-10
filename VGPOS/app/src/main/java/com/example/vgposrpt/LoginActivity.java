@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static final String SQLPASSWORD = "SQLPASSWORD";
     public static final String SQLDB = "SQLDB";
     public static final String BRANCHES = "BRANCHES";
+    public static final String ISNUMERICPR = "ISNUMERICPR";
     public static final String CUSTOMERS = "CUSTOMERS";
     public static final String USERS = "USERS";
     public static final String DEFCOUNTER = "DEFCOUNTER";
@@ -95,6 +96,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             CommonUtil.printer = sharedpreferences.getString(PRINTER,"");
             CommonUtil.printerKot = sharedpreferences.getString(PRINTER_KOT,"");
             CommonUtil.isMobileDevice = sharedpreferences.getString(ISMOBILE,"Y").equals("Y");
+            CommonUtil.isNumericPR = sharedpreferences.getBoolean(ISNUMERICPR,true);
             String usbdevice = sharedpreferences.getString(USBDEVICENAME,"");
             String[] sb = usbdevice.split("~");
             if(sb.length>1){

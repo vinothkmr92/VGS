@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -84,6 +85,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             searchCustomer = view.findViewById(R.id.quickSaleCustomer);
             saleCartlayout = view.findViewById(R.id.quickSaleCartLayout);
             prIDEditText = view.findViewById(R.id.quickSaleprID);
+            prIDEditText.setInputType(CommonUtil.isNumericPR? InputType.TYPE_CLASS_NUMBER :InputType.TYPE_CLASS_TEXT);
             prNameEditText = view.findViewById(R.id.quickSalePrName);
             btnScanQR = view.findViewById(R.id.quickSaleScanbtn);
             btnCancel = view.findViewById(R.id.quickSaleCancelBtn);

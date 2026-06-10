@@ -68,6 +68,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public static final String SQLUSERNAME= "SQLUSERNAME";
     public static final String SQLPASSWORD = "SQLPASSWORD";
     public static final String SQLDB = "SQLDB";
+    public static final String ISNUMERICPR = "ISNUMERICPR";
     public static final String PRINTER = "PRINTER";
     public static final String PRINTER_KOT = "PRINTER_KOT";
     public static final String BRANCH = "BRANCH";
@@ -141,7 +142,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     SwitchMaterial enableKot;
     MaterialCardView kotprinteroptions;
     SwitchMaterial isMobile;
-
+    SwitchMaterial isNumericPR;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -182,6 +183,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             rptSizeLayout = view.findViewById(R.id.rptsizeLayout);
             rptSizeTextView = view.findViewById(R.id.rptsizeTxtView);
             headerfooterLayout = view.findViewById(R.id.headerfooterLayout);
+            isNumericPR = view.findViewById(R.id.isNumericPR);
             header = view.findViewById(R.id.header);
             address = view.findViewById(R.id.address);
             footer = view.findViewById(R.id.footer);
@@ -194,6 +196,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             sharedpreferences = MySharedPreferences.getInstance(getContext(),MyPREFERENCES);
             String sqlserver = getContext().getApplicationContext().getString(R.string.SQL_SERVER);
             String dbnamestr = getContext().getApplicationContext().getString(R.string.SQL_DBNAME);
+            isNumericPR.setChecked(sharedpreferences.getBoolean(ISNUMERICPR,true));
             String hostname = sharedpreferences.getString(SQLSERVER,sqlserver);
             String Databasename = sharedpreferences.getString(SQLDB,dbnamestr);
             enableKot.setChecked(sharedpreferences.getString(ENABLEKOT,"N").equalsIgnoreCase("Y"));
@@ -667,6 +670,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             sharedpreferences.putString(MULTI_LANG,multiLang.isChecked()?"Y":"N");
             sharedpreferences.putString(ISMOBILE,isMobile.isChecked()?"Y":"N");
             sharedpreferences.putString(DEFCOUNTER,defCounter);
+            sharedpreferences.putBoolean(ISNUMERICPR,isNumericPR.isChecked());
             CommonUtil.printer = printer;
             CommonUtil.defBranch = brCode;
             sharedpreferences.commit();
