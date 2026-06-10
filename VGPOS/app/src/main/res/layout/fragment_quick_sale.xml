@@ -139,7 +139,9 @@
                                 android:textSize="15dp"
                                 android:inputType="number"
                                 android:textAlignment="center"
+                                android:selectAllOnFocus="true"
                                 android:textStyle="bold"
+                                android:imeOptions="actionNext"
                                 />
                         </LinearLayout>
                         <LinearLayout
@@ -163,6 +165,7 @@
                                 android:layout_height="wrap_content"
                                 android:id="@+id/quickSaleQty"
                                 android:focusable="true"
+                                android:selectAllOnFocus="true"
                                 android:textColor="@color/Black"
                                 android:textSize="15dp"
                                 android:inputType="number"

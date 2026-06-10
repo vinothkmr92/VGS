@@ -163,14 +163,12 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                 }
                 return false;
             });
-            prPriceEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    String txt = prPriceEditText.getText().toString();
-                    if(hasFocus && !txt.isEmpty()){
-                        ((EditText)v).selectAll();
-                    }
+            prPriceEditText.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                  prQtyEditText.requestFocus();
+                    WindowCompat.getInsetsController(getActivity().getWindow(), prQtyEditText).show(WindowInsetsCompat.Type.ime());
                 }
+                return  false;
             });
             fullProducts =  CommonUtil.productsFull;
             fullProducts.forEach(i->i.setQty(1));
