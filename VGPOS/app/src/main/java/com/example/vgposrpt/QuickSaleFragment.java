@@ -48,6 +48,8 @@ import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -67,7 +69,6 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
     EditText prQtyEditText;
     LinearLayout saleCartlayout;
     Button btnScanQR;
-    Button btnAdd;
     private Button btnCancel;
     private Button btnPrint;
     public static QuickSaleFragment quickSaleInstance;
@@ -84,7 +85,6 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             saleCartlayout = view.findViewById(R.id.quickSaleCartLayout);
             prIDEditText = view.findViewById(R.id.quickSaleprID);
             prNameEditText = view.findViewById(R.id.quickSalePrName);
-            btnAdd = view.findViewById(R.id.quickSaleAddBtn);
             btnScanQR = view.findViewById(R.id.quickSaleScanbtn);
             btnCancel = view.findViewById(R.id.quickSaleCancelBtn);
             btnPrint = view.findViewById(R.id.quickSalePrintBtn);
@@ -93,6 +93,42 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             prTrackingIDEditText = view.findViewById(R.id.quickSaleTrackingID);
             prQtyEditText = view.findViewById(R.id.quickSaleQty);
             productCart = new ArrayList<>();
+            prQtyEditText.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    String QTY = prQtyEditText.getText().toString();
+                    if(!QTY.isEmpty()){
+                        String prid = prIDEditText.getText().toString();
+                        Product pr = fullProducts.stream().filter(c->c.getProductID().equals(prid)).findFirst().orElse(null);
+                        if(pr!=null){
+                            String trackingid = prTrackingIDEditText.getText().toString();
+                            String qty = prQtyEditText.getText().toString();
+                            Integer qtyi = Integer.valueOf(qty);
+                            if(!trackingid.isEmpty() && qtyi>1){
+                                showCustomDialog("Warning","Quantity Cannot be changed for Tracking ID Products. Reverting it back to 1.");
+                                prQtyEditText.setText("1");
+                                qtyi = 1;
+                            }
+                            String price = prPriceEditText.getText().toString();
+                            pr.setPrice(Double.valueOf(price));
+                            pr.setQty(qtyi);
+                            pr.setTrackingID(trackingid);
+                            AddItemToCart(pr);
+                            prNameEditText.setText("");
+                            prPriceEditText.setText("");
+                            prIDEditText.setText("");
+                            prTrackingIDEditText.setText("");
+                            prQtyEditText.setText("");
+                            prIDEditText.requestFocus();
+                            WindowCompat.getInsetsController(getActivity().getWindow(), prIDEditText).show(WindowInsetsCompat.Type.ime());
+
+                        }
+                        else {
+                            showCustomDialog("Warning","No valid product to add to Cart.");
+                        }
+                    }
+                }
+                return false;
+            });
             prIDEditText.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String search = prIDEditText.getText().toString();
@@ -141,7 +177,6 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             if(CommonUtil.cartItems.size()>0){
                 CommonUtil.cartItems.clear();
             }
-            btnAdd.setOnClickListener(this);
             btnCancel.setOnClickListener(this);
             btnPrint.setOnClickListener(this);
             btnScanQR.setOnClickListener(this);
@@ -294,7 +329,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                                 }
 
                                 if(prcheck!=null){
-                                    prQtyEditText.setEnabled(trackingid.isEmpty());
+                                    //prQtyEditText.setEnabled(trackingid.isEmpty());
                                     //pr.setTrackingID(trackingid);
                                     if(trackingid.isEmpty()){
                                         prTrackingIDEditText.setText(trackingid);
@@ -439,6 +474,8 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
     }
     private int AddItemToCart(Product pr){
         int latestQty = 0;
+        int cartSize = productCart.size();
+        cartSize++;
         Product alreadyExits = productCart.stream().filter(c->c.getTrackingID().equals(pr.getTrackingID()) && c.getProductID().equals(pr.getProductID())).findFirst().orElse(null);
         if(alreadyExits!=null){
             Integer qty = alreadyExits.getQty();
@@ -446,6 +483,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             alreadyExits.setQty(qty);
         }
         else{
+            pr.setSNo(cartSize);
             productCart.add(new Product(pr));
         }
         Double billAmt = productCart.size()>0 ? productCart.stream().mapToDouble(c->c.getAmount()).sum() :0d;
@@ -456,6 +494,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
         latestQty = pr.getQty();
         if(latestQty>0){
             saleCartlayout.removeAllViews();
+            Collections.sort(productCart, Comparator.comparingInt(Product::getSNo).reversed());
             for (Product p:
                     productCart) {
                 LoadPRView(p);
@@ -567,27 +606,6 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     showCustomDialog("Warning","No products in Cart to Sale");
                 }
                 break;
-            case R.id.quickSaleAddBtn:
-                String prid = prIDEditText.getText().toString();
-                Product pr = fullProducts.stream().filter(c->c.getProductID().equals(prid)).findFirst().orElse(null);
-                if(pr!=null){
-                    String price = prPriceEditText.getText().toString();
-                    pr.setPrice(Double.valueOf(price));
-                    String qty = prQtyEditText.getText().toString();
-                    pr.setQty(Integer.valueOf(qty));
-                    pr.setTrackingID(prTrackingIDEditText.getText().toString());
-                    AddItemToCart(pr);
-                    prNameEditText.setText("");
-                    prPriceEditText.setText("");
-                    prIDEditText.setText("");
-                    prTrackingIDEditText.setText("");
-                    prQtyEditText.setText("");
-                    prIDEditText.requestFocus();
-                    WindowCompat.getInsetsController(getActivity().getWindow(), prIDEditText).show(WindowInsetsCompat.Type.ime());
-                }
-                else {
-                    showCustomDialog("Warning","No valid product to add to Cart.");
-                }
         }
     }
     public class CheckTrackingID extends  AsyncTask<Product,String,String>{
