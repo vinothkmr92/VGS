@@ -41,5 +41,6 @@ public class CommonUtil {
     public static String usbDeviceNameKot = "";
     public static boolean isMobileDevice = true;
     public static boolean isNumericPR = true;
+    public static boolean print = false;
     public static ArrayList<Customer> customers = new ArrayList<>();
 }

@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/DarkBlue</item>
         <item name="colorPrimaryDark">@color/BlueViolet</item>
         <item name="colorAccent">@color/BlueViolet</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="actionOverflowButtonStyle">@style/MyCustomOverflowButton</item>
     </style>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
@@ -14,7 +16,10 @@
 
     <style name="Theme.VGPOSRPT" parent="Base.Theme.VGPOSRPT" />
 
-
+    <style name="MyCustomOverflowButton" parent="Widget.AppCompat.ActionButton.Overflow">
+        <!-- Replace #FF0000 with your desired hex color code -->
+        <item name="android:tint">@color/White</item>
+    </style>
     <style name="Theme.VGPOSRPT.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.VGPOSRPT.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

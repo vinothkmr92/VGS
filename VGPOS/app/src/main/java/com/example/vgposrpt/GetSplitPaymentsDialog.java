@@ -35,6 +35,7 @@ public class GetSplitPaymentsDialog extends DialogFragment {
     Button btnPay;
     public Integer BillAmount;
     Switch splitPayments;
+    Switch printYerorNo;
     LinearLayout layoutA;
     LinearLayout layoutB;
     ImageButton btnCash;
@@ -63,6 +64,10 @@ public class GetSplitPaymentsDialog extends DialogFragment {
         billAmt = view.findViewById(R.id.splitpaymentbillamt);
         btnPay = view.findViewById(R.id.splitpaymentPayBtn);
         splitPayments = view.findViewById(R.id.switchSplitPayments);
+        printYerorNo = view.findViewById(R.id.printorno);
+        boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
+        printYerorNo.setChecked(print);
+        printYerorNo.setEnabled(!CommonUtil.PrintOption.equalsIgnoreCase("NONE"));
         layoutA = view.findViewById(R.id.layoutA);
         layoutB = view.findViewById(R.id.layoutB);
         layoutB.setVisibility(View.GONE);
@@ -80,6 +85,7 @@ public class GetSplitPaymentsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
+                CommonUtil.print = printYerorNo.isChecked();
                 if(CommonUtil.isMobileDevice){
                     QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
                     dn.getPaymentMode("CASH");
@@ -95,6 +101,7 @@ public class GetSplitPaymentsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
+                CommonUtil.print = printYerorNo.isChecked();
                 if(CommonUtil.isMobileDevice){
                     QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
                     dn.getPaymentMode("CARD");
@@ -110,6 +117,7 @@ public class GetSplitPaymentsDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
+                CommonUtil.print = printYerorNo.isChecked();
                 if(CommonUtil.isMobileDevice){
                     QuickSaleFragment dn = (QuickSaleFragment)getParentFragment();
                     dn.getPaymentMode("UPI");
@@ -128,6 +136,7 @@ public class GetSplitPaymentsDialog extends DialogFragment {
         btnPay.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                CommonUtil.print = printYerorNo.isChecked();
                 String casAmtStr = cashAmt.getText().toString();
                 String cardAmtStr = cardAmt.getText().toString();
                 String upiAmtStr = upiAmt.getText().toString();

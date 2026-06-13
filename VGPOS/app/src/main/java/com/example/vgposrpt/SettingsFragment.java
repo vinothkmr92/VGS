@@ -674,7 +674,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             CommonUtil.printer = printer;
             CommonUtil.defBranch = brCode;
             sharedpreferences.commit();
-            showCustomDialog("Saved","Settings Saved Successfully",true);
+            Toast.makeText(getContext(),"Settings Saved Successfully...!",Toast.LENGTH_SHORT).show();
+            GoLogin();
         }
     }
 
@@ -719,7 +720,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 dialog.hide();
             }
             if(!result.startsWith("ERROR")){
-                Toast.makeText(getContext(),result,Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),result,Toast.LENGTH_SHORT).show();
                 SaveSettings();
             }
             else {

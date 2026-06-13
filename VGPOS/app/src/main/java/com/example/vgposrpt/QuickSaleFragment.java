@@ -61,6 +61,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
 
     Dialog itemSearchdialog;
     Dialog dialog;
+    TextView billNoTxtView;
     TextView searchCustomer;
     TextView totalAmt;
     EditText prIDEditText;
@@ -94,6 +95,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             totalAmt = view.findViewById(R.id.quickSaleBillAmt);
             prTrackingIDEditText = view.findViewById(R.id.quickSaleTrackingID);
             prQtyEditText = view.findViewById(R.id.quickSaleQty);
+            billNoTxtView = view.findViewById(R.id.txtBillNo);
             productCart = new ArrayList<>();
             prQtyEditText.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -242,6 +244,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     });
                 }
             });
+            new GetBillNo().execute();
             prIDEditText.requestFocus();
             WindowCompat.getInsetsController(getActivity().getWindow(), prIDEditText).show(WindowInsetsCompat.Type.ime());
         }
@@ -512,6 +515,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
         prQtyEditText.setText("");
         totalAmt.setText("0");
         searchCustomer.setText("");
+        new GetBillNo().execute();
     }
     public void GetPaymentMode(){
         try {
@@ -689,6 +693,76 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             return res;
         }
     }
+    public class GetBillNo extends  AsyncTask<String,String,Integer>{
+        Boolean isSuccess = false;
+        String error = "";
+        private final ProgressDialog dialog = new ProgressDialog(getContext(),R.style.CustomProgressStyle);
+        ConnectionClass connectionClass = null;
+        Connection con = null;
+        @Override
+        protected void onPreExecute() {
+            connectionClass = new ConnectionClass(CommonUtil.SQL_SERVER,CommonUtil.DB,CommonUtil.USERNAME,CommonUtil.PASSWORD);
+            con = connectionClass.CONN();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.setTitle("Loading");
+            dialog.setMessage("Please Wait...");
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer billNo) {
+            if(isSuccess){
+                String msg = "";
+                if(billNo>0){
+                    billNoTxtView.setText(billNo.toString());
+                }
+                else {
+                    msg = "Failed to GetBillNo. Contact support Team.";
+                    showCustomDialog("Status",msg);
+                }
+
+            }
+            else {
+                if(dialog.isShowing()){
+                    dialog.hide();
+                }
+                if(!error.isEmpty()){
+                    showCustomDialog("Status",error);
+                }
+            }
+            if(dialog.isShowing()){
+                dialog.hide();
+            }
+        }
+        @Override
+        protected Integer doInBackground(String... params) {
+            Integer billNo = 0;
+            try {
+                if (con == null) {
+                    error = "Database Connection Failed";
+                } else {
+                    String getBillNoQuery = "SELECT MAX(BILL_NO) AS BILL_NO FROM SALE WHERE BRANCH_CODE="+CommonUtil.defBranch+" AND COUNTER_ID='"+CommonUtil.defCounter.CounterID+"' AND BILL_TYPE='Normal'";
+                    Statement stmt = con.createStatement();
+                    ResultSet billNoRs = stmt.executeQuery(getBillNoQuery);
+                    billNo = 0;
+                    if(billNoRs.next()){
+                        billNo = billNoRs.getInt("BILL_NO");
+                    }
+                    billNoRs.close();
+                    billNo++;
+                    isSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                isSuccess = false;
+                error = "Exceptions"+ex.getMessage();
+            }
+            return billNo;
+        }
+    }
     public class SaveNewBill extends AsyncTask<BillDetails,String, Integer>
     {
         Boolean isSuccess = false;
@@ -716,8 +790,8 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                 if(billNo>0){
                     msg ="Bill No - "+billNo+" is saved Successfully.";
                     CommonUtil.cartItems = new ArrayList<>();
-                    boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
-                    if(print){
+                    //boolean print = !CommonUtil.PrintOption.equalsIgnoreCase("NONE");
+                    if(CommonUtil.print){
                         try{
                             PrinterUtil printerUtil = new PrinterUtil(getContext(),getInstance(),billDetails);
                             printerUtil.Print();
