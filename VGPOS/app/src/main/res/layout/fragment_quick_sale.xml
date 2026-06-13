@@ -243,7 +243,7 @@
                                 android:layout_width="0dp"
                                 android:layout_weight="0.5"
                                 android:layout_height="wrap_content"
-                                android:text="QUANTITY"
+                                android:text="QTY"
                                 android:textStyle="bold"
                                 android:textColor="@color/DarkBlue"
                                 android:paddingRight="5dp"

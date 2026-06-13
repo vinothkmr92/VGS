@@ -1,10 +1,8 @@
 package com.example.vgposrpt;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.NumberFormat;
@@ -19,7 +17,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,9 +49,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 
 public class QuickSaleFragment extends Fragment implements View.OnClickListener {
@@ -97,6 +92,48 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
             prQtyEditText = view.findViewById(R.id.quickSaleQty);
             billNoTxtView = view.findViewById(R.id.txtBillNo);
             productCart = new ArrayList<>();
+            prPriceEditText.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    String trackingid = prTrackingIDEditText.getText().toString();
+                    if(!trackingid.isEmpty()){
+                        prQtyEditText.setText("1");
+                        String prid = prIDEditText.getText().toString();
+                        Product pr = fullProducts.stream().filter(c->c.getProductID().equals(prid)).findFirst().orElse(null);
+                        if(pr!=null){
+                            String qty = prQtyEditText.getText().toString();
+                            Integer qtyi = Integer.valueOf(qty);
+                            if(!trackingid.isEmpty() && qtyi>1){
+                                showCustomDialog("Warning","Quantity Cannot be changed for Tracking ID Products. Reverting it back to 1.");
+                                prQtyEditText.setText("1");
+                                qtyi = 1;
+                            }
+                            String price = prPriceEditText.getText().toString();
+                            pr.setPrice(Double.valueOf(price));
+                            pr.setQty(qtyi);
+                            pr.setTrackingID(trackingid);
+                            AddItemToCart(pr);
+                            prNameEditText.setText("");
+                            prPriceEditText.setText("");
+                            prIDEditText.setText("");
+                            prTrackingIDEditText.setText("");
+                            prQtyEditText.setText("");
+                            prIDEditText.requestFocus();
+                            WindowCompat.getInsetsController(getActivity().getWindow(), prIDEditText).show(WindowInsetsCompat.Type.ime());
+                            return true;
+
+                        }
+                        else {
+                            showCustomDialog("Warning","No valid product to add to Cart.");
+                        }
+                    }
+                    else {
+                        prQtyEditText.selectAll();
+                        prQtyEditText.requestFocus();
+                        WindowCompat.getInsetsController(getActivity().getWindow(), prQtyEditText).show(WindowInsetsCompat.Type.ime());
+                    }
+                }
+                return false;
+            });
             prQtyEditText.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     String QTY = prQtyEditText.getText().toString();
@@ -166,13 +203,6 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
 
                 }
                 return false;
-            });
-            prPriceEditText.setOnEditorActionListener((v, actionId, event) -> {
-                if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                  prQtyEditText.requestFocus();
-                    WindowCompat.getInsetsController(getActivity().getWindow(), prQtyEditText).show(WindowInsetsCompat.Type.ime());
-                }
-                return  false;
             });
             fullProducts =  CommonUtil.productsFull;
             fullProducts.forEach(i->i.setQty(1));
@@ -652,6 +682,7 @@ public class QuickSaleFragment extends Fragment implements View.OnClickListener 
                     prQtyEditText.setText("1");
                     prPriceEditText.selectAll();
                     prPriceEditText.requestFocus();
+                    WindowCompat.getInsetsController(getActivity().getWindow(), prPriceEditText).show(WindowInsetsCompat.Type.ime());
                 }
             }
             else {

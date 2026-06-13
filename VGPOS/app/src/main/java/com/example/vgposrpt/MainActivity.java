@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String LOGEDINUSER = "LOGEDINUSER";
     public static final String USERROLEID = "USERROLEID";
+    public static final String ENABLEKOT = "ENABLEKOT";
     private DrawerLayout drawerLayout;
     private static String[] PERMISSIONS_BLUETOOTH = {
             Manifest.permission.BLUETOOTH_CONNECT,
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView logout = headerView.findViewById(R.id.logout);
         TextView username = headerView.findViewById(R.id.loggedinuser);
         username.setText(CommonUtil.loggedinUser);
-        sharedpreferences = MySharedPreferences.getInstance(this,MyPREFERENCES);
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -216,9 +218,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         MenuItem salemenu = menu.findItem(R.id.salesnew);
         salemenu.setVisible(CommonUtil.loggedinUserRoleID>1 || CommonUtil.isMobileDevice);
-
+        String enablekot = sharedpreferences.getString(ENABLEKOT,"N");
         MenuItem kotmenu = menu.findItem(R.id.kot);
-        kotmenu.setVisible(CommonUtil.loggedinUserRoleID>1 || !CommonUtil.isMobileDevice);
+        kotmenu.setVisible( enablekot.equals("Y") & (CommonUtil.loggedinUserRoleID>1 || !CommonUtil.isMobileDevice));
 
         MenuItem prdreport = menu.findItem(R.id.action_productrpt);
         prdreport.setVisible(CommonUtil.loggedinUserRoleID>1);
