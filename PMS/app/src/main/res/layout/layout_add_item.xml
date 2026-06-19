@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <EditText
+        android:id="@+id/ItemNoadd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:editable="false"
+        android:focusable="false"
+        android:fontFamily="@font/orienta"
+        android:hint="Item No"
+        android:inputType="number"></EditText>
+
+    <EditText
+        android:id="@+id/ItemNameadd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ItemNoadd"
+        android:fontFamily="@font/orienta"
+        android:hint="Item Name"
+        android:inputType="textCapCharacters"
+        android:textAllCaps="true"></EditText>
+
+    <EditText
+        android:id="@+id/ItemPriceadd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ItemNameadd"
+        android:fontFamily="@font/orienta"
+        android:hint="Price"
+        android:inputType="number"></EditText>
+
+    <EditText
+        android:id="@+id/ItemStockadd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ItemPriceadd"
+        android:fontFamily="@font/orienta"
+        android:hint="Stock"
+        android:inputType="number"></EditText>
+
+    <EditText
+        android:id="@+id/ItemAcpriceadd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ItemStockadd"
+        android:fontFamily="@font/orienta"
+        android:hint="Special Price"
+        android:inputType="number"></EditText>
+
+</RelativeLayout>
