@@ -875,6 +875,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 itemNo.setText("");
                 itemName.setText("");
                 priceTxt.setText("");
+                vnoEditText.setText("");
                 progressBar.hide();
                 itemNo.requestFocus();
             }
@@ -1176,7 +1177,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         itc.setItem_No(itemNo.getText().toString());
         itc.setItem_Name(itemName.getText().toString());
         itc.Qty=1;
-        itc.setVehicleNo(Double.valueOf(vnoEditText.getText().toString()));
+        itc.setVehicleNo(vnoEditText.getText().toString());
         itc.setPrice(Double.valueOf(priceTxt.getText().toString()));
         if(itemsCarts == null){
             itemsCarts = new ArrayList<ItemsCart>();

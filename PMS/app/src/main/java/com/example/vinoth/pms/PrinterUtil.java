@@ -398,8 +398,7 @@ public class PrinterUtil {
     }
 
     private void PrintBill(ReceiptData rcptData) throws IOException {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
-        String dateStr = format.format(rcptData.billDate);
+
         Bitmap bitmapIcon = Common.shopLogo;
         //posPtr.printNormal(ESC+" F");
         if(bitmapIcon!=null){
@@ -434,13 +433,16 @@ public class PrinterUtil {
             posPtr.printNormal(ESC+"|bC"+ESC+"|lANAME     : "+ rcptData.waiter);
             posPtr.printNormal("\n");
         }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+        String dateStr = dateFormat.format(rcptData.billDate);
         posPtr.printNormal(ESC+"|bC"+ESC+"|lA"+ESC+"|2C"+dateStr+"\n");
-
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm aaa", Locale.getDefault());
+        String timeStr = timeFormat.format(rcptData.billDate);
+        posPtr.printNormal(ESC+"|bC"+ESC+"|lA"+ESC+"|2C"+timeStr+"\n");
         ItemsCart item = rcptData.itemsCarts.get(0);
         if(item!=null){
             posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+ESC+"|2C"+item.getItem_Name()+"\n");
-            String vno = String.format("%.0f",item.getVehicleNo());
-            posPtr.printNormal(ESC+"|bC"+ESC+"|lA"+ESC+"|2C"+"V.NO   : "+vno+"\n");
+            posPtr.printNormal(ESC+"|bC"+ESC+"|lA"+ESC+"|2C"+"V.NO   : "+item.getVehicleNo()+"\n");
             Double amt = item.getPrice()*item.Qty;
             String amts=String.format("%.0f",amt);
             posPtr.printNormal(ESC+"|bC"+ESC+"|lAAMOUNT       : "+ amts+"/-\n");

@@ -73,49 +73,56 @@
         </LinearLayout>
 
     </GridLayout>
-
-    <GridLayout
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="fill"
-        android:orientation="horizontal"
-        android:padding="20px">
-
+        android:layout_height="wrap_content">
         <TextView
             android:id="@+id/customerinfosaleRpt"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="center"
             android:background="@android:drawable/editbox_background"
             android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
             android:fontFamily="@font/orienta"
             android:hint="Select Customer"
             android:textColor="@android:color/black" />
-        <CheckBox
-            android:id="@+id/delReport"
+    </LinearLayout>
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/DarkBlue"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:text="Deleted Reports"
-            android:textColor="@color/DarkBlue"></CheckBox>
-        <ImageButton
-            android:id="@+id/btnsalerptprint"
-            android:layout_width="100px"
-            android:layout_height="100px"
-            android:layout_gravity="right"
-            android:background="@drawable/ic_baseline_print_24"
-            android:foreground="?android:attr/selectableItemBackground">
-        </ImageButton>
-        <ImageButton
-            android:id="@+id/btnshareExcel"
-            android:layout_width="100px"
-            android:layout_height="100px"
-            android:background="@drawable/baseline_share_24"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:text="Print">
-        </ImageButton>
-    </GridLayout>
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/delReport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/DarkBlue"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="Deleted Reports"
+                android:textColor="@color/DarkBlue"></CheckBox>
+            <ImageButton
+                android:id="@+id/btnsalerptdel"
+                android:layout_width="100px"
+                android:layout_height="100px"
+                android:background="@drawable/baseline_delete_24"
+                android:foreground="?android:attr/selectableItemBackground">
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnsalerptprint"
+                android:layout_width="100px"
+                android:layout_height="100px"
+                android:background="@drawable/ic_baseline_print_24"
+                android:foreground="?android:attr/selectableItemBackground">
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnshareExcel"
+                android:layout_width="100px"
+                android:layout_height="100px"
+                android:background="@drawable/baseline_share_24"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="Print">
+            </ImageButton>
+        </LinearLayout>
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

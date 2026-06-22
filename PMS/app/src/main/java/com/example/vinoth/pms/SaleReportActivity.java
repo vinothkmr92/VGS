@@ -84,6 +84,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     TextView frmDateTextView;
     TextView toDateTextView;
     ImageButton btnPrintReport;
+    ImageButton btnDelRpt;
     DatePickerDialog datePickerDialog;
     DatePickerDialog todatePickerDialog;
     String selectedDate;
@@ -317,11 +318,13 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         saleRptContainer = (LinearLayout) findViewById(R.id.saleprtContainer);
         txtViewTotalSaleAmt = (TextView)findViewById(R.id.totalSaleAmt);
         delReportCheckBox = findViewById(R.id.delReport);
+        btnDelRpt = findViewById(R.id.btnsalerptdel);
         heading = findViewById(R.id.heading);
         frmDateTextView.setOnClickListener(this);
         toDateTextView.setOnClickListener(this);
         btnPrintReport.setOnClickListener(this);
         btnExportExcel.setOnClickListener(this);
+        btnDelRpt.setOnClickListener(this);
         searchTxtView = (TextView)findViewById(R.id.customerinfosaleRpt);
         searchTxtView.setText("ALL");
         chart = findViewById(R.id.salesChart);
@@ -595,6 +598,26 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         chart.setData(data);
         chart.invalidate();
     }
+    private void  DeleteAllBills(){
+        try{
+            ArrayList<SaleReport> items = GetSaleReport();
+            if(items.size()>0){
+                for (SaleReport s:
+                        items) {
+                    billDateToDelete = s.getBillDate();
+                    billNoToDelete = s.getBillNo();
+                    DeleteBill();
+                }
+                showCustomDialog("Status","Successfully Deleted All Bills");
+            }
+            else{
+                showCustomDialog("Warning","No Valid Bills to Delete.");
+            }
+        }
+        catch (Exception ex){
+            showCustomDialog("Error",ex.getMessage());
+        }
+    }
     private void LoadSaleReport(){
         try{
             saleRptContainer.removeAllViews();
@@ -654,6 +677,9 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btnshareExcel:
                 ExportExcel();
+                break;
+            case R.id.btnsalerptdel:
+                DeleteAllBills();
                 break;
             case R.id.btnsalerptprint:
                 try{

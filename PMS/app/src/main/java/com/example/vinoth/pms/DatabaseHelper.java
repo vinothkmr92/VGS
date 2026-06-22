@@ -33,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
       db.execSQL("CREATE TABLE STOCKS (ITEM_NO INTEGER PRIMARY KEY,STOCK NUMERIC)");
       db.execSQL("CREATE TABLE BILLS_DELETED (BILL_NO INTEGER,BILL_DATE TEXT,DELETE_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,DISCOUNT NUMERIC,PAYMENT_MODE TEXT,PRIMARY KEY (BILL_NO,BILL_DATE,DELETE_DATE))");
       db.execSQL("CREATE TABLE BILLS (BILL_NO INTEGER,BILL_DATE TEXT,SALE_AMT NUMERIC,WAITER TEXT,DISCOUNT NUMERIC,PAYMENT_MODE TEXT,PRIMARY KEY (BILL_NO,BILL_DATE))");
-      db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT,PRICE DOUBLE,VNO DOUBLE)");
+      db.execSQL("CREATE TABLE BILLS_ITEM (BILL_NO INTEGER,BILL_DATE TEXT,ITEM_NAME TEXT,QUANTITY NUMERIC,WAITER TEXT,PRICE DOUBLE,VNO TEXT)");
       db.execSQL("CREATE TABLE CUSTOMERS (NAME TEXT,MOBILE_NUMBER TEXT,ADDRESS TEXT,PRIMARY KEY (MOBILE_NUMBER))");
       InsertMasterUser(db);
     }
@@ -179,7 +179,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 r.setQty(cur.getDouble(3));
                 r.setWaiter(cur.getString(4));
                 r.setPrice(cur.getDouble(5));
-                r.setVehicleNo(cur.getDouble(6));
+                r.setVehicleNo(cur.getString(6));
                 Item item = GetItem(r.getItem_Name());
                 if(null!=item){
                     r.setItem_No(item.getItem_No());

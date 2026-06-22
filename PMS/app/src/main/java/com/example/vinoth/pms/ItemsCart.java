@@ -6,13 +6,13 @@ public class ItemsCart {
     private String Item_Name;
     private double Price;
     private double MRP;
-    private double VehicleNo;
+    private String VehicleNo;
 
-    public double getVehicleNo() {
+    public String getVehicleNo() {
         return VehicleNo;
     }
 
-    public void setVehicleNo(double vehicleNo) {
+    public void setVehicleNo(String vehicleNo) {
         VehicleNo = vehicleNo;
     }
 
