@@ -600,19 +600,14 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
     }
     private void  DeleteAllBills(){
         try{
-            ArrayList<SaleReport> items = GetSaleReport();
-            if(items.size()>0){
-                for (SaleReport s:
-                        items) {
-                    billDateToDelete = s.getBillDate();
-                    billNoToDelete = s.getBillNo();
-                    DeleteBill();
-                }
-                showCustomDialog("Status","Successfully Deleted All Bills");
-            }
-            else{
-                showCustomDialog("Warning","No Valid Bills to Delete.");
-            }
+            String frmdt = frmDateTextView.getText().toString();
+            String todt = toDateTextView.getText().toString();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+            Date fromDate = format.parse(frmdt);
+            Date toDate = format.parse(todt);
+            dbHelper.DeleteBills(format.format(fromDate),format.format(toDate));
+            showCustomDialog("Status","Successfully Deleted All Bills");
+            LoadSaleReport();
         }
         catch (Exception ex){
             showCustomDialog("Error",ex.getMessage());

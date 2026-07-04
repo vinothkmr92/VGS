@@ -140,6 +140,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return bills;
     }
+    public void DeleteBills(String frmDt,String toDt){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("BILLS_ITEM","DATE(BILL_DATE) BETWEEN '"+frmDt+"' AND '"+toDt+"'",null);
+        db.delete("BILLS","DATE(BILL_DATE) BETWEEN '"+frmDt+"' AND '"+toDt+"'",null);
+    }
     public void DeleteBill(String billdt,String billno){
         SQLiteDatabase db = this.getWritableDatabase();
         ArrayList<Bills_Item> billsItems = GetBills_Item(billdt,billno);
@@ -163,6 +168,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return  discount;
     }
+
+
     public  ArrayList<Bills_Item> GetBills_Item(String billdt,String billno){
         ArrayList<Bills_Item> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
