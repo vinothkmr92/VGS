@@ -221,6 +221,8 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
         TextView billno = view.findViewById(R.id.billsCard_billNo);
         TextView billDate = view.findViewById(R.id.billsCard_billDate);
         TextView billAmt = view.findViewById(R.id.billsCard_billAmt);
+        TextView paymode = view.findViewById(R.id.billsCard_paymentMode);
+        paymode.setText(sr.PaymentMode());
         billno.setText(String.valueOf(sr.Bill_No));
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa",Locale.getDefault());
         billDate.setText(format.format(sr.Bill_Date));
