@@ -674,7 +674,10 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                 ExportExcel();
                 break;
             case R.id.btnsalerptdel:
-                DeleteAllBills();
+                PasscodeActivity.srpInstance= this;
+                PasscodeActivity.isUserPasscode = true;
+                Intent intendt = new Intent(this,PasscodeActivity.class);
+                startActivityForResult(intendt,234);
                 break;
             case R.id.btnsalerptprint:
                 try{
@@ -733,6 +736,10 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     DeleteBill();
                 }
                 break;
+            case 234:
+                if(Common.isAuthenticated){
+                    DeleteAllBills();
+                }
         }
     }
     public void ShareBill(String billdetail){

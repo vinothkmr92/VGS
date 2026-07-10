@@ -10,13 +10,13 @@ public class Sale {
     public Double Card_Amount;
     public Double Upi_Amount;
     public String PaymentMode(){
-        if(Bill_Amount==Cash_Amount){
+        if(Bill_Amount.equals(Cash_Amount)){
             return "CASH";
         }
-        else if(Bill_Amount == Card_Amount){
+        else if(Bill_Amount.equals(Card_Amount)){
             return "CARD";
         }
-        else if(Bill_Amount==Upi_Amount){
+        else if(Bill_Amount.equals(Upi_Amount)){
             return "UPI";
         }
         else {

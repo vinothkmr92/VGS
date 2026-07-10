@@ -6,11 +6,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.icu.text.NumberFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
@@ -197,17 +199,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         Float cashAmtf = convertToFloat(cashAmt);
         Float cardAmtf = convertToFloat(cardAmt);
         Float upiAmtf = convertToFloat(upiAmt);
+        ArrayList<Integer> customColors = new ArrayList<Integer>();
         if(cashAmt>0){
             pieEntires.add(new PieEntry(cashAmtf,"Cash"));
+            customColors.add(ContextCompat.getColor(getContext(), R.color.Green));
         }
         if(cardAmt>0){
             pieEntires.add(new PieEntry(cardAmtf,"Card"));
+            customColors.add(ContextCompat.getColor(getContext(), R.color.Crimson));
         }
         if(upiAmt>0){
             pieEntires.add(new PieEntry(upiAmtf,"UPI"));
+            customColors.add(ContextCompat.getColor(getContext(), R.color.DarkMagenta));
         }
         PieDataSet dataSet = new PieDataSet(pieEntires,"");
-        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        dataSet.setColors(customColors);
         Typeface typeface = ResourcesCompat.getFont(requireContext(), R.font.orienta);
         dataSet.setValueTypeface(typeface);
         //dataSet.setDrawValues(false);

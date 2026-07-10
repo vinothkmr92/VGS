@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -222,6 +223,22 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
         TextView billDate = view.findViewById(R.id.billsCard_billDate);
         TextView billAmt = view.findViewById(R.id.billsCard_billAmt);
         TextView paymode = view.findViewById(R.id.billsCard_paymentMode);
+        String paymentMode = sr.PaymentMode();
+        switch (paymentMode){
+            case "CASH":
+            paymode.setTextColor(ContextCompat.getColor(this, R.color.Green));
+            break;
+            case "CARD":
+                paymode.setTextColor(ContextCompat.getColor(this, R.color.Crimson));
+                break;
+            case "UPI":
+                paymode.setTextColor(ContextCompat.getColor(this, R.color.DarkMagenta));
+                break;
+            case "MULTIPLE":
+                paymode.setTextColor(ContextCompat.getColor(this, R.color.DarkBlue));
+                break;
+
+        }
         paymode.setText(sr.PaymentMode());
         billno.setText(String.valueOf(sr.Bill_No));
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa",Locale.getDefault());
