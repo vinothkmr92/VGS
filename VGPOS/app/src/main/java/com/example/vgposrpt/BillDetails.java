@@ -1,6 +1,8 @@
 package com.example.vgposrpt;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class BillDetails {
     public ArrayList<Product> billProducts;
@@ -14,4 +16,5 @@ public class BillDetails {
     public Integer BillNo=0;
     public Integer MemberID = 0;
     public String MemberName="";
+    public Date billDate;
 }

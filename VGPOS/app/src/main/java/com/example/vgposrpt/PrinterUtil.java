@@ -199,7 +199,7 @@ public class PrinterUtil {
     }
     private void PrintBillWithMRP() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
-        String dateStr = format.format(new Date());
+        String dateStr = format.format(billDetail.billDate);
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+CommonUtil.ReceiptHeader+"\r\n");
         posPtr.printNormal(ESC+"|cA"+CommonUtil.ReceiptAddress+"\r\n");
         posPtr.printNormal("\n");
@@ -352,7 +352,7 @@ public class PrinterUtil {
 
     private void PrintBill() throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy hh:mm aaa", Locale.getDefault());
-        String dateStr = format.format(new Date());
+        String dateStr = format.format(billDetail.billDate);
         DecimalFormat formater = new DecimalFormat("#.###");
         posPtr.printNormal(ESC+"|cA"+ESC+"|2C"+CommonUtil.ReceiptHeader+"\r\n");
         posPtr.printNormal(ESC+"|cA"+CommonUtil.ReceiptAddress+"\r\n");

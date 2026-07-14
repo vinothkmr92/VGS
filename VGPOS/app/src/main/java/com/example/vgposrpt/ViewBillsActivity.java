@@ -391,6 +391,7 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
                         bd.billUser = rs.getString("User_Name");
                         bd.BillAmount = sale.Bill_Amount.intValue();
                         bd.BillNo = sale.Bill_No;
+                        bd.billDate = sale.Bill_Date;
                         bd.CashAmt = sale.Cash_Amount.intValue();
                         bd.CardAmt = sale.Card_Amount.intValue();
                         bd.UpiAmt = sale.Upi_Amount.intValue();

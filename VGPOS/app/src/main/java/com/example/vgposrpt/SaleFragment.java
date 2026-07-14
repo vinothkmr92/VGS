@@ -649,6 +649,7 @@ public class SaleFragment extends Fragment implements View.OnClickListener {
                     }
                     billNo++;
                     billDetails.BillNo = billNo;
+                    billDetails.billDate = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     Date date = new Date();
                     String expdt = format.format(date);

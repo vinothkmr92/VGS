@@ -537,6 +537,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         bd.BillAmount = sale.Bill_Amount.intValue();
                         bd.BillNo = sale.Bill_No;
                         bd.branchCode = 1;
+                        bd.billDate = sale.Bill_Date;
                         bd.MemberID = rs.getInt("Member_ID");
                         bd.billUser = rs.getString("User_Name");
                         sales.add(sale);
