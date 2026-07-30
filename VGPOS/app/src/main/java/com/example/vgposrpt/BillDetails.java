@@ -17,4 +17,5 @@ public class BillDetails {
     public Integer MemberID = 0;
     public String MemberName="";
     public Date billDate;
+    public String paymentMode = "";
 }

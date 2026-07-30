@@ -511,6 +511,7 @@ public class SaleFragment extends Fragment implements View.OnClickListener {
             Double billAmt = productCart.stream().mapToDouble(c->c.getAmount()).sum();
             bd.BillAmount = (int) Math.round(billAmt);
             bd.billUser = CommonUtil.loggedinUser;
+            bd.paymentMode = paymentMode;
             switch (paymentMode){
                 case  "CASH":
                     bd.CashAmt=bd.BillAmount;

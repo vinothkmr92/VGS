@@ -428,7 +428,10 @@ public class PrinterUtil {
         else {
             posPtr.printNormal("----------------------------------------------\n");
         }
-
+        if(!billDetail.paymentMode.isEmpty()){
+            posPtr.lineFeed(1);
+            posPtr.printNormal("Payment Mode: "+billDetail.paymentMode+"\n");
+        }
         totalAmt = billAmt;
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
