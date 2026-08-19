@@ -816,6 +816,7 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
                     user = bi.getWaiter();
                     billno = bi.getBill_No();
                     billdt = bi.getBill_Date();
+                    ic.setVehicleNo(bi.getVehicleNo());
                     itemsCarts.add(ic);
                 }
                 receiptData.billDate = billdt;
