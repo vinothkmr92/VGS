@@ -10,6 +10,15 @@ public class SaleReport {
     private Double SaleAmount;
     private Date billDt;
     private String paymentMode;
+    private String VehicleNo;
+
+    public String getVehicleNo() {
+        return VehicleNo;
+    }
+
+    public void setVehicleNo(String vehicleNo) {
+        VehicleNo = vehicleNo;
+    }
 
     public String getPaymentMode() {
         return paymentMode;

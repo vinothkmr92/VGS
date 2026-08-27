@@ -549,28 +549,23 @@ public class ItemReport extends AppCompatActivity implements  View.OnClickListen
     }
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.itemrptFrmDate:
-                datePickerDialog.show();
-                break;
-            case R.id.itemrptToDate:
-                todatePickerDialog.show();
-                break;
-            case R.id.btnshareExcel:
-                ExportExcel();
-                break;
-            case R.id.btnrptprint:
-                String frmdt = frmDateTextView.getText().toString();
-                String todt = toDateTextView.getText().toString();
-                String waiter  = searchTxtView.getText().toString();
-                ArrayList<ItemsRpt> items = dbHelper.GetReports(frmdt,todt,waiter,stockReport.isChecked());
-                if(items.size()>0){
-                    PrintReport(items);
-                }
-                else {
-                    showCustomDialog("Warning","No Details to Print.");
-                }
+        int id = v.getId();
+        if (id == R.id.itemrptFrmDate) {
+            datePickerDialog.show();
+        } else if (id == R.id.itemrptToDate) {
+            todatePickerDialog.show();
+        } else if (id == R.id.btnshareExcel) {
+            ExportExcel();
+        } else if (id == R.id.btnrptprint) {
+            String frmdt = frmDateTextView.getText().toString();
+            String todt = toDateTextView.getText().toString();
+            String waiter = searchTxtView.getText().toString();
+            ArrayList<ItemsRpt> items = dbHelper.GetReports(frmdt, todt, waiter, stockReport.isChecked());
+            if (items.size() > 0) {
+                PrintReport(items);
+            } else {
+                showCustomDialog("Warning", "No Details to Print.");
+            }
         }
-
     }
 }

@@ -714,44 +714,44 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.exit:
-                finish();
-                System.exit(0);
-                return true;
-            case R.id.uploadExcel:
-                Intent dcpage = new Intent(this,UploadActivity.class);
-                dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(dcpage);
-                return  true;
-            case R.id.itemMaster:
-                Intent itemmaster = new Intent(this,ItemsMasterActivity.class);
-                itemmaster.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(itemmaster);
-                return true;
-            case R.id.newSale:
-                Intent newSale = new Intent(this,HomePage.class);
-                newSale.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(newSale);
-                return true;
-            case R.id.settings:
-                Common.openSettings = false;
-                Intent settingsPage = new Intent(this,Settings.class);
-                settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(settingsPage);
-                return  true;
-            case R.id.saleReort:
-                Intent saleReportPage = new Intent(this,SaleReportActivity.class);
-                saleReportPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(saleReportPage);
-                return  true;
-            case R.id.homemenu:
-                Intent page = new Intent(this,HomeActivity.class);
-                page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(page);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        int itemId = item.getItemId();
+        if (itemId == R.id.exit) {
+            finish();
+            System.exit(0);
+            return true;
+        } else if (itemId == R.id.uploadExcel) {
+            Intent dcpage = new Intent(this, UploadActivity.class);
+            dcpage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(dcpage);
+            return true;
+        } else if (itemId == R.id.itemMaster) {
+            Intent itemmaster = new Intent(this, ItemsMasterActivity.class);
+            itemmaster.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(itemmaster);
+            return true;
+        } else if (itemId == R.id.newSale) {
+            Intent newSale = new Intent(this, HomePage.class);
+            newSale.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(newSale);
+            return true;
+        } else if (itemId == R.id.settings) {
+            Common.openSettings = false;
+            Intent settingsPage = new Intent(this, Settings.class);
+            settingsPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(settingsPage);
+            return true;
+        } else if (itemId == R.id.saleReort) {
+            Intent saleReportPage = new Intent(this, SaleReportActivity.class);
+            saleReportPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(saleReportPage);
+            return true;
+        } else if (itemId == R.id.homemenu) {
+            Intent page = new Intent(this, HomeActivity.class);
+            page.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(page);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
     public void showCustomDialog(String title, String Message,boolean... closeapp) {
@@ -919,227 +919,189 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     @Override
     public void onClick(View v) {
-       switch (v.getId()){
-           case R.id.btnAddMember:
-               OpenAddCustomerDialog();
-               break;
-           case R.id._clr:
-                  if(itemNo.isFocused()){
-                      String sr = itemNo.getText().toString();
-                      if(sr.length()>0){
-                          sr = sr.substring(0,sr.length()-1);
-                          itemNo.setText(sr);
-                      }
-                  }
-                  else if(vnoEditText.isFocused()){
-                      String sr = vnoEditText.getText().toString();
-                      if(sr.isEmpty()){
-                          priceTxt.setText(" ");
-                          priceTxt.requestFocus();
-                      }
-                      else{
-                          if(sr.length()>0){
-                              sr = sr.substring(0,sr.length()-1);
-                              vnoEditText.setText(sr);
-                          }
-                      }
-                  }
+        int id = v.getId();
+        if (id == R.id.btnAddMember) {
+            OpenAddCustomerDialog();
+        } else if (id == R.id._clr) {
+            if (itemNo.isFocused()) {
+                String sr = itemNo.getText().toString();
+                if (sr.length() > 0) {
+                    sr = sr.substring(0, sr.length() - 1);
+                    itemNo.setText(sr);
+                }
+            } else if (vnoEditText.isFocused()) {
+                String sr = vnoEditText.getText().toString();
+                if (sr.isEmpty()) {
+                    priceTxt.setText(" ");
+                    priceTxt.requestFocus();
+                } else {
+                    if (sr.length() > 0) {
+                        sr = sr.substring(0, sr.length() - 1);
+                        vnoEditText.setText(sr);
+                    }
+                }
+            } else if (priceTxt.isFocused()) {
+                String sr = priceTxt.getText().toString();
+                if (sr.length() > 0) {
+                    sr = sr.substring(0, sr.length() - 1);
+                    priceTxt.setText(sr);
+                }
+            } else if (discountAmtEditText.isFocused()) {
+                String sr = discountAmtEditText.getText().toString();
+                if (sr.length() > 0) {
+                    sr = sr.substring(0, sr.length() - 1);
+                    discountAmtEditText.setText(sr);
+                }
+            } else if (discountperEditText.isFocused()) {
+                String sr = discountperEditText.getText().toString();
+                if (sr.length() > 0) {
+                    sr = sr.substring(0, sr.length() - 1);
+                    discountperEditText.setText(sr);
+                }
+            }
+        } else if (id == R.id.viewitems) {
+            try {
+                SortItemsCarts();
+                QuantityListener.itemsCarts = Common.itemsCarts;
+                if (QuantityListener.itemsCarts.size() > 0) {
+                    Intent intent = new Intent(this, ViewItemActivity.class);
+                    startActivity(intent);
+                } else {
+                    showCustomDialog("Warning", "Please add items into KOT");
+                }
+                QuantityListener.itemsCarts = Common.itemsCarts;
+                double totalAmt = GetBillAmt();
+                double discountAmt = 0;
+                if (!discountAmtEditText.getText().toString().isEmpty()) {
+                    discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
+                }
+                totalAmt = totalAmt - discountAmt;
+                Double d = (totalAmt * (5d / 100d));
+                if (!isGSTBill.isChecked()) {
+                    d = 0d;
+                }
+                totalAmt += d;
+                totalAmt = Math.round(totalAmt);
+                estAmt.setText(GetCurrency(totalAmt));
+            } catch (Exception ex) {
+                //Toast.makeText(this.)
+            }
+        } else if (id == R.id._dot) {
+            if (itemNo.isFocused()) {
+                String sr = itemNo.getText().toString();
+                sr += ".";
+                itemNo.setText(sr);
+            } else if (vnoEditText.isFocused()) {
+                String sr = vnoEditText.getText().toString();
+                sr += ".";
+                vnoEditText.setText(sr);
+            } else if (discountperEditText.isFocused()) {
+                String sr = discountperEditText.getText().toString();
+                sr += ".";
+                discountperEditText.setText(sr);
+            }
+        } else if (id == R.id.menu) {
+            Intent intent = new Intent(this, ItemReport.class);
+            startActivity(intent);
+        } else if (id == R.id.cancel) {
+            CancelBt();
+        } else if (id == R.id.print) {
+            if (QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0) {
+                showCustomDialog("Warning", "Please add Items");
+                return;
+            }
+            SortItemsCarts();
+            GetPaymentMode();
+        } else if (id == R.id.enter) {
 
-                  else if(priceTxt.isFocused()){
-                      String sr = priceTxt.getText().toString();
-                      if(sr.length()>0){
-                          sr = sr.substring(0,sr.length()-1);
-                          priceTxt.setText(sr);
-                      }
-                  }
-                  else if(discountAmtEditText.isFocused()){
-                      String sr = discountAmtEditText.getText().toString();
-                      if(sr.length()>0){
-                          sr = sr.substring(0,sr.length()-1);
-                          discountAmtEditText.setText(sr);
-                      }
-                  }
-                  else if(discountperEditText.isFocused()){
-                      String sr = discountperEditText.getText().toString();
-                      if(sr.length()>0){
-                          sr = sr.substring(0,sr.length()-1);
-                          discountperEditText.setText(sr);
-                      }
-                  }
-                  break;
-           case R.id.viewitems:
-               try{
-                   SortItemsCarts();
-                   QuantityListener.itemsCarts = Common.itemsCarts;
-                   if(QuantityListener.itemsCarts.size()>0){
-                       Intent intent = new Intent(this, ViewItemActivity.class);
-                       startActivity(intent);
-                   }
-                   else {
-                       showCustomDialog("Warning","Please add items into KOT");
-                   }
-                   QuantityListener.itemsCarts = Common.itemsCarts;
-                   double totalAmt = GetBillAmt();
-                   double discountAmt = 0;
-                   if(!discountAmtEditText.getText().toString().isEmpty()){
-                       discountAmt = Double.valueOf(discountAmtEditText.getText().toString());
-                   }
-                   totalAmt = totalAmt-discountAmt;
-                   Double d = (totalAmt*(5d/100d));
-                   if(!isGSTBill.isChecked()){
-                       d = 0d;
-                   }
-                   totalAmt+=d;
-                   totalAmt = Math.round(totalAmt);
-                   estAmt.setText(GetCurrency(totalAmt));
-               }
-               catch (Exception ex){
-                   //Toast.makeText(this.)
-               }
-               break;
-           case R.id._dot:
-               if(itemNo.isFocused()){
-                   String sr = itemNo.getText().toString();
-                   sr +=".";
-                   itemNo.setText(sr);
-               }
-               else if(vnoEditText.isFocused()){
-                   String sr = vnoEditText.getText().toString();
-                   sr +=".";
-                   vnoEditText.setText(sr);
-               }
-               else if(discountperEditText.isFocused()){
-                   String sr = discountperEditText.getText().toString();
-                   sr+=".";
-                   discountperEditText.setText(sr);
-               }
-               break;
-           case R.id.menu:
-               Intent intent = new Intent(this, ItemReport.class);
-               startActivity(intent);
-               break;
-           case  R.id.cancel:
-               CancelBt();
-               break;
-           case  R.id.print:
-               if(QuantityListener.itemsCarts == null || QuantityListener.itemsCarts.size() == 0){
-                   showCustomDialog("Warning", "Please add Items");
-                   return;
-               }
-               SortItemsCarts();
-               GetPaymentMode();
-               break;
-           case  R.id.enter:
-               
-               if(priceTxt.isFocused()){
-                   vnoEditText.requestFocus();
-               }
-               else  if(itemName.isFocused()){
-                   priceTxt.requestFocus();
-               }
-               else if(discountperEditText.isFocused()){
-                   CalculateDiscountAmt();
-               }
-               else if(discountAmtEditText.isFocused()){
-                   CalculateDiscountPer();
-               }
-               else if(advanceAmtEditText.isFocused()){
-                   CalculateAdvanceAmt();
-               }
-               else{
-                   LoadProductNameandPrice();
-               }
-               break;
-           case R.id.scanQR:
-               try{
-                   if(!hasCameraPermission()){
-                       requestCameraPermission();
-                   }
-                   else {
-                       ScanQRCode();
-                   }
-               }
-               catch (Exception ex){
-                   showCustomDialog("Error",ex.getMessage());
-               }
-               break;
-           default:
-                 String addstr = getResources().getResourceEntryName(v.getId());
-                 addstr =  addstr.replace("_","");
-                   if(itemNo.isFocused()){
-                       String sr = itemNo.getText().toString();
-                       sr+=addstr;
-                       itemNo.setText(sr);
-                   }
-                   else if(discountperEditText.isFocused()){
-                       int startSelection = discountperEditText.getSelectionStart();
-                       int endSelection = discountperEditText.getSelectionEnd();
-                       String selectedText = discountperEditText.getText().toString().substring(startSelection,endSelection);
-                       if(!selectedText.isEmpty()){
-                           discountperEditText.setText(addstr);
-                       }
-                       else {
-                           String sr = discountperEditText.getText().toString();
-                           sr+=addstr;
-                           discountperEditText.setText(sr);
-                       }
-                   }
-                   else if(discountAmtEditText.isFocused()){
-                       int startSelection = discountAmtEditText.getSelectionStart();
-                       int endSelection = discountAmtEditText.getSelectionEnd();
-                       String selectedText = discountAmtEditText.getText().toString().substring(startSelection,endSelection);
-                       if(!selectedText.isEmpty()){
-                           discountAmtEditText.setText(addstr);
-                       }
-                       else {
-                           String sr = discountAmtEditText.getText().toString();
-                           sr+=addstr;
-                           discountAmtEditText.setText(sr);
-                       }
-                   }
-                   else if(advanceAmtEditText.isFocused()){
-                       int startSelection = advanceAmtEditText.getSelectionStart();
-                       int endSelection = advanceAmtEditText.getSelectionEnd();
-                       String selectedText = advanceAmtEditText.getText().toString().substring(startSelection,endSelection);
-                       if(!selectedText.isEmpty()){
-                           advanceAmtEditText.setText(addstr);
-                       }
-                       else {
-                           String sr = advanceAmtEditText.getText().toString();
-                           sr+=addstr;
-                           advanceAmtEditText.setText(sr);
-                       }
-                   }
-                   else if(vnoEditText.isFocused()){
-                       int startSelection=vnoEditText.getSelectionStart();
-                       int endSelection=vnoEditText.getSelectionEnd();
-                       String selectedText = vnoEditText.getText().toString().substring(startSelection, endSelection);
-                       if(!selectedText.isEmpty()){
-                           vnoEditText.setText(addstr);
-                       }
-                       else{
-                           String sr = vnoEditText.getText().toString();
-                           sr+=addstr;
-                           vnoEditText.setText(sr);
-                       }
+            if (priceTxt.isFocused()) {
+                vnoEditText.requestFocus();
+            } else if (itemName.isFocused()) {
+                priceTxt.requestFocus();
+            } else if (discountperEditText.isFocused()) {
+                CalculateDiscountAmt();
+            } else if (discountAmtEditText.isFocused()) {
+                CalculateDiscountPer();
+            } else if (advanceAmtEditText.isFocused()) {
+                CalculateAdvanceAmt();
+            } else {
+                LoadProductNameandPrice();
+            }
+        } else if (id == R.id.scanQR) {
+            try {
+                if (!hasCameraPermission()) {
+                    requestCameraPermission();
+                } else {
+                    ScanQRCode();
+                }
+            } catch (Exception ex) {
+                showCustomDialog("Error", ex.getMessage());
+            }
+        } else {
+            String addstr = getResources().getResourceEntryName(v.getId());
+            addstr = addstr.replace("_", "");
+            if (itemNo.isFocused()) {
+                String sr = itemNo.getText().toString();
+                sr += addstr;
+                itemNo.setText(sr);
+            } else if (discountperEditText.isFocused()) {
+                int startSelection = discountperEditText.getSelectionStart();
+                int endSelection = discountperEditText.getSelectionEnd();
+                String selectedText = discountperEditText.getText().toString().substring(startSelection, endSelection);
+                if (!selectedText.isEmpty()) {
+                    discountperEditText.setText(addstr);
+                } else {
+                    String sr = discountperEditText.getText().toString();
+                    sr += addstr;
+                    discountperEditText.setText(sr);
+                }
+            } else if (discountAmtEditText.isFocused()) {
+                int startSelection = discountAmtEditText.getSelectionStart();
+                int endSelection = discountAmtEditText.getSelectionEnd();
+                String selectedText = discountAmtEditText.getText().toString().substring(startSelection, endSelection);
+                if (!selectedText.isEmpty()) {
+                    discountAmtEditText.setText(addstr);
+                } else {
+                    String sr = discountAmtEditText.getText().toString();
+                    sr += addstr;
+                    discountAmtEditText.setText(sr);
+                }
+            } else if (advanceAmtEditText.isFocused()) {
+                int startSelection = advanceAmtEditText.getSelectionStart();
+                int endSelection = advanceAmtEditText.getSelectionEnd();
+                String selectedText = advanceAmtEditText.getText().toString().substring(startSelection, endSelection);
+                if (!selectedText.isEmpty()) {
+                    advanceAmtEditText.setText(addstr);
+                } else {
+                    String sr = advanceAmtEditText.getText().toString();
+                    sr += addstr;
+                    advanceAmtEditText.setText(sr);
+                }
+            } else if (vnoEditText.isFocused()) {
+                int startSelection = vnoEditText.getSelectionStart();
+                int endSelection = vnoEditText.getSelectionEnd();
+                String selectedText = vnoEditText.getText().toString().substring(startSelection, endSelection);
+                if (!selectedText.isEmpty()) {
+                    vnoEditText.setText(addstr);
+                } else {
+                    String sr = vnoEditText.getText().toString();
+                    sr += addstr;
+                    vnoEditText.setText(sr);
+                }
 
-                   }
-
-                   else if(priceTxt.isFocused()){
-                       int startSelection=priceTxt.getSelectionStart();
-                       int endSelection=priceTxt.getSelectionEnd();
-                       String selectedText = priceTxt.getText().toString().substring(startSelection, endSelection);
-                       if(!selectedText.isEmpty()){
-                           priceTxt.setText(addstr);
-                       }
-                       else{
-                           String sr = priceTxt.getText().toString();
-                           sr+=addstr;
-                           priceTxt.setText(sr);
-                       }
-                   }
-                   break;
-       }
+            } else if (priceTxt.isFocused()) {
+                int startSelection = priceTxt.getSelectionStart();
+                int endSelection = priceTxt.getSelectionEnd();
+                String selectedText = priceTxt.getText().toString().substring(startSelection, endSelection);
+                if (!selectedText.isEmpty()) {
+                    priceTxt.setText(addstr);
+                } else {
+                    String sr = priceTxt.getText().toString();
+                    sr += addstr;
+                    priceTxt.setText(sr);
+                }
+            }
+        }
     }
     private String GetCurrency(double amt){
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));

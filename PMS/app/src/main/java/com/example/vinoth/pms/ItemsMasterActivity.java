@@ -294,25 +294,21 @@ public class ItemsMasterActivity extends AppCompatActivity implements View.OnCli
     }
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.scanQR:
-                try{
-                    if(!hasCameraPermission()){
-                        requestCameraPermission();
-                    }
-                    else {
-                        ScanQRCode();
-                    }
+        int id = v.getId();
+        if (id == R.id.scanQR) {
+            try {
+                if (!hasCameraPermission()) {
+                    requestCameraPermission();
+                } else {
+                    ScanQRCode();
+                }
 
-                }
-                catch (Exception ex){
-                    showCustomDialog("Error",ex.getMessage());
-                }
-                break;
-            case R.id.btnupdateitems:
-                dialog.show();
-                UpdateItems();
-                break;
+            } catch (Exception ex) {
+                showCustomDialog("Error", ex.getMessage());
+            }
+        } else if (id == R.id.btnupdateitems) {
+            dialog.show();
+            UpdateItems();
         }
     }
 

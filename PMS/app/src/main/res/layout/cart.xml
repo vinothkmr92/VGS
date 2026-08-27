@@ -74,6 +74,7 @@
         android:textColor="@color/DarkBlue"
         android:textSize="15dp"
         android:textStyle="bold"></TextView>
+
     <ImageButton
         android:id="@+id/salecart_delete"
         android:layout_width="40dp"
@@ -81,6 +82,28 @@
         android:layout_gravity="right"
         android:background="@drawable/baseline_delete_24"
         android:foreground="?android:attr/selectableItemBackground"></ImageButton>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="@font/orienta"
+        android:text="Vechile No"
+        android:textColor="@android:color/black"
+        android:textSize="15dp"></TextView>
+
+    <TextView
+        android:id="@+id/salecart_vno"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_columnSpan="2"
+        android:layout_gravity="left"
+        android:fontFamily="@font/orienta"
+        android:padding="20dp"
+        android:text="454ds"
+        android:textColor="@color/DarkBlue"
+        android:textSize="20dp"
+        android:textStyle="bold"></TextView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

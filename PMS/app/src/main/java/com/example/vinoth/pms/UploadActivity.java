@@ -460,15 +460,12 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btnUpload:
-                UploadExcel();
-                break;
-            case R.id.btnExportproduct:
-                ExportExcel();
-                break;
+        int id = v.getId();
+        if (id == R.id.btnUpload) {
+            UploadExcel();
+        } else if (id == R.id.btnExportproduct) {
+            ExportExcel();
         }
-
     }
 
     private void UploadExcel(){

@@ -612,18 +612,14 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     }
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btnSave:
-                SaveSettings();
-                break;
-            case R.id.buttonLoadPicture:
-                LoadPictureToUpload();
-                break;
-            case R.id.btnclearlogo:
-                imageView.setImageBitmap(null);
-                imageView.setImageDrawable(null);
-                break;
+        int id = v.getId();
+        if (id == R.id.btnSave) {
+            SaveSettings();
+        } else if (id == R.id.buttonLoadPicture) {
+            LoadPictureToUpload();
+        } else if (id == R.id.btnclearlogo) {
+            imageView.setImageBitmap(null);
+            imageView.setImageDrawable(null);
         }
-
     }
 }

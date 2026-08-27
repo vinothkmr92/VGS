@@ -503,9 +503,13 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
         ImageButton printbtn = view.findViewById(R.id.salecart_print);
         ImageButton deletebtn = view.findViewById(R.id.salecart_delete);
         ImageButton shareBillBtn = view.findViewById(R.id.salecart_share);
+        TextView vno = view.findViewById(R.id.salecart_vno);
+        SimpleDateFormat formatbi = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm aa",Locale.getDefault());
+        ArrayList<Bills_Item> bills = dbHelper.GetBills_Item(formatbi.format(sr.getBillDt()),sr.getBillNo());
+        vno.setText(bills.size()>0 ? bills.get(0).getVehicleNo():"");
         paymentMode.setText(sr.getPaymentMode());
         billno.setText(sr.getBillNo());
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm aa",Locale.getDefault());
         billDate.setText(format.format(sr.getBillDt()));
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         formatter.setMaximumFractionDigits(0);
@@ -663,40 +667,34 @@ public class SaleReportActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.salerptFrmDate:
-                datePickerDialog.show();
-                break;
-            case R.id.salerptToDate:
-                todatePickerDialog.show();
-                break;
-            case R.id.btnshareExcel:
-                ExportExcel();
-                break;
-            case R.id.btnsalerptdel:
-                PasscodeActivity.srpInstance= this;
-                PasscodeActivity.isUserPasscode = true;
-                Intent intendt = new Intent(this,PasscodeActivity.class);
-                startActivityForResult(intendt,234);
-                break;
-            case R.id.btnsalerptprint:
-                try{
-                    ArrayList<SaleReport> items = GetSaleReport();
-                    if(items.size()>0){
-                        Common.saleReportFrmDate = frmDateTextView.getText().toString();
-                        Common.saleReportToDate = toDateTextView.getText().toString();
-                        PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this,this,false);
-                        printerUtil.saleReports = items;
-                        printerUtil.isDeleteSaleRpt = delReportCheckBox.isChecked();
-                        printerUtil.Print();
-                    }
-                    else {
-                        showCustomDialog("Info","No record found.");
-                    }
+        int id = v.getId();
+        if (id == R.id.salerptFrmDate) {
+            datePickerDialog.show();
+        } else if (id == R.id.salerptToDate) {
+            todatePickerDialog.show();
+        } else if (id == R.id.btnshareExcel) {
+            ExportExcel();
+        } else if (id == R.id.btnsalerptdel) {
+            PasscodeActivity.srpInstance = this;
+            PasscodeActivity.isUserPasscode = true;
+            Intent intendt = new Intent(this, PasscodeActivity.class);
+            startActivityForResult(intendt, 234);
+        } else if (id == R.id.btnsalerptprint) {
+            try {
+                ArrayList<SaleReport> items = GetSaleReport();
+                if (items.size() > 0) {
+                    Common.saleReportFrmDate = frmDateTextView.getText().toString();
+                    Common.saleReportToDate = toDateTextView.getText().toString();
+                    PrinterUtil printerUtil = new PrinterUtil(SaleReportActivity.this, this, false);
+                    printerUtil.saleReports = items;
+                    printerUtil.isDeleteSaleRpt = delReportCheckBox.isChecked();
+                    printerUtil.Print();
+                } else {
+                    showCustomDialog("Info", "No record found.");
                 }
-                catch (Exception ex){
-                    showCustomDialog("Error",ex.getMessage().toString());
-                }
+            } catch (Exception ex) {
+                showCustomDialog("Error", ex.getMessage().toString());
+            }
         }
     }
     public  void DeleteBill(){

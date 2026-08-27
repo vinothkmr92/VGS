@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 20);
+        super(context, DATABASE_NAME, null, 30);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -49,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS BILLS_ITEM");
         db.execSQL("DROP TABLE IF EXISTS CUSTOMERS");
         db.execSQL("DROP TABLE IF EXISTS ICONS");
+        db.execSQL("DROP TABLE IF EXISTS BILLS_DELETED");
         onCreate(db);
     }
     public byte[] GetReceiptIcon(){
@@ -173,7 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public  ArrayList<Bills_Item> GetBills_Item(String billdt,String billno){
         ArrayList<Bills_Item> report = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cur = db.rawQuery("SELECT * FROM BILLS_ITEM WHERE DATE(BILL_DATE)='"+billdt+"' AND BILL_NO="+billno,null);
+        Cursor cur = db.rawQuery("SELECT * FROM BILLS_ITEM WHERE BILL_DATE BETWEEN '"+billdt+" 00:00:00' AND '"+billdt+" 23:59:59' AND BILL_NO="+billno,null);
         if(cur.getCount()>0){
             while (cur.moveToNext()){
                 Bills_Item r = new Bills_Item();
@@ -282,6 +283,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 r.setBillAmount(billAmt);
                 r.setSaleAmount(saleAmt);
                 r.setDiscount(discount);
+                SimpleDateFormat formatdtonly = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 Date bd = format.parse(r.getBillDate(),new ParsePosition(0));
                 r.setBillDt(bd);
