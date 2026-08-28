@@ -6,6 +6,7 @@
     android:layout_height="fill_parent"
     android:background="@color/GreenYellow"
     android:orientation="vertical"
+    android:paddingTop="40dp"
     android:theme="@style/Theme.AppCompat.NoActionBar"
     tools:context=".SaleReportActivity">
     <ScrollView
