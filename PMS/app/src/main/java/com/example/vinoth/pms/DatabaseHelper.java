@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public  static  final String DATABASE_NAME = "VGSPOS.db";
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 20);
+        super(context, DATABASE_NAME, null, 30);
         SQLiteDatabase db = this.getWritableDatabase();
     }
 

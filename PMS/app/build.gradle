@@ -26,6 +26,11 @@ androidComponents {
     onVariants(selector().all()) { variant ->
         variant.outputs.forEach { output ->
             output.outputFileName.set("PMS.apk")
+            copy {
+                from file("${project.buildDir}/app/release/${output.outputFileName}")
+                // Change this to your desired destination path
+                into "D:\\Dropbox\\Android_APK\\PMS.apk"
+            }
         }
     }
 }
