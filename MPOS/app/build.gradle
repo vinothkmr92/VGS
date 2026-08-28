@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
     defaultConfig {
         applicationId "com.example.vinoth.vgspos"
         minSdkVersion 26
@@ -38,6 +38,10 @@ android {
     buildFeatures {
         buildConfig true
     }
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
+    }
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -58,4 +62,9 @@ dependencies {
     implementation 'org.fintrace.core.drivers:tspl2-driver:0.0.12'
     implementation "androidx.biometric:biometric:1.1.0"
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }

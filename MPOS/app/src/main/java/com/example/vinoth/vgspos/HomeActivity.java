@@ -337,9 +337,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                     // Initialize array adapter
                     ArrayAdapter<String> adapter=new ArrayAdapter<>(HomeActivity.this, android.R.layout.simple_list_item_1,waiters);
+                    MyAdapter myAdapter = new MyAdapter(waiters);
 
                     // set adapter
-                    listView.setAdapter(adapter);
+                    listView.setAdapter(myAdapter);
                     editText.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -348,7 +349,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                         @Override
                         public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            adapter.getFilter().filter(s);
+                            myAdapter.getFilter().filter(s);
                         }
 
                         @Override
