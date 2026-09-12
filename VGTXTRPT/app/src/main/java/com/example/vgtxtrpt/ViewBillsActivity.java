@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.icu.text.NumberFormat;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -12,9 +14,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -223,6 +227,8 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
         TextView billDate = view.findViewById(R.id.billsCard_billDate);
         TextView billAmt = view.findViewById(R.id.billsCard_billAmt);
         TextView paymode = view.findViewById(R.id.billsCard_paymentMode);
+        ImageButton btnView = view.findViewById(R.id.viewBillBtn);
+        btnView.setTag(sr.BillURL());
         String paymentMode = sr.PaymentMode();
         switch (paymentMode){
             case "CASH":
@@ -248,6 +254,20 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
         String symbol = formatter.getCurrency().getSymbol();
         String moneyString = formatter.format(sr.Bill_Amount).replace(symbol,symbol+" ");
         billAmt.setText(moneyString);
+        btnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String webViewerUrl =  view.getTag().toString();
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webViewerUrl));
+                intent.setClassName("com.android.chrome", "com.google.android.apps.chrome.Main");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(ViewBillsActivity.this, "No web browser found to open this link", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         salesRptContainer.addView(view);
     }
     public void  LoadSalesViews(ArrayList<Sale> sales){
@@ -312,7 +332,7 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
                 if (con == null) {
                     error = "Database Connection Failed.";
                 } else {
-                    String query = String.format("SELECT Bill_No,cast(concat(SUBSTRING(CONVERT(VARCHAR(10), bILL_DATE, 120),0,11),' ',SUBSTRING(convert(varchar(30),time,121),11,13)) as datetime) as Bill_Date, (Cash_Received+Card_Received+Coupon_Received) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT COUNTER_ID,Bill_No,cast(concat(SUBSTRING(CONVERT(VARCHAR(10), bILL_DATE, 120),0,11),' ',SUBSTRING(convert(varchar(30),time,121),11,13)) as datetime) as Bill_Date, (Cash_Received+Card_Received+Coupon_Received) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(!counterID.equalsIgnoreCase("0")){
                         query = query+String.format(" AND COUNTER_ID='%s'",counterID);
                     }
@@ -329,6 +349,7 @@ public class ViewBillsActivity extends AppCompatActivity implements View.OnClick
                         sale.Cash_Amount = rs.getDouble("Cash_Received");
                         sale.Card_Amount = rs.getDouble("Card_Received");
                         sale.Upi_Amount = rs.getDouble("Coupon_Received");
+                        sale.CounterID = rs.getString("COUNTER_ID");
                         sales.add(sale);
                         isSuccess = true;
                     }

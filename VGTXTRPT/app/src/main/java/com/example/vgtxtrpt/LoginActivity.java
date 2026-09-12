@@ -332,6 +332,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     sharedpreferences.commit();
                     CommonUtil.countersList = counters;
                     c.close();
+                    Statement s = con.createStatement();
+                    String query = "SELECT FTP_URL,FTP_PATH FROM Company_Details";
+                    ResultSet r = s.executeQuery(query);
+                    if(r.next()){
+                        CommonUtil.FTP_URL = r.getString("FTP_URL");
+                        CommonUtil.FTP_PATH = r.getString("FTP_PATH");
+                    }
+                    r.close();
                 }
             }
             catch (Exception ex)

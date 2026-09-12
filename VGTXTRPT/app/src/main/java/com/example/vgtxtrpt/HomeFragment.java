@@ -424,7 +424,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 if (con == null) {
                     error = "Database Connection Failed";
                 } else {
-                    String query = String.format("SELECT Bill_No,cast(BILL_DATE as datetime) as Bill_Date, (Cash_Received+Card_Received+Coupon_Received) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
+                    String query = String.format("SELECT COUNTER_ID,Bill_No,cast(BILL_DATE as datetime) as Bill_Date, (Cash_Received+Card_Received+Coupon_Received) AS AMT,Cash_Received,Card_Received,Coupon_Received FROM SALE WHERE CAST(BILL_DATE AS DATE) BETWEEN '%s' AND '%s'",frmDate,toDate);
                     if(!counterID.equalsIgnoreCase("0")){
                         query = query+String.format(" AND COUNTER_ID='%s'",counterID);
                     }
@@ -440,6 +440,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         sale.Cash_Amount = rs.getDouble("Cash_Received");
                         sale.Card_Amount = rs.getDouble("Card_Received");
                         sale.Upi_Amount = rs.getDouble("Coupon_Received");
+                        sale.CounterID = rs.getString("COUNTER_ID");
                         sales.add(sale);
                         isSuccess = true;
                     }
