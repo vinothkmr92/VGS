@@ -164,7 +164,13 @@ public class PrinterUtil {
                         ArrayList<ItemsCart> prds = rcptData.itemsCarts;
                         for (ItemsCart ic:
                                 prds) {
-                            PrintBillSeperate(rcptData,ic);
+                            double ttqty = ic.getQty();
+                            while (ttqty>0){
+                                ic.setQty(1);
+                                PrintBillSeperate(rcptData,ic);
+                                ttqty--;
+                            }
+
                         }
                     }
                     else {
@@ -184,7 +190,12 @@ public class PrinterUtil {
                             ArrayList<ItemsCart> prds = rcptData.itemsCarts;
                             for (ItemsCart ic:
                                     prds) {
-                                PrintBillSeperate(rcptData,ic);
+                                double ttqty = ic.getQty();
+                                while (ttqty>0){
+                                    ic.setQty(1);
+                                    PrintBillSeperate(rcptData,ic);
+                                    ttqty--;
+                                }
                             }
                         }
                         else {
@@ -433,7 +444,7 @@ public class PrinterUtil {
             posPtr.printNormal(ESC+"|bC"+ESC+"|lANAME     : "+ rcptData.waiter);
             posPtr.printNormal("\n");
         }
-        posPtr.printNormal(ESC+"|bC"+ESC+"|lADATE     : "+dateStr+"\n\n");
+        posPtr.printNormal(ESC+"|bC"+ESC+"|lADATE     : "+dateStr+"\n");
         if(Common.RptSize.equals("2")){
             posPtr.printNormal(ESC+"|bC"+"--------------------------------");
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM        QTY    RATE   AMOUNT\n");
@@ -456,24 +467,38 @@ public class PrinterUtil {
             billAmt+=amt;
             String amts=String.format("%.0f",amt);
             String line = "";
+            int prLenght3inch = 22;
+            int prLenght2inch = 12;
+            int qtpadmultipline3inch = 25;
+            int qtpadmultipline2inch = 15;
+            boolean printsameline = false;
             if(Common.RptSize.equals("2")){
-                if(name.length()>33){
+                printsameline = name.length()<=prLenght2inch;
+                if(printsameline){
+                    name = StringUtils.rightPad(name,prLenght2inch);
+                }
+                if(!printsameline && name.length()>33){
                     name = name.substring(0,32);
                 }
-                qty = StringUtils.leftPad(qty,15);
+                qty = StringUtils.leftPad(qty,printsameline?3:qtpadmultipline2inch);
                 price = StringUtils.leftPad(price,8);
                 amts = StringUtils.leftPad(amts,9);
                 line = qty+price+amts+"\n";
             }
             else {
-                if(name.length()>47){
+                printsameline = name.length()<=prLenght3inch;
+                if(printsameline){
+                    name = StringUtils.rightPad(name,prLenght3inch);
+                }
+                if(!printsameline && name.length()>47){
                     name = name.substring(0,46);
                 }
-                qty = StringUtils.leftPad(qty,25);
+                qty = StringUtils.leftPad(qty,printsameline?3:qtpadmultipline3inch);
                 price = StringUtils.leftPad(price,11);
                 amts = StringUtils.leftPad(amts,10);
                 line = qty+price+amts+"\n";
             }
+
             if(Common.MultiLang){
                 Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
                 if(xb!=null){
@@ -484,9 +509,16 @@ public class PrinterUtil {
                 }
             }
             else {
-                posPtr.printNormal(ESC+"|bC"+name+"\n");
+                if(printsameline){
+                    posPtr.printNormal(ESC+"|bC"+name+line);
+                }
+                else {
+                    posPtr.printNormal(ESC+"|bC"+name+"\n");
+                }
             }
-            posPtr.printNormal(ESC+"|bC"+line);
+            if(!printsameline){
+                posPtr.printNormal(ESC+"|bC"+line);
+            }
         }
         if(Common.RptSize.equals("2")){
             posPtr.printNormal(ESC+"|bC"+"--------------------------------");
@@ -537,14 +569,14 @@ public class PrinterUtil {
         }
         String totalamt = formatter.format(totalAmt+gst+gst).replace(symbol,symbol+" ");
         String txttotal = "Grand Total  "+totalamt+"/-";
-        posPtr.lineFeed(1);
+        //posPtr.lineFeed(1);
         if(rcptData.isGST){
             posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|1C"+subTotal+"\n");
             posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|1C"+sgst+"\n");
             posPtr.printNormal(ESC+"|rA"+ESC+"|bC"+ESC+"|1C"+cgst+"\n");
 
         }
-        posPtr.lineFeed(1);
+        //posPtr.lineFeed(1);
         Bitmap bp = getTextAsImage(txttotal,30, Layout.Alignment.ALIGN_CENTER,null);
         if(bp!=null){
             posPtr.printBitmap(bp,0);
@@ -559,7 +591,7 @@ public class PrinterUtil {
         }
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+Common.footerMsg+"\n");
-        posPtr.lineFeed(6);
+        posPtr.lineFeed(3);
         posPtr.cutPaper();
     }
     private void PrintBillSeperate(ReceiptData rcptData,ItemsCart ic) throws IOException {
@@ -599,7 +631,7 @@ public class PrinterUtil {
             posPtr.printNormal(ESC+"|bC"+ESC+"|lANAME     : "+ rcptData.waiter);
             posPtr.printNormal("\n");
         }
-        posPtr.printNormal(ESC+"|bC"+ESC+"|lADATE     : "+dateStr+"\n\n");
+        posPtr.printNormal(ESC+"|bC"+ESC+"|lADATE     : "+dateStr+"\n");
         if(Common.RptSize.equals("2")){
             posPtr.printNormal(ESC+"|bC"+"--------------------------------");
             posPtr.printNormal(ESC+"|bC"+ESC+"|1C"+"ITEM        QTY    RATE   AMOUNT\n");
@@ -622,20 +654,33 @@ public class PrinterUtil {
             billAmt+=amt;
             String amts=String.format("%.0f",amt);
             String line = "";
+            int prLenght3inch = 22;
+            int prLenght2inch = 12;
+            int qtpadmultipline3inch = 25;
+            int qtpadmultipline2inch = 15;
+            boolean printsameline = false;
             if(Common.RptSize.equals("2")){
-                if(name.length()>33){
+                printsameline = name.length()<=prLenght2inch;
+                if(printsameline){
+                    name = StringUtils.rightPad(name,prLenght2inch);
+                }
+                if(!printsameline && name.length()>33){
                     name = name.substring(0,32);
                 }
-                qty = StringUtils.leftPad(qty,15);
+                qty = StringUtils.leftPad(qty,printsameline?3:qtpadmultipline2inch);
                 price = StringUtils.leftPad(price,8);
                 amts = StringUtils.leftPad(amts,9);
                 line = qty+price+amts+"\n";
             }
             else {
-                if(name.length()>47){
+                printsameline = name.length()<=prLenght3inch;
+                if(printsameline){
+                    name = StringUtils.rightPad(name,prLenght3inch);
+                }
+                if(!printsameline && name.length()>47){
                     name = name.substring(0,46);
                 }
-                qty = StringUtils.leftPad(qty,25);
+                qty = StringUtils.leftPad(qty,printsameline?3:qtpadmultipline3inch);
                 price = StringUtils.leftPad(price,11);
                 amts = StringUtils.leftPad(amts,10);
                 line = qty+price+amts+"\n";
@@ -650,9 +695,16 @@ public class PrinterUtil {
                 }
             }
             else {
-                posPtr.printNormal(ESC+"|bC"+name+"\n");
+                if(printsameline){
+                    posPtr.printNormal(ESC+"|bC"+name+line);
+                }
+                else {
+                    posPtr.printNormal(ESC+"|bC"+name+"\n");
+                }
             }
+        if(!printsameline){
             posPtr.printNormal(ESC+"|bC"+line);
+        }
 
         if(Common.RptSize.equals("2")){
             posPtr.printNormal(ESC+"|bC"+"--------------------------------");
@@ -683,7 +735,7 @@ public class PrinterUtil {
         }
         posPtr.lineFeed(1);
         posPtr.printNormal(ESC+"|bC"+ESC+"|cA"+Common.footerMsg+"\n");
-        posPtr.lineFeed(4);
+        posPtr.lineFeed(2);
         posPtr.cutPaper();
     }
 
