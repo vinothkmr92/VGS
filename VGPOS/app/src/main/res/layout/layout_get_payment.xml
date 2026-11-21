@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:padding="20dp">
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp"
+        >
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/LavenderBlush"
+        android:columnCount="2">
+
+        <TextView android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="2"
+            android:id="@+id/memidandno"
+            android:textColor="@color/DarkMagenta"
+            android:textSize="25dp"
+            android:fontFamily="@font/orienta"
+            android:textStyle="bold"
+            android:text="MEMBER NAME"></TextView>
+
+        <LinearLayout android:layout_columnSpan="2"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="40dp"
+                android:layout_gravity="center"
+                android:fontFamily="@font/orienta"
+                android:textColor="@color/DarkGreen"
+                android:text="₹"
+                ></TextView>
+        <EditText android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/paymentAmt"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:layout_columnSpan="2"
+            android:fontFamily="@font/orienta"
+            android:hint="0"
+            android:textColorHint="@color/DimGray"
+            android:inputType="number"
+            android:textSize="40dp"
+            android:focusedByDefault="true"
+            android:textColor="@color/DarkGreen"></EditText>
+        </LinearLayout>
+        <LinearLayout android:layout_columnSpan="2"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content">
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CASH"
+            android:textStyle="bold"
+            android:fontFamily="@font/orienta"
+            android:id="@+id/cashRadioBtn"
+            android:textSize="20dp"
+            android:textColor="@color/DarkGreen"
+            ></com.google.android.material.radiobutton.MaterialRadioButton>
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CARD"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:id="@+id/cardRadioBtn"
+                android:textColor="@color/DarkBlue"
+                ></com.google.android.material.radiobutton.MaterialRadioButton>
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UPI"
+            android:textStyle="bold"
+            android:fontFamily="@font/orienta"
+            android:textSize="20dp"
+            android:id="@+id/upiRadioBtn"
+            android:textColor="@color/DarkOrange"
+            ></com.google.android.material.radiobutton.MaterialRadioButton>
+        </LinearLayout>
+    </GridLayout>
+    </com.google.android.material.card.MaterialCardView>
+</RelativeLayout>

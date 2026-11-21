@@ -17,6 +17,10 @@
             android:title="KOT"
             android:icon="@drawable/baseline_kitchen_24"/>
         <item
+            android:id="@+id/action_collection"
+            android:title="Payment Collections"
+            android:icon="@drawable/outline_attach_money_24"/>
+        <item
             android:id="@+id/action_productrpt"
             android:title="Products Report"
             android:icon="@drawable/baseline_data_exploration_24"/>
