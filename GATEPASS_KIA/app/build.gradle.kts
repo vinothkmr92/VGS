@@ -1,12 +1,12 @@
+import com.android.build.gradle.api.ApkVariantOutput
+
 plugins {
     alias(libs.plugins.android.application)
 }
 
 android {
     namespace = "com.example.gatepass_kia"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.gatepass_kia"
@@ -26,15 +26,14 @@ android {
                 "proguard-rules.pro"
             )
         }
-        applicationVariants.all {
-            outputs.all {
-                this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
-                //val timestamp = SimpleDateFormat("ddMMyyyy_hhmm_aa").format(Date())
-                val apkName = "KIA_GATEPASS.apk"
-                outputFileName = apkName
-            }
+    }
+
+    applicationVariants.all {
+        outputs.all {
+            (this as? ApkVariantOutput)?.outputFileName = "KIA_GATEPASS.apk"
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

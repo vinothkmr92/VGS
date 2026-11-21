@@ -223,6 +223,9 @@ public class PrinterUtil {
 
     Bitmap getMultiLangTextAsImage(String text, float textSize, Typeface typeface)  {
         try{
+            if(text.contains("\n")){
+                text = text.replace("\n","");
+            }
             TextPaint mPaint = new TextPaint();
             mPaint.setColor(Color.BLACK);
             if (typeface != null) mPaint.setTypeface(typeface);
@@ -473,7 +476,7 @@ public class PrinterUtil {
             int qtpadmultipline2inch = 15;
             boolean printsameline = false;
             if(Common.RptSize.equals("2")){
-                printsameline = name.length()<=prLenght2inch;
+                printsameline = !Common.MultiLang && name.length()<=prLenght2inch;
                 if(printsameline){
                     name = StringUtils.rightPad(name,prLenght2inch);
                 }
@@ -486,7 +489,7 @@ public class PrinterUtil {
                 line = qty+price+amts+"\n";
             }
             else {
-                printsameline = name.length()<=prLenght3inch;
+                printsameline =!Common.MultiLang && name.length()<=prLenght3inch;
                 if(printsameline){
                     name = StringUtils.rightPad(name,prLenght3inch);
                 }
@@ -500,12 +503,13 @@ public class PrinterUtil {
             }
 
             if(Common.MultiLang){
-                Bitmap xb = getMultiLangTextAsImage(name, 24, Typeface.DEFAULT);
+                String cont = name;
+                Bitmap xb = getMultiLangTextAsImage(cont, 24, Typeface.DEFAULT);
                 if(xb!=null){
                     posPtr.printBitmap(xb,0);
                 }
                 else {
-                    posPtr.printNormal(ESC+"|bC"+name+"\n");
+                    posPtr.printNormal(ESC+"|bC"+cont+"\n");
                 }
             }
             else {
@@ -518,6 +522,9 @@ public class PrinterUtil {
             }
             if(!printsameline){
                 posPtr.printNormal(ESC+"|bC"+line);
+            }
+            if(Common.RptSize.equals("2")){
+                posPtr.lineFeed(1);
             }
         }
         if(Common.RptSize.equals("2")){
